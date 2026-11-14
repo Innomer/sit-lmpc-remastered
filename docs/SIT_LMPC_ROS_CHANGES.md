@@ -1,6 +1,6 @@
 # SIT-LMPC on the ROS 2 F1TENTH sim: what changed
 
-Companion to `PROJECT_BRIEF.md`. Status as of 2026-11-13. The full decision log, measurements and
+Companion to `PROJECT_BRIEF.md`. Status as of 2026-11-14. The full decision log, measurements and
 open questions are in `src/sit-lmpc-remastered/NOTES.md`.
 
 ## Outcome
@@ -36,6 +36,26 @@ the same shape: their BNN trails the known model by up to ~40% and catches up on
 The model predicts the car to within a millimetre over 1 s, but its uncertainty becomes overconfident
 on the faster laps, so many belief updates are held back. Planning takes about 100 ms per step
 (64 sampled cars per plan), against 20 ms for the known model.
+
+**Ablation: BNN without chance constraints** (`results/Spielberg/bnn-nochance25`): 25 of 25 laps,
+best **75.6 s** (44% faster than warm-up), close to the known model's 70.9 s; planning median 64 ms.
+The chance constraints, not the BNN itself, cause most of the slow learning.
+
+**Fast warm start (sim only)**: 5 warm-up laps driven by the lab 5 pure pursuit (`submission` tag)
+on its Spielberg raceline at 60% of its speed profile, about 38.0 s per lap (its full-speed 24 s
+laps were too fast for 10 Hz LMPPI to take over). Figures in `results/figures/all-baselines-compare/`
+and `results/figures/fast-start-compare/`.
+
+| Fast start | LMPPI laps | best LMPPI lap | how it ended |
+|---|---|---|---|
+| Known model (`known-ppwarm25`) | 17 | 38.9 s | spun in the first corner |
+| BNN + chance (`bnn-ppwarm25`) | 5 | 39.8 s | conservative fallback braked to a stop |
+| BNN, no chance (`bnn-nochance-ppwarm25`) | 7 | 38.3 s | braked to a stop on track |
+
+None beat the 38.0 s warm-up, and all drifted slower lap over lap (the safe set keeps only the
+newest 4 laps, so the faster warm-up laps drop out). The BNN never fits this fast, high-slip regime
+well: its training population barely covers slip angles above 0.3 rad, which these laps reach
+routinely, so its belief stays close to the prior.
 
 ## How it fits together
 
@@ -83,6 +103,14 @@ Selecting it is one config switch: `simulation.backend: ros`.
   in the MPC lab. Each step, the state is predicted forward over the delay using the commands
   already sent, and the planner plans from that. Not testable in the sim (no delay there); to be
   tuned on the car.
+- `planner.warmup.controller: pure_pursuit` (sim only; default `mppi`): warm-up laps driven by a port
+  of the lab 5 pure pursuit (`src/sit_lmpc/planners/pure_pursuit.py`; same speed profile, lookahead,
+  corner cut and steering law), following `planner.warmup.path` with `speed_scale`. It runs at the
+  sim's 100 Hz: the adapter calls it every 0.01 s inside each 0.1 s step (`substep_policy`), because
+  at 10 Hz it spins at these speeds. Needs lockstep and one physics step per message.
+- Pure-pursuit warm-up laps are not given to the BNN belief update (their commands change within
+  each 0.1 s step, so the step-averaged labels are wrong); they still seed the safe set and value
+  function.
 
 **Simulator (`src/f1tenth_gym_ros`)**
 
@@ -174,6 +202,10 @@ baseline improved from 89 s (with a crash) to 70.9 s (no failures).
 | `patches/f1tenth_gym_ros-sit-lmpc.patch` | **New.** The simulator bridge changes (`control_mode`, `substeps_per_drive`, wheel drawing) as a patch against upstream f1tenth_gym_ros `1fef653`; apply with `git apply` in `src/f1tenth_gym_ros` |
 | `models/vehicle-bnn-f1tenth-l96/` | **New.** The trained F1TENTH BNN (748 KB); `sit-import-bnn --source models/vehicle-bnn-f1tenth-l96 --destination artifacts/vehicle-bnn-f1tenth-l96` |
 | `configs/collect-vehicle-f1tenth.yaml`, `configs/train-dynamics-f1tenth.yaml`, `configs/f1tenth-ros-bnn-fast.yaml` | **New.** BNN data collection, training and SIT-LMPC configs |
+| `configs/f1tenth-ros-bnn-nochance-fast.yaml` | **New.** Ablation: BNN without chance constraints |
+| `src/sit_lmpc/planners/pure_pursuit.py` | **New.** Lab 5 pure pursuit as a warm-up controller |
+| `configs/collect-vehicle-f1tenth-wide.yaml`, `configs/train-dynamics-f1tenth-wide.yaml` | **New.** Wider BNN population (speeds to 20 m/s) for the fast start |
+| `configs/f1tenth-ros-{known,bnn,bnn-nochance}-ppwarm.yaml`, `configs/racelines/spielberg_pp_lab5.csv` | **New.** Fast-start configs and the lab 5 raceline |
 | `vendor/dyna-dist/src/dyna_dist/{config.py, data/vehicle_collection.py, adapters/gym_st.py}` | F1TENTH profile for data collection; physics labels from f1tenth_gym_ros when the bundled gym is absent |
 | `docs/SIT_LMPC_ROS_CHANGES.md`, `docs/PROJECT_BRIEF.md` | Copies of this document and the project brief |
 | `results/` | Run outputs (git-ignored) |
@@ -226,8 +258,10 @@ python scripts/presentation_figures.py results/Spielberg/<name> --out results/fi
 - **Track limit uses the car's centre only:** at large heading angles the nose can reach the wall
   while the centre is within limits (this caused the one wall contact before the track fix). It
   has not recurred since the fix, but a heading-aware limit would be safer, especially on the car.
-- **Learned-dynamics (BNN) baseline:** the bundled pretrained model is for a full-size car and
-  must be retrained on an F1TENTH population before it can be used.
+- **BNN at high speed:** the population data barely covers high slip, so the BNN cannot learn the
+  fast-start laps. Fix would be collecting data with a controller that holds high slip (not started).
+- **Fast start ends in stops/spins:** the newest-4-laps safe set lets lap times creep up after a
+  fast warm-up, and every fast-start run ended in an unforced stop or spin.
 - **Real car:** steering limit is 0.34 rad (sim 0.42); steering and slip angle need estimators
   (no direct measurement); real-time (non-lockstep) operation is untested.
 - **Our contributions** (in-lap belief updates, condition-aware safe set, mid-session changes) are

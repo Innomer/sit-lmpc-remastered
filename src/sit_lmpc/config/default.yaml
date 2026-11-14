@@ -105,6 +105,22 @@ planner:
     lambda_max: 20.0  # Positive exclusive upper bound on chance-penalty levels; probabilities already lie in [0, 1] before multiplication by lambda.
     max_candidates: 256  # Positive bounded joint-proposal cap when chance constraints are active; does not multiply the baseline candidate count by additional grids.
     fallback: baseline  # [baseline, stop] baseline: continue with SIT-LMPC's least boundary/hull violation and log selected probabilities; stop: save an incomplete attempt before acting when verification fails or is unavailable.
+  warmup:  # Controller for the warm-up laps that seed the safe set and value function.
+    controller: mppi  # [mppi, pure_pursuit] mppi tracks the track raceline at initial_speed (the authors' warm-up); pure_pursuit is the ESE 6150 lab 5 submission's controller on warmup.path (fast sim-only warm starts). Defaults below are its Spielberg settings.
+    path: null  # pure_pursuit only: raceline CSV whose first two columns are x, y in metres (comma or semicolon separated; # comments).
+    max_speed: 25.0  # Speed-profile cap in m/s.
+    max_lat_accel: 22.0  # Speed profile: v <= sqrt(max_lat_accel / curvature), curvature = max over the next 0.7 m, in m/s^2.
+    accel: 9.0  # Speed-profile forward-acceleration limit in m/s^2 (commands are also limited by simulation.action_scale).
+    brake: 7.0  # Speed-profile braking limit in m/s^2.
+    speed_scale: 1.0  # Multiplies the speed profile.
+    lookahead_base: 0.6  # Lookahead = lookahead_base + lookahead_gain * speed, in m.
+    lookahead_gain: 0.16  # Lookahead growth with speed, in s.
+    lookahead_min: 0.7  # Minimum lookahead in m.
+    lookahead_max: 5.0  # Maximum lookahead in m.
+    corner_cut: 0.12  # Lookahead is shortened to sqrt(8 * corner_cut / curvature) in corners, in m.
+    understeer_gradient: 0.0028  # Speed profile keeps v <= sqrt(steering margin / (understeer_gradient * curvature)); 0 disables.
+    latency: 0.025  # Seconds the pose is projected forward before choosing the goal point.
+    yaw_rate_gain: 0.12  # Yaw-rate feedback added to the steady-state dynamic steering angle.
   horizon: 10  # Number of prediction/control steps; positive integer. Physical prediction duration is horizon * simulation.timestep.
   samples: 1024  # Number of sampled action sequences per update, for both controllers; > 0.
   iterations: 1  # MPPI optimization passes per control step; positive integer. Applies to warm-up/tracking only; the current LMPPI update uses one pass.

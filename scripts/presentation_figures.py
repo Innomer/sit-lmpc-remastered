@@ -382,6 +382,37 @@ def plot_compare(runs, out):
         writer.writerows(rows)
 
 
+def plot_compare_panels(left, right, titles, out):
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.4))
+    rows = []
+    for ax, runs, title in zip(axes, (left, right), titles):
+        warmup_end = 0
+        for (label, run), color in zip(runs, SERIES):
+            laps = successful_laps(run)
+            warmup_end = max(warmup_end, sum(mode == "mppi" for _, _, mode in laps))
+            ax.plot([lap for lap, _, _ in laps], [time for _, time, _ in laps], color=color, marker="o",
+                    markersize=5, markeredgecolor=SURFACE, markeredgewidth=1.0, label=label)
+            best = min(laps, key=lambda item: item[1])
+            ax.annotate(f"best {best[1]:.1f} s", (best[0], best[1]), xytext=(0, -14),
+                        textcoords="offset points", ha="center", color=color, fontsize=9)
+            rows += [{"panel": title, "run": label, "lap": lap, "controller": mode, "lap_time_s": time}
+                     for lap, time, mode in laps]
+        ax.axvspan(0.5, warmup_end + 0.5, color=GRID, alpha=0.6, linewidth=0)
+        ax.annotate("warm-up", (0.6, 1.0), xycoords=("data", "axes fraction"), xytext=(2, -14),
+                    textcoords="offset points", color=TEXT_SECONDARY, fontsize=9)
+        ax.margins(y=0.12)
+        ax.set_xlabel("Lap")
+        ax.set_title(title)
+        ax.legend(loc="upper right")
+        ax.xaxis.get_major_locator().set_params(integer=True)
+    axes[0].set_ylabel("Lap time (s)")
+    save(fig, out, "compare_panels")
+    with (out / "comparison_panels.csv").open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 def plot_authors_ratio(known_run, bnn_run, out):
     root = Path(__file__).resolve().parents[1] / "examples" / "racecar" / "data"
 
@@ -481,6 +512,9 @@ def main():
     parser.add_argument("--timing", nargs="*", default=None, help="LABEL=RUN pairs to compare planning time")
     parser.add_argument("--steering", nargs="*", default=None, help="LABEL=RUN pairs to compare warm-up steering")
     parser.add_argument("--compare", nargs="*", default=None, help="LABEL=RUN pairs for one lap-time chart")
+    parser.add_argument("--compare-right", nargs="*", default=None,
+                        help="LABEL=RUN pairs for a second panel beside --compare (same colour per position)")
+    parser.add_argument("--panel-titles", nargs=2, default=("Slow warm start", "Fast warm start"))
     parser.add_argument("--authors", nargs=2, type=Path, default=None, metavar=("KNOWN_RUN", "BNN_RUN"),
                         help="Compare our BNN/known lap-time ratio with the authors' recorded runs")
     args = parser.parse_args()
@@ -497,6 +531,9 @@ def main():
         plot_steering([labeled(spec) for spec in args.steering], args.out)
     if args.compare:
         plot_compare([labeled(spec) for spec in args.compare], args.out)
+    if args.compare and args.compare_right:
+        plot_compare_panels([labeled(spec) for spec in args.compare],
+                            [labeled(spec) for spec in args.compare_right], args.panel_titles, args.out)
     if args.authors:
         plot_authors_ratio(*args.authors, args.out)
     plot_belief(args.run, args.out)

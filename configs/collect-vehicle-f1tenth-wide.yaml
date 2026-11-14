@@ -1,0 +1,22 @@
+# F1TENTH-scale population data covering the fast pure-pursuit warm start (1-20 m/s, up to 22 m/s^2 lateral); same population as collect-vehicle-f1tenth.yaml.
+# Every parameter instance replays the same action tapes; labels come from the ST physics of f1tenth_gym_ros.
+profile: f1tenth
+friction: [0.4, 1.2]               # ROS sim car is 1.0489; the low end covers a slippery surface
+front_cornering_scale: [0.85, 1.15]
+rear_cornering_scale: [0.85, 1.15]
+mass_ratio: [0.8, 1.3]             # x 3.74 kg; the high end covers added weight
+random_instances: 24               # plus 9 one-at-a-time anchors
+speeds: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0]
+signals_per_speed: 2
+steps: 120                         # 12 s per action tape
+timestep: 0.1
+integrator_timestep: 0.01
+steering_sines: 10
+lateral_accel_target: 16.0          # m/s^2; the shared tapes must suit the mid-population car (mu 0.8); the sim car (mu 1.05) corners at up to ~22
+speed_target_span: 3.0
+speed_target_refresh: 42
+controller_noise_scale: 0.25
+max_abs_slip: 1.2
+max_abs_yaw_rate: 10.0
+seed: 20261113
+output: data/f1tenth-vehicle-wide

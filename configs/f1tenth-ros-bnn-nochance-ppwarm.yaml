@@ -1,0 +1,7 @@
+# f1tenth-ros-bnn-ppwarm.yaml without chance constraints.
+extends: f1tenth-ros-bnn-ppwarm.yaml
+output:
+  exp_name: f1tenth-ros-bnn-nochance-ppwarm
+planner:
+  probabilistic_safety:
+    enabled: false

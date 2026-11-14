@@ -1,0 +1,18 @@
+# Fast warm start (sim only): the lab 5 submission's pure pursuit and Spielberg raceline/settings for the
+# warm-up laps (planner.warmup defaults), then known-dynamics SIT-LMPC. action_scale is the sim car's full
+# actuator authority (sv_max 3.2 rad/s, a_max 9.51 m/s^2), as the submission had. Pure pursuit runs at the bridge's 100 Hz inside each
+# 0.1 s SIT-LMPC step, so these runs use the normal lockstep bridge (configs/ros-bridge-lockstep.yaml).
+extends: f1tenth-ros-known-fast.yaml
+output:
+  exp_name: f1tenth-ros-known-ppwarm
+simulation:
+  ros:
+    bridge_substeps: 1
+  initial_speed: 5.0
+  action_scale: [3.2, 9.51]
+planner:
+  sample_std: [0.0625, 0.25]  # 0.2 rad/s steering (as the slow baseline), 2.4 m/s^2 acceleration (the authors' default). Small acceleration noise could not brake hard enough at speed; large steering noise oscillated into a spin.
+  warmup:
+    controller: pure_pursuit
+    path: configs/racelines/spielberg_pp_lab5.csv
+    speed_scale: 0.6  # ~38 s warm-up laps, up to ~15 m/s. At full speed (24 s laps, 18-20 m/s) 10 Hz SIT-LMPC spun within 2 s of taking over (twice).

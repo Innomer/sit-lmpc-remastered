@@ -1,0 +1,120 @@
+panel,run,lap,controller,lap_time_s
+Slow warm start,Known,1,mppi,135.0999999999966
+Slow warm start,Known,2,mppi,135.2999999999966
+Slow warm start,Known,3,mppi,135.0999999999966
+Slow warm start,Known,4,mppi,135.2999999999966
+Slow warm start,Known,5,mppi,135.1999999999966
+Slow warm start,Known,6,lmppi,166.49999999999483
+Slow warm start,Known,7,lmppi,145.19999999999604
+Slow warm start,Known,8,lmppi,134.49999999999665
+Slow warm start,Known,9,lmppi,115.5999999999977
+Slow warm start,Known,10,lmppi,105.39999999999829
+Slow warm start,Known,11,lmppi,97.69999999999872
+Slow warm start,Known,12,lmppi,91.29999999999909
+Slow warm start,Known,13,lmppi,85.7999999999994
+Slow warm start,Known,14,lmppi,82.69999999999958
+Slow warm start,Known,15,lmppi,78.89999999999979
+Slow warm start,Known,16,lmppi,76.9999999999999
+Slow warm start,Known,17,lmppi,74.80000000000003
+Slow warm start,Known,18,lmppi,73.90000000000008
+Slow warm start,Known,19,lmppi,72.80000000000014
+Slow warm start,Known,20,lmppi,72.10000000000018
+Slow warm start,Known,21,lmppi,72.00000000000018
+Slow warm start,Known,22,lmppi,71.40000000000022
+Slow warm start,Known,23,lmppi,71.30000000000022
+Slow warm start,Known,24,lmppi,71.10000000000024
+Slow warm start,Known,25,lmppi,70.90000000000025
+Slow warm start,BNN+chance,1,mppi,135.2999999999966
+Slow warm start,BNN+chance,2,mppi,135.0999999999966
+Slow warm start,BNN+chance,3,mppi,135.1999999999966
+Slow warm start,BNN+chance,4,mppi,135.1999999999966
+Slow warm start,BNN+chance,5,mppi,135.2999999999966
+Slow warm start,BNN+chance,6,lmppi,144.2999999999961
+Slow warm start,BNN+chance,7,lmppi,139.59999999999636
+Slow warm start,BNN+chance,8,lmppi,128.99999999999696
+Slow warm start,BNN+chance,9,lmppi,124.19999999999722
+Slow warm start,BNN+chance,10,lmppi,121.59999999999737
+Slow warm start,BNN+chance,11,lmppi,117.99999999999757
+Slow warm start,BNN+chance,12,lmppi,117.89999999999758
+Slow warm start,BNN+chance,13,lmppi,114.29999999999778
+Slow warm start,BNN+chance,14,lmppi,113.9999999999978
+Slow warm start,BNN+chance,15,lmppi,112.79999999999787
+Slow warm start,BNN+chance,16,lmppi,112.59999999999788
+Slow warm start,BNN+chance,17,lmppi,112.1999999999979
+Slow warm start,BNN+chance,18,lmppi,111.79999999999792
+Slow warm start,BNN+chance,19,lmppi,110.99999999999797
+Slow warm start,BNN+chance,20,lmppi,111.19999999999796
+Slow warm start,BNN+chance,21,lmppi,110.79999999999798
+Slow warm start,BNN+chance,22,lmppi,111.19999999999796
+Slow warm start,BNN+chance,23,lmppi,110.29999999999801
+Slow warm start,BNN+chance,24,lmppi,110.399999999998
+Slow warm start,BNN+chance,25,lmppi,110.09999999999802
+Slow warm start,BNN no chance,1,mppi,135.2999999999966
+Slow warm start,BNN no chance,2,mppi,135.0999999999966
+Slow warm start,BNN no chance,3,mppi,135.1999999999966
+Slow warm start,BNN no chance,4,mppi,135.1999999999966
+Slow warm start,BNN no chance,5,mppi,135.2999999999966
+Slow warm start,BNN no chance,6,lmppi,170.2999999999946
+Slow warm start,BNN no chance,7,lmppi,149.5999999999958
+Slow warm start,BNN no chance,8,lmppi,114.09999999999779
+Slow warm start,BNN no chance,9,lmppi,114.09999999999779
+Slow warm start,BNN no chance,10,lmppi,98.39999999999868
+Slow warm start,BNN no chance,11,lmppi,99.69999999999861
+Slow warm start,BNN no chance,12,lmppi,91.0999999999991
+Slow warm start,BNN no chance,13,lmppi,88.59999999999924
+Slow warm start,BNN no chance,14,lmppi,84.49999999999947
+Slow warm start,BNN no chance,15,lmppi,80.99999999999967
+Slow warm start,BNN no chance,16,lmppi,79.49999999999976
+Slow warm start,BNN no chance,17,lmppi,77.89999999999985
+Slow warm start,BNN no chance,18,lmppi,76.8999999999999
+Slow warm start,BNN no chance,19,lmppi,76.09999999999995
+Slow warm start,BNN no chance,20,lmppi,75.79999999999997
+Slow warm start,BNN no chance,21,lmppi,75.69999999999997
+Slow warm start,BNN no chance,22,lmppi,75.79999999999997
+Slow warm start,BNN no chance,23,lmppi,76.29999999999994
+Slow warm start,BNN no chance,24,lmppi,75.99999999999996
+Slow warm start,BNN no chance,25,lmppi,75.59999999999998
+Fast warm start,Known,1,mppi,38.400000000000276
+Fast warm start,Known,2,mppi,38.10000000000027
+Fast warm start,Known,3,mppi,38.00000000000027
+Fast warm start,Known,4,mppi,38.10000000000027
+Fast warm start,Known,5,mppi,38.00000000000027
+Fast warm start,Known,6,lmppi,39.100000000000286
+Fast warm start,Known,7,lmppi,38.90000000000028
+Fast warm start,Known,8,lmppi,39.30000000000029
+Fast warm start,Known,9,lmppi,39.20000000000029
+Fast warm start,Known,10,lmppi,39.000000000000284
+Fast warm start,Known,11,lmppi,38.90000000000028
+Fast warm start,Known,12,lmppi,39.000000000000284
+Fast warm start,Known,13,lmppi,39.000000000000284
+Fast warm start,Known,14,lmppi,38.90000000000028
+Fast warm start,Known,15,lmppi,38.90000000000028
+Fast warm start,Known,16,lmppi,39.50000000000029
+Fast warm start,Known,17,lmppi,39.20000000000029
+Fast warm start,Known,18,lmppi,39.50000000000029
+Fast warm start,Known,19,lmppi,39.20000000000029
+Fast warm start,Known,20,lmppi,39.800000000000296
+Fast warm start,Known,21,lmppi,39.800000000000296
+Fast warm start,Known,22,lmppi,40.60000000000031
+Fast warm start,BNN+chance,1,mppi,38.400000000000276
+Fast warm start,BNN+chance,2,mppi,38.10000000000027
+Fast warm start,BNN+chance,3,mppi,38.00000000000027
+Fast warm start,BNN+chance,4,mppi,38.10000000000027
+Fast warm start,BNN+chance,5,mppi,38.00000000000027
+Fast warm start,BNN+chance,6,lmppi,40.0000000000003
+Fast warm start,BNN+chance,7,lmppi,39.800000000000296
+Fast warm start,BNN+chance,8,lmppi,41.30000000000032
+Fast warm start,BNN+chance,9,lmppi,41.60000000000032
+Fast warm start,BNN+chance,10,lmppi,42.00000000000033
+Fast warm start,BNN no chance,1,mppi,38.400000000000276
+Fast warm start,BNN no chance,2,mppi,38.10000000000027
+Fast warm start,BNN no chance,3,mppi,38.00000000000027
+Fast warm start,BNN no chance,4,mppi,38.10000000000027
+Fast warm start,BNN no chance,5,mppi,38.00000000000027
+Fast warm start,BNN no chance,6,lmppi,38.300000000000274
+Fast warm start,BNN no chance,7,lmppi,38.60000000000028
+Fast warm start,BNN no chance,8,lmppi,38.70000000000028
+Fast warm start,BNN no chance,9,lmppi,38.80000000000028
+Fast warm start,BNN no chance,10,lmppi,38.90000000000028
+Fast warm start,BNN no chance,11,lmppi,39.100000000000286
+Fast warm start,BNN no chance,12,lmppi,39.100000000000286

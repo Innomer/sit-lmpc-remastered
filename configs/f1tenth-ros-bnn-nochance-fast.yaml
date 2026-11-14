@@ -1,0 +1,7 @@
+# Ablation of f1tenth-ros-bnn-fast.yaml: same BNN predictor and between-lap posterior updates, chance constraints off.
+extends: f1tenth-ros-bnn-fast.yaml
+output:
+  exp_name: f1tenth-ros-bnn-nochance
+planner:
+  probabilistic_safety:
+    enabled: false

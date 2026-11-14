@@ -112,6 +112,7 @@ class RosSimulator:
         self.stamp = None
         self.returned_at = None
         self.steps = 0
+        self.substep_policy = None
         self.plan_times, self.step_times = [], []
         self.window_plan, self.window_step = [], []
         self.odom_sub = self.node.create_subscription(
@@ -205,16 +206,19 @@ class RosSimulator:
             self._publish_drive(target, speed + acceleration / speed_gain(params, speed, acceleration))
             rate = steering_gain(params) * (target - self.delta)
             rate = min(max(rate, -params["sv_max"]), params["sv_max"])
+            sent = (steering_speed, acceleration)
         else:
             rate = min(max(steering_speed, params["sv_min"]), params["sv_max"])
             duration = self.substeps * self.ros.bridge_timestep if self.ros.stepping == "realtime" else self.message_dt
             rate = min(max(rate, (params["s_min"] - self.delta) / duration), (params["s_max"] - self.delta) / duration)
-            self._publish_drive(rate, min(max(acceleration, -params["a_max"]), params["a_max"]))
+            sent = (rate, min(max(acceleration, -params["a_max"]), params["a_max"]))
+            self._publish_drive(*sent)
         count = self.substeps if self.ros.stepping == "realtime" else self.ros.bridge_substeps
         for _ in range(count):
             self.delta = integrate_steering(self.delta, rate, params, self.ros.bridge_timestep)
+        return sent
 
-    def _observe(self):
+    def _measured(self):
         msg = self.odom
         position = msg.pose.pose.position
         q = msg.pose.pose.orientation
@@ -229,9 +233,11 @@ class RosSimulator:
         speed = math.hypot(twist.linear.x, twist.linear.y)
         slip = math.atan2(twist.linear.y, twist.linear.x) if speed > 0.05 else 0.0
         delta = self.delta_history[0] if self.delay_steps and self.delta_history else self.delta
-        cartesian = np.asarray(
-            [x, y, delta, speed, yaw, twist.angular.z, slip], dtype=self.dtype
-        )
+        return np.asarray([x, y, delta, speed, yaw, twist.angular.z, slip], dtype=self.dtype)
+
+    def _observe(self):
+        cartesian = self._measured()
+        x, y, yaw = float(cartesian[0]), float(cartesian[1]), float(cartesian[4])
         if self.predictor is not None and len(self.pending) == self.delay_steps:
             from sit_lmpc.dynamics.st import rollout
 
@@ -349,7 +355,14 @@ class RosSimulator:
             self.window_plan.append(self.plan_times[-1])
         control = np.asarray(normalized_action) * np.asarray(self.simulation.action_scale) + noise
         self.collision = False
-        if self.ros.stepping == "lockstep":
+        if self.ros.stepping == "lockstep" and self.substep_policy is not None:
+            sent = []
+            for _ in range(self.substeps // self.ros.bridge_substeps):
+                command = np.asarray(self.substep_policy(self._measured()), dtype=float) + noise
+                sent.append(self._command(float(command[0]), float(command[1])))
+                self._wait_for_advance(self.message_dt)
+            control = np.mean(np.asarray(sent), axis=0)
+        elif self.ros.stepping == "lockstep":
             for _ in range(self.substeps // self.ros.bridge_substeps):
                 self._command(float(control[0]), float(control[1]))
                 self._wait_for_advance(self.message_dt)

@@ -447,8 +447,135 @@ Fast mode, seed 1, fresh warm-up, BNN + between-lap tempered posterior + chance 
   Known LMPPI: 19.5 ms. Lap times unaffected (lockstep).
 - Figures: `results/figures/bnn25/` (compare_lap_times, bnn_vs_known_ratio, bnn_belief,
   chance_fallbacks, plus the per-run set).
-Next proposed: ablation with chance constraints off (`configs/bnn-posterior.yaml` style) from the
-same warm-up, to separate chance-constraint conservatism from the BNN predictor itself.
+### Ablation: BNN without chance constraints (`results/Spielberg/bnn-nochance25`)
+
+`configs/f1tenth-ros-bnn-nochance-fast.yaml` (= BNN baseline with `probabilistic_safety.enabled:
+false`), seed 1, fresh warm-up. 25/25, 0 failures, 0 contacts, 0 out-of-bounds, LMPPI max |ey| 0.850.
+- Warm-up identical to the BNN baseline (135.1–135.3 s; same belief history through generation 4).
+- LMPPI: 170.3, 149.6, 114.1, 114.1, 98.4, 99.7, 91.1, 88.6, 84.5, 81.0, 79.5, 77.9, 76.9, 76.1,
+  75.8, 75.7, 75.8, 76.3, 76.0, **75.6 s** (44% faster than warm-up; last 5 mean 75.9). Known: 70.9;
+  BNN + chance: 110.1.
+- **Conclusion: the chance constraints, not the BNN predictor, cause the slow learning of the BNN
+  baseline.** Without them the BNN tracks the known model within 2–4 s per lap and converges ~5 s
+  (7%) behind it; the residual gap is consistent with the learned model's growing error on faster
+  laps (held-out 1 s error 0.2 → 1–2.5 mm).
+- Belief: 18 published, 7 held; many published at evidence weight 0.1; coverage dipped to 67–77% on
+  some faster laps (overconfident uncertainty, unused by the planner without chance constraints).
+- Planning (LMPPI ran alone; warm-up windows contaminated by parallel tests): **p50 64.2 ms, p95
+  74.3, p99 85.2 ms, 0.4% > 100 ms** vs 98.5 ms / 21% with chance constraints and 19.5 ms known.
+- Figures: `results/figures/bnn-nochance25/` (incl. three-way `compare_lap_times`).
+- Caveat for the report: no run came close to failing, so this does not measure the safety benefit
+  of chance constraints, only their cost.
+
+### Fast warm start with the lab 5 pure pursuit (sim only, 2026-11-14)
+
+Plan (user): after the BNN no-chance ablation, 20 LMPPI laps from a fast pure-pursuit warm start
+with (a) known model, (b) BNN + chance, (c) BNN without chance; then the IRL branch.
+
+- Controller: `src/sit_lmpc/planners/pure_pursuit.py`, a port of the ESE 6150 lab 5 submission
+  (`ese-6150-lab-5-pure-pursuit-group-8`, tag `submission` = 4e5e5ce, `src/pure_pursuit_node.cpp`):
+  the same speed profile (±3-point curvature, max curvature over the next 0.7 m, lateral cap,
+  understeer steering-margin cap, braking then forward passes over 2 laps), lookahead
+  base + gain·v with corner-cut shortening, 25 ms latency projection, dynamic steering
+  (steady-state cornering model + yaw-rate feedback). Defaults = the submission's Spielberg
+  parameters (max speed 25, lateral 22, brake 7, forward 9, lookahead 0.6 + 0.16·v in [0.7, 5],
+  corner cut 0.12, understeer 0.0028, latency 0.025, yaw-rate gain 0.12). Raceline: the
+  submission's `waypoints/spielberg_raceline.csv` → `configs/racelines/spielberg_pp_lab5.csv`.
+- **Rate matters.** Offline, with the sim's ST physics from the start line: the port completes a lap
+  in 24.7 s at 100 Hz (submission measured 24.35 s), but spins within 2–7 s at 50, 20 or 10 Hz. My
+  first simplified pure pursuit at 10 Hz also crashed in the ROS sim (twice). So the warm-up runs at
+  the bridge's 100 Hz inside each 0.1 s SIT-LMPC step: the runner sets `simulator.substep_policy`
+  to `PurePursuit.substep` during warm-up laps; the adapter queries it before each 0.01 s bridge step
+  with the current measured state, converting the targets with the sim's own actuator loops
+  (steering 10·sv_max/(s_max−s_min) ≈ 38/s capped at 3.2 rad/s; speed 10·a_max/v_max up,
+  10·a_max/|v_min| braking). The step's recorded control is the mean of the ten commands (exact
+  end-of-step steering angle and speed; only the intra-step path differs — relevant only for BNN
+  belief data from warm-up laps). LMPPI is unchanged at 10 Hz. Validation requires backend ros,
+  lockstep and `bridge_substeps 1` (normal bridge).
+- Why SIT-LMPC stays at 10 Hz: horizon is 10 steps = 1 s; faster rates need more steps (cost
+  scales), the BNN predicts 0.1 s increments (retrain needed), and both baselines/authors use 10 Hz.
+- ROS sim check (`results/Spielberg/ppwarm-test4`): warm-up laps **24.8 s** (from the 5 m/s launch)
+  and **24.0 s**, 0 contacts, max |ey| 0.65 m, top speed 20 m/s (sim v_max), slip up to 0.65 rad.
+- Configs: `f1tenth-ros-known-ppwarm.yaml`, `f1tenth-ros-bnn-ppwarm.yaml`,
+  `f1tenth-ros-bnn-nochance-ppwarm.yaml`: `action_scale [3.2, 9.51]` (sim actuator limits, as the
+  submission had), `sample_std [0.0625, 0.0526]` (same physical LMPPI noise as the baselines),
+  `initial_speed 5`, normal lockstep bridge (`configs/ros-bridge-lockstep.yaml`).
+- Wide BNN for these runs: the original model covers 1–8 m/s, ~6 m/s². New
+  `configs/collect-vehicle-f1tenth-wide.yaml`: same population, speeds 1–20 m/s, excitation
+  16 m/s² (22 m/s² made the mid-population μ = 0.8 nominal car leave the ST validity envelope and
+  aborted collection), slip limit 1.2, yaw-rate limit 10. `data/f1tenth-vehicle-wide`: 1320
+  trajectories, 154,488 transitions, 62 truncated at the envelope; 31% of training transitions
+  above 14 m/s, but only 2.6% with |slip| > 0.3 rad while the warm-up laps reach p95 0.49 rad —
+  high-slip data is sparse. Training: `configs/train-dynamics-f1tenth-wide.yaml` →
+  `runs/dynamics-f1tenth-wide` → `artifacts/vehicle-bnn-f1tenth-wide-l96`.
+- **Known model from the 24 s warm start fails at the LMPPI switch (2 attempts, 5/5 warm-up laps
+  clean each time).** Both crashed within ~2 s of LMPPI taking over at 18 m/s:
+  (1) `sample_std [0.0625, 0.0526]` (baseline-sized noise; `results/Spielberg/known-ppwarm25-std-small`):
+  weaved 0 → −0.46 m on the straight and braked only −0.4 to −2.6 m/s² where the warm-up braked
+  ~−7, entered the first corner at 16.9 vs 13–15 m/s, slip 0.68 → 1.74 rad, wall at step 20;
+  (2) `sample_std [0.25, 0.25]` (authors' default; `results/Spielberg/known-ppwarm25`): braked
+  hard (−7 to −7.7) but the steering rate flipped sign almost every step (±1.5–2.6 rad/s), steering
+  swung ±0.2–0.42 rad, slip oscillated with growing amplitude (±0.3, 0.59, 1.8 rad), spun at
+  s ≈ 25 m, wall at step 17. Interpretation: at 15–20 m/s this low-inertia ST car needs faster
+  control than 10 Hz (the same limit as pure pursuit: clean at 100 Hz, spins at ≤ 50 Hz).
+  Not tuned further; options for the user: run SIT-LMPC at 20 Hz (horizon 20; BNN would need
+  retraining at 0.05 s), use a slower warm start (`speed_scale`) that 10 Hz can take over from,
+  or report the finding and drop the fast series. **User chose the slower warm start.**
+- The two failures point at the noise channels separately: at 18 m/s cornering needs ~0.03 rad of
+  steering, so 0.8 rad/s steering noise held for 0.1 s overshoots; braking needs ~−7 m/s², which
+  0.5 m/s² acceleration noise cannot find. Split noise `sample_std [0.0625, 0.25]` = 0.2 rad/s
+  steering, 2.4 m/s² acceleration.
+- **`speed_scale 0.6`** (profile 37.2 s, 3.7–15 m/s) with split noise
+  (`results/Spielberg/ppwarm-scale06`, 7 laps): warm-up 38.4, 38.1, 38.0, 38.1, 38.0 s (max 14.7 m/s,
+  slip ≤ 0.14); LMPPI 39.0, 39.4 s; 0 contacts; LMPPI slip ≤ 0.31. Made the fast-start default in
+  all three configs. Series runs sequentially via `results/logs/run-ppwarm-series.sh`
+  (known → BNN + chance → BNN no chance), results in `results/Spielberg/*-ppwarm25`.
+- **Known model, fast start (`results/Spielberg/known-ppwarm25`)**: warm-up 38.4, 38.1, 38.0, 38.1,
+  38.0 s; LMPPI 39.1, 38.9, 39.3, 39.2, 39.0, 38.9, 39.0, 39.0, 38.9, 38.9, 39.5, 39.2, 39.5, 39.2,
+  39.8, 39.8, 40.6 s, then a spin in the first corner (attempt 23: entry at 12.6 m/s, heading error
+  −0.27 → −1.6 rad, slip 2.1) → run ended (SIT). Never beat the warm-up (best LMPPI 38.9 vs 38.0)
+  and drifted slower over the last 7 laps, consistent with the newest-4-laps safe set dropping the
+  faster warm-up laps. All three fast-start failures were in that first corner (hard braking into
+  a turn) — the weak point for 10 Hz control on this track.
+- **BNN + chance, fast start, first attempt (`results/Spielberg/bnn-ppwarm25-warmupbelief`) —
+  confounded.** LMPPI 40.3, 39.9, 40.9, 42.1, 42.4 s, then braked repeatedly and stopped at
+  s ≈ 110 m (`speed_too_low`, no violation). Belief held-out 1 s error 17–167 mm (slow runs:
+  0.1–2.5 mm), calibration only accepted evidence weight 0.0001 (≈ prior), so the 64 sampled cars
+  disagreed widely and the chance constraints grew ever more cautious. Cause: the 100 Hz warm-up
+  laps are recorded with step-mean controls; at 9–15 m/s pure pursuit's commands change a lot
+  within 0.1 s, so those labels do not explain the transitions. **Fix:** the runner no longer passes
+  pure-pursuit warm-up laps (all steps `mppi`) to the belief learner (`dynamics_observation_skipped`
+  event); they still seed the safe set and value function. Both BNN fast-start runs rerun with it
+  (`results/logs/run-bnn-ppwarm-series.sh`); the first BNN no-chance attempt was stopped after 3
+  warm-up laps.
+- **BNN + chance, fast start (`results/Spielberg/bnn-ppwarm25`), with the belief fix**: warm-up
+  38.4, 38.1, 38.0, 38.1, 38.0 s; LMPPI 40.0, 39.8, 41.3, 41.6, 42.0 s, then attempt 11 stopped after
+  49 steps (`speed_too_low`, on track, s ≈ 33.6 m). 186 `no_feasible_candidate` fallbacks from the
+  first LMPPI step: P_violate(hull) = 1 for every sample (limit 0.9), so the conservative fallback
+  braked. Belief: held-out 1 s error 42 → 60 → 44 → 28 → 32 mm, ~230 of ~400 transitions per lap
+  accepted, evidence weight pinned at 0.0001 throughout. LMPPI planning p50 99 ms, 40% of steps
+  over 100 ms.
+- **BNN no chance, fast start (`results/Spielberg/bnn-nochance-ppwarm25`)**: warm-up as above;
+  LMPPI 38.3, 38.6, 38.7, 38.8, 38.9, 39.1, 39.1 s, then attempt 13 braked on track from ~12 m/s to
+  a stop at s ≈ 109 m (`speed_too_low`, no fallbacks — chance off; ey ≈ 0, slip ≈ 0). Belief
+  improved: error 58 → 79 → 15 → 45 (held) → 34 (held) → 9.7 → 33 mm, evidence weight rose to
+  0.001 from gen 3; two updates held for calibration. LMPPI planning p50 63 ms, 4.8% over 100 ms.
+- **Fast-start summary**: no fast-start run beat the 38.0 s warm-up. Best LMPPI: BNN no chance
+  38.3 s, known 38.9 s, BNN + chance 39.8 s; the BNN no-chance run beat the known model on its
+  first laps but ended sooner (7 vs 17 LMPPI laps). Every run drifted slower lap over lap (newest-4
+  safe set ratchet) and every run ended in an unforced stop or spin. Chance constraints make
+  things worse here, as in the slow-start ablation, and more sharply: the hull-chance check is
+  infeasible for all samples. Root cause for the BNN: the wide population covers |slip| > 0.3 in
+  only 2.6% of its data, against a lap p95 of 0.49, so the posterior stays near the prior and the
+  64 sampled cars spread wide. Candidate fix (not started, needs a decision): population tapes
+  driven closed-loop at high slip.
+- Figures: `results/figures/{known,bnn,bnn-nochance}-ppwarm25/`, `results/figures/fast-start-compare/`
+  (lap times, planning time for the three fast runs) and `results/figures/all-baselines-compare/compare_panels.png`
+  (slow vs fast start side by side, same colour per model; new `--compare-right` option in
+  `presentation_figures.py`; the single-panel `--compare` only has three colours).
+- Concurrency note: the no-chance ablation, the known fast-start run (second sim, ROS domain 78)
+  and the wide-model training ran at the same time; lap results are unaffected (lockstep), but
+  their per-step timing is contaminated — re-measure planning time separately.
 
 ### Known-dynamics baseline, after the track fix (`results/Spielberg/known25-fixed`) — OFFICIAL
 
@@ -509,21 +636,33 @@ LMPPI JIT) and freeze sim time in lockstep, so they are not the cause.
 Next: after the 25-lap run, a short run with full insight recording across a lap boundary to see
 which term (hull vs value) forces the braking.
 
-## 7. Open questions
+## 7. Status and open questions (2026-11-14)
 
-- One clean end-to-end run (fresh warm-up with the new `sample_std`, no quick-load) is still to do;
-  the successful session reused the CPU run's warm-up, which was collected with the old noise.
-- Lap times are still improving at lap 6; run longer (20–30 laps) to see where it converges.
-- Resume on the ROS backend is unsupported (launch changes the restored Frenet state).
-- Safe set keeps the newest `safe_set_size` laps, not the fastest; slow LMPPI laps 1–2 displaced
-  warm-up laps without harm here, but it matters for the condition-aware safe set.
-- 0.8% of steps exceed 100 ms while the value model retrains on the same GPU; relevant for
-  async/real-time and the Jetson.
-- BNN path needs an F1TENTH-scale population checkpoint (`sit-train-dynamics`); the bundled one is
-  full-scale.
+Sim baselines on Spielberg, all done:
 
-- Steering angle on the real car: no sensor. Estimate by integrating the commanded steering
-  speed through a first-order actuator model (sim: exact PID known; car: identify time constant).
-- Slip angle on the real car: PF odom gives only forward speed; need IMU lateral accel + model,
-  or set β=0 and let the BNN absorb the residual.
-- GPU: driver broken on this laptop; Jetson Orin budget unknown.
+| run | warm-up | best LMPPI lap | LMPPI laps | planning p50 |
+|---|---|---|---|---|
+| known, slow start (`known25-fixed`) | 135.2 s | 70.9 s | 20/20 | 19.5 ms |
+| BNN + chance, slow (`bnn25`) | 135.2 s | 110.1 s | 20/20 | 98.5 ms |
+| BNN no chance, slow (`bnn-nochance25`) | 135.2 s | 75.6 s | 20/20 | 64 ms |
+| known, fast start (`known-ppwarm25`) | 38.0 s | 38.9 s | 17, then spin | 19.7 ms |
+| BNN + chance, fast (`bnn-ppwarm25`) | 38.0 s | 39.8 s | 5, then fallback stop | 99 ms |
+| BNN no chance, fast (`bnn-nochance-ppwarm25`) | 38.0 s | 38.3 s | 7, then stop | 63 ms |
+
+Open questions:
+- BNN in the fast/high-slip regime: population data covers |slip| > 0.3 in 2.6% of samples (laps
+  p95 0.49). Closed-loop high-slip excitation tapes would be the fix; not started, user to decide.
+- Fast start: why LMPPI brakes to a stop on track (no fallback, no violation) in the no-chance run;
+  and the newest-4-laps safe set ratchets lap times up after a fast warm-up (relevant to the
+  condition-aware safe set).
+- Chance constraints: hull chance limit 0.9 is infeasible for every sample at speed; tuning the
+  limits or the sample count is untested.
+- Resume on the ROS backend relies on the 0.25 m restore tolerance (launch run-up).
+- Planning time: BNN steps exceed 100 ms often (40% with chance at speed); matters for the Jetson.
+- Real car: steering angle has no sensor (estimate from commanded rate; identify actuator delay,
+  `actuation_delay` ≈ 0.2 s); slip from PF odom twist or β = 0; steering_limit 0.34 rad; Jetson
+  GPU budget unknown.
+- Levine map in sim still to do.
+
+Next steps (agreed roadmap): decide on the BNN data question, then the IRL branch (Levine lobby,
+particle-filter odom, VESC IMU yaw rate, steering limit 0.34, delay compensation, Jetson setup).

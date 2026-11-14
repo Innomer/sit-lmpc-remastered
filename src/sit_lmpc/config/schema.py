@@ -148,6 +148,25 @@ class SafeSetDensityConfig:
 
 
 @dataclass(frozen=True)
+class WarmupConfig:
+    controller: str = "mppi"
+    path: str | None = None
+    max_speed: float = 25.0
+    max_lat_accel: float = 22.0
+    accel: float = 9.0
+    brake: float = 7.0
+    speed_scale: float = 1.0
+    lookahead_base: float = 0.6
+    lookahead_gain: float = 0.16
+    lookahead_min: float = 0.7
+    lookahead_max: float = 5.0
+    corner_cut: float = 0.12
+    understeer_gradient: float = 0.0028
+    latency: float = 0.025
+    yaw_rate_gain: float = 0.12
+
+
+@dataclass(frozen=True)
 class PlannerConfig:
     dynamics: DynamicsConfig = field(default_factory=DynamicsConfig)
     sit_lmpc_mode: bool = False
@@ -157,6 +176,7 @@ class PlannerConfig:
     belief: BeliefConfig = field(default_factory=BeliefConfig)
     risk_constraint: RiskConstraintConfig = field(default_factory=RiskConstraintConfig)
     probabilistic_safety: ProbabilisticSafetyConfig = field(default_factory=ProbabilisticSafetyConfig)
+    warmup: WarmupConfig = field(default_factory=WarmupConfig)
     horizon: int = 10
     samples: int = 1024
     iterations: int = 1
@@ -276,6 +296,26 @@ class ExperimentConfig:
         r = self.risk
         if not isinstance(d.print_lambdas, bool):
             raise ValueError("diagnostics.print_lambdas must be true or false")
+        w = p.warmup
+        if w.controller not in ("mppi", "pure_pursuit"):
+            raise ValueError("planner.warmup.controller must be mppi or pure_pursuit")
+        if w.controller == "pure_pursuit":
+            if not isinstance(w.path, str) or not Path(w.path).expanduser().is_file():
+                raise ValueError("planner.warmup.path must name an existing raceline CSV for pure_pursuit")
+            for name in ("max_speed", "max_lat_accel", "accel", "brake", "speed_scale", "lookahead_gain",
+                         "lookahead_min", "lookahead_max", "corner_cut"):
+                value = getattr(w, name)
+                if isinstance(value, bool) or not isinstance(value, (int, float)) or not 0 < value < math.inf:
+                    raise ValueError(f"planner.warmup.{name} must be positive")
+            for name in ("lookahead_base", "understeer_gradient", "latency", "yaw_rate_gain"):
+                value = getattr(w, name)
+                if isinstance(value, bool) or not isinstance(value, (int, float)) or not 0 <= value < math.inf:
+                    raise ValueError(f"planner.warmup.{name} must be nonnegative")
+            if w.lookahead_min > w.lookahead_max:
+                raise ValueError("planner.warmup.lookahead_min must not exceed lookahead_max")
+            if s.backend != "ros" or s.ros.stepping != "lockstep" or s.ros.bridge_substeps != 1:
+                raise ValueError("planner.warmup pure_pursuit runs at the bridge rate: it needs backend ros, "
+                                 "lockstep stepping and simulation.ros.bridge_substeps 1")
         if s.backend not in ("gym", "ros"):
             raise ValueError("simulation.backend must be gym or ros")
         if s.ros.drive_mode not in ("accel_steering_speed", "speed_steering_angle"):
@@ -825,6 +865,11 @@ def load_config(path=None, overrides=None):
                 values["probabilistic_safety"] = ProbabilisticSafetyConfig(**values["probabilistic_safety"])
             except (TypeError, AttributeError) as error:
                 raise ValueError(f"Invalid planner.probabilistic_safety configuration: {error}") from error
+        if name == "planner" and "warmup" in values:
+            try:
+                values["warmup"] = WarmupConfig(**values["warmup"])
+            except (TypeError, AttributeError) as error:
+                raise ValueError(f"Invalid planner.warmup configuration: {error}") from error
         if name == "planner" and "belief" in values:
             try:
                 values["belief"] = BeliefConfig(**{
@@ -856,6 +901,11 @@ def load_config(path=None, overrides=None):
         # Keep these fields immutable just as in the direct YAML-loading route.
         values = {key: tuple(value) if isinstance(value, list) else value
                   for key, value in values.items()}
+        if name == "planner" and isinstance(values.get("warmup"), dict):
+            try:
+                values = {**values, "warmup": replace(config.planner.warmup, **values["warmup"])}
+            except TypeError as error:
+                raise ValueError(f"Invalid planner.warmup override: {error}") from error
         if name == "planner" and isinstance(values.get("dynamics"), dict):
             try:
                 values = {**values, "dynamics": replace(config.planner.dynamics, **values["dynamics"])}

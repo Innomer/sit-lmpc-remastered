@@ -1,0 +1,19 @@
+# Fast warm start (sim only) with the BNN + chance constraints: the lab 5 submission's pure pursuit for the
+# warm-up laps (100 Hz inside each 0.1 s step; normal lockstep bridge, configs/ros-bridge-lockstep.yaml), then
+# BNN SIT-LMPC. Uses the wide-speed model (1-20 m/s) trained from configs/collect-vehicle-f1tenth-wide.yaml.
+extends: f1tenth-ros-bnn-fast.yaml
+output:
+  exp_name: f1tenth-ros-bnn-ppwarm
+simulation:
+  ros:
+    bridge_substeps: 1
+  initial_speed: 5.0
+  action_scale: [3.2, 9.51]
+planner:
+  sample_std: [0.0625, 0.25]  # 0.2 rad/s steering (as the slow baseline), 2.4 m/s^2 acceleration (the authors' default). Small acceleration noise could not brake hard enough at speed; large steering noise oscillated into a spin.
+  dynamics:
+    checkpoint: artifacts/vehicle-bnn-f1tenth-wide-l96
+  warmup:
+    controller: pure_pursuit
+    path: configs/racelines/spielberg_pp_lab5.csv
+    speed_scale: 0.6  # ~38 s warm-up laps, up to ~15 m/s. At full speed (24 s laps, 18-20 m/s) 10 Hz SIT-LMPC spun within 2 s of taking over (twice).

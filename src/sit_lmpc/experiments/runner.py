@@ -358,6 +358,10 @@ def _run(config, tracking_only, keyboard_cleanup):
         )
 
     nominal = MPPI(planner, model, track, simulation.seed, randomness=randomness)
+    if planner.warmup.controller == "pure_pursuit":
+        from sit_lmpc.planners.pure_pursuit import PurePursuit
+
+        nominal = PurePursuit(planner, simulation, simulator_params, model)
     learned = LMPPI(
         planner,
         model,
@@ -644,7 +648,12 @@ def _run(config, tracking_only, keyboard_cleanup):
         if metrics["lambda_summary"]["steps"]:
             events.emit("lambda_summary", attempt_id=trajectory.attempt_id,
                         lap=trajectory.lap, outcome=outcome, **metrics["lambda_summary"])
-        if belief_learner is not None:
+        substep_warmup = (planner.warmup.controller == "pure_pursuit"
+                          and len(trajectory.controllers) and np.all(trajectory.controllers == "mppi"))
+        if belief_learner is not None and substep_warmup:
+            events.emit("dynamics_observation_skipped", attempt_id=trajectory.attempt_id,
+                        reason="pure_pursuit warm-up controls change within each step; step-mean labels are inexact")
+        elif belief_learner is not None:
             pending_belief_prediction = belief_learner.observe(trajectory)
             if outcome == "incomplete":
                 belief_learner.save()
@@ -1359,6 +1368,9 @@ def _run(config, tracking_only, keyboard_cleanup):
             show_validation()
             if history is not None and history.poll():
                 raise KeyboardInterrupt
+            if hasattr(simulator, "substep_policy"):
+                simulator.substep_policy = (nominal.substep if mode == "mppi" and hasattr(nominal, "substep")
+                                            else None)
             physical_noise = randomness.host.normal(0, simulation.control_noise, 2)
             (next_cartesian, next_frenet), control, terminated, truncated, info = simulator.step(
                 result.action, physical_noise
