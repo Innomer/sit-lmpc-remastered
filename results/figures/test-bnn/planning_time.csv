@@ -1,0 +1,3 @@
+run,controller,steps,source,p50_ms,p95_ms,p99_ms,max_ms,over_100ms_pct
+this run,Warm-up MPPI,6600,100-step summaries,37.75595499996598,38.72197277471514,,12453.433524000502,
+this run,SIT-LMPC LMPPI,20600,100-step summaries,98.60409649991198,101.24350022465478,,4681.929015000605,

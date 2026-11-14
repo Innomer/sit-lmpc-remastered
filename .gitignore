@@ -223,7 +223,8 @@ __marimo__/
 /.cache/
 /.venv/
 /.uv-python/
-/results/
+/results/logs/
+/results/Spielberg
 /runs/
 /artifacts/
 /data/

@@ -1,0 +1,51 @@
+run,lap,controller,lap_time_s
+Known dynamics,1,mppi,135.0999999999966
+Known dynamics,2,mppi,135.2999999999966
+Known dynamics,3,mppi,135.0999999999966
+Known dynamics,4,mppi,135.2999999999966
+Known dynamics,5,mppi,135.1999999999966
+Known dynamics,6,lmppi,166.49999999999483
+Known dynamics,7,lmppi,145.19999999999604
+Known dynamics,8,lmppi,134.49999999999665
+Known dynamics,9,lmppi,115.5999999999977
+Known dynamics,10,lmppi,105.39999999999829
+Known dynamics,11,lmppi,97.69999999999872
+Known dynamics,12,lmppi,91.29999999999909
+Known dynamics,13,lmppi,85.7999999999994
+Known dynamics,14,lmppi,82.69999999999958
+Known dynamics,15,lmppi,78.89999999999979
+Known dynamics,16,lmppi,76.9999999999999
+Known dynamics,17,lmppi,74.80000000000003
+Known dynamics,18,lmppi,73.90000000000008
+Known dynamics,19,lmppi,72.80000000000014
+Known dynamics,20,lmppi,72.10000000000018
+Known dynamics,21,lmppi,72.00000000000018
+Known dynamics,22,lmppi,71.40000000000022
+Known dynamics,23,lmppi,71.30000000000022
+Known dynamics,24,lmppi,71.10000000000024
+Known dynamics,25,lmppi,70.90000000000025
+BNN + chance,1,mppi,135.2999999999966
+BNN + chance,2,mppi,135.0999999999966
+BNN + chance,3,mppi,135.1999999999966
+BNN + chance,4,mppi,135.1999999999966
+BNN + chance,5,mppi,135.2999999999966
+BNN + chance,6,lmppi,144.2999999999961
+BNN + chance,7,lmppi,139.59999999999636
+BNN + chance,8,lmppi,128.99999999999696
+BNN + chance,9,lmppi,124.19999999999722
+BNN + chance,10,lmppi,121.59999999999737
+BNN + chance,11,lmppi,117.99999999999757
+BNN + chance,12,lmppi,117.89999999999758
+BNN + chance,13,lmppi,114.29999999999778
+BNN + chance,14,lmppi,113.9999999999978
+BNN + chance,15,lmppi,112.79999999999787
+BNN + chance,16,lmppi,112.59999999999788
+BNN + chance,17,lmppi,112.1999999999979
+BNN + chance,18,lmppi,111.79999999999792
+BNN + chance,19,lmppi,110.99999999999797
+BNN + chance,20,lmppi,111.19999999999796
+BNN + chance,21,lmppi,110.79999999999798
+BNN + chance,22,lmppi,111.19999999999796
+BNN + chance,23,lmppi,110.29999999999801
+BNN + chance,24,lmppi,110.399999999998
+BNN + chance,25,lmppi,110.09999999999802
