@@ -651,7 +651,8 @@ Sim baselines on Spielberg, all done:
 
 Open questions:
 - BNN in the fast/high-slip regime: population data covers |slip| > 0.3 in 2.6% of samples (laps
-  p95 0.49). Closed-loop high-slip excitation tapes would be the fix; not started, user to decide.
+  p95 0.49). Closed-loop high-slip excitation tapes would be the fix. **Decision (2026-11-14):
+  report the fast-start BNN result as is; no recollection.**
 - Fast start: why LMPPI brakes to a stop on track (no fallback, no violation) in the no-chance run;
   and the newest-4-laps safe set ratchets lap times up after a fast warm-up (relevant to the
   condition-aware safe set).
@@ -659,10 +660,12 @@ Open questions:
   limits or the sample count is untested.
 - Resume on the ROS backend relies on the 0.25 m restore tolerance (launch run-up).
 - Planning time: BNN steps exceed 100 ms often (40% with chance at speed); matters for the Jetson.
+- Real car slip: kinematic β; VESC IMU gyro for yaw rate; log the full IMU on every run and build a
+  slip estimator offline, enabled only if it clearly beats kinematic β (decided 2026-11-14).
 - Real car: steering angle has no sensor (estimate from commanded rate; identify actuator delay,
   `actuation_delay` ≈ 0.2 s); slip from PF odom twist or β = 0; steering_limit 0.34 rad; Jetson
   GPU budget unknown.
 - Levine map in sim still to do.
 
-Next steps (agreed roadmap): decide on the BNN data question, then the IRL branch (Levine lobby,
+Next steps (agreed roadmap): the IRL branch (Levine lobby,
 particle-filter odom, VESC IMU yaw rate, steering limit 0.34, delay compensation, Jetson setup).
