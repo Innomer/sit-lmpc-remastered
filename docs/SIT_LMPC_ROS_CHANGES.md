@@ -253,6 +253,16 @@ python scripts/presentation_figures.py results/Spielberg/<name> --out results/fi
   with `configs/f1tenth-ros-known-fast.yaml` (both must agree on 10 substeps per message).
 - After a reboot, check `nvidia-smi` first; run logs must not contain `CUDA_ERROR_NO_DEVICE`.
 
+## Real car (branch `irl`)
+
+The `irl` branch adds a real-car backend: `simulation.backend: car`, `src/sit_lmpc/adapters/ros_car.py`.
+It reads the particle-filter pose, VESC speed and VESC IMU yaw rate, and drives through `/drive` at
+10 Hz on the wall clock. It has a watchdog, LiDAR, out-of-bounds and stale-odometry stops, and
+operator-gated restarts. Configs: `configs/car-levine-*.yaml`, Levine `levine_self_again` raceline.
+Tools: `scripts/make_track.py`, `scripts/car_check.py`, `scripts/jetson_setup.sh`. It was dry-run on
+the sim in real time and has not yet run on the car. Steps and open risks are in
+`docs/CAR_DEPLOYMENT.md`.
+
 ## Known issues and next steps
 
 - **Track limit uses the car's centre only:** at large heading angles the nose can reach the wall

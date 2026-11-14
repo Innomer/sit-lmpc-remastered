@@ -1,0 +1,25 @@
+# Dry run of the car backend against the ROS sim (Spielberg), real time, same code path as on the car.
+# Bridge: configs/ros-bridge-realtime.yaml. Start the run, then publish go:
+#   ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty
+extends: car-levine-known.yaml
+output:
+  exp_name: car-sim-dryrun
+simulation:
+  car:
+    odom_topic: /ego_racecar/odom
+    speed_topic: ""
+    imu_topic: ""
+    scan_topic: /scan
+    joy_topic: ""
+    record_bag: false
+    max_speed: 4.0
+    start_zone: 4.0
+  map: Spielberg
+  initial_speed: 2.5
+  max_laps: 4
+planner:
+  half_width: 1.1
+  boundary_buffer: 0.25
+  warmup:
+    path: configs/racelines/spielberg_pp_lab5.csv
+    max_speed: 4.0

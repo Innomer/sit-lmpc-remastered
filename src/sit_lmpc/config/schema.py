@@ -25,9 +25,37 @@ class RosConfig:
 
 
 @dataclass(frozen=True)
+class CarConfig:
+    odom_topic: str = "/pf/pose/odom"
+    speed_topic: str = "/odom"
+    imu_topic: str = "/sensors/imu/raw"
+    imu_yaw_scale: float = 1.0
+    drive_topic: str = "/drive"
+    scan_topic: str = "/scan"
+    joy_topic: str = "/joy"
+    go_button: int = 0
+    go_topic: str = "/sit_lmpc/go"
+    max_speed: float = 3.0
+    speed_horizon: float = 0.2
+    stop_distance: float = 0.25
+    scan_half_angle: float = 0.35
+    odom_timeout: float = 0.3
+    command_timeout: float = 0.3
+    startup_timeout: float = 10.0
+    start_zone: float = 3.0
+    start_heading: float = 0.6
+    launch_lookahead: float = 1.0
+    launch_timeout: float = 10.0
+    record_bag: bool = True
+    bag_topics: tuple[str, ...] = ("/pf/pose/odom", "/odom", "/sensors/imu/raw", "/sensors/imu",
+                                   "/sensors/core", "/drive", "/joy", "/tf", "/tf_static")
+
+
+@dataclass(frozen=True)
 class SimulationConfig:
     backend: str = "gym"
     ros: RosConfig = field(default_factory=RosConfig)
+    car: CarConfig = field(default_factory=CarConfig)
     steering_limit: float | None = None
     model: str = "dynamic_ST"
     map: str = "custom1"
@@ -313,16 +341,30 @@ class ExperimentConfig:
                     raise ValueError(f"planner.warmup.{name} must be nonnegative")
             if w.lookahead_min > w.lookahead_max:
                 raise ValueError("planner.warmup.lookahead_min must not exceed lookahead_max")
-            if s.backend != "ros" or s.ros.stepping != "lockstep" or s.ros.bridge_substeps != 1:
-                raise ValueError("planner.warmup pure_pursuit runs at the bridge rate: it needs backend ros, "
-                                 "lockstep stepping and simulation.ros.bridge_substeps 1")
-        if s.backend not in ("gym", "ros"):
-            raise ValueError("simulation.backend must be gym or ros")
+            if s.backend == "gym" or (s.backend == "ros" and (s.ros.stepping != "lockstep" or s.ros.bridge_substeps != 1)):
+                raise ValueError("planner.warmup pure_pursuit runs at the bridge rate: it needs backend car, or backend ros "
+                                 "with lockstep stepping and simulation.ros.bridge_substeps 1")
+        if s.backend not in ("gym", "ros", "car"):
+            raise ValueError("simulation.backend must be gym, ros or car")
+        if s.backend == "car":
+            if s.ros.stepping != "realtime" or s.ros.drive_mode != "speed_steering_angle" or s.ros.bridge_substeps != 1:
+                raise ValueError("simulation.backend car needs simulation.ros stepping realtime, drive_mode "
+                                 "speed_steering_angle and bridge_substeps 1")
+            c = s.car
+            for name in ("max_speed", "speed_horizon", "scan_half_angle", "odom_timeout", "command_timeout",
+                         "startup_timeout", "start_zone", "start_heading", "launch_lookahead", "launch_timeout"):
+                value = getattr(c, name)
+                if isinstance(value, bool) or not isinstance(value, (int, float)) or not 0 < value < math.inf:
+                    raise ValueError(f"simulation.car.{name} must be positive")
+            if isinstance(c.stop_distance, bool) or not isinstance(c.stop_distance, (int, float)) or c.stop_distance < 0:
+                raise ValueError("simulation.car.stop_distance must be 0 (off) or positive")
+            if s.initial_speed > c.max_speed:
+                raise ValueError("simulation.initial_speed must not exceed simulation.car.max_speed")
         if s.ros.drive_mode not in ("accel_steering_speed", "speed_steering_angle"):
             raise ValueError("simulation.ros.drive_mode must be accel_steering_speed or speed_steering_angle")
         if s.ros.stepping not in ("lockstep", "realtime"):
             raise ValueError("simulation.ros.stepping must be lockstep or realtime")
-        if s.backend == "ros":
+        if s.backend in ("ros", "car"):
             substeps = s.timestep / s.ros.bridge_timestep
             if abs(substeps - round(substeps)) > 1e-6 or round(substeps) < 1:
                 raise ValueError("simulation.timestep must be a positive multiple of simulation.ros.bridge_timestep")
@@ -888,6 +930,14 @@ def load_config(path=None, overrides=None):
                 values["ros"] = RosConfig(**values["ros"])
             except (TypeError, AttributeError) as error:
                 raise ValueError(f"Invalid simulation.ros configuration: {error}") from error
+        if name == "simulation" and "car" in values:
+            try:
+                values["car"] = CarConfig(**{
+                    key: tuple(value) if isinstance(value, list) else value
+                    for key, value in values["car"].items()
+                })
+            except (TypeError, AttributeError) as error:
+                raise ValueError(f"Invalid simulation.car configuration: {error}") from error
         try:
             config = replace(config, **{name: cls(**values)})
         except TypeError as error:
@@ -927,6 +977,14 @@ def load_config(path=None, overrides=None):
                 values = {**values, "ros": replace(config.simulation.ros, **values["ros"])}
             except TypeError as error:
                 raise ValueError(f"Invalid simulation.ros override: {error}") from error
+        if name == "simulation" and isinstance(values.get("car"), dict):
+            try:
+                values = {**values, "car": replace(config.simulation.car, **{
+                    key: tuple(value) if isinstance(value, list) else value
+                    for key, value in values["car"].items()
+                })}
+            except TypeError as error:
+                raise ValueError(f"Invalid simulation.car override: {error}") from error
         if name == "planner" and "model_bank" in values:
             bank = values["model_bank"]
             if isinstance(bank, dict):

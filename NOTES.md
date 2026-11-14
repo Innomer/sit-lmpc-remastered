@@ -669,3 +669,38 @@ Open questions:
 
 Next steps (agreed roadmap): the IRL branch (Levine lobby,
 particle-filter odom, VESC IMU yaw rate, steering limit 0.34, delay compensation, Jetson setup).
+
+## 8. Real car code (branch `irl`, 2026-11-14)
+
+Written and dry-run in the sim; not yet run on the car. Full guide: `docs/CAR_DEPLOYMENT.md`.
+
+- `simulation.backend: car` → `src/sit_lmpc/adapters/ros_car.py` (`RosCar`), settings in `simulation.car`
+  (`CarConfig`). Inputs: PF `/pf/pose/odom` pose, VESC `/odom` speed, VESC IMU `/sensors/imu/raw` gyro z yaw
+  rate (× `imu_yaw_scale`), steering estimated from commands, kinematic β. Output: speed + steering angle on
+  `/drive`. 10 Hz on a fixed wall-clock cadence; delay compensation 0.2 s.
+- Safety: watchdog thread (no command for 0.3 s → speed 0), out-of-bounds / LiDAR < 0.25 m / stale odom
+  → immediate stop, Ctrl-C and SIGTERM stop the car (rclpy signal handler off). Restarts wait for the
+  operator's go (joystick button or `/sit_lmpc/go`) with the car 0.3–3 m behind the start line; the first
+  step drives it over the line at `initial_speed`, so runner JIT and checkpoint work never happen while
+  it moves.
+- Logs: `car_log.npz` per command, `control_timing.json` (overruns, watchdog stops), rosbag of the IMU,
+  odom, drive and joystick topics.
+- Track: user chose Levine with `levine_self_again_raceline.csv` (not the lobby). Its map is only on
+  the car (the raceline does not lie in `levine_self.pgm`), so `tracks/levine_self_again/` is the raceline
+  with an assumed 0.4 m each side (`half_width` 0.25). `scripts/make_track.py --map <pf map>` rebuilds it
+  with a wall-centred centerline and measured widths (on `levine_self` + its raceline: 62 m, 5th-pct wall
+  0.68 m → half_width 0.53).
+- Configs: `car-levine-known.yaml` (pure pursuit warm-up ≤ 2.5 m/s, max_speed 3), `car-levine-bnn-nochance.yaml`,
+  `car-levine-bnn.yaml` (wide model, now tracked in `models/vehicle-bnn-f1tenth-wide-l96`), `car-sim-dryrun.yaml`
+  + `ros-bridge-realtime.yaml` for a laptop dry run.
+- Tools: `scripts/car_check.py` (topic rates, IMU scale/sign vs PF heading, VESC vs PF speed, s/ey, LiDAR,
+  joystick buttons; never drives), `scripts/jetson_setup.sh` (venv with system ROS, package, GPU JAX, check).
+- Dry run (Spielberg, real-time bridge): launch 2.48 m/s; warm-up lap 68.9 s at the 4 m/s cap; step p50
+  99 ms, 1 overrun (first step), 0 watchdog stops; Ctrl-C → 0 m/s; out-of-bounds teleport → stop in the same
+  step; a start 2 m past the line was rejected. Bugs found and fixed there: stale-odom check before
+  draining the ROS queue, 125 ms drift (deadline from observation time), first-call JIT of the delay
+  predictor while moving, rclpy SIGINT handler killing the context before the final stop.
+- Risk: the package needs Python 3.12 (JAX 0.11); if the Jetson's ROS is Humble (3.10) rclpy will not
+  import → Jazzy container or Jazzy install. JAX GPU on the Orin is unverified; CPU LMPPI is ~500 ms/step.
+- Pre-existing test failures (not from this work): `test_experiment_resume` (gym `fullscale_vehicle_params`),
+  `test_bnn_belief` quick-load, `test_probability_safety` errors.

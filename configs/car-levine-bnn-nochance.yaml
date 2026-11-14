@@ -1,0 +1,23 @@
+# Real car, Levine: BNN SIT-LMPC without chance constraints (the better BNN variant in sim), after the same
+# pure pursuit warm-up as car-levine-known.yaml. Wide-speed F1TENTH model (1-20 m/s).
+extends: car-levine-known.yaml
+output:
+  exp_name: car-levine-bnn-nochance
+planner:
+  sit_lmpc_mode: false
+  belief:
+    enabled: false
+  dynamics:
+    backend: gaussian_bnn
+    checkpoint: models/vehicle-bnn-f1tenth-wide-l96
+    belief_update: posterior
+    posterior_method: tempered
+    likelihood_power: 1.0
+    particles: 64
+    chance_estimation: planning_samples
+    calibration_split: random_windows
+    calibration_horizon: 10
+    calibration_target_coverage: 0.95
+    validation_fraction: 0.2
+  probabilistic_safety:
+    enabled: false

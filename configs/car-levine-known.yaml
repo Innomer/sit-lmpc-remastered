@@ -1,0 +1,65 @@
+# Real car, Levine loop (levine_self_again raceline): pure pursuit warm-up laps, then known-dynamics SIT-LMPC.
+# Run on the car from the repo root, with the car stack (VESC, ackermann mux, particle filter) up:
+#   sit-racecar --config configs/car-levine-known.yaml
+# tracks/levine_self_again was built from the raceline alone (0.4 m assumed each side). Rebuild it from the car's
+# PF map before driving and set planner.half_width from its output (docs/CAR_DEPLOYMENT.md).
+extends: default.yaml
+output:
+  exp_name: car-levine-known
+  checkpoint_every_trials: 1
+simulation:
+  backend: car
+  ros:
+    drive_mode: speed_steering_angle
+    stepping: realtime
+    bridge_timestep: 0.01
+    bridge_substeps: 1
+    actuation_delay: 0.2  # MPC lab measured on this car; 0 turns the delay compensation off
+    timing_report_steps: 50
+  car:
+    odom_topic: /pf/pose/odom
+    speed_topic: /odom  # VESC wheel odometry; "" uses the PF odom twist
+    imu_topic: /sensors/imu/raw  # VESC IMU gyro z for yaw rate; "" uses the PF odom twist
+    imu_yaw_scale: 1.0  # sign/units from scripts/car_check.py
+    drive_topic: /drive
+    scan_topic: /scan
+    joy_topic: /joy
+    go_button: 0
+    max_speed: 3.0
+    stop_distance: 0.25
+  map: tracks/levine_self_again/levine_self_again
+  steering_limit: 0.34
+  timestep: 0.1
+  integrator_timestep: 0.02
+  friction: 1.0489
+  mass_ratio: 1.0
+  initial_speed: 1.5
+  max_laps: 15
+  action_scale: [1.0, 3.0]
+  control_noise: [0.0, 0.0]
+  state_noise: 0.0
+planner:
+  friction: 1.0489
+  mass_ratio: 1.0
+  model_bank:
+    frictions: [1.0489]
+  half_width: 0.25  # CoG limit for the fallback track (0.4 m walls - 0.155 m car half width)
+  boundary_buffer: 0.08
+  sample_std: [0.2, 0.167]
+  warmup:
+    controller: pure_pursuit
+    path: configs/racelines/levine_self_again_raceline.csv
+    max_speed: 2.5
+    max_lat_accel: 4.0
+    accel: 3.0
+    brake: 3.0
+    speed_scale: 1.0
+    lookahead_gain: 0.3
+    lookahead_min: 0.75
+    latency: 0.2
+diagnostics:
+  render: false
+  plots: false
+  keyboard_controls: false
+  summary_plots: true
+  trace_steps: 0
