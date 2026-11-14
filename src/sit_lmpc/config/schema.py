@@ -8,7 +8,27 @@ import yaml
 
 
 @dataclass(frozen=True)
+class RosConfig:
+    namespace: str = "ego_racecar"
+    odom_topic: str = "odom"
+    drive_topic: str = "/drive"
+    collision_topic: str = "collision"
+    reset_topic: str = "/initialpose"
+    drive_mode: str = "accel_steering_speed"
+    stepping: str = "lockstep"
+    bridge_timestep: float = 0.01
+    bridge_substeps: int = 1
+    actuation_delay: float = 0.0
+    wait_timeout: float = 5.0
+    launch_timeout: float = 5.0
+    timing_report_steps: int = 100
+
+
+@dataclass(frozen=True)
 class SimulationConfig:
+    backend: str = "gym"
+    ros: RosConfig = field(default_factory=RosConfig)
+    steering_limit: float | None = None
     model: str = "dynamic_ST"
     map: str = "custom1"
     timestep: float = 0.1
@@ -256,6 +276,31 @@ class ExperimentConfig:
         r = self.risk
         if not isinstance(d.print_lambdas, bool):
             raise ValueError("diagnostics.print_lambdas must be true or false")
+        if s.backend not in ("gym", "ros"):
+            raise ValueError("simulation.backend must be gym or ros")
+        if s.ros.drive_mode not in ("accel_steering_speed", "speed_steering_angle"):
+            raise ValueError("simulation.ros.drive_mode must be accel_steering_speed or speed_steering_angle")
+        if s.ros.stepping not in ("lockstep", "realtime"):
+            raise ValueError("simulation.ros.stepping must be lockstep or realtime")
+        if s.backend == "ros":
+            substeps = s.timestep / s.ros.bridge_timestep
+            if abs(substeps - round(substeps)) > 1e-6 or round(substeps) < 1:
+                raise ValueError("simulation.timestep must be a positive multiple of simulation.ros.bridge_timestep")
+            if (type(s.ros.bridge_substeps) is not int or s.ros.bridge_substeps < 1
+                    or round(substeps) % s.ros.bridge_substeps):
+                raise ValueError("simulation.ros.bridge_substeps must be a positive divisor of timestep / bridge_timestep")
+            if s.ros.bridge_substeps > 1 and (s.ros.drive_mode != "accel_steering_speed" or s.ros.stepping != "lockstep"):
+                raise ValueError("simulation.ros.bridge_substeps > 1 needs drive_mode accel_steering_speed and lockstep stepping")
+            delay_steps = s.ros.actuation_delay / s.timestep
+            if (isinstance(s.ros.actuation_delay, bool) or not isinstance(s.ros.actuation_delay, (int, float))
+                    or s.ros.actuation_delay < 0 or abs(delay_steps - round(delay_steps)) > 1e-6):
+                raise ValueError("simulation.ros.actuation_delay must be 0 or a positive multiple of simulation.timestep")
+        if s.steering_limit is not None and (
+                isinstance(s.steering_limit, bool) or not isinstance(s.steering_limit, (int, float))
+                or not 0 < s.steering_limit < math.pi / 2):
+            raise ValueError("simulation.steering_limit must be null or a steering angle in (0, pi/2) rad")
+            if d.render:
+                raise ValueError("simulation.backend ros has no simulator window; set diagnostics.render false")
         dynamics = p.dynamics
         if not isinstance(dynamics, DynamicsConfig) or dynamics.backend not in ("st", "gaussian_bnn"):
             raise ValueError("planner.dynamics.backend must be st or gaussian_bnn")
@@ -793,6 +838,11 @@ def load_config(path=None, overrides=None):
         # Old saved runs with only an integer seed retain their fixed-seed behavior.
         if name == "simulation" and values.get("seed") is not None and "seed_mode" not in values:
             values["seed_mode"] = "fixed"
+        if name == "simulation" and "ros" in values:
+            try:
+                values["ros"] = RosConfig(**values["ros"])
+            except (TypeError, AttributeError) as error:
+                raise ValueError(f"Invalid simulation.ros configuration: {error}") from error
         try:
             config = replace(config, **{name: cls(**values)})
         except TypeError as error:
@@ -822,6 +872,11 @@ def load_config(path=None, overrides=None):
             values = normalize_diagnostic_settings(values)
         if name == "simulation" and values.get("seed") is not None and "seed_mode" not in values:
             values = {**values, "seed_mode": "fixed"}
+        if name == "simulation" and isinstance(values.get("ros"), dict):
+            try:
+                values = {**values, "ros": replace(config.simulation.ros, **values["ros"])}
+            except TypeError as error:
+                raise ValueError(f"Invalid simulation.ros override: {error}") from error
         if name == "planner" and "model_bank" in values:
             bank = values["model_bank"]
             if isinstance(bank, dict):

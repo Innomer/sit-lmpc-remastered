@@ -6,17 +6,37 @@ import numpy as np
 from dyna_dist.models.profiles import PARAMETER_FIELDS
 
 
+class SubstepRK4:
+    """The bundled gym's RK4Integrator stepping, built on f1tenth_gym_ros's rk4_integration."""
+
+    def __init__(self, dt, integrator_dt):
+        from f1tenth_gym.envs.integrators import rk4_integration
+
+        self.step = rk4_integration
+        self.integrator_dt = integrator_dt
+        self.n_steps = int(round(dt / integrator_dt))
+
+    def integrate(self, f, x, u, *args):
+        for _ in range(self.n_steps):
+            x = self.step(f, x, u, self.integrator_dt, *args)
+        return x
+
+
 class GymST:
     def __init__(self, parameters, timestep, integrator_timestep):
         try:
             from f1tenth_gym.envs.dynamic_models.single_track import vehicle_dynamics_st
-            from f1tenth_gym.envs.integrator import RK4Integrator
         except ImportError as error:
             raise ImportError("Collection requires: uv sync --extra collection") from error
+        try:
+            from f1tenth_gym.envs.integrator import RK4Integrator
+            integrator = RK4Integrator(timestep, integrator_timestep)
+        except ImportError:
+            integrator = SubstepRK4(timestep, integrator_timestep)
         self.parameters = dict(parameters)
         self.params = np.array([parameters[k] for k in PARAMETER_FIELDS], dtype=np.float64)
         self.rhs = vehicle_dynamics_st
-        self.integrator = RK4Integrator(timestep, integrator_timestep)
+        self.integrator = integrator
 
     def step(self, state, control):
         result = self.integrator.integrate(self.rhs, state, control, self.params)

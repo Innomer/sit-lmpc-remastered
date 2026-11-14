@@ -114,8 +114,8 @@ class VehicleCollectionConfig:
     output: str = "runs/vehicle_st/paired-study"
 
     def validate(self):
-        if self.profile != "fullscale":
-            raise ValueError("vehicle study currently uses the fullscale profile")
+        if self.profile not in {"fullscale", "f1tenth"}:
+            raise ValueError("vehicle collection supports the fullscale and f1tenth profiles")
         for name in ("friction", "front_cornering_scale", "rear_cornering_scale", "mass_ratio"):
             _range(name, getattr(self, name), positive=True)
         if not self.speeds or any(not math.isfinite(x) or not 0 < x <= 20 for x in self.speeds):

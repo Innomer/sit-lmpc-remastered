@@ -1,0 +1,8 @@
+# Batch/fast variant of f1tenth-ros-known.yaml: one drive message per control step, no per-step insight recording.
+# Bridge: configs/ros-bridge-lockstep-fast.yaml (substeps_per_drive 10). Run without Foxglove for best speed.
+extends: f1tenth-ros-known.yaml
+simulation:
+  ros:
+    bridge_substeps: 10
+diagnostics:
+  trace_steps: 0

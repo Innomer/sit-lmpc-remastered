@@ -1,0 +1,36 @@
+# Known-dynamics SIT-LMPC at F1TENTH scale on the ROS 2 f1tenth_gym_ros simulator (Spielberg).
+# Unlisted settings come from the packaged default.yaml. Launch the bridge with
+# configs/ros-bridge-lockstep.yaml before running: sit-racecar --config configs/f1tenth-ros-known.yaml
+extends: default.yaml
+output:
+  exp_name: f1tenth-ros-known
+simulation:
+  backend: ros
+  ros:
+    drive_mode: accel_steering_speed  # [accel_steering_speed, speed_steering_angle] must match the bridge's control_mode
+    stepping: lockstep  # [lockstep, realtime] lockstep needs the bridge in async_mode False with use_sim_time_bridge True
+    bridge_timestep: 0.01  # The bridge's fixed physics step; timestep below must be a multiple of it.
+  map: Spielberg
+  timestep: 0.1
+  integrator_timestep: 0.02  # Predictor RK4 substep; the bridge itself integrates at bridge_timestep.
+  friction: 1.0489  # Informational for the ROS backend: the bridge's vehicle_params decide the plant.
+  mass_ratio: 1.0
+  initial_speed: 2.5
+  max_laps: 30
+  action_scale: [1.0, 3.0]  # [steering speed rad/s, acceleration m/s^2]. Spielberg needs <= 0.44 rad/s even at 8 m/s; warm-up MPPI samples with unit std in normalized units (it ignores sample_std), so 3.2 rad/s made the warm-up steering flicker.
+  control_noise: [0.001, 0.001]
+  state_noise: 0.001
+planner:
+  friction: 1.0489  # f1tenth mu in the ROS gym
+  mass_ratio: 1.0
+  model_bank:
+    frictions: [1.0489]
+  half_width: 1.1  # Spielberg F1TENTH centerline half-width (CoG point boundary; car half-width 0.155)
+  boundary_buffer: 0.25
+  sample_std: [0.2, 0.167]  # LMPPI noise in normalized units: 0.2 rad/s and 0.5 m/s^2 per step with action_scale [1.0, 3.0]. Larger noise sends samples far outside the warm-up data and stalls LMPPI.
+diagnostics:
+  render: false
+  plots: false
+  keyboard_controls: false
+  summary_plots: true
+  trace_steps: 50

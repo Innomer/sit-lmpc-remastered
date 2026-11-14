@@ -14,7 +14,8 @@ import jax.numpy as jnp
 import numpy as np
 import yaml
 
-from sit_lmpc.adapters.f1tenth import F1TenthSimulator, vehicle_parameters
+from sit_lmpc.adapters import vehicle_parameters_for
+from sit_lmpc.adapters.f1tenth import F1TenthSimulator
 from sit_lmpc.config.resume import resume_fixed_fields
 from sit_lmpc.data.laps import save_laps
 from sit_lmpc.data.trajectories import (
@@ -118,8 +119,9 @@ def write_metadata(directory, *, resumed_from=None, checkpoint_trial=None):
 
 def build_vehicle_dynamics(config):
     """Separate actual Gym parameters from the assumed prediction model."""
-    simulator_params = vehicle_parameters(config.simulation.friction, config.simulation.mass_ratio)
-    predictor_params = vehicle_parameters(config.planner.friction, config.planner.mass_ratio)
+    simulation = config.simulation
+    simulator_params = vehicle_parameters_for(simulation, simulation.friction, simulation.mass_ratio)
+    predictor_params = vehicle_parameters_for(simulation, config.planner.friction, config.planner.mass_ratio)
     return simulator_params, STModel.from_vehicle(predictor_params, config.simulation)
 
 
@@ -796,9 +798,14 @@ def _run(config, tracking_only, keyboard_cleanup):
     try:
         if not tracking_only:
             learned.precompile_hulls(events.emit)
-        simulator = F1TenthSimulator(
-            simulation, track_path, config.diagnostics.render, simulator_params
-        )
+        if simulation.backend == "ros":
+            from sit_lmpc.adapters.ros_f1tenth import RosSimulator
+
+            simulator = RosSimulator(simulation, track, simulator_params, events.emit, directory)
+        else:
+            simulator = F1TenthSimulator(
+                simulation, track_path, config.diagnostics.render, simulator_params
+            )
         pose = np.asarray(track.frenet_to_cartesian(0, 0, 0))
         initial = np.asarray([pose[0], pose[1], 0, simulation.initial_speed, pose[2], 0, 0])
         if resuming:
@@ -978,8 +985,16 @@ def _run(config, tracking_only, keyboard_cleanup):
             (cartesian, frenet), _ = simulator.restore(initial, resume_state["simulator"])
         else:
             (cartesian, frenet), _ = simulator.reset(initial)
-        if resuming and not np.allclose(frenet, resume_arrays["frenet"], atol=1e-5):
-            raise ValueError("simulator restored a different Frenet state from the checkpoint")
+        if resuming:
+            tolerance = getattr(simulator, "restore_tolerance", 1e-5)
+            mismatch = np.abs(np.asarray(frenet) - np.asarray(resume_arrays["frenet"]))
+            if not np.all(mismatch <= tolerance):
+                raise ValueError(
+                    f"simulator restored a different Frenet state from the checkpoint "
+                    f"(max difference {float(mismatch.max()):.3g} > tolerance {tolerance})"
+                )
+            events.emit("resume_state_restored", tolerance=tolerance,
+                        max_difference=float(mismatch.max()))
         collector = begin_attempt(cartesian, frenet)
         if abs(frenet[1]) > planner.half_width:
             finish_attempt("failure", "invalid_lap_start")

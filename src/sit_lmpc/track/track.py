@@ -435,7 +435,7 @@ class Track:
 
     def get_s_search_range(self, s_guess, s_ind_range):
         s_ind = self.centerline.spline.find_segment_for_s(s_guess)
-        s_inds = (np.arange(s_ind, s_ind + s_ind_range) % self.centerline.length).astype(int)
+        s_inds = (np.arange(s_ind, s_ind + s_ind_range) % (len(self.centerline.spline.s) - 1)).astype(int)
         return s_inds
 
     def frenet_to_cartesian(self, s, ey, ephi, use_raceline=False):

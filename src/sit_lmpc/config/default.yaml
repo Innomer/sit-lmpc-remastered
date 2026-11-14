@@ -16,6 +16,22 @@ output:
 
 
 simulation:
+  backend: gym  # [gym, ros] gym steps the bundled standalone F1TENTH Gym in-process; ros drives f1tenth_gym_ros through odometry and Ackermann drive topics (see configs/f1tenth-ros-known.yaml).
+  ros:  # Only read when backend is ros. Topics without a leading slash are relative to namespace.
+    namespace: ego_racecar  # The bridge's ego_namespace.
+    odom_topic: odom  # nav_msgs/Odometry with base_link pose and body-frame twist; converted to the ST CoG state.
+    drive_topic: /drive  # ackermann_msgs/AckermannDriveStamped output.
+    collision_topic: collision  # std_msgs/Bool contact flag; latched within each control step.
+    reset_topic: /initialpose  # geometry_msgs/PoseWithCovarianceStamped used by reset.
+    drive_mode: accel_steering_speed  # [accel_steering_speed, speed_steering_angle] accel mode needs the bridge's control_mode accel_steering_speed; angle mode inverts the bridge's P controllers.
+    stepping: lockstep  # [lockstep, realtime] lockstep sends one drive message per bridge_timestep and waits for each odometry (bridge async_mode False, use_sim_time_bridge True); realtime sends one per timestep and waits for the period to elapse.
+    bridge_timestep: 0.01  # The bridge's physics step in seconds; timestep must be a positive multiple.
+    bridge_substeps: 1  # Physics steps the bridge takes per drive message; must equal the bridge's substeps_per_drive. >1 (e.g. 10) sends one message per control step: lockstep and accel_steering_speed only.
+    actuation_delay: 0.0  # Seconds between sending a command and the vehicle applying it; 0 disables compensation. >0 (a multiple of timestep, e.g. 0.2 on the real car) rolls the measured state forward over the delay with the commands already sent, and gives the planner that predicted state.
+    wait_timeout: 5.0  # Seconds to wait for odometry before failing.
+    launch_timeout: 5.0  # Seconds of simulated time allowed to reach initial_speed after a reset.
+    timing_report_steps: 100  # Emit control_step_timing (planning and simulator wall time) every this many steps; 0 disables.
+  steering_limit: null  # Front-wheel steering limit in rad for both the controlled vehicle and the planner model; null keeps the vehicle default (F1TENTH sim 0.4189). Set 0.34 for the real car.
   model: dynamic_ST  # [dynamic_ST] Only supported simulator model. Actual F1TENTH simulation model; planner.dynamics independently selects the predictor. [resume]
   map: custom1  # [custom1, Spielberg, or an existing local map prefix without _map] yaml. Custom maps must provide the map/centerline/raceline resources used by Track. [resume]
   timestep: 0.1  # Controller/simulator step duration in seconds; positive.

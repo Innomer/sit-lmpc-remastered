@@ -1,0 +1,31 @@
+# BNN baseline at F1TENTH scale on the ROS sim: learned Gaussian BNN predictor, between-lap posterior
+# updates and chance constraints (as in the authors' BNN example), on the fast known-dynamics setup.
+# Bridge: configs/ros-bridge-lockstep-fast.yaml. Model: sit-import-bnn --source runs/dynamics-f1tenth/<run>
+#   --destination artifacts/vehicle-bnn-f1tenth-l96
+extends: f1tenth-ros-known-fast.yaml
+output:
+  exp_name: f1tenth-ros-bnn
+planner:
+  sit_lmpc_mode: false  # BNN backend requires it; failed attempts are reset and counted instead of ending the run
+  belief:
+    enabled: false
+  dynamics:
+    backend: gaussian_bnn
+    checkpoint: artifacts/vehicle-bnn-f1tenth-l96
+    belief_update: posterior
+    posterior_method: tempered
+    likelihood_power: 1.0
+    particles: 64
+    chance_estimation: planning_samples
+    calibration_split: random_windows
+    calibration_horizon: 10
+    calibration_target_coverage: 0.95
+    validation_fraction: 0.2
+  probabilistic_safety:
+    enabled: true
+    boundary_threshold: 0.05
+    terminal_hull_threshold: 0.9
+    lambda_count: 10
+    lambda_max: 20.0
+    max_candidates: 256
+    fallback: baseline

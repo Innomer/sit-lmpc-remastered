@@ -90,7 +90,7 @@ def _initial(speed):
 def shared_probe(config, speed, rng, steps=None):
     """Record a nominal closed-loop action tape, then replay it open-loop everywhere."""
     parameters = vehicle_parameters(
-        "fullscale", friction=sum(config.friction) / 2, mass_ratio=1.0,
+        config.profile, friction=sum(config.friction) / 2, mass_ratio=1.0,
         inertia_policy="fixed",
     )
     simulator = GymST(parameters, config.timestep, config.integrator_timestep)
@@ -308,7 +308,7 @@ def collect_vehicle(config, emit=print):
     incomplete = []
     for index, (values, split, anchor) in enumerate(instance_specs):
         mu, front, rear, mass = map(float, values)
-        parameters = vehicle_parameters("fullscale", mu, mass, "fixed")
+        parameters = vehicle_parameters(config.profile, mu, mass, "fixed")
         parameters["C_Sf"] *= front
         parameters["C_Sr"] *= rear
         simulator = GymST(parameters, config.timestep, config.integrator_timestep)

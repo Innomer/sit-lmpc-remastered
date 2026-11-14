@@ -1,0 +1,117 @@
+diff --git a/f1tenth_gym_ros/gym_bridge.py b/f1tenth_gym_ros/gym_bridge.py
+index d476873..9a96d8f 100644
+--- a/f1tenth_gym_ros/gym_bridge.py
++++ b/f1tenth_gym_ros/gym_bridge.py
+@@ -274,6 +274,8 @@ class GymBridge(Node):
+         self.declare_parameter('scale', 1.0)
+         self.declare_parameter('vehicle_params', 'f1tenth')
+         self.declare_parameter('async_mode', True)
++        self.declare_parameter('control_mode', 'speed_steering_angle')
++        self.declare_parameter('substeps_per_drive', 1)
+         # Flag to know whether to publish the sim time or not
+         # Has to be different than use_sim_time so we can still use real time to trigger timer callbacks
+         self.declare_parameter('use_sim_time_bridge', False)
+@@ -387,10 +389,21 @@ class GymBridge(Node):
+             # the clock, so lap 1 and every lap_time are full circuits.
+             count_partial_first_lap=False,
+         )
+-        control_cfg = ControlConfig(
+-            longitudinal_mode=LongitudinalActionType.SPEED,
+-            steering_mode=SteerActionType.STEERING_ANGLE,
+-        )
++        control_mode = self.get_parameter('control_mode').value
++        if control_mode == 'speed_steering_angle':
++            self.accel_control = False
++            control_cfg = ControlConfig(
++                longitudinal_mode=LongitudinalActionType.SPEED,
++                steering_mode=SteerActionType.STEERING_ANGLE,
++            )
++        elif control_mode == 'accel_steering_speed':
++            self.accel_control = True
++            control_cfg = ControlConfig(
++                longitudinal_mode=LongitudinalActionType.ACCL,
++                steering_mode=SteerActionType.STEERING_SPEED,
++            )
++        else:
++            raise ValueError('control_mode should be either speed_steering_angle or accel_steering_speed.')
+         observation_cfg = ObservationConfig(type=ObservationType.DEFAULT)
+         reset_cfg = ResetConfig(strategy=ResetStrategy.MAP_RANDOM_STATIC)
+ 
+@@ -587,16 +600,26 @@ class GymBridge(Node):
+         self.sim_paused = msg.data
+         self.get_logger().info(f"Simulation {'paused' if self.sim_paused else 'resumed'}")
+ 
++    def _drive_action(self, drive):
++        params = self.vehicle_params
++        if self.accel_control:
++            steer = float(np.clip(drive.steering_angle_velocity, params.sv_min, params.sv_max))
++            longitudinal = float(np.clip(drive.acceleration, -params.a_max, params.a_max))
++        else:
++            steer = float(np.clip(drive.steering_angle, params.s_min, params.s_max))
++            longitudinal = drive.speed
++        return steer, longitudinal
++
+     def drive_callback(self, drive_msg):
+         if self.sim_paused:
+             return  # Skip stepping the sim if paused
+ 
+-        self.ego_requested_speed = drive_msg.drive.speed
+-        self.ego_steer = np.clip(drive_msg.drive.steering_angle, self.vehicle_params.s_min, self.vehicle_params.s_max)
++        self.ego_steer, self.ego_requested_speed = self._drive_action(drive_msg.drive)
+ 
+         if not self.get_parameter('async_mode').value:
+             # step the sim immediately and publish odom and scan
+-            self.drive_timer_callback()
++            for _ in range(self.get_parameter('substeps_per_drive').value):
++                self.drive_timer_callback()
+             self.timer_callback()
+ 
+     def opp_drive_callback(self, drive_msg, opp_index):
+@@ -604,8 +627,7 @@ class GymBridge(Node):
+             return  # Skip stepping the sim if paused
+ 
+         opp = self.opps[opp_index]
+-        opp.requested_speed = drive_msg.drive.speed
+-        opp.steer = np.clip(drive_msg.drive.steering_angle, self.vehicle_params.s_min, self.vehicle_params.s_max)
++        opp.steer, opp.requested_speed = self._drive_action(drive_msg.drive)
+ 
+         if not self.get_parameter('async_mode').value:
+             # step the sim immediately and publish odom and scan
+@@ -839,9 +861,13 @@ class GymBridge(Node):
+             self.br.sendTransform(ts_msg)
+ 
+     def _publish_wheel_transforms(self, ts):
+-        for namespace, steer, spin in [
+-            (self.ego_namespace, self.ego_steer, self.ego_wheel_angle)
+-        ] + [(opp.namespace, opp.steer, opp.wheel_angle) for opp in self.opps]:
++        steering = self.env.unwrapped.sim.state.standard_state[:, 2]
++        wheels = [(self.ego_namespace, self.ego_steer, self.ego_wheel_angle)]
++        wheels += [(opp.namespace, opp.steer, opp.wheel_angle) for opp in self.opps]
++        if self.accel_control:
++            for i in range(len(wheels)):
++                wheels[i] = (wheels[i][0], float(steering[i]), wheels[i][2])
++        for namespace, steer, spin in wheels:
+             # Front wheels steer about z first, then roll about their own
+             # (steered) axle; rear wheels only roll. 'ZY' = intrinsic Rz @ Ry.
+             front_quat = Rotation.from_euler('ZY', [steer, spin]).as_quat()
+diff --git a/config/sim.yaml b/config/sim.yaml
+index 3ea76ee..ee7af55 100644
+--- a/config/sim.yaml
++++ b/config/sim.yaml
+@@ -116,6 +116,16 @@ bridge:
+     # If true, the simulation will step using a timer callback.
+     async_mode: True
+ 
++    # How /drive messages are interpreted.
++    # 'speed_steering_angle': drive.speed and drive.steering_angle, tracked by the gym's P controllers (default).
++    # 'accel_steering_speed': drive.acceleration and drive.steering_angle_velocity applied directly
++    # (for acceleration-based controllers such as SIT-LMPC). Keyboard teleop assumes the default mode.
++    control_mode: 'speed_steering_angle'
++
++    # Synchronous mode only: physics steps (of 0.01 s) taken per ego /drive message before odom is
++    # published. 1 = one step per message (default); 10 lets a 10 Hz controller advance 0.1 s per message.
++    substeps_per_drive: 1
++
+ foxglove:
+   ros__parameters:
+     # Automatically open Foxglove when the launch file starts.

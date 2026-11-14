@@ -1,0 +1,12 @@
+{
+  "source": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/runs/dynamics-f1tenth/best_refit",
+  "fingerprint": "44e86501e558113ca489069202694834e15f6fd83e6c12994bbced438de694c0",
+  "latent_dimension": 96,
+  "timestep": 0.1,
+  "integrator_timestep": 0.01,
+  "copied_at": "2026-11-13T18:55:07.616956-05:00",
+  "sha256": {
+    "manifest.json": "70620227e40b876ada74661d2e795c04457f837988e60d851bd11f9d3a03eceb",
+    "model.msgpack": "44e86501e558113ca489069202694834e15f6fd83e6c12994bbced438de694c0"
+  }
+}
