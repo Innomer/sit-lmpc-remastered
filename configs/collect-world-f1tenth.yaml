@@ -28,5 +28,5 @@ change_episodes: 300
 change_steps: 200
 change_kinds: [step, patch]
 sensors: true
-seed: 20261116
+seed: 20261113  # same as collect-vehicle-f1tenth-wide.yaml, so the base tapes are identical
 output: data/f1tenth-world

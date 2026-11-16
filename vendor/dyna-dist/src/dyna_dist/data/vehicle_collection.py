@@ -459,7 +459,12 @@ def collect_vehicle(config, emit=print):
             if key not in simulators:
                 simulators[key] = _instance_simulator(config, row)[0]
             schedule.append(simulators[key])
-        probe = shared_probe(config, speed, change_rng, steps=config.change_steps)
+        for _ in range(50):
+            probe = shared_probe(config, speed, change_rng, steps=config.change_steps, allow_exit=True)
+            if len(probe["controls"]) >= start + 20:
+                break
+        else:
+            raise ValueError(f"no change-episode tape at {speed:g} m/s stayed in the envelope past step {start + 20}")
         states, valid, reason = _rollout(schedule[0], probe, config, schedule)
         count = len(valid)
         filename = f"changes/episode-{episode:05d}.npz"

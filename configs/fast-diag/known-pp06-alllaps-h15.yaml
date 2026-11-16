@@ -1,0 +1,7 @@
+# Fast-start diagnosis: all-laps safe set (fixes the ratchet) plus horizon 15 (1.5 s, ~18 m at 12 m/s) against
+# the spin after ~23 laps (cost blind to slip; 1 s horizon too short at speed).
+extends: known-pp06-alllaps.yaml
+output:
+  exp_name: diag-known-pp06-alllaps-h15
+planner:
+  horizon: 15
