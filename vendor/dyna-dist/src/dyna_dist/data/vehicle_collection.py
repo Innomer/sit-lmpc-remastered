@@ -87,7 +87,7 @@ def _initial(speed):
     return np.array([0.0, 0.0, 0.0, speed, 0.0, 0.0, 0.0], dtype=np.float64)
 
 
-def shared_probe(config, speed, rng, steps=None):
+def shared_probe(config, speed, rng, steps=None, lateral_accel=None, speed_span=None, allow_exit=False):
     """Record a nominal closed-loop action tape, then replay it open-loop everywhere."""
     parameters = vehicle_parameters(
         config.profile, friction=sum(config.friction) / 2, mass_ratio=1.0,
@@ -99,9 +99,11 @@ def shared_probe(config, speed, rng, steps=None):
     wheelbase = parameters["lf"] + parameters["lr"]
     # Full-lock steering from the source script is not safe at 20 m/s. Keep
     # its smooth signal, but bound the requested lateral acceleration.
+    lateral_accel = config.lateral_accel_target if lateral_accel is None else lateral_accel
+    speed_span = config.speed_target_span if speed_span is None else speed_span
     steer_limit = min(
         parameters["s_max"],
-        np.arctan(config.lateral_accel_target * wheelbase / speed**2),
+        np.arctan(lateral_accel * wheelbase / speed**2),
     )
     steer_targets = _smooth_steering_targets(steps, config.steering_sines, rng)
     steer_targets *= steer_limit
@@ -111,7 +113,7 @@ def shared_probe(config, speed, rng, steps=None):
     for index in range(steps):
         if index % config.speed_target_refresh == 0:
             target_speed = float(np.clip(
-                speed + rng.uniform(-config.speed_target_span / 2, config.speed_target_span / 2),
+                speed + rng.uniform(-speed_span / 2, speed_span / 2),
                 0.5, 20.0,
             ))
         speed_targets[index] = target_speed
@@ -133,6 +135,12 @@ def shared_probe(config, speed, rng, steps=None):
         )
         controls[index] = [steering_speed, acceleration]
         state = simulator.step(state, controls[index])
+        outside = (not np.isfinite(state).all() or abs(state[6]) > config.max_abs_slip
+                   or abs(state[5]) > config.max_abs_yaw_rate)
+        if outside and allow_exit:
+            steps = index + 1
+            controls, speed_targets, steer_targets = controls[:steps], speed_targets[:steps], steer_targets[:steps]
+            break
         if not np.isfinite(state).all():
             raise ValueError(f"nonfinite nominal probe at {speed:g} m/s, step {index}")
         if abs(state[6]) > config.max_abs_slip or abs(state[5]) > config.max_abs_yaw_rate:
@@ -147,11 +155,13 @@ def shared_probe(config, speed, rng, steps=None):
     }
 
 
-def _rollout(simulator, probe, config):
+def _rollout(simulator, probe, config, schedule=None):
     states = [probe["initial_state"].copy()]
     valid = []
     reason = "step_limit"
-    for control in probe["controls"]:
+    for index, control in enumerate(probe["controls"]):
+        if schedule is not None:
+            simulator = schedule[index]
         state = simulator.step(states[-1], control)
         states.append(state)
         supported = (
@@ -165,6 +175,73 @@ def _rollout(simulator, probe, config):
             reason = "nonfinite" if not np.isfinite(state).all() else "envelope_limit"
             break
     return np.asarray(states), np.asarray(valid, dtype=bool), reason
+
+
+def _save_sensors(root, manifest, filename, simulator, states, controls, config, rng, vehicle=None):
+    from dyna_dist.data.sensors import SENSOR_FIELDS, sample_sensor_parameters, simulate_sensors
+
+    parameters = sample_sensor_parameters(rng, config.sensor_ranges)
+    vehicle = simulator.params if vehicle is None else vehicle
+    readings = simulate_sensors(states, controls, simulator.rhs, vehicle, config.timestep, rng, parameters)
+    sensor_file = "sensors/" + filename.split("/", 1)[1]
+    destination = root / sensor_file
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    names = sorted(parameters)
+    np.savez_compressed(
+        destination,
+        readings=readings,
+        fields=np.asarray(SENSOR_FIELDS),
+        parameter_names=np.asarray(names),
+        parameter_values=np.asarray([parameters[name] for name in names]),
+    )
+    manifest.setdefault("sensor_checksums", {})[sensor_file] = hashlib.sha256(destination.read_bytes()).hexdigest()
+    return sensor_file
+
+
+def _instance_simulator(config, values):
+    mu, front, rear, mass = map(float, values)
+    parameters = vehicle_parameters(config.profile, mu, mass, "fixed")
+    parameters["C_Sf"] *= front
+    parameters["C_Sr"] *= rear
+    return GymST(parameters, config.timestep, config.integrator_timestep), parameters
+
+
+def _change_episode(config, rng):
+    bounds = np.array([config.friction, config.front_cornering_scale,
+                       config.rear_cornering_scale, config.mass_ratio], dtype=float)
+    base = bounds[:, 0] + rng.random(4) * (bounds[:, 1] - bounds[:, 0])
+    friction_range = config.friction if config.change_friction is None else config.change_friction
+    mass_range = config.mass_ratio if config.change_mass_ratio is None else config.change_mass_ratio
+    kind = str(rng.choice(config.change_kinds))
+    steps = config.change_steps
+    start = int(rng.integers(steps // 4, 3 * steps // 4))
+    changed = base.copy()
+    if kind == "patch":
+        changed[0] = max(0.25, base[0] * rng.uniform(0.35, 0.65))
+        end = min(steps, start + int(rng.integers(20, 51)))
+    else:
+        end = steps
+        what = rng.choice(["friction", "mass", "both"])
+        if what in ("friction", "both"):
+            for _ in range(100):
+                changed[0] = rng.uniform(*friction_range)
+                if abs(changed[0] - base[0]) >= 0.2:
+                    break
+        if what in ("mass", "both"):
+            for _ in range(100):
+                changed[3] = rng.uniform(*mass_range)
+                if abs(changed[3] - base[3]) >= 0.15:
+                    break
+    conditions = np.repeat(base[None], steps, axis=0)
+    conditions[start:end] = changed
+    speed = float(rng.choice([s for s in config.speeds if s <= 15.0] or list(config.speeds)))
+    return kind, start, end, conditions, speed
+
+
+def _slip_coverage(paths):
+    slips = np.concatenate([np.abs(states[:, 6]) for states in paths.values()])
+    return {f"abs_slip_over_{limit}": float(np.mean(slips > limit)) for limit in (0.1, 0.2, 0.3, 0.5)}
+
 
 
 def _plot_results(root, config, members, probes, paths):
@@ -272,9 +349,11 @@ def _plot_results(root, config, members, probes, paths):
 def collect_vehicle(config, emit=print):
     config.validate()
     config = replace(config, seed=resolve_seed(config.seed))
-    parameter_seed, probe_seed = np.random.SeedSequence(config.seed).spawn(2)
+    parameter_seed, probe_seed, sensor_seed, change_seed = np.random.SeedSequence(config.seed).spawn(4)
     parameter_rng = np.random.default_rng(parameter_seed)
     probe_rng = np.random.default_rng(probe_seed)
+    sensor_rng = np.random.default_rng(sensor_seed)
+    change_rng = np.random.default_rng(change_seed)
     instance_specs = parameter_instances(config, parameter_rng)
     per_speed = (
         None if config.transitions_per_instance is None
@@ -288,6 +367,12 @@ def collect_vehicle(config, emit=print):
         )
         probes[f"speed-{speed:g}-signal-{signal}"] = shared_probe(
             config, speed, probe_rng, steps=steps
+        )
+    excitation_speeds = [speed for speed in config.speeds if speed >= config.excitation_min_speed]
+    for speed, signal in product(excitation_speeds, range(config.excitation_signals_per_speed)):
+        probes[f"excite-{speed:g}-signal-{signal}"] = shared_probe(
+            config, speed, probe_rng, lateral_accel=config.excitation_lateral_accel,
+            speed_span=config.excitation_speed_span, allow_exit=True,
         )
     root = new_directory(config.output)
     write_config(config, root / "config.yaml")
@@ -308,10 +393,7 @@ def collect_vehicle(config, emit=print):
     incomplete = []
     for index, (values, split, anchor) in enumerate(instance_specs):
         mu, front, rear, mass = map(float, values)
-        parameters = vehicle_parameters(config.profile, mu, mass, "fixed")
-        parameters["C_Sf"] *= front
-        parameters["C_Sr"] *= rear
-        simulator = GymST(parameters, config.timestep, config.integrator_timestep)
+        simulator, parameters = _instance_simulator(config, values)
         manifest["source_fingerprint"] = simulator.source_fingerprint
         member = {
             "instance_id": f"instance-{index:05d}",
@@ -347,6 +429,10 @@ def collect_vehicle(config, emit=print):
                 destination.read_bytes()
             ).hexdigest()
             member["files"].append(filename)
+            if config.sensors:
+                member.setdefault("sensor_files", []).append(
+                    _save_sensors(root, manifest, filename, simulator, states,
+                                  probe["controls"][:count], config, sensor_rng))
             paths[(member["instance_id"], probe_id)] = states
             total += int(valid.sum())
             if reason != "step_limit":
@@ -356,6 +442,62 @@ def collect_vehicle(config, emit=print):
         emit(f"[vehicle] {member['instance_id']} | {split} | μ={mu:.3f} | "
              f"Csf×{front:.3f} | Csr×{rear:.3f} | m×{mass:.3f}")
 
+    change_paths = {}
+    if config.change_episodes:
+        manifest["change_episodes"] = []
+        order = change_rng.permutation(config.change_episodes)
+        held_out = max(1, round(0.15 * config.change_episodes))
+        splits = np.full(config.change_episodes, "train", dtype=object)
+        splits[order[:held_out]] = "validation"
+        splits[order[held_out:2 * held_out]] = "test"
+    for episode in range(config.change_episodes):
+        kind, start, end, conditions, speed = _change_episode(config, change_rng)
+        simulators = {}
+        schedule = []
+        for row in conditions:
+            key = tuple(np.round(row, 12))
+            if key not in simulators:
+                simulators[key] = _instance_simulator(config, row)[0]
+            schedule.append(simulators[key])
+        probe = shared_probe(config, speed, change_rng, steps=config.change_steps)
+        states, valid, reason = _rollout(schedule[0], probe, config, schedule)
+        count = len(valid)
+        filename = f"changes/episode-{episode:05d}.npz"
+        destination = root / filename
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(
+            destination,
+            states=states,
+            controls=probe["controls"][:count],
+            commanded_controls=probe["controls"][:count],
+            actuator_noise=np.zeros((count, 2)),
+            measured_states=states,
+            valid=valid,
+            times=np.arange(count + 1) * config.timestep,
+            termination=np.asarray(reason),
+            target_speed=probe["target_speed"][:count],
+            target_steering=probe["target_steering"][:count],
+            conditions=conditions[:count],
+            condition_fields=np.asarray(KNOBS),
+        )
+        manifest["shard_checksums"][filename] = hashlib.sha256(destination.read_bytes()).hexdigest()
+        record = {
+            "episode_id": f"episode-{episode:05d}", "split": str(splits[episode]), "kind": kind,
+            "change_step": start, "end_step": end, "speed": speed, "steps": count,
+            "termination": reason, "before": [float(x) for x in conditions[0]],
+            "after": [float(x) for x in conditions[min(start, len(conditions) - 1)]],
+            "files": [filename],
+        }
+        if config.sensors:
+            vehicle = np.asarray([sim.params for sim in schedule[:count]])
+            record["sensor_files"] = [_save_sensors(root, manifest, filename, schedule[0], states,
+                                                    probe["controls"][:count], config, sensor_rng, vehicle)]
+        manifest["change_episodes"].append(record)
+        change_paths[record["episode_id"]] = states
+    if config.change_episodes:
+        write_json(root / "manifest.json", manifest)
+        emit(f"[vehicle] {config.change_episodes} change episodes")
+
     _plot_results(root, config, manifest["instances"], probes, paths)
     summary = {
         "instances": len(manifest["instances"]),
@@ -363,6 +505,8 @@ def collect_vehicle(config, emit=print):
         "valid_transitions": total,
         "incomplete_trajectories": incomplete,
         "max_recorded_speed_mps": max(float(s[:, 3].max()) for s in paths.values()),
+        "slip_coverage": _slip_coverage(paths),
+        "change_episodes": len(change_paths),
         "endpoint_spread_m": {},
         "anchor_endpoint_distance_m": {},
     }

@@ -1,0 +1,7 @@
+# Fast-start diagnosis: baseline known-model fast start, but the safe set keeps every lap
+# (classic LMPC) instead of only the newest 4, to test the safe-set ratchet.
+extends: ../f1tenth-ros-known-ppwarm.yaml
+output:
+  exp_name: diag-known-pp06-alllaps
+planner:
+  safe_set_min_states: 1000000

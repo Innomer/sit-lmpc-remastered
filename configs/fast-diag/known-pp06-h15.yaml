@@ -1,0 +1,6 @@
+# Fast-start diagnosis: known model, baseline warm-up (speed_scale 0.6), horizon 15 (1.5 s) instead of 10.
+extends: ../f1tenth-ros-known-ppwarm.yaml
+output:
+  exp_name: diag-known-pp06-h15
+planner:
+  horizon: 15

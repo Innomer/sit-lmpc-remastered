@@ -54,6 +54,7 @@ def build_model(config, dataset, seed, view="true", max_count=0, balance_stages=
     )
     model = PopulationModel(parameters, dummy, baseline, config)
     inputs, targets = [], []
+    outside, total = 0, 0
     for member in dataset.members("train"):
         transitions = dataset.transitions(
             member, view, max_count=max_count, balance_stages=balance_stages, seed=seed
@@ -62,26 +63,32 @@ def build_model(config, dataset, seed, view="true", max_count=0, balance_stages=
             jnp.asarray(x, dtype=dtype)
             for x in (transitions.states, transitions.controls, transitions.next_states)
         )
-        inputs.append(np.asarray(features(states, controls, config.domain)))
+        member_inputs = np.asarray(features(states, controls, config.domain))
         baseline_delta = np.asarray(baseline_increments(model, states, controls))
-        if config.mode == "residual" and (
-            not np.isfinite(baseline_delta).all()
-            or np.any(
-                np.abs(baseline_delta[:, 5] + np.asarray(states)[:, 5])
-                > dataset.manifest["config"]["max_abs_yaw_rate"]
+        member_targets = np.asarray(increments(states, next_states, config.domain)) - baseline_delta
+        if config.mode == "residual":
+            inside = (
+                np.isfinite(baseline_delta).all(axis=1)
+                & (np.abs(baseline_delta[:, 5] + np.asarray(states)[:, 5])
+                   <= dataset.manifest["config"]["max_abs_yaw_rate"])
+                & (np.abs(baseline_delta[:, 6] + np.asarray(states)[:, 6])
+                   <= dataset.manifest["config"]["max_abs_slip"])
             )
-            or np.any(
-                np.abs(baseline_delta[:, 6] + np.asarray(states)[:, 6])
-                > dataset.manifest["config"]["max_abs_slip"]
-            )
-        ):
-            raise ValueError(
-                "nominal residual baseline leaves the collection envelope; "
-                "check low-speed excitation or declare a finer baseline integration step"
-            )
-        targets.append(np.asarray(increments(states, next_states, config.domain)) - baseline_delta)
+            outside += int((~inside).sum())
+            member_inputs, member_targets = member_inputs[inside], member_targets[inside]
+        total += len(baseline_delta)
+        inputs.append(member_inputs)
+        targets.append(member_targets)
     if not inputs:
         raise ValueError("dataset has no training instances")
+    if outside > 0.01 * total:
+        raise ValueError(
+            f"nominal residual baseline leaves the collection envelope for {outside} of {total} "
+            "transitions; check low-speed excitation or declare a finer baseline integration step"
+        )
+    if outside:
+        print(f"[residual] {outside} of {total} transitions leave the nominal envelope; "
+              "excluded from the normalizer fit")
     normalizer = Normalizer.fit(
         np.concatenate(inputs), np.concatenate(targets), dtype, config.domain
     )

@@ -1,0 +1,7 @@
+# Fast-start diagnosis: known model, pure pursuit warm-up at speed_scale 0.5 (vs 0.6 in the baseline).
+extends: ../f1tenth-ros-known-ppwarm.yaml
+output:
+  exp_name: diag-known-pp05
+planner:
+  warmup:
+    speed_scale: 0.5
