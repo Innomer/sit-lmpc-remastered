@@ -84,6 +84,9 @@ stack stays on Humble), or install Jazzy. LMPPI needs the GPU: on the laptop CPU
 
 1. `git clone -b irl <repo> && cd sit-lmpc-remastered`, source ROS and the car workspace, then `bash scripts/jetson_setup.sh`.
    It reports the JAX device and a matmul time, and validates the car configs.
+   Our car is a Jetson Orin Nano Super 8 GB on JetPack 7 (L4T R39, Ubuntu 24.04, ROS Jazzy, Python 3.12, CUDA 13.2).
+   CPU and GPU share its 7.4 GB, and JAX takes 75% of GPU memory at start by default. Before every run do
+   `export XLA_PYTHON_CLIENT_MEM_FRACTION=0.35` so the ROS stack and particle filter keep enough memory.
 2. Bring up the car stack (VESC, ackermann mux, joystick) and the particle filter on the Levine map.
 3. `python scripts/car_check.py --config configs/car-levine-known.yaml --seconds 30`, while you push or drive the car
    through left and right turns. It never sends drive commands. It checks topic rates and PF gaps, suggests

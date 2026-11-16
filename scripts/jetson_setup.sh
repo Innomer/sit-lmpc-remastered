@@ -33,8 +33,10 @@ esac
 cuda_major=""
 if [ -f /usr/local/cuda/version.json ]; then
   cuda_major=$(python3 -c 'import json; print(json.load(open("/usr/local/cuda/version.json"))["cuda"]["version"].split(".")[0])')
-elif command -v nvcc >/dev/null; then
-  cuda_major=$(nvcc --version | sed -n 's/.*release \([0-9]*\)\..*/\1/p')
+elif [ -x /usr/local/cuda/bin/nvcc ]; then
+  cuda_major=$(/usr/local/cuda/bin/nvcc --version | sed -n 's/.*release \([0-9]*\)\..*/\1/p')
+elif command -v nvidia-smi >/dev/null; then
+  cuda_major=$(nvidia-smi | sed -n 's/.*CUDA Version: *\([0-9]*\)\..*/\1/p' | head -1)
 fi
 echo "CUDA major version: ${cuda_major:-unknown}"
 
