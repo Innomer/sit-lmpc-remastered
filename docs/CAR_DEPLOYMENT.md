@@ -39,6 +39,25 @@ time, overruns, watchdog stops), `car_log.npz` (per command: PF pose, speed, IMU
 commands, closest LiDAR) and `bag/` (rosbag of `simulation.car.bag_topics`, including the full VESC IMU, for the
 offline slip estimator).
 
+## What happens during a run
+
+1. Start-up: load the config, track and model (the BNN from `models/`), compile the planners and the hull
+   variants, wait for all car topics, then wait for go with the car behind the start line.
+2. Go: the car follows the centerline over the start line at `initial_speed`.
+3. Warm-up laps (5 = `safe_set_size` + 1): pure pursuit on the raceline, at most `planner.warmup.max_speed`.
+   Each finished lap is stored. After each lap the value function (a normalizing flow over lap states) is
+   retrained in the background.
+4. LMPPI laps: 10 Hz sampling MPC. It samples 1024 control sequences over a 1 s horizon through the model (known ST,
+   or BNN samples), scores them with the value function, keeps them inside the safe set (convex hull of the
+   newest 4 laps) and within the track band, and applies the first action. Each new lap replaces the oldest
+   one in the safe set, so laps should get faster.
+5. BNN runs only: after each LMPPI lap, the BNN posterior is updated with that lap's data (the network is
+   trained offline on the laptop; on the car only the posterior changes). Warm-up laps are not used for this.
+6. Failure (off the band, obstacle): the car stops. The known model ends the run there. The BNN configs wait for go
+   and retry from the start line.
+7. End: after `max_laps` (15) or Ctrl-C the car stops and the run directory holds laps, events, timing, `car_log.npz`
+   and the bag. A checkpoint after every lap allows `--resume`.
+
 ## Track
 
 The configs use `tracks/levine_self_again/`. It was built from `levine_self_again_raceline.csv` alone, because the matching

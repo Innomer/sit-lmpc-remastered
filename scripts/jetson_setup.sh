@@ -44,7 +44,7 @@ if [ ! -d .venv ]; then
 fi
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -e vendor/f1tenth_gym -e vendor/dyna-dist -e .
+python -m pip install -e vendor/dyna-dist -e .
 case "$cuda_major" in
   13) python -m pip install "jax[cuda13]==0.11.2" ;;
   12) python -m pip install "jax[cuda12]==0.11.2" ;;

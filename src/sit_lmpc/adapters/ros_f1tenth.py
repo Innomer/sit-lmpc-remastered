@@ -9,13 +9,17 @@ import numpy as np
 from sit_lmpc.dynamics.st import PARAMETER_FIELDS
 
 
-def f1tenth_vehicle_parameters(friction, mass_ratio=1.0):
-    from f1tenth_gym.envs.dynamic_models import get_f1tenth_vehicle_parameters
+F1TENTH_VEHICLE = {
+    "mu": 1.0489, "C_Sf": 4.718, "C_Sr": 5.4562, "lf": 0.15875, "lr": 0.17145, "h": 0.074,
+    "m": 3.74, "I": 0.04712, "s_min": -0.4189, "s_max": 0.4189, "sv_min": -3.2, "sv_max": 3.2,
+    "v_switch": 7.319, "a_max": 9.51, "v_min": -5.0, "v_max": 20.0, "width": 0.31, "length": 0.58,
+}
 
-    source = get_f1tenth_vehicle_parameters()
+
+def f1tenth_vehicle_parameters(friction, mass_ratio=1.0):
     params = {}
     for name in PARAMETER_FIELDS:
-        params[name] = float(getattr(source, name))
+        params[name] = float(F1TENTH_VEHICLE[name])
     params["mu"] = friction
     params["m"] *= mass_ratio
     return params
