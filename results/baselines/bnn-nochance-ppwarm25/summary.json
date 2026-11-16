@@ -1,0 +1,320 @@
+{
+  "status": "speed_too_low",
+  "laps": 12,
+  "successful_laps": 12,
+  "trials": 12,
+  "history_laps": 0,
+  "attempts": 13,
+  "failed_attempts": 0,
+  "incomplete_attempts": 1,
+  "applied_steps": 4745,
+  "learned_steps": 2839,
+  "training_generations": 11,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 5,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": {
+    "training_transitions": 1567,
+    "likelihood_power": 1.0,
+    "last_update": {
+      "generation": 5,
+      "status": "ready",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "d33f1cadc8a4eb8260edd3b6f374498d7aec3f7d3f91435788ce54d9b894e6d7",
+      "attempt_ids": [
+        "12"
+      ],
+      "new_training_transitions": 225,
+      "training_transitions": 1567,
+      "calibration_transitions": 568,
+      "held_out_transitions": 82,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.035046787175816e-06,
+        9.315196621173527e-06,
+        9.888174645311665e-06,
+        9.111273357120808e-06,
+        1.0120113074663095e-05,
+        6.181572825880721e-05,
+        0.0005309285479597747
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.1655119323533385,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 64,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.023179493844509125,
+            "path_coverage_95": 0.0,
+            "path_radius_95": 0.003300668206065893,
+            "energy_score": 0.007642039097845554,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.02584659494459629,
+            "path_coverage_95": 0.390625,
+            "path_radius_95": 0.00887141190469265,
+            "energy_score": 0.007444357965141535,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.030506666749715805,
+            "path_coverage_95": 0.75,
+            "path_radius_95": 0.020263995975255966,
+            "energy_score": 0.007342654280364513,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0365031473338604,
+            "path_coverage_95": 0.953125,
+            "path_radius_95": 0.04366428405046463,
+            "energy_score": 0.008014305494725704,
+            "eligible": true
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.04335824400186539,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.08280676603317261,
+            "energy_score": 0.010209296829998493,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.07447673380374908,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.1563909351825714,
+            "energy_score": 0.016660481691360474,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.18491722643375397,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.3398752212524414,
+            "energy_score": 0.03552326560020447,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.036671459674835205,
+          "path_coverage_95": 0.953125,
+          "path_radius_95": 0.04501566290855408,
+          "energy_score": 0.008080636151134968
+        },
+        "working_variance": [
+          9.035046787175816e-06,
+          9.315196621173527e-06,
+          9.888174645311665e-06,
+          9.111273357120808e-06,
+          1.0120113074663095e-05,
+          6.181572825880721e-05,
+          0.0005309285479597747
+        ],
+        "status": "ready",
+        "selected": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.0365031473338604,
+          "path_coverage_95": 0.953125,
+          "path_radius_95": 0.04366428405046463,
+          "energy_score": 0.008014305494725704
+        },
+        "selected_power": 0.001
+      },
+      "published": true,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 391,
+        "one_step_xy_rmse": 0.0014754523600180919,
+        "component_rmse": [
+          0.0013320731266433382,
+          0.0006344610720584818,
+          0.00015475812814948745,
+          0.0007753339274733121,
+          0.0007658276384625831,
+          0.014251160412890658,
+          0.0012892335346834584
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 82,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -3.8006914863130845,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0017506767888684268,
+            "path_coverage_95": 0.875,
+            "path_radius_95": 0.002101890742778778,
+            "energy_score": 0.0008881963935551771
+          },
+          "5": {
+            "windows": 43,
+            "endpoint_xy_rmse": 0.006796999409744839,
+            "path_coverage_95": 0.8837209302325582,
+            "path_radius_95": 0.012077669613063335,
+            "energy_score": 0.002891760416561128
+          },
+          "10": {
+            "windows": 15,
+            "endpoint_xy_rmse": 0.034371024504944676,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.047651369124650955,
+            "energy_score": 0.00725161400481966
+          },
+          "15": {
+            "windows": 4,
+            "endpoint_xy_rmse": 0.026193421587461883,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.09599852561950684,
+            "energy_score": 0.009930794153254959
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 82,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -3.809794516387211,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.001707331381854725,
+            "path_coverage_95": 0.890625,
+            "path_radius_95": 0.0020677419379353523,
+            "energy_score": 0.0008638726216316831
+          },
+          "5": {
+            "windows": 43,
+            "endpoint_xy_rmse": 0.006641715801691972,
+            "path_coverage_95": 0.8837209302325582,
+            "path_radius_95": 0.011673946864902973,
+            "energy_score": 0.002818539521636043
+          },
+          "10": {
+            "windows": 15,
+            "endpoint_xy_rmse": 0.0334271082366284,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.046007513999938965,
+            "energy_score": 0.007027082030358397
+          },
+          "15": {
+            "windows": 4,
+            "endpoint_xy_rmse": 0.02547414865177369,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.09298566728830338,
+            "energy_score": 0.009626135935238742
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.213595062999957
+    }
+  },
+  "predictor_friction": null,
+  "dynamics_predictor": {
+    "kind": "gaussian_bnn",
+    "particles": 64,
+    "latent_dimension": 96,
+    "model_fingerprint": "d33f1cadc8a4eb8260edd3b6f374498d7aec3f7d3f91435788ce54d9b894e6d7",
+    "population_generation": 20000,
+    "target_mode": "dynamics",
+    "adaptation": "gaussian_posterior",
+    "belief_generation": 5,
+    "likelihood_power": 0.0010000000474974513,
+    "posterior_method": "tempered",
+    "inference": "calibrated_working_likelihood"
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.9,
+    "lambda_count": 10,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 363.51180400700014,
+  "partial_lap": {
+    "file": "partial_lap.npz",
+    "lap": 13,
+    "completed": false,
+    "termination_reason": "speed_too_low",
+    "steps": 124,
+    "duration": 12.399999999999972,
+    "lap_time": null,
+    "mean_speed": 8.717118263244629,
+    "safe_set_max": 0.0,
+    "safe_set_mean": 0.0,
+    "boundary_max": 0.0,
+    "boundary_mean": 0.0,
+    "actual_boundary_max": 0.0,
+    "actual_boundary_mean": 0.0,
+    "out_of_bounds_steps": 0,
+    "max_abs_lateral_offset": 0.4906218647956848,
+    "nonfinite_lateral_steps": 0,
+    "attempt_id": 13,
+    "outcome": "incomplete",
+    "lambda_summary": {
+      "steps": 124,
+      "terms": {
+        "hull": {
+          "mean": 1.4516129032258065,
+          "max": 7.5,
+          "steps": 124
+        },
+        "boundary": {
+          "mean": 0.14112903225806453,
+          "max": 1.25,
+          "steps": 124
+        }
+      }
+    }
+  },
+  "device_memory": {
+    "bytes_in_use": 2167296,
+    "peak_bytes_in_use": 809284608,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 6167724032
+  }
+}
