@@ -17,7 +17,7 @@ def quaternion_yaw(q):
 
 
 class RosCar:
-    restore_tolerance = math.inf
+    restore_tolerance = 1e9
 
     def __init__(self, simulation, track, parameters, half_width, emit=None, directory=None):
         import rclpy

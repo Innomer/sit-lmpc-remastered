@@ -16,7 +16,7 @@ output:
 
 
 simulation:
-  backend: gym  # [gym, ros, car] gym steps the bundled standalone F1TENTH Gym in-process; ros drives f1tenth_gym_ros through odometry and Ackermann drive topics (see configs/f1tenth-ros-known.yaml).
+  backend: gym  # [gym, ros, car, replay] gym steps the bundled standalone F1TENTH Gym in-process; ros drives f1tenth_gym_ros through odometry and Ackermann drive topics (see configs/f1tenth-ros-known.yaml).
   ros:  # Only read when backend is ros. Topics without a leading slash are relative to namespace.
     namespace: ego_racecar  # The bridge's ego_namespace.
     odom_topic: odom  # nav_msgs/Odometry with base_link pose and body-frame twist; converted to the ST CoG state.
@@ -39,7 +39,8 @@ simulation:
     drive_topic: /drive  # ackermann_msgs/AckermannDriveStamped (speed, steering_angle) into the car's mux.
     scan_topic: /scan  # sensor_msgs/LaserScan for the proximity stop; "" disables it.
     joy_topic: /joy  # sensor_msgs/Joy; a press of go_button starts or restarts a lap. "" disables it.
-    go_button: 0  # Joystick button index for go.
+    go_button: 0  # Joystick button index for go; must not be a deadman button.
+    deadman_buttons: [6, 8]  # The car stack's teleop (6) and autonomous (8) deadman buttons (f1tenth_stack joy_teleop.yaml).
     go_topic: /sit_lmpc/go  # std_msgs/Empty alternative to the joystick go button.
     max_speed: 3.0  # Cap on every speed command in m/s.
     speed_horizon: 0.2  # Speed target = measured speed + planned acceleration * this many seconds.
@@ -54,6 +55,7 @@ simulation:
     launch_timeout: 10.0  # Seconds allowed to reach the start line after go.
     record_bag: true  # Record bag_topics with ros2 bag into the run directory.
     bag_topics: [/pf/pose/odom, /odom, /sensors/imu/raw, /sensors/imu, /sensors/core, /drive, /joy, /tf, /tf_static]  # Topics recorded per run.
+  replay_path: null  # Only read when backend is replay: a recorded attempt .npz (cartesian, frenet) replayed as the plant to time the planner without a simulator.
   steering_limit: null  # Front-wheel steering limit in rad for both the controlled vehicle and the planner model; null keeps the vehicle default (F1TENTH sim 0.4189). Set 0.34 for the real car.
   model: dynamic_ST  # [dynamic_ST] Only supported simulator model. Actual F1TENTH simulation model; planner.dynamics independently selects the predictor. [resume]
   map: custom1  # [custom1, Spielberg, or an existing local map prefix without _map] yaml. Custom maps must provide the map/centerline/raceline resources used by Track. [resume]

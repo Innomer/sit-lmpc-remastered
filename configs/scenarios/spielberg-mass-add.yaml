@@ -1,0 +1,5 @@
+# 25% added mass (yaw inertia unchanged, as in the training data) from lap 7 on.
+map: Spielberg
+events:
+  - lap: 7
+    condition: {mass_ratio: 1.25}

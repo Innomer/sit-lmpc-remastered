@@ -110,6 +110,17 @@ class VehicleCollectionConfig:
     controller_noise_scale: float = 0.25
     max_abs_slip: float = 0.8
     max_abs_yaw_rate: float = 4.0
+    excitation_signals_per_speed: int = 0
+    excitation_lateral_accel: float = 40.0
+    excitation_speed_span: float = 8.0
+    excitation_min_speed: float = 6.0
+    change_episodes: int = 0
+    change_steps: int = 200
+    change_kinds: tuple[str, ...] = ("step", "patch")
+    change_friction: tuple[float, float] | None = None
+    change_mass_ratio: tuple[float, float] | None = None
+    sensors: bool = False
+    sensor_ranges: dict | None = None
     seed: int | None = 20261016
     output: str = "runs/vehicle_st/paired-study"
 
@@ -145,6 +156,29 @@ class VehicleCollectionConfig:
                 raise ValueError(f"{name} must be finite and nonnegative")
         if self.lateral_accel_target == 0 or self.max_abs_slip == 0 or self.max_abs_yaw_rate == 0:
             raise ValueError("lateral acceleration and trajectory guardrails must be positive")
+        for name in ("excitation_signals_per_speed", "change_episodes"):
+            if type(getattr(self, name)) is not int or getattr(self, name) < 0:
+                raise ValueError(f"{name} must be a nonnegative integer")
+        if type(self.change_steps) is not int or self.change_steps < 2:
+            raise ValueError("change_steps must be an integer of at least 2")
+        for name in ("excitation_lateral_accel", "excitation_speed_span", "excitation_min_speed"):
+            if not math.isfinite(getattr(self, name)) or getattr(self, name) <= 0:
+                raise ValueError(f"{name} must be positive")
+        if not self.change_kinds or set(self.change_kinds) - {"step", "patch"}:
+            raise ValueError("change_kinds must be a nonempty subset of step and patch")
+        for name in ("change_friction", "change_mass_ratio"):
+            if getattr(self, name) is not None:
+                _range(name, getattr(self, name), positive=True)
+        if type(self.sensors) is not bool:
+            raise ValueError("sensors must be true or false")
+        if self.sensor_ranges is not None:
+            from dyna_dist.data.sensors import DEFAULT_SENSOR_RANGES
+
+            if set(self.sensor_ranges) != set(DEFAULT_SENSOR_RANGES):
+                raise ValueError(f"sensor_ranges must name exactly {sorted(DEFAULT_SENSOR_RANGES)}")
+            for name, bounds in self.sensor_ranges.items():
+                if len(bounds) != 2 or not bounds[0] <= bounds[1]:
+                    raise ValueError(f"sensor_ranges.{name} must be [low, high]")
         _seed(self.seed)
         return self
 

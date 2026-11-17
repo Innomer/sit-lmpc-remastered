@@ -807,7 +807,11 @@ def _run(config, tracking_only, keyboard_cleanup):
     try:
         if not tracking_only:
             learned.precompile_hulls(events.emit)
-        if simulation.backend == "car":
+        if simulation.backend == "replay":
+            from sit_lmpc.adapters.replay import ReplaySimulator
+
+            simulator = ReplaySimulator(simulation, track, events.emit, directory)
+        elif simulation.backend == "car":
             from sit_lmpc.adapters.ros_car import RosCar
 
             simulator = RosCar(simulation, track, simulator_params, planner.half_width, events.emit, directory)

@@ -34,6 +34,7 @@ class CarConfig:
     scan_topic: str = "/scan"
     joy_topic: str = "/joy"
     go_button: int = 0
+    deadman_buttons: tuple[int, ...] = (6, 8)
     go_topic: str = "/sit_lmpc/go"
     max_speed: float = 3.0
     speed_horizon: float = 0.2
@@ -56,6 +57,7 @@ class SimulationConfig:
     backend: str = "gym"
     ros: RosConfig = field(default_factory=RosConfig)
     car: CarConfig = field(default_factory=CarConfig)
+    replay_path: str | None = None
     steering_limit: float | None = None
     model: str = "dynamic_ST"
     map: str = "custom1"
@@ -341,11 +343,13 @@ class ExperimentConfig:
                     raise ValueError(f"planner.warmup.{name} must be nonnegative")
             if w.lookahead_min > w.lookahead_max:
                 raise ValueError("planner.warmup.lookahead_min must not exceed lookahead_max")
-            if s.backend == "gym" or (s.backend == "ros" and (s.ros.stepping != "lockstep" or s.ros.bridge_substeps != 1)):
+            if s.backend in ("gym", "replay") or (s.backend == "ros" and (s.ros.stepping != "lockstep" or s.ros.bridge_substeps != 1)):
                 raise ValueError("planner.warmup pure_pursuit runs at the bridge rate: it needs backend car, or backend ros "
                                  "with lockstep stepping and simulation.ros.bridge_substeps 1")
-        if s.backend not in ("gym", "ros", "car"):
-            raise ValueError("simulation.backend must be gym, ros or car")
+        if s.backend not in ("gym", "ros", "car", "replay"):
+            raise ValueError("simulation.backend must be gym, ros, car or replay")
+        if s.backend == "replay" and (not isinstance(s.replay_path, str) or not Path(s.replay_path).expanduser().is_file()):
+            raise ValueError("simulation.backend replay needs simulation.replay_path, a recorded attempt .npz")
         if s.backend == "car":
             if s.ros.stepping != "realtime" or s.ros.drive_mode != "speed_steering_angle" or s.ros.bridge_substeps != 1:
                 raise ValueError("simulation.backend car needs simulation.ros stepping realtime, drive_mode "
@@ -358,6 +362,9 @@ class ExperimentConfig:
                     raise ValueError(f"simulation.car.{name} must be positive")
             if isinstance(c.stop_distance, bool) or not isinstance(c.stop_distance, (int, float)) or c.stop_distance < 0:
                 raise ValueError("simulation.car.stop_distance must be 0 (off) or positive")
+            if type(c.go_button) is not int or c.go_button < 0 or c.go_button in c.deadman_buttons:
+                raise ValueError(f"simulation.car.go_button must be a joystick button index other than the mux "
+                                 f"deadman buttons {list(c.deadman_buttons)}")
             if s.initial_speed > c.max_speed:
                 raise ValueError("simulation.initial_speed must not exceed simulation.car.max_speed")
         if s.ros.drive_mode not in ("accel_steering_speed", "speed_steering_angle"):

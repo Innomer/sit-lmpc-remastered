@@ -1,0 +1,8 @@
+# Fast baseline with the TAs' BNN retrained on the shared world dataset (models/vehicle-bnn-f1tenth-world-l96),
+# with chance constraints, run-4 fixes. Run with --max-laps 15.
+extends: bnn-chance-pp06-alllaps.yaml
+output:
+  exp_name: fast-bnn-world-chance
+planner:
+  dynamics:
+    checkpoint: models/vehicle-bnn-f1tenth-world-l96

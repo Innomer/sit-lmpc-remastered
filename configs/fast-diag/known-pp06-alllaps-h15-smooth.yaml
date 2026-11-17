@@ -1,0 +1,7 @@
+# Fast-start diagnosis: all laps + horizon 15, plus a 10x action-rate penalty against the planner-induced
+# fishtail (yaw rate oscillating with growing amplitude at ~12 m/s before each spin).
+extends: known-pp06-alllaps-h15.yaml
+output:
+  exp_name: diag-known-pp06-alllaps-h15-smooth
+planner:
+  action_rate_penalty: 0.1

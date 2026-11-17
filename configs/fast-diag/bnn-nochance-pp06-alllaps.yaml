@@ -1,0 +1,9 @@
+# Fast baseline: BNN without chance constraints with the run-4 fixes (all-laps safe set against the ratchet,
+# 1.5 s horizon, 10x action-rate penalty against the planner-induced fishtail).
+extends: ../f1tenth-ros-bnn-nochance-ppwarm.yaml
+output:
+  exp_name: diag-bnn-nochance-pp06-alllaps-h15-smooth
+planner:
+  safe_set_min_states: 1000000
+  horizon: 15
+  action_rate_penalty: 0.1
