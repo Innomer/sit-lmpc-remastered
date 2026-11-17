@@ -2,6 +2,60 @@
 
 Refactored racecar SIT-LMPC with online value learning, a Gaussian BNN dynamics distribution, calibrated Bayesian belief updates, and dynamics-based chance constraints.
 
+## ESE 6150 Team 8 fork: world-model SIT-LMPC at F1TENTH scale
+
+This fork runs SIT-LMPC on the ROS 2 F1TENTH simulator and the real F1TENTH car, and adds our method: a
+physics-grounded world model that adapts to changing conditions (grip, load) **during** a lap.
+
+| Branch | Content |
+|---|---|
+| `ros-sim` | ROS sim backend, baselines, world model, all sim results and videos |
+| `irl` | `ros-sim` + the real-car backend (`docs/CAR_DEPLOYMENT.md`), Jetson setup |
+
+**Our method.** Next state = bicycle model + learned correction b + learned directions B·z, with z (16 numbers)
+describing the car's current conditions. A GRU encoder reads the IMU, wheel speed, particle-filter pose and last
+command every 0.1 s and outputs z (with its uncertainty) and the unmeasured state (steering, speed, yaw rate, slip).
+The planner is the TAs' LMPPI, unchanged. The safe set is condition-aware: each lap is tagged with its grip estimate
+and only laps with similar grip are used. Details: [docs/WORLD_MODEL.md](docs/WORLD_MODEL.md).
+
+| Method | Car model | What adapts while driving |
+|---|---|---|
+| Known model | exact sim physics | safe set, value function (per lap) |
+| TAs' BNN | learned network + z (96), Gaussian belief | + z, after each lap |
+| Ours | bicycle + b + B·z (16) | + z and state every 0.1 s from sensors; grip-aware safe set |
+
+**Status (2026-11-17).**
+
+| Item | Result |
+|---|---|
+| Fast-start sim baselines (Spielberg, 38.0 s warm-up) | known 25/25, best 35.0 s; TAs' BNN 14/15, best 35.7 s; BNN + chance 15/15, 39.4 s |
+| Encoder v3, offline (held-out sim cars) | 1 s position error from sensors 0.53 m vs 0.95 m for the best baseline; slip RMSE 0.020 rad; grip from z R² 0.91 |
+| Ours in the loop, no change | 14/15, best 35.7 s; one spin |
+| Ours in the loop, grip 1.05 → 0.75 after lap 7 | 14/15, best 35.8 s; grip guess 0.75 on the first slippery lap; one spin |
+| Baselines on the grip drop, real-car runs | not yet run |
+
+Results: [results/world-closed-loop](results/world-closed-loop/README.md) (with videos in `results/Spielberg/*.mp4`),
+[results/world-eval-v3](results/world-eval-v3). Full history, including mistakes and the runs they invalidated:
+[docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md). Older, wrong evaluations (`results/world-eval`, `-v1`, `-v2`) are kept
+on purpose.
+
+**Run (sim).** Needs ROS 2 Jazzy, the `f1tenth_gym_ros` bridge with `patches/f1tenth_gym_ros-sit-lmpc.patch`, and a
+trained encoder in `runs/` (not in git).
+
+```bash
+# world-model training and evaluation
+python -m sit_lmpc.world.train --config configs/train-world-encoder-v2.yaml --output runs/world-encoder-v3
+python -m sit_lmpc.world.evaluate --encoder runs/world-encoder-v3 --out results/world-eval-v3
+python -m sit_lmpc.world.readout --encoder runs/world-encoder-v3
+# one mid-session change experiment (bridge + condition scheduler + controller, ROS domain 77)
+bash scripts/run_change_experiment.sh configs/world/world-nochance-condition.yaml \
+  configs/scenarios/spielberg-friction-drop.yaml change-friction-world-condition 15
+# top-down video of a run
+python scripts/render_run_video.py results/Spielberg/change-friction-world-condition --speedup 2
+```
+
+The rest of this README is the upstream (TAs') documentation.
+
 ## Main findings and capabilities
 
 - The known-dynamics preset retains MPPI warm-up, convex-hull safe sets, NF/MLP value learning and the smallest-feasible-lambda selection behavior.
