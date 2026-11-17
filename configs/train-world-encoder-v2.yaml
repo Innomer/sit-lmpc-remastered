@@ -1,0 +1,24 @@
+# World-model stage 2, v2: as train-world-encoder.yaml plus a true-state prediction term that keeps z physical.
+# (runs/residual-world, bicycle + b + B z, z 16-dim) on data/f1tenth-world (instances + change episodes).
+dataset: data/f1tenth-world
+transition: runs/residual-world/best_refit
+output: runs/world-encoder-v2
+seed: 20261116
+steps: 20000
+batch: 64
+window: 40              # steps per training window (4 s)
+burn: 10                # first 1 s of each window only builds the encoder memory; no anchor/prediction loss there
+horizon: 10             # prediction rollouts of 1 s with z held fixed
+start_stride: 5         # rollouts start every 0.5 s from step burn on
+hidden: 128
+walk_std: 0.05          # random-walk step of z per 0.1 s, as a fraction of the population prior std
+anchor_weight: 1.0
+prediction_weight: 1.0
+true_state_prediction_weight: 1.0  # rollouts from the true state with the encoder z, so z must describe the car, not correct state-estimate errors
+observation_weight: 0.1
+kl_weight: 0.01
+kl_warmup: 3000         # KL weight ramps linearly from 0 over these steps, so z is used before it is regularized
+learning_rate: 0.001
+gradient_clip: 5.0
+validation_every: 500
+validation_batches: 8
