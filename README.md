@@ -34,7 +34,11 @@ and only laps with similar grip are used. Details: [docs/WORLD_MODEL.md](docs/WO
 | Ours in the loop, grip 1.05 → 0.75 after lap 7 | 14/15, best 35.8 s; grip guess 0.75 on the first slippery lap; one spin |
 | Baselines on the grip drop, real-car runs | not yet run |
 
-Results: [results/world-closed-loop](results/world-closed-loop/README.md) (with videos in `results/Spielberg/*.mp4`),
+Grip-drop run (whole run sped up; model's grip guess in blue vs true grip in black):
+
+![Grip-drop run](results/world-closed-loop/videos/change-friction-world-condition.gif)
+
+Results: [results/world-closed-loop](results/world-closed-loop/README.md) (both run videos there),
 [results/world-eval-v3](results/world-eval-v3). Full history, including mistakes and the runs they invalidated:
 [docs/PROGRESS_LOG.md](docs/PROGRESS_LOG.md). Older, wrong evaluations (`results/world-eval`, `-v1`, `-v2`) are kept
 on purpose.
