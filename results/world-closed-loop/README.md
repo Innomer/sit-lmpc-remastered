@@ -12,6 +12,19 @@ IMU, wheel speed and PF pose. No chance constraints. Fast-start settings (pure-p
 
 Launched with `bash scripts/run_change_experiment.sh <config> <scenario> <name> 15`.
 
+## Videos
+
+Top-down view, whole run sped up (32× sim time). Full videos at 2× sim speed: [no change](videos/world-nochange.mp4),
+[grip drop](videos/change-friction-world-condition.mp4) (open, then "View raw" to download if the browser does not play it).
+
+**Grip drop** (grip chart: model's guess in blue, true grip in black, drops after lap 7)
+
+![Grip-drop run](videos/change-friction-world-condition.gif)
+
+**No change**
+
+![No-change run](videos/world-nochange.gif)
+
 ## Lap times (s)
 
 | Lap | 1–5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
@@ -42,6 +55,6 @@ The lap average finds the drop on the first slippery lap. Within a lap the estim
 
 `summary.json`, `lap_metrics.json`, `config.yaml`, `control_timing.json`, `encoder_friction.npy` (per step),
 `conditions.jsonl` (scheduler log), `run.log`, the failed attempt's trajectory, and the runner's plots.
-Full trajectories stay in `results/Spielberg/<run>` (not tracked). Videos: `scripts/render_run_video.py`.
+Full trajectories: `results/Spielberg/<run>`. Videos made with `scripts/render_run_video.py`.
 
 Not yet run: baselines on the same scenario (known model, TAs' BNN) and ours without the grip filter.
