@@ -1,0 +1,36 @@
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[vehicle] instance-00000 | train | μ=0.800 | Csf×1.000 | Csr×1.000 | m×1.050
+[vehicle] instance-00001 | train | μ=0.400 | Csf×1.000 | Csr×1.000 | m×1.050
+[vehicle] instance-00002 | train | μ=1.200 | Csf×1.000 | Csr×1.000 | m×1.050
+[vehicle] instance-00003 | train | μ=0.800 | Csf×0.850 | Csr×1.000 | m×1.050
+[vehicle] instance-00004 | train | μ=0.800 | Csf×1.150 | Csr×1.000 | m×1.050
+[vehicle] instance-00005 | train | μ=0.800 | Csf×1.000 | Csr×0.850 | m×1.050
+[vehicle] instance-00006 | train | μ=0.800 | Csf×1.000 | Csr×1.150 | m×1.050
+[vehicle] instance-00007 | train | μ=0.800 | Csf×1.000 | Csr×1.000 | m×0.800
+[vehicle] instance-00008 | train | μ=0.800 | Csf×1.000 | Csr×1.000 | m×1.300
+[vehicle] instance-00009 | train | μ=1.003 | Csf×0.952 | Csr×0.868 | m×1.130
+[vehicle] instance-00010 | validation | μ=1.083 | Csf×0.931 | Csr×0.855 | m×0.978
+[vehicle] instance-00011 | test | μ=0.849 | Csf×0.989 | Csr×1.098 | m×0.825
+[vehicle] instance-00012 | train | μ=0.506 | Csf×0.878 | Csr×1.121 | m×0.914
+[vehicle] instance-00013 | train | μ=1.103 | Csf×0.859 | Csr×0.883 | m×1.051
+[vehicle] instance-00014 | validation | μ=1.062 | Csf×0.891 | Csr×0.918 | m×1.079
+[vehicle] instance-00015 | train | μ=0.479 | Csf×1.014 | Csr×1.049 | m×0.850
+[vehicle] instance-00016 | train | μ=0.818 | Csf×0.908 | Csr×1.055 | m×0.813
+[vehicle] instance-00017 | train | μ=0.705 | Csf×1.066 | Csr×1.127 | m×0.902
+[vehicle] instance-00018 | train | μ=0.929 | Csf×0.915 | Csr×1.024 | m×1.207
+[vehicle] instance-00019 | train | μ=0.947 | Csf×0.872 | Csr×0.932 | m×1.153
+[vehicle] instance-00020 | train | μ=0.970 | Csf×1.038 | Csr×1.066 | m×0.928
+[vehicle] instance-00021 | train | μ=0.584 | Csf×1.116 | Csr×1.083 | m×1.243
+[vehicle] instance-00022 | train | μ=0.895 | Csf×1.150 | Csr×1.105 | m×1.182
+[vehicle] instance-00023 | train | μ=0.796 | Csf×1.097 | Csr×0.890 | m×1.268
+[vehicle] instance-00024 | train | μ=0.663 | Csf×1.037 | Csr×1.009 | m×1.163
+[vehicle] instance-00025 | train | μ=0.459 | Csf×1.082 | Csr×0.984 | m×0.883
+[vehicle] instance-00026 | validation | μ=1.175 | Csf×0.942 | Csr×0.910 | m×0.992
+[vehicle] instance-00027 | test | μ=1.137 | Csf×1.109 | Csr×0.967 | m×1.224
+[vehicle] instance-00028 | train | μ=0.605 | Csf×0.969 | Csr×0.952 | m×1.009
+[vehicle] instance-00029 | train | μ=0.747 | Csf×1.060 | Csr×0.996 | m×0.951
+[vehicle] instance-00030 | test | μ=0.552 | Csf×1.009 | Csr×0.947 | m×1.036
+[vehicle] instance-00031 | validation | μ=0.433 | Csf×1.135 | Csr×1.139 | m×1.297
+[vehicle] instance-00032 | test | μ=0.695 | Csf×0.982 | Csr×1.027 | m×1.111
+[saved] vehicle dataset and plots: data/f1tenth-vehicle-wide

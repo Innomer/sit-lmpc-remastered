@@ -1,0 +1,26 @@
+[
+  {
+    "lap": 1,
+    "completed": false,
+    "termination_reason": "out_of_bounds",
+    "steps": 517,
+    "duration": 51.700000000000465,
+    "lap_time": null,
+    "mean_speed": 3.9422311782836914,
+    "safe_set_max": 0.0,
+    "safe_set_mean": 0.0,
+    "boundary_max": 0.0,
+    "boundary_mean": 0.0,
+    "actual_boundary_max": 0.5166189908981322,
+    "actual_boundary_mean": 0.0009992630384876833,
+    "out_of_bounds_steps": 1,
+    "max_abs_lateral_offset": 1.6166189908981323,
+    "nonfinite_lateral_steps": 0,
+    "attempt_id": 1,
+    "outcome": "failure",
+    "lambda_summary": {
+      "steps": 0,
+      "terms": {}
+    }
+  }
+]

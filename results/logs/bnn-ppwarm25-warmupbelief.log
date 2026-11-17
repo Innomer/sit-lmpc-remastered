@@ -1,0 +1,168 @@
+[dynamics_model_loaded] kind=gaussian_bnn | latent_dimension=96 | particles=64 | adaptation=gaussian_posterior | numerical_substep_mismatch=True
+[start] learning | seed=1 | friction actual/model=1.049/None | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[particle_hull_precompile_started] variants=238
+[particle_hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[probabilistic_safety_status] status=tracking_warmup_unconstrained | step=0 | reason=terminal safe-set/value learner not ready or tracking-only run
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[attempt] #1 success | 384 steps
+[dynamics_observed] attempt_id=1 | valid_transitions=384 | rejected_transitions=0
+[dynamics_posterior_training] generation=1 | status=ready | posterior_method=tempered | new_training_transitions=225 | training_transitions=225 | likelihood_power=0.0001 | heldout_xy10_rmse=0.04699 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=1 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 1 | 38.4 s | avg speed 8.92 m/s | mppi
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[attempt] #2 success | 381 steps
+[dynamics_observed] attempt_id=2 | valid_transitions=381 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=ready | posterior_method=tempered | new_training_transitions=219 | training_transitions=444 | likelihood_power=0.0001 | heldout_xy10_rmse=0.06558 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=2 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 2 | 38.1 s | avg speed 8.987 m/s | mppi
+[control_step_timing] steps=800
+[control_step_timing] steps=900
+[control_step_timing] steps=1000
+[training] generation=1 | epochs=300 | loss=-0.3848 | gradient_steps=600
+[control_step_timing] steps=1100
+[attempt] #3 success | 380 steps
+[dynamics_observed] attempt_id=3 | valid_transitions=380 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=226 | training_transitions=670 | likelihood_power=0.0001 | heldout_xy10_rmse=0.03897 | heldout_coverage10=1
+[lap] trial 3 | 38 s | avg speed 8.974 m/s | mppi
+[control_step_timing] steps=1200
+[control_step_timing] steps=1300
+[training] generation=2 | epochs=300 | loss=-1.269 | gradient_steps=1800
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[attempt] #4 success | 381 steps
+[dynamics_observed] attempt_id=4 | valid_transitions=381 | rejected_transitions=0
+[dynamics_posterior_training] generation=3 | status=ready | posterior_method=tempered | new_training_transitions=219 | training_transitions=889 | likelihood_power=0.0001 | heldout_xy10_rmse=0.06961 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=3 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 4 | 38.1 s | avg speed 8.987 m/s | mppi
+[control_step_timing] steps=1600
+[control_step_timing] steps=1700
+[training] generation=3 | epochs=300 | loss=-1.742 | gradient_steps=3300
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[attempt] #5 success | 380 steps
+[dynamics_observed] attempt_id=5 | valid_transitions=380 | rejected_transitions=0
+[dynamics_posterior_training] generation=4 | status=ready | posterior_method=tempered | new_training_transitions=221 | training_transitions=1110 | likelihood_power=0.0001 | heldout_xy10_rmse=0.05328 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=4 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 5 | 38 s | avg speed 8.974 m/s | mppi
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/bnn-ppwarm25/init.npz
+[probabilistic_safety_warmed] candidates=256 | mode=terminal
+[training] generation=4 | epochs=300 | loss=-2.087 | gradient_steps=5100
+[probabilistic_safety_status] status=no_feasible_candidate | generation=4 | step=1906 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=1906 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[learned_controller_started] step=1906 | value_generation=3 | hull_facets=842
+[probabilistic_safety_status] status=active | generation=4 | step=1907 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=4 | step=1915 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=1915 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=4 | step=1916 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=4 | step=1988 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=1988 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=4 | step=1989 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2000
+[probabilistic_safety_status] status=no_feasible_candidate | generation=4 | step=2071 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2071 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2072 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=4 | step=2073 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=4 | step=2079 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2079 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=4 | step=2080 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2100
+[probabilistic_safety_status] status=no_feasible_candidate | generation=4 | step=2197 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2197 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=4 | step=2198 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2200
+[control_step_timing] steps=2300
+[attempt] #6 success | 403 steps
+[dynamics_observed] attempt_id=6 | valid_transitions=403 | rejected_transitions=0
+[dynamics_posterior_training] generation=5 | status=ready | posterior_method=tempered | new_training_transitions=230 | training_transitions=1340 | likelihood_power=0.0001 | heldout_xy10_rmse=0.06464 | heldout_coverage10=0.95
+[dynamics_predictor_changed] generation=5 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 6 | 40.3 s | avg speed 8.459 m/s | lmppi | lambda_ss mean=3.883 max=18.75 | lambda_boundary mean=2.615 max=18.75 | lambda_chance_boundary mean=3.27 max=18 | lambda_chance_hull mean=2.744 max=18
+[probabilistic_safety_status] status=active | generation=5 | step=2309 | estimator=empirical_planning_samples | samples=64
+[training] generation=5 | epochs=300 | loss=-2.772 | gradient_steps=6900
+[probabilistic_safety_status] status=no_feasible_candidate | generation=5 | step=2377 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2377 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=5 | step=2378 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2400
+[probabilistic_safety_status] status=no_feasible_candidate | generation=5 | step=2443 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2443 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=5 | step=2444 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=5 | step=2467 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2467 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=5 | step=2468 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2500
+[probabilistic_safety_status] status=no_feasible_candidate | generation=5 | step=2521 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2521 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=5 | step=2522 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=5 | step=2536 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2536 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=5 | step=2537 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2600
+[probabilistic_safety_status] status=no_feasible_candidate | generation=5 | step=2689 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2689 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=5 | step=2690 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2700
+[attempt] #7 success | 399 steps
+[dynamics_observed] attempt_id=7 | valid_transitions=399 | rejected_transitions=0
+[dynamics_posterior_training] generation=5 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=236 | training_transitions=1576 | likelihood_power=0.0001 | heldout_xy10_rmse=0.1673 | heldout_coverage10=1
+[lap] trial 7 | 39.9 s | avg speed 8.586 m/s | lmppi | lambda_ss mean=4.029 max=18.75 | lambda_boundary mean=2.544 max=18.75 | lambda_chance_boundary mean=2.952 max=18 | lambda_chance_hull mean=2.827 max=18
+[training] generation=6 | epochs=300 | loss=-2.849 | gradient_steps=8700
+[control_step_timing] steps=2800
+[probabilistic_safety_status] status=no_feasible_candidate | generation=5 | step=2826 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2826 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=5 | step=2827 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[control_step_timing] steps=3100
+[attempt] #8 success | 409 steps
+[dynamics_observed] attempt_id=8 | valid_transitions=409 | rejected_transitions=0
+[dynamics_posterior_training] generation=5 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=235 | training_transitions=1811 | likelihood_power=0.0001 | heldout_xy10_rmse=0.02781 | heldout_coverage10=1
+[lap] trial 8 | 40.9 s | avg speed 8.363 m/s | lmppi | lambda_ss mean=3.719 max=17.5 | lambda_boundary mean=1.436 max=15 | lambda_chance_boundary mean=2.054 max=16 | lambda_chance_hull mean=2 max=18
+[training] generation=7 | epochs=300 | loss=-2.768 | gradient_steps=10500
+[control_step_timing] steps=3200
+[probabilistic_safety_status] status=no_feasible_candidate | generation=5 | step=3236 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=3236 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=5 | step=3237 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=3300
+[control_step_timing] steps=3400
+[control_step_timing] steps=3500
+[attempt] #9 success | 421 steps
+[dynamics_observed] attempt_id=9 | valid_transitions=421 | rejected_transitions=0
+[dynamics_posterior_training] generation=6 | status=ready | posterior_method=tempered | new_training_transitions=243 | training_transitions=2054 | likelihood_power=0.0001 | heldout_xy10_rmse=0.02314 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=6 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 9 | 42.1 s | avg speed 8.097 m/s | lmppi | lambda_ss mean=3.732 max=3.75 | lambda_boundary mean=1.274 max=5 | lambda_chance_boundary mean=2 max=4 | lambda_chance_hull mean=2.057 max=16
+[probabilistic_safety_status] status=active | generation=6 | step=3538 | estimator=empirical_planning_samples | samples=64
+[training] generation=8 | epochs=300 | loss=-2.729 | gradient_steps=12300
+[control_step_timing] steps=3600
+[probabilistic_safety_status] status=no_feasible_candidate | generation=6 | step=3663 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=3663 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=6 | step=3664 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=3700
+[control_step_timing] steps=3800
+[control_step_timing] steps=3900
+[attempt] #10 success | 424 steps
+[dynamics_observed] attempt_id=10 | valid_transitions=424 | rejected_transitions=0
+[dynamics_posterior_training] generation=7 | status=ready | posterior_method=tempered | new_training_transitions=250 | training_transitions=2304 | likelihood_power=0.0001 | heldout_xy10_rmse=0.01718 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=7 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 10 | 42.4 s | avg speed 8.048 m/s | lmppi | lambda_ss mean=3.738 max=11.25 | lambda_boundary mean=1.244 max=3.75 | lambda_chance_boundary mean=2.005 max=10 | lambda_chance_hull mean=1.995 max=8
+[training] generation=9 | epochs=300 | loss=-2.707 | gradient_steps=14400
+[checkpoint_saved] file=checkpoints/trial-000010 | trials=10
+[probabilistic_safety_status] status=active | generation=7 | step=3962 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=4000
+[attempt] #11 incomplete | 136 steps | speed_too_low | lambda_ss mean=3.732 max=3.75 | lambda_boundary mean=1.278 max=5 | lambda_chance_boundary mean=2.015 max=4 | lambda_chance_hull mean=1.985 max=2
+[dynamics_observed] attempt_id=11 | valid_transitions=136 | rejected_transitions=0
+[partial_lap] attempt_id=11 | steps=136 | termination_reason=speed_too_low
+[finish] status=speed_too_low | trials=10 | successful_laps=10 | failed_attempts=0 | applied_steps=4098 | training_generations=9 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/bnn-ppwarm25
+[control_timing_summary] steps=4098 | control_period_seconds=0.1 | stepping=lockstep
+EXIT=2

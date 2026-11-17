@@ -1,0 +1,15 @@
+[INFO] [1794625850.375839283] [bridge]: Loading map from path: /home/mann-bhanushali/sim_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/maps/Spielberg.yaml
+[INFO] [1794625850.730523028] [bridge]: Start poses: ego_racecar=(0.00, 0.00, -2.88)
+[INFO] [1794625850.954231330] [bridge]: Running in synchronous mode. Simulation will step only on new /drive messages.
+[INFO] [1794625850.964383238] [bridge]: Using simulation time. Will publish /clock topic. Drive and odom will be as fast as possible.
+[WARN] [1794625879.717559552] [bridge]: ego_racecar hit something at (-27.26, -6.35)
+[WARN] [1794625879.861366899] [bridge]: ego_racecar hit something at (-30.26, -9.02)
+[WARN] [1794625880.056469556] [bridge]: ego_racecar hit something at (-36.43, -7.99)
+[WARN] [1794625880.068280444] [bridge]: ego_racecar hit something at (-36.53, -7.77)
+[WARN] [1794625880.084067977] [bridge]: ego_racecar hit something at (-36.63, -7.60)
+[WARN] [1794625880.541465493] [bridge]: ego_racecar hit something at (-50.99, 13.60)
+[WARN] [1794625956.207596669] [bridge]: ego_racecar hit something at (-36.33, -8.15)
+[WARN] [1794625956.218291580] [bridge]: ego_racecar hit something at (-36.50, -7.78)
+[WARN] [1794625956.224219459] [bridge]: ego_racecar hit something at (-36.58, -7.60)
+[WARN] [1794626145.919731516] [bridge]: ego_racecar hit something at (-24.61, -7.47)
+[WARN] [1794626145.949255700] [bridge]: ego_racecar hit something at (-26.20, -7.88)

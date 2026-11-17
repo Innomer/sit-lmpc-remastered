@@ -1,0 +1,4 @@
+extends: quickload-fresh.yaml
+simulation:
+  ros:
+    actuation_delay: 0.2

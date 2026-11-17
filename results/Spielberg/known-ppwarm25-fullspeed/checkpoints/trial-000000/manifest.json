@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/known-ppwarm25",
+  "files": {
+    "state.json": "b35adad4b73ce082e53a1b5f428901fbfd27b581ca25218d174e00bb4cfec575",
+    "events.jsonl": "de70802cc0952e0ee4a6754dc37ce713ea2b9956ffa4a88b43b428ccb831a052",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "3cae5a9a948db84aa499ce7b666ef96247b6d8755656c504730b376cd5027e82",
+    "config.yaml": "fb119f2c3ee59d0e1062ec62104a5bc9991fabc3665fa30b293bd8cf19e824e6",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "62763c2139a292ca43b3b95019f506283f3af60102e0569e530147706993eec8"
+  }
+}

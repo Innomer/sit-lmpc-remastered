@@ -1,0 +1,26 @@
+[
+  {
+    "lap": 1,
+    "completed": false,
+    "termination_reason": "error",
+    "steps": 0,
+    "duration": 0.0,
+    "lap_time": null,
+    "mean_speed": null,
+    "safe_set_max": null,
+    "safe_set_mean": null,
+    "boundary_max": null,
+    "boundary_mean": null,
+    "actual_boundary_max": null,
+    "actual_boundary_mean": null,
+    "out_of_bounds_steps": 0,
+    "max_abs_lateral_offset": null,
+    "nonfinite_lateral_steps": 0,
+    "attempt_id": 1,
+    "outcome": "incomplete",
+    "lambda_summary": {
+      "steps": 0,
+      "terms": {}
+    }
+  }
+]

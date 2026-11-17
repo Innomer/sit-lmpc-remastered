@@ -1,0 +1,240 @@
+{
+  "state_estimation_rmse": {
+    "encoder": {
+      "steering": 0.009671824052929878,
+      "speed": 0.11687520146369934,
+      "yaw_rate": 0.10018978267908096,
+      "slip": 0.020221242681145668,
+      "lateral_velocity": 0.19524617493152618
+    },
+    "ekf": {
+      "steering": 5264.96728515625,
+      "speed": 15381.1064453125,
+      "yaw_rate": 33952555008.0,
+      "slip": 0.2625839412212372,
+      "lateral_velocity": 12949.0087890625
+    },
+    "kinematic": {
+      "slip": 0.18233729898929596,
+      "lateral_velocity": 1.9419279098510742
+    }
+  },
+  "prediction_1s": {
+    "bicycle": {
+      "instance": {
+        "position_m": 0.6463761329650879,
+        "heading_rad": 0.14774850010871887,
+        "speed_mps": 2.0406061594258063e-05,
+        "yaw_rate_rmse": Infinity,
+        "position_median_m": 0.3897669315338135,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.5602153539657593,
+        "heading_rad": 0.1989850103855133,
+        "speed_mps": 2.153090463252738e-06,
+        "yaw_rate_rmse": Infinity,
+        "position_median_m": 0.29277193546295166,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "bnn_prior": {
+      "instance": {
+        "position_m": 0.5015953183174133,
+        "heading_rad": 0.12240691483020782,
+        "speed_mps": 0.0020654748659580946,
+        "yaw_rate_rmse": 0.24523431062698364,
+        "position_median_m": 0.20315149426460266,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.5123782157897949,
+        "heading_rad": 0.16918639838695526,
+        "speed_mps": 0.0021831856574863195,
+        "yaw_rate_rmse": 0.2562463879585266,
+        "position_median_m": 0.20718935132026672,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "residual_prior": {
+      "instance": {
+        "position_m": 0.5020612478256226,
+        "heading_rad": 0.12223532050848007,
+        "speed_mps": 5.977768523734994e-05,
+        "yaw_rate_rmse": 0.2459888458251953,
+        "position_median_m": 0.20263037085533142,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.5118846893310547,
+        "heading_rad": 0.16858288645744324,
+        "speed_mps": 5.399433575803414e-05,
+        "yaw_rate_rmse": 0.25421300530433655,
+        "position_median_m": 0.21028314530849457,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "ours": {
+      "instance": {
+        "position_m": 0.3780790865421295,
+        "heading_rad": 0.06050007790327072,
+        "speed_mps": 0.24153903126716614,
+        "yaw_rate_rmse": 0.12188873440027237,
+        "position_median_m": 0.3089742958545685,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.28942498564720154,
+        "heading_rad": 0.07752601057291031,
+        "speed_mps": 0.197331041097641,
+        "yaw_rate_rmse": 0.14826785027980804,
+        "position_median_m": 0.2272171825170517,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "ours_true_state": {
+      "instance": {
+        "position_m": 0.8881523013114929,
+        "heading_rad": 0.0642099529504776,
+        "speed_mps": 0.22310084104537964,
+        "yaw_rate_rmse": 0.13097421824932098,
+        "position_median_m": 0.7727708220481873,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.5800784230232239,
+        "heading_rad": 0.08824526518583298,
+        "speed_mps": 0.15597324073314667,
+        "yaw_rate_rmse": 0.15231680870056152,
+        "position_median_m": 0.4809996485710144,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    }
+  },
+  "adaptation": {
+    "step": {
+      "-20..0 s": {
+        "bicycle": 0.6150368055276063,
+        "bnn_prior": 0.5484430456480343,
+        "residual_prior": 0.5477193962627765,
+        "ours": 0.3024248769600178,
+        "ours_true_state": 0.6069638912372273,
+        "starts": 399
+      },
+      "0..0.5 s": {
+        "bicycle": 0.5427525791304145,
+        "bnn_prior": 0.45758592292828404,
+        "residual_prior": 0.45390064547245856,
+        "ours": 0.3551073650950971,
+        "ours_true_state": 0.5870070188589718,
+        "starts": 23
+      },
+      "0.5..1 s": {
+        "bicycle": 0.4067607210827586,
+        "bnn_prior": 0.3400966373839132,
+        "residual_prior": 0.3398577348106419,
+        "ours": 0.2605686771642903,
+        "ours_true_state": 0.5391925951546949,
+        "starts": 23
+      },
+      "1..2 s": {
+        "bicycle": 0.5498702122890593,
+        "bnn_prior": 0.4864695015282411,
+        "residual_prior": 0.48852266813691647,
+        "ours": 0.2684909352303847,
+        "ours_true_state": 0.575255575792297,
+        "starts": 46
+      },
+      "2..5 s": {
+        "bicycle": 0.6046618105052218,
+        "bnn_prior": 0.575222312669317,
+        "residual_prior": 0.5751684425823455,
+        "ours": 0.2545144893498956,
+        "ours_true_state": 0.5590947753061419,
+        "starts": 138
+      },
+      "5..30 s": {
+        "bicycle": 0.6595081105704529,
+        "bnn_prior": 0.5371521525929246,
+        "residual_prior": 0.5370894159470383,
+        "ours": 0.25852173815800195,
+        "ours_true_state": 0.5481510167891109,
+        "starts": 222
+      }
+    },
+    "patch": {
+      "-20..0 s": {
+        "bicycle": 0.48716102288032836,
+        "bnn_prior": 0.5172161132571754,
+        "residual_prior": 0.5155233111144171,
+        "ours": 0.30576204352585196,
+        "ours_true_state": 0.54763347307782,
+        "starts": 421
+      },
+      "0..0.5 s": {
+        "bicycle": 0.5116434953126469,
+        "bnn_prior": 0.39997380873874616,
+        "residual_prior": 0.39761596398526117,
+        "ours": 0.39742229663227735,
+        "ours_true_state": 0.7008674050632276,
+        "starts": 19
+      },
+      "0.5..1 s": {
+        "bicycle": 0.629319265190708,
+        "bnn_prior": 0.4566300775561678,
+        "residual_prior": 0.45782981303177384,
+        "ours": 0.38773970854909795,
+        "ours_true_state": 0.6747764627400198,
+        "starts": 19
+      },
+      "1..2 s": {
+        "bicycle": 0.666416649069441,
+        "bnn_prior": 0.5167144404136037,
+        "residual_prior": 0.5170234736594322,
+        "ours": 0.3305459694054566,
+        "ours_true_state": 0.6477563679218292,
+        "starts": 38
+      },
+      "2..5 s": {
+        "bicycle": 0.534321125787461,
+        "bnn_prior": 0.49301806961718414,
+        "residual_prior": 0.49215622162113765,
+        "ours": 0.31264552264696077,
+        "ours_true_state": 0.5989299362968831,
+        "starts": 105
+      },
+      "5..30 s": {
+        "bicycle": 0.43057197691064175,
+        "bnn_prior": 0.3629911313014418,
+        "residual_prior": 0.36564044332362755,
+        "ours": 0.2254298542829929,
+        "ours_true_state": 0.62127476464957,
+        "starts": 128
+      }
+    }
+  },
+  "z_separation": {
+    "friction": {
+      "r2_test": 0.88635224031836,
+      "rmse_test": 0.07203124463610595,
+      "trajectories_train": 1679,
+      "trajectories_test": 270
+    },
+    "mass_ratio": {
+      "r2_test": 0.2901453920344915,
+      "rmse_test": 0.1219649917117039,
+      "trajectories_train": 1679,
+      "trajectories_test": 270
+    }
+  }
+}

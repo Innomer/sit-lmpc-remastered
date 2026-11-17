@@ -1,0 +1,22 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/diag-bnn-nochance-pp06-alllaps-h15-smooth",
+  "files": {
+    "state.json": "7a67bd4164ad20e311d02308e96a4c38392ea4b12aec305d72128e5c9df61703",
+    "dynamics_posterior.json": "cda2e2ea5d6906363371c6f3d99d5936659da44956fcb54b6a1a59a2d436d806",
+    "events.jsonl": "8f5f478200d8fa55a3a38866d387baca4700b0566b328ee34b2ce47395f3708e",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "a413aaec477853d7f7d5019a4479807e36065c0065f29702450bca320b0b7740",
+    "config.yaml": "fa964d478ebae9cdcc74de7ecbb97eb564b014e10455b604ef4e5210442dbedc",
+    "dynamics_posterior.npz": "f0b173ea39b8c63d650a3540b4ee91aba1cb352962d83cd65eefb7e678f4487c",
+    "dynamics_model/manifest.json": "8a2348e6ee80805de40002fdb458882ac8846937f52ddb9aa485f2beeabd5521",
+    "dynamics_model/model.msgpack": "d33f1cadc8a4eb8260edd3b6f374498d7aec3f7d3f91435788ce54d9b894e6d7",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "c3218db10be683f5c26f958bd51951fa07ca10fadd1a15a23772c21858807895"
+  }
+}

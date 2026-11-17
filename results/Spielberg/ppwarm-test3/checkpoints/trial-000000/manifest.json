@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/ppwarm-test3",
+  "files": {
+    "state.json": "a87b583d1dc01d824164ad30943176e2faa39bd98c02c0790ae7a982b6dd0f8d",
+    "events.jsonl": "2070c2304210f2f2628f850e7674baccbb503a2cc68dae73d8a59037138848ed",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "f6e2eeb0007d75f1012fdcd17c75219f4124061e299a964671a1fd52f175cf32",
+    "config.yaml": "4df5f228e73717aa496bbd0972794708f15cef168e6671d78bbb9d218c982e85",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "ac919fb98b08e2ad2c75b3d2d9c8b3fefbf344e726876997b6b2bffacd135f85"
+  }
+}

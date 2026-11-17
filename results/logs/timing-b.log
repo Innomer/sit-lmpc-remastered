@@ -1,0 +1,20 @@
+[insight_recording] steps=50 | file=insight.npz
+[resume] checkpoint=checkpoints/trial-000010 | trials=10 | next_step=13359
+[start] learning | seed=4234360083 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=0.7904 | speed=0.78
+[ros_reset] run_up=0.05413 | requested=0.1324, -0.5203, -0.05803, 0.7904, -66.03, -0.1405, -0.02729 | reached=0.08523, -0.5178, 0, 0.78, 3.088, 0, 0
+[resume_state_restored] tolerance=0.25 | max_difference=0.1405
+[model_bank_warmup] frictions=1.049
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[insight_saved] file=insight.npz | steps=50 | reason=step_limit
+[attempt] #11 incomplete | 200 steps | step_limit | lambda_ss mean=2.1 max=18.75 | lambda_boundary mean=0.175 max=2.5
+[partial_lap] attempt_id=11 | steps=200 | termination_reason=step_limit
+[finish] status=step_limit | trials=10 | successful_laps=10 | failed_attempts=0 | applied_steps=13559 | training_generations=9 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/timing-b
+[control_timing_summary] steps=200 | control_period_seconds=0.1 | stepping=lockstep

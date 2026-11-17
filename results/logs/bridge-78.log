@@ -1,0 +1,6 @@
+[INFO] [1794626295.624898094] [bridge]: Loading map from path: /home/mann-bhanushali/sim_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/maps/Spielberg.yaml
+[INFO] [1794626295.976710524] [bridge]: Start poses: ego_racecar=(0.00, 0.00, -2.88)
+[INFO] [1794626296.214357234] [bridge]: Running in synchronous mode. Simulation will step only on new /drive messages.
+[INFO] [1794626296.225239535] [bridge]: Using simulation time. Will publish /clock topic. Drive and odom will be as fast as possible.
+[INFO] [1794626334.245758693] [bridge]: ego_racecar completed lap 1, last lap 24.73 s
+[INFO] [1794626342.000016122] [bridge]: ego_racecar completed lap 2, last lap 24.01 s

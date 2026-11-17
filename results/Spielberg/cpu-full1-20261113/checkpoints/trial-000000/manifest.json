@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/tmp/claude-1000/-home-mann-bhanushali-sim-ws/fe461a28-837e-4742-9591-a6751092f77d/scratchpad/full1",
+  "files": {
+    "state.json": "ea5fa588bedbf58a4387d80b7fb98a7bfe62ebd71bd3923e5016ed1536a2dc99",
+    "events.jsonl": "13011ee3f8dac96663d6addf3aee53aefc8bfc2bcbc218e3b21886adebda16e1",
+    "metadata.json": "5887f351926d7eec17cef8dc7bf06d1fc5696abde82cfd2c3f57916a8ab69188",
+    "state.npz": "2711d9f7d3e913f89da0b3c533620868907c0e57f7de2459a6ed762fa399dc78",
+    "config.yaml": "bfbb1705ce2269606d34312087f02f1b60cf9212a4875bf31c359da7e823118b",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "0987f675dcd2b842fef2dc2c47d8b8c2937c174e4d8925482523ebc51b3e9046"
+  }
+}

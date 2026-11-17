@@ -1,0 +1,247 @@
+[insight_recording] steps=50 | file=insight.npz
+[start] learning | seed=1 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=2.5 | speed=2.49
+[ros_reset] run_up=0.9751 | requested=0, 0, 0, 2.5, -2.879, 0, 0 | reached=-0.05628, -0.01513, 0, 2.49, -2.879, 0, 0
+[model_bank_warmup] frictions=1.049
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[control_step_timing] steps=800
+[control_step_timing] steps=900
+[control_step_timing] steps=1000
+[control_step_timing] steps=1100
+[control_step_timing] steps=1200
+[control_step_timing] steps=1300
+[attempt] #1 success | 1351 steps
+[lap] trial 1 | 135.1 s | avg speed 2.504 m/s | mppi
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[control_step_timing] steps=1600
+[control_step_timing] steps=1700
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[control_step_timing] steps=2000
+[control_step_timing] steps=2100
+[control_step_timing] steps=2200
+[control_step_timing] steps=2300
+[control_step_timing] steps=2400
+[control_step_timing] steps=2500
+[control_step_timing] steps=2600
+[control_step_timing] steps=2700
+[attempt] #2 success | 1353 steps
+[lap] trial 2 | 135.3 s | avg speed 2.5 m/s | mppi
+[control_step_timing] steps=2800
+[training] generation=1 | epochs=300 | loss=-2.295 | gradient_steps=1500
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[control_step_timing] steps=3100
+[control_step_timing] steps=3200
+[control_step_timing] steps=3300
+[control_step_timing] steps=3400
+[control_step_timing] steps=3500
+[control_step_timing] steps=3600
+[control_step_timing] steps=3700
+[control_step_timing] steps=3800
+[control_step_timing] steps=3900
+[control_step_timing] steps=4000
+[attempt] #3 success | 1353 steps
+[lap] trial 3 | 135.3 s | avg speed 2.5 m/s | mppi
+[control_step_timing] steps=4100
+[training] generation=2 | epochs=300 | loss=-2.489 | gradient_steps=4500
+[control_step_timing] steps=4200
+[control_step_timing] steps=4300
+[control_step_timing] steps=4400
+[control_step_timing] steps=4500
+[control_step_timing] steps=4600
+[control_step_timing] steps=4700
+[control_step_timing] steps=4800
+[control_step_timing] steps=4900
+[control_step_timing] steps=5000
+[control_step_timing] steps=5100
+[control_step_timing] steps=5200
+[control_step_timing] steps=5300
+[control_step_timing] steps=5400
+[attempt] #4 success | 1352 steps
+[lap] trial 4 | 135.2 s | avg speed 2.501 m/s | mppi
+[control_step_timing] steps=5500
+[training] generation=3 | epochs=300 | loss=-3.027 | gradient_steps=9000
+[control_step_timing] steps=5600
+[control_step_timing] steps=5700
+[control_step_timing] steps=5800
+[control_step_timing] steps=5900
+[control_step_timing] steps=6000
+[control_step_timing] steps=6100
+[control_step_timing] steps=6200
+[control_step_timing] steps=6300
+[control_step_timing] steps=6400
+[control_step_timing] steps=6500
+[control_step_timing] steps=6600
+[control_step_timing] steps=6700
+[attempt] #5 success | 1352 steps
+[lap] trial 5 | 135.2 s | avg speed 2.502 m/s | mppi
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/fresh25/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[training] generation=4 | epochs=300 | loss=-3.389 | gradient_steps=14700
+[learned_controller_started] step=6761 | value_generation=3 | hull_facets=246
+[control_step_timing] steps=6800
+[control_step_timing] steps=6900
+[control_step_timing] steps=7000
+[control_step_timing] steps=7100
+[control_step_timing] steps=7200
+[control_step_timing] steps=7300
+[control_step_timing] steps=7400
+[control_step_timing] steps=7500
+[control_step_timing] steps=7600
+[control_step_timing] steps=7700
+[control_step_timing] steps=7800
+[control_step_timing] steps=7900
+[control_step_timing] steps=8000
+[control_step_timing] steps=8100
+[control_step_timing] steps=8200
+[control_step_timing] steps=8300
+[control_step_timing] steps=8400
+[attempt] #6 success | 1685 steps
+[lap] trial 6 | 168.5 s | avg speed 2.006 m/s | lmppi | safe-set violation=0.1984 | lambda_ss mean=2.607 max=18.75 | lambda_boundary mean=0.3479 max=7.5
+[training] generation=5 | epochs=300 | loss=-3.847 | gradient_steps=20400
+[control_step_timing] steps=8500
+[control_step_timing] steps=8600
+[control_step_timing] steps=8700
+[control_step_timing] steps=8800
+[control_step_timing] steps=8900
+[control_step_timing] steps=9000
+[control_step_timing] steps=9100
+[control_step_timing] steps=9200
+[control_step_timing] steps=9300
+[control_step_timing] steps=9400
+[control_step_timing] steps=9500
+[control_step_timing] steps=9600
+[control_step_timing] steps=9700
+[control_step_timing] steps=9800
+[attempt] #7 success | 1427 steps
+[lap] trial 7 | 142.7 s | avg speed 2.371 m/s | lmppi | safe-set violation=0.2912 | lambda_ss mean=2.059 max=18.75 | lambda_boundary mean=0.1445 max=16.25
+[control_step_timing] steps=9900
+[training] generation=6 | epochs=300 | loss=-3.311 | gradient_steps=26400
+[control_step_timing] steps=10000
+[control_step_timing] steps=10100
+[control_step_timing] steps=10200
+[control_step_timing] steps=10300
+[control_step_timing] steps=10400
+[control_step_timing] steps=10500
+[control_step_timing] steps=10600
+[control_step_timing] steps=10700
+[control_step_timing] steps=10800
+[control_step_timing] steps=10900
+[control_step_timing] steps=11000
+[attempt] #8 success | 1223 steps
+[lap] trial 8 | 122.3 s | avg speed 2.766 m/s | lmppi | lambda_ss mean=1.82 max=18.75 | lambda_boundary mean=0.1635 max=18.75
+[control_step_timing] steps=11100
+[training] generation=7 | epochs=300 | loss=-2.524 | gradient_steps=32700
+[control_step_timing] steps=11200
+[control_step_timing] steps=11300
+[control_step_timing] steps=11400
+[control_step_timing] steps=11500
+[control_step_timing] steps=11600
+[control_step_timing] steps=11700
+[control_step_timing] steps=11800
+[control_step_timing] steps=11900
+[control_step_timing] steps=12000
+[control_step_timing] steps=12100
+[control_step_timing] steps=12200
+[attempt] #9 success | 1180 steps
+[lap] trial 9 | 118 s | avg speed 2.866 m/s | lmppi | lambda_ss mean=1.881 max=18.75 | lambda_boundary mean=0.1208 max=11.25
+[control_step_timing] steps=12300
+[training] generation=8 | epochs=300 | loss=-1.848 | gradient_steps=38700
+[control_step_timing] steps=12400
+[control_step_timing] steps=12500
+[control_step_timing] steps=12600
+[control_step_timing] steps=12700
+[control_step_timing] steps=12800
+[control_step_timing] steps=12900
+[control_step_timing] steps=13000
+[control_step_timing] steps=13100
+[control_step_timing] steps=13200
+[control_step_timing] steps=13300
+[attempt] #10 success | 1083 steps
+[lap] trial 10 | 108.3 s | avg speed 3.125 m/s | lmppi | lambda_ss mean=2.411 max=18.75 | lambda_boundary mean=0.1951 max=16.25
+[training] generation=9 | epochs=300 | loss=-2.314 | gradient_steps=44700
+[checkpoint_saved] file=checkpoints/trial-000010 | trials=10
+[control_step_timing] steps=13400
+[control_step_timing] steps=13500
+[control_step_timing] steps=13600
+[control_step_timing] steps=13700
+[control_step_timing] steps=13800
+[control_step_timing] steps=13900
+[control_step_timing] steps=14000
+[control_step_timing] steps=14100
+[control_step_timing] steps=14200
+[control_step_timing] steps=14300
+[attempt] #11 success | 1026 steps
+[lap] trial 11 | 102.6 s | avg speed 3.299 m/s | lmppi | safe-set violation=0.05568 | lambda_ss mean=2.549 max=18.75 | lambda_boundary mean=0.2924 max=18.75
+[control_step_timing] steps=14400
+[training] generation=10 | epochs=300 | loss=-2.369 | gradient_steps=50100
+[control_step_timing] steps=14500
+[control_step_timing] steps=14600
+[control_step_timing] steps=14700
+[control_step_timing] steps=14800
+[control_step_timing] steps=14900
+[control_step_timing] steps=15000
+[control_step_timing] steps=15100
+[control_step_timing] steps=15200
+[control_step_timing] steps=15300
+[attempt] #12 success | 979 steps
+[lap] trial 12 | 97.9 s | avg speed 3.461 m/s | lmppi | safe-set violation=0.03005 | lambda_ss mean=3.344 max=18.75 | lambda_boundary mean=0.3677 max=11.25
+[control_step_timing] steps=15400
+[training] generation=11 | epochs=300 | loss=-2.757 | gradient_steps=54900
+[control_step_timing] steps=15500
+[control_step_timing] steps=15600
+[control_step_timing] steps=15700
+[control_step_timing] steps=15800
+[control_step_timing] steps=15900
+[control_step_timing] steps=16000
+[control_step_timing] steps=16100
+[control_step_timing] steps=16200
+[attempt] #13 success | 926 steps
+[lap] trial 13 | 92.6 s | avg speed 3.657 m/s | lmppi | lambda_ss mean=2.79 max=18.75 | lambda_boundary mean=0.4347 max=15
+[control_step_timing] steps=16300
+[training] generation=12 | epochs=300 | loss=-2.548 | gradient_steps=59700
+[control_step_timing] steps=16400
+[control_step_timing] steps=16500
+[control_step_timing] steps=16600
+[control_step_timing] steps=16700
+[control_step_timing] steps=16800
+[control_step_timing] steps=16900
+[control_step_timing] steps=17000
+[control_step_timing] steps=17100
+[control_step_timing] steps=17200
+[attempt] #14 success | 920 steps
+[lap] trial 14 | 92 s | avg speed 3.683 m/s | lmppi | lambda_ss mean=2.674 max=18.75 | lambda_boundary mean=0.4266 max=15
+[training] generation=13 | epochs=300 | loss=-2.287 | gradient_steps=64200
+[control_step_timing] steps=17300
+[control_step_timing] steps=17400
+[control_step_timing] steps=17500
+[control_step_timing] steps=17600
+[control_step_timing] steps=17700
+[control_step_timing] steps=17800
+[control_step_timing] steps=17900
+[control_step_timing] steps=18000
+[control_step_timing] steps=18100
+[attempt] #15 success | 890 steps
+[lap] trial 15 | 89 s | avg speed 3.808 m/s | lmppi | lambda_ss mean=2.357 max=18.75 | lambda_boundary mean=0.2739 max=12.5
+[attempt] #16 failure | 50 steps | collision | lambda_ss mean=7.775 max=18.75 | lambda_boundary mean=2.8 max=18.75
+[training] generation=14 | epochs=300 | loss=-2.581 | gradient_steps=68400
+[insight_saved] file=insight_before_crash.npz | steps=50 | reason=collision
+[insight_saved] file=insight_before_crash.npz | steps=50 | reason=collision
+[insight_saved] file=insight_before_crash.npz | steps=50 | reason=collision
+[finish] status=collision | trials=16 | successful_laps=15 | failed_attempts=1 | applied_steps=18150 | training_generations=14 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/fresh25
+[control_timing_summary] steps=18150 | control_period_seconds=0.1 | stepping=lockstep
+EXIT=2

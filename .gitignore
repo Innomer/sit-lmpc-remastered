@@ -223,8 +223,12 @@ __marimo__/
 /.cache/
 /.venv/
 /.uv-python/
-/results/logs/
-/results/Spielberg
+# Run debug dumps over GitHub's 100 MB file limit (kept locally only)
+/results/Spielberg/diag1/insight.npz
+/results/Spielberg/diag2/insight.npz
+/results/Spielberg/finish-trace/insight.npz
+!/results/**/*.log
+!/results/*.log
 /runs/
 /artifacts/
 /data/

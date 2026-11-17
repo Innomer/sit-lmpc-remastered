@@ -1,0 +1,56 @@
+[insight_recording] steps=50 | file=insight.npz
+[start] learning | seed=1 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=2.513 | speed=2.513
+[ros_reset] run_up=1.002 | requested=0.02334, -0.8357, -0.00864, 2.513, -34.3, 1.471e-05, -0.000591 | reached=-0.03079, -0.8501, 0, 2.513, -2.882, 0, 0
+[model_bank_warmup] frictions=1.049
+[training] generation=1 | epochs=600 | loss=-4.043 | gradient_steps=11400
+[quick_load] safe_set_laps=4 | epochs=600
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[learned_controller_started] step=0 | value_generation=1 | hull_facets=272
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[control_step_timing] steps=800
+[control_step_timing] steps=900
+[control_step_timing] steps=1000
+[control_step_timing] steps=1100
+[control_step_timing] steps=1200
+[control_step_timing] steps=1300
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[attempt] #1 success | 1519 steps
+[lap] trial 1 | 151.9 s | avg speed 2.226 m/s | lmppi | lambda_ss mean=2.184 max=18.75 | lambda_boundary mean=0.3514 max=3.75
+[control_step_timing] steps=1600
+[control_step_timing] steps=1700
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[control_step_timing] steps=2000
+[control_step_timing] steps=2100
+[control_step_timing] steps=2200
+[control_step_timing] steps=2300
+[control_step_timing] steps=2400
+[control_step_timing] steps=2500
+[control_step_timing] steps=2600
+[control_step_timing] steps=2700
+[control_step_timing] steps=2800
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[attempt] #2 success | 1519 steps
+[lap] trial 2 | 151.9 s | avg speed 2.227 m/s | lmppi | lambda_ss mean=2.206 max=18.75 | lambda_boundary mean=0.3999 max=5
+[control_step_timing] steps=3100
+[training] generation=2 | epochs=300 | loss=-1.945 | gradient_steps=17400
+[control_step_timing] steps=3200
+[control_step_timing] steps=3300
+[control_step_timing] steps=3400
+[control_step_timing] steps=3500
+[control_step_timing] steps=3600
+[error] type=ExternalShutdownException | message=

@@ -1,0 +1,81 @@
+{
+  "status": "step_limit",
+  "laps": 6,
+  "successful_laps": 6,
+  "trials": 6,
+  "history_laps": 0,
+  "attempts": 7,
+  "failed_attempts": 0,
+  "incomplete_attempts": 1,
+  "applied_steps": 7805,
+  "learned_steps": 7805,
+  "training_generations": 6,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 0,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": null,
+  "predictor_friction": 1.0489000082015991,
+  "dynamics_predictor": {
+    "kind": "single",
+    "friction": 1.0489000082015991
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.05,
+    "lambda_count": 16,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 964.447043056,
+  "partial_lap": {
+    "file": "partial_lap.npz",
+    "lap": 7,
+    "completed": false,
+    "termination_reason": "step_limit",
+    "steps": 200,
+    "duration": 20.000000000000014,
+    "lap_time": null,
+    "mean_speed": 3.1924047470092773,
+    "safe_set_max": 0.6648542284965515,
+    "safe_set_mean": 0.03681067099794746,
+    "boundary_max": 0.0,
+    "boundary_mean": 0.0,
+    "actual_boundary_max": 0.0,
+    "actual_boundary_mean": 0.0,
+    "out_of_bounds_steps": 0,
+    "max_abs_lateral_offset": 0.8388121128082275,
+    "nonfinite_lateral_steps": 0,
+    "attempt_id": 7,
+    "outcome": "incomplete",
+    "lambda_summary": {
+      "steps": 200,
+      "terms": {
+        "hull": {
+          "mean": 4.275,
+          "max": 18.75,
+          "steps": 200
+        },
+        "boundary": {
+          "mean": 0.9875,
+          "max": 17.5,
+          "steps": 200
+        }
+      }
+    }
+  },
+  "device_memory": {
+    "bytes_in_use": 1464832,
+    "peak_bytes_in_use": 271272960,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 6167724032
+  }
+}

@@ -130,9 +130,9 @@ def main():
         smooth[:window] = np.nan
 
     out = Path(args.out) if args.out else run.parent / f"{run.name}.mp4"
-    writer = FFMpegWriter(fps=args.fps, bitrate=2400)
+    writer = FFMpegWriter(fps=args.fps, codec="libx264", extra_args=["-crf", "30", "-preset", "slow", "-pix_fmt", "yuv420p"])
     trail_steps = int(args.trail / TIMESTEP)
-    with writer.saving(fig, str(out), dpi=110):
+    with writer.saving(fig, str(out), dpi=112):
         for frame in frames:
             start = max(0, frame - trail_steps)
             points = states[start:frame + 1, :2]

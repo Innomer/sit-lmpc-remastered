@@ -1,0 +1,307 @@
+{
+  "status": "lap_limit",
+  "laps": 25,
+  "successful_laps": 25,
+  "trials": 25,
+  "history_laps": 0,
+  "attempts": 25,
+  "failed_attempts": 0,
+  "incomplete_attempts": 0,
+  "applied_steps": 30234,
+  "learned_steps": 23473,
+  "training_generations": 24,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 12,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": {
+    "training_transitions": 17914,
+    "likelihood_power": 1.0,
+    "last_update": {
+      "generation": 12,
+      "status": "ready",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "44e86501e558113ca489069202694834e15f6fd83e6c12994bbced438de694c0",
+      "attempt_ids": [
+        "25"
+      ],
+      "new_training_transitions": 655,
+      "training_transitions": 17914,
+      "calibration_transitions": 6166,
+      "held_out_transitions": 225,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.1,
+      "effective_likelihood_variance": [
+        9.03101226867875e-06,
+        9.383484211866744e-06,
+        1.0118939826497808e-05,
+        9.046277227753308e-06,
+        9.077995855477639e-06,
+        1.6748294001445174e-05,
+        0.0001018046386889182
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.07704625154796724,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 64,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.00029002371593378484,
+            "path_coverage_95": 0.765625,
+            "path_radius_95": 0.00021874780941288918,
+            "energy_score": 7.299137359950691e-05,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0003550948458723724,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.0005899311508983374,
+            "energy_score": 8.70785879669711e-05,
+            "eligible": true
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0006204477394931018,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.001435987651348114,
+            "energy_score": 0.00016632652841508389,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0006581409834325314,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0031973039731383324,
+            "energy_score": 0.0003214880416635424,
+            "eligible": false
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.001180640421807766,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.004837386775761843,
+            "energy_score": 0.0004973596078343689,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0016303716693073511,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0068041980266571045,
+            "energy_score": 0.0006301581161096692,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0025243714917451143,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.012102128937840462,
+            "energy_score": 0.0009851771173998713,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.0003394081140868366,
+          "path_coverage_95": 0.984375,
+          "path_radius_95": 0.0006039321888238192,
+          "energy_score": 8.69779905769974e-05
+        },
+        "working_variance": [
+          9.03101226867875e-06,
+          9.383484211866744e-06,
+          1.0118939826497808e-05,
+          9.046277227753308e-06,
+          9.077995855477639e-06,
+          1.6748294001445174e-05,
+          0.0001018046386889182
+        ],
+        "status": "ready",
+        "selected": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.0003550948458723724,
+          "path_coverage_95": 0.984375,
+          "path_radius_95": 0.0005899311508983374,
+          "energy_score": 8.70785879669711e-05
+        },
+        "selected_power": 0.1
+      },
+      "published": true,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 1101,
+        "one_step_xy_rmse": 5.917796964495062e-05,
+        "component_rmse": [
+          5.880653386484534e-05,
+          6.619944569367234e-06,
+          1.4773634456870949e-05,
+          6.552513372668888e-05,
+          3.5670363974556036e-05,
+          0.0003754671883147437,
+          4.4322842724623646e-05
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 225,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.650506988373797,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 5.500933379101727e-05,
+            "path_coverage_95": 0.921875,
+            "path_radius_95": 6.15519966231659e-05,
+            "energy_score": 2.466424936789119e-05
+          },
+          "5": {
+            "windows": 41,
+            "endpoint_xy_rmse": 0.0002771202340306754,
+            "path_coverage_95": 0.9024390243902439,
+            "path_radius_95": 0.00024436155217699707,
+            "energy_score": 7.16517937013392e-05
+          },
+          "10": {
+            "windows": 11,
+            "endpoint_xy_rmse": 0.00044811100747420366,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0007498539634980261,
+            "energy_score": 0.00014058368263942237
+          },
+          "15": {
+            "windows": 1,
+            "endpoint_xy_rmse": 0.0003067037952405715,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0015374519862234592,
+            "energy_score": 0.00011790956006579978
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 225,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.650865238017653,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 5.43896251420886e-05,
+            "path_coverage_95": 0.921875,
+            "path_radius_95": 6.03428234171588e-05,
+            "energy_score": 2.4451733136463403e-05
+          },
+          "5": {
+            "windows": 41,
+            "endpoint_xy_rmse": 0.000271668069845514,
+            "path_coverage_95": 0.9024390243902439,
+            "path_radius_95": 0.00023984209110494703,
+            "energy_score": 7.098332108777722e-05
+          },
+          "10": {
+            "windows": 11,
+            "endpoint_xy_rmse": 0.00045124982202933894,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0007252410287037492,
+            "energy_score": 0.00013885266157777842
+          },
+          "15": {
+            "windows": 1,
+            "endpoint_xy_rmse": 0.0003025418099807488,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0014794436283409595,
+            "energy_score": 0.00011520732557166174
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.29373300499901234
+    }
+  },
+  "predictor_friction": null,
+  "dynamics_predictor": {
+    "kind": "gaussian_bnn",
+    "particles": 64,
+    "latent_dimension": 96,
+    "model_fingerprint": "44e86501e558113ca489069202694834e15f6fd83e6c12994bbced438de694c0",
+    "population_generation": 19200,
+    "target_mode": "dynamics",
+    "adaptation": "gaussian_posterior",
+    "belief_generation": 12,
+    "likelihood_power": 0.10000000149011612,
+    "posterior_method": "tempered",
+    "inference": "calibrated_working_likelihood"
+  },
+  "probabilistic_safety": {
+    "enabled": true,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.9,
+    "lambda_count": 10,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": {
+    "kind": "gaussian_bnn",
+    "particles": 64,
+    "latent_dimension": 96,
+    "model_fingerprint": "44e86501e558113ca489069202694834e15f6fd83e6c12994bbced438de694c0",
+    "population_generation": 19200,
+    "target_mode": "dynamics",
+    "adaptation": "gaussian_posterior",
+    "belief_generation": 12,
+    "likelihood_power": 0.10000000149011612,
+    "posterior_method": "tempered",
+    "inference": "calibrated_working_likelihood",
+    "method": "gaussian_last_layer_mc",
+    "sample_count": 64,
+    "probability_source": "gaussian_latent_posterior",
+    "chance_estimation": "planning_samples",
+    "probability_estimator": "empirical_planning_samples",
+    "verification_sample_count": 0,
+    "verification_confidence": null,
+    "confidence": null,
+    "uncertainty": "conditional Gaussian belief; fixed learned features/likelihood",
+    "limitations": "optimization samples reused; no independent confidence bound; execution noise excluded; not real-system certification"
+  },
+  "elapsed": 3213.489678680001,
+  "partial_lap": null,
+  "device_memory": {
+    "bytes_in_use": 3329280,
+    "peak_bytes_in_use": 794818304,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 6167724032
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/diag-known-pp05",
+  "files": {
+    "state.json": "ccc28c3088383d5f59248418588cd7b81f2e080200cb25e367cce2b5db1a1eca",
+    "events.jsonl": "43de4f977e3413ec0607eb943a53ece556b5e48b0e77d279db6f42aaff99ebbe",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "3cae5a9a948db84aa499ce7b666ef96247b6d8755656c504730b376cd5027e82",
+    "config.yaml": "d214d9f796c1435ae909b055686f5e74d3dcca92849dc2b13b62a6ec5d95fb15",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "3bc30e81434d5a8323550a663848eb635f92d1d183ff1eec600766678bf0cdf8"
+  }
+}

@@ -1,0 +1,335 @@
+[dynamics_model_loaded] kind=gaussian_bnn | latent_dimension=96 | particles=64 | adaptation=gaussian_posterior | numerical_substep_mismatch=True
+[start] learning | seed=1 | friction actual/model=1.049/None | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[particle_hull_precompile_started] variants=238
+[particle_hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[probabilistic_safety_status] status=tracking_warmup_unconstrained | step=0 | reason=terminal safe-set/value learner not ready or tracking-only run
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[attempt] #1 success | 384 steps
+[dynamics_observation_skipped] attempt_id=1 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 1 | 38.4 s | avg speed 8.92 m/s | mppi
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[attempt] #2 success | 381 steps
+[dynamics_observation_skipped] attempt_id=2 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 2 | 38.1 s | avg speed 8.987 m/s | mppi
+[control_step_timing] steps=800
+[control_step_timing] steps=900
+[control_step_timing] steps=1000
+[training] generation=1 | epochs=300 | loss=-0.3848 | gradient_steps=600
+[control_step_timing] steps=1100
+[attempt] #3 success | 380 steps
+[dynamics_observation_skipped] attempt_id=3 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 3 | 38 s | avg speed 8.974 m/s | mppi
+[control_step_timing] steps=1200
+[control_step_timing] steps=1300
+[training] generation=2 | epochs=300 | loss=-1.269 | gradient_steps=1800
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[attempt] #4 success | 381 steps
+[dynamics_observation_skipped] attempt_id=4 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 4 | 38.1 s | avg speed 8.987 m/s | mppi
+[control_step_timing] steps=1600
+[control_step_timing] steps=1700
+[training] generation=3 | epochs=300 | loss=-1.742 | gradient_steps=3300
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[attempt] #5 success | 380 steps
+[dynamics_observation_skipped] attempt_id=5 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 5 | 38 s | avg speed 8.974 m/s | mppi
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/bnn-ppwarm25/init.npz
+[probabilistic_safety_warmed] candidates=256 | mode=terminal
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=1906 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=1906 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[learned_controller_started] step=1906 | value_generation=3 | hull_facets=764
+[probabilistic_safety_status] status=active | generation=0 | step=1907 | estimator=empirical_planning_samples | samples=64
+[training] generation=4 | epochs=300 | loss=-2.087 | gradient_steps=5100
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=1940 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=1940 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2188 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1941 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1719 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1942 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1875 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1943 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.07812 (empirical, limit=0.05) | P_violate(hull)=0.8594 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1944 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.01562 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=1945 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=1962 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=1962 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=1963 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=1964 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=1964 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.03125 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1965 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1966 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=1967 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=1969 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=1969 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1970 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=1971 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=1980 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=1980 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.04688 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1981 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1982 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1983 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1875 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1984 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.25 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1985 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1986 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1987 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1406 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1988 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=1989 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=1990 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2000
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2050 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2050 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.01562 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2051 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2075 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2075 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.07812 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2076 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2077 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2077 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2078 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1406 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2079 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.07812 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2080 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2100
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2107 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2107 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.9062 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2108 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2110 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2110 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.07812 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2111 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2112 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2113 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2114 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2114 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2115 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.01562 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2116 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.04688 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2117 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.01562 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2118 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2119 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.04688 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2120 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2121 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2122 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2123 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1875 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2124 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2125 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1406 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2126 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2812 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2127 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2344 (empirical, limit=0.05) | P_violate(hull)=0.9219 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2128 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2031 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2129 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.3438 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2130 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2344 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2131 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1875 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2132 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1094 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2133 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.8906 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2134 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2135 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2135 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.03125 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2136 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.01562 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2137 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2138 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2138 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.03125 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2139 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2143 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2143 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2144 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2148 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2148 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2149 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.03125 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2150 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.07812 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2151 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1094 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2152 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.125 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2153 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1406 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2154 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2188 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2155 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2812 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2156 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2157 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.04688 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2158 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1719 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2159 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.04688 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2160 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1094 (empirical, limit=0.05) | P_violate(hull)=0.9219 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2161 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.125 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2162 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2163 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2164 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.125 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2165 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2031 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2166 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1875 (empirical, limit=0.05) | P_violate(hull)=0.9219 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2167 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.125 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2168 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1406 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2169 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2170 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2183 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2183 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2184 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.03125 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2185 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1094 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2186 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.04688 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2187 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2188 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.125 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2189 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1406 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2190 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1406 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2191 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.07812 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2192 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.9219 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2193 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2194 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2031 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2195 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2188 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2196 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.3281 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2197 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2188 (empirical, limit=0.05) | P_violate(hull)=0.8438 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2198 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2812 (empirical, limit=0.05) | P_violate(hull)=0.875 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2199 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.125 (empirical, limit=0.05) | P_violate(hull)=0.8438 (empirical, limit=0.9)
+[control_step_timing] steps=2200
+[probabilistic_safety_status] status=active | generation=0 | step=2200 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2204 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2204 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.01562 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2205 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2206 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2207 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2031 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2208 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2209 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2188 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2210 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2969 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2211 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2212 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2344 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2213 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2214 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2221 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2221 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2222 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2228 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2228 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.01562 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2229 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2230 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2230 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9062 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2231 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.01562 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2232 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2245 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2245 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2246 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.04688 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2247 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.07812 (empirical, limit=0.05) | P_violate(hull)=0.9219 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2248 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2249 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.125 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2250 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2251 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2252 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.3594 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2253 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.3281 (empirical, limit=0.05) | P_violate(hull)=0.9219 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2254 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2969 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2255 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.3125 (empirical, limit=0.05) | P_violate(hull)=0.9062 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2256 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2969 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2257 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2258 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.09375 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2259 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2273 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2273 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.125 (empirical, limit=0.05) | P_violate(hull)=0.7969 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2274 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1719 (empirical, limit=0.05) | P_violate(hull)=0.7969 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2275 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1875 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2276 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2969 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2277 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.2031 (empirical, limit=0.05) | P_violate(hull)=0.9531 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2278 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1406 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2279 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.04688 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2280 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1406 (empirical, limit=0.05) | P_violate(hull)=0.9375 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2281 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2284 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2284 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.07812 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2285 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1094 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2286 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.1562 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2287 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.07812 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2288 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.0625 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2289 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0.01562 (empirical, limit=0.05) | P_violate(hull)=0.9844 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2290 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2300
+[probabilistic_safety_status] status=no_feasible_candidate | generation=0 | step=2304 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2304 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9219 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=0 | step=2305 | estimator=empirical_planning_samples | samples=64
+[attempt] #6 success | 400 steps
+[dynamics_observed] attempt_id=6 | valid_transitions=400 | rejected_transitions=0
+[dynamics_posterior_training] generation=1 | status=ready | posterior_method=tempered | new_training_transitions=233 | training_transitions=233 | likelihood_power=0.001 | heldout_xy10_rmse=0.04175 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=1 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 6 | 40 s | avg speed 8.461 m/s | lmppi | lambda_ss mean=4.375 max=18.75 | lambda_boundary mean=2.875 max=18.75 | lambda_chance_boundary mean=3.48 max=18 | lambda_chance_hull mean=3.4 max=18
+[probabilistic_safety_status] status=active | generation=1 | step=2306 | estimator=empirical_planning_samples | samples=64
+[training] generation=5 | epochs=300 | loss=-2.74 | gradient_steps=6900
+[control_step_timing] steps=2400
+[probabilistic_safety_status] status=no_feasible_candidate | generation=1 | step=2465 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2465 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2466 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2467 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=2468 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=1 | step=2469 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2500
+[probabilistic_safety_status] status=no_feasible_candidate | generation=1 | step=2592 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2592 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=1 | step=2593 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2600
+[probabilistic_safety_status] status=no_feasible_candidate | generation=1 | step=2619 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2619 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9219 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=1 | step=2620 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=1 | step=2631 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2631 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=1 | step=2632 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2700
+[attempt] #7 success | 398 steps
+[dynamics_observed] attempt_id=7 | valid_transitions=398 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=ready | posterior_method=tempered | new_training_transitions=233 | training_transitions=466 | likelihood_power=0.0001 | heldout_xy10_rmse=0.05961 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=2 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 7 | 39.8 s | avg speed 8.608 m/s | lmppi | lambda_ss mean=3.97 max=18.75 | lambda_boundary mean=2.836 max=18.75 | lambda_chance_boundary mean=3.166 max=18 | lambda_chance_hull mean=2.633 max=18
+[probabilistic_safety_status] status=active | generation=2 | step=2704 | estimator=empirical_planning_samples | samples=64
+[training] generation=6 | epochs=300 | loss=-2.829 | gradient_steps=8700
+[control_step_timing] steps=2800
+[probabilistic_safety_status] status=no_feasible_candidate | generation=2 | step=2823 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=2823 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=2 | step=2824 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[control_step_timing] steps=3100
+[attempt] #8 success | 413 steps
+[dynamics_observed] attempt_id=8 | valid_transitions=413 | rejected_transitions=0
+[dynamics_posterior_training] generation=3 | status=ready | posterior_method=tempered | new_training_transitions=239 | training_transitions=705 | likelihood_power=0.0001 | heldout_xy10_rmse=0.0444 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=3 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 8 | 41.3 s | avg speed 8.212 m/s | lmppi | lambda_ss mean=3.765 max=16.25 | lambda_boundary mean=1.374 max=13.75 | lambda_chance_boundary mean=2.01 max=4 | lambda_chance_hull mean=2.034 max=18
+[probabilistic_safety_status] status=active | generation=3 | step=3117 | estimator=empirical_planning_samples | samples=64
+[training] generation=7 | epochs=300 | loss=-2.788 | gradient_steps=10500
+[control_step_timing] steps=3200
+[probabilistic_safety_status] status=no_feasible_candidate | generation=3 | step=3238 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=3238 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=3 | step=3239 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=3300
+[control_step_timing] steps=3400
+[control_step_timing] steps=3500
+[attempt] #9 success | 416 steps
+[dynamics_observed] attempt_id=9 | valid_transitions=416 | rejected_transitions=0
+[dynamics_posterior_training] generation=4 | status=ready | posterior_method=tempered | new_training_transitions=239 | training_transitions=944 | likelihood_power=0.0001 | heldout_xy10_rmse=0.02837 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=4 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 9 | 41.6 s | avg speed 8.172 m/s | lmppi | lambda_ss mean=3.741 max=3.75 | lambda_boundary mean=1.265 max=5 | lambda_chance_boundary mean=2 max=4 | lambda_chance_hull mean=2.014 max=8
+[probabilistic_safety_status] status=active | generation=4 | step=3533 | estimator=empirical_planning_samples | samples=64
+[training] generation=8 | epochs=300 | loss=-2.679 | gradient_steps=12300
+[control_step_timing] steps=3600
+[probabilistic_safety_status] status=no_feasible_candidate | generation=4 | step=3657 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=3657 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=0.9688 (empirical, limit=0.9)
+[probabilistic_safety_status] status=active | generation=4 | step=3658 | estimator=empirical_planning_samples | samples=64
+[control_step_timing] steps=3700
+[control_step_timing] steps=3800
+[control_step_timing] steps=3900
+[attempt] #10 success | 420 steps
+[dynamics_observed] attempt_id=10 | valid_transitions=420 | rejected_transitions=0
+[dynamics_posterior_training] generation=5 | status=ready | posterior_method=tempered | new_training_transitions=246 | training_transitions=1190 | likelihood_power=0.0001 | heldout_xy10_rmse=0.03198 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=5 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 10 | 42 s | avg speed 8.096 m/s | lmppi | lambda_ss mean=3.542 max=8.75 | lambda_boundary mean=1.185 max=5 | lambda_chance_boundary mean=1.895 max=4 | lambda_chance_hull mean=1.919 max=18
+[training] generation=9 | epochs=300 | loss=-2.822 | gradient_steps=14400
+[checkpoint_saved] file=checkpoints/trial-000010 | trials=10
+[probabilistic_safety_status] status=active | generation=5 | step=3953 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_status] status=no_feasible_candidate | generation=5 | step=3996 | estimator=empirical_planning_samples | samples=64
+[probabilistic_safety_fallback] step=3996 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=3997 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=3998 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=3999 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[control_step_timing] steps=4000
+[probabilistic_safety_fallback] step=4000 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[probabilistic_safety_fallback] step=4001 | status=no_feasible_candidate | policy=sit_conservative | P_violate(boundary)=0 (empirical, limit=0.05) | P_violate(hull)=1 (empirical, limit=0.9)
+[attempt] #11 incomplete | 49 steps | speed_too_low | lambda_ss mean=5.689 max=18.75 | lambda_boundary mean=1.531 max=7.5 | lambda_chance_boundary mean=2.122 max=10 | lambda_chance_hull mean=2.571 max=10
+[dynamics_observed] attempt_id=11 | valid_transitions=49 | rejected_transitions=0
+[partial_lap] attempt_id=11 | steps=49 | termination_reason=speed_too_low
+[finish] status=speed_too_low | trials=10 | successful_laps=10 | failed_attempts=0 | applied_steps=4002 | training_generations=9 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/bnn-ppwarm25
+[control_timing_summary] steps=4002 | control_period_seconds=0.1 | stepping=lockstep
+EXIT=2

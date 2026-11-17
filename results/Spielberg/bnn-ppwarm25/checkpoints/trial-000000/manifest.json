@@ -1,0 +1,22 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/bnn-ppwarm25",
+  "files": {
+    "state.json": "9f28ab52a35b12536570f944b0b57478f4bd39e5c21ac57a8235f06b9f2e7c63",
+    "dynamics_posterior.json": "cda2e2ea5d6906363371c6f3d99d5936659da44956fcb54b6a1a59a2d436d806",
+    "events.jsonl": "2d857dd5d43cfcb569fe99265c8aebe39c21d549467ff5a59c8eb770072e0f2e",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "3cae5a9a948db84aa499ce7b666ef96247b6d8755656c504730b376cd5027e82",
+    "config.yaml": "05a49709fc16866e98179d09d2deb1619b42b650e80748ee7f198d67f037d8e5",
+    "dynamics_posterior.npz": "f0b173ea39b8c63d650a3540b4ee91aba1cb352962d83cd65eefb7e678f4487c",
+    "dynamics_model/manifest.json": "8a2348e6ee80805de40002fdb458882ac8846937f52ddb9aa485f2beeabd5521",
+    "dynamics_model/model.msgpack": "d33f1cadc8a4eb8260edd3b6f374498d7aec3f7d3f91435788ce54d9b894e6d7",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "cccb7f2ca482e2a2ecb38acccbdd9a4607a67a6ae8f85600ec6ab28a9a3ffe57"
+  }
+}

@@ -1,0 +1,6 @@
+extends: ../../configs/f1tenth-ros-known.yaml
+output:
+  exp_name: quickload-diag
+  quick_load: true
+  quick_load_init: true
+  init_path: results/Spielberg/cpu-full1-20261113/init.npz

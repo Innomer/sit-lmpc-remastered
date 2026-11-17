@@ -1,0 +1,8 @@
+{"event": "insight_recording", "time": "2026-11-13T21:40:28.891937+00:00", "steps": 50, "file": "insight.npz"}
+{"event": "start", "time": "2026-11-13T21:40:32.904749+00:00", "dynamics": "dynamic_ST", "simulator": "st", "seed": 1, "tracking_only": false, "simulator_friction": 1.0489, "simulator_mass_ratio": 1.0, "simulator_mass_kg": 3.74, "predictor_friction": 1.0489, "predictor_mass_ratio": 1.0, "predictor_kind": "single", "predictor": {"kind": "single", "friction": 1.0489000082015991}, "sit_lmpc_mode": true, "candidate_frictions": [1.0489], "dynamics_belief_enabled": false, "value_input_mode": "state", "risk_input_mode": null}
+{"event": "hull_precompile_started", "time": "2026-11-13T21:40:32.904967+00:00", "bucket": 10, "max_facets": 1190, "variants": 238, "dtype": "float32"}
+{"event": "hull_precompile_finished", "time": "2026-11-13T21:40:46.148374+00:00", "variants": 238, "elapsed": 13.243421508999973}
+{"event": "ros_launch", "time": "2026-11-13T21:40:46.952676+00:00", "target_speed": 2.495499610900879, "seconds": 0.5, "speed": 2.4999988079071045}
+{"event": "model_bank_warmup", "time": "2026-11-13T21:40:47.737774+00:00", "seconds": 0.41420183399986854, "frictions": [1.0489]}
+{"event": "training", "time": "2026-11-13T21:40:59.446079+00:00", "generation": 1, "epochs": 600, "loss": -3.743260145187378, "gradient_steps": 11400}
+{"event": "quick_load", "time": "2026-11-13T21:40:59.450451+00:00", "from_file": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/cpu-full1-20261113/init.npz", "restore_state": true, "safe_set_laps": 4, "epochs": 600, "compatibility": "validated"}

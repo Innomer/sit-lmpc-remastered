@@ -1,0 +1,81 @@
+{
+  "status": "speed_too_low",
+  "laps": 7,
+  "successful_laps": 7,
+  "trials": 7,
+  "history_laps": 0,
+  "attempts": 8,
+  "failed_attempts": 0,
+  "incomplete_attempts": 1,
+  "applied_steps": 3371,
+  "learned_steps": 1092,
+  "training_generations": 6,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 0,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": null,
+  "predictor_friction": 1.0489000082015991,
+  "dynamics_predictor": {
+    "kind": "single",
+    "friction": 1.0489000082015991
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.05,
+    "lambda_count": 16,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 177.58220215799975,
+  "partial_lap": {
+    "file": "partial_lap.npz",
+    "lap": 8,
+    "completed": false,
+    "termination_reason": "speed_too_low",
+    "steps": 144,
+    "duration": 14.399999999999965,
+    "lap_time": null,
+    "mean_speed": 7.493758201599121,
+    "safe_set_max": 0.0,
+    "safe_set_mean": 0.0,
+    "boundary_max": 0.0,
+    "boundary_mean": 0.0,
+    "actual_boundary_max": 0.0,
+    "actual_boundary_mean": 0.0,
+    "out_of_bounds_steps": 0,
+    "max_abs_lateral_offset": 0.45871442556381226,
+    "nonfinite_lateral_steps": 0,
+    "attempt_id": 8,
+    "outcome": "incomplete",
+    "lambda_summary": {
+      "steps": 144,
+      "terms": {
+        "hull": {
+          "mean": 1.4670138888888888,
+          "max": 7.5,
+          "steps": 144
+        },
+        "boundary": {
+          "mean": 0.13020833333333334,
+          "max": 3.75,
+          "steps": 144
+        }
+      }
+    }
+  },
+  "device_memory": {
+    "bytes_in_use": 1478912,
+    "peak_bytes_in_use": 276859904,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 6167724032
+  }
+}

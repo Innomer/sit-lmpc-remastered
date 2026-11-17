@@ -1,0 +1,423 @@
+  rate = np.sqrt(np.mean((predicted[..., 5] - true[..., 5]) ** 2, axis=-1))
+{
+  "state_estimation_rmse": {
+    "encoder": {
+      "steering": 0.008311118930578232,
+      "speed": 0.37245193123817444,
+      "yaw_rate": 0.11210732161998749,
+      "slip": 0.020051531493663788,
+      "lateral_velocity": 0.22849193215370178
+    },
+    "ekf": {
+      "steering": 0.0252907183021307,
+      "speed": 0.45515474677085876,
+      "yaw_rate": 0.05131721496582031,
+      "slip": 0.0244472436606884,
+      "lateral_velocity": 0.259136438369751
+    },
+    "kinematic": {
+      "slip": 0.18233729898929596,
+      "lateral_velocity": 1.9419279098510742
+    }
+  },
+  "prediction_1s": {
+    "bicycle": {
+      "instance": {
+        "position_m": 0.6463761329650879,
+        "heading_rad": 0.14774850010871887,
+        "speed_mps": 2.0406061594258063e-05,
+        "yaw_rate_rmse": Infinity,
+        "position_median_m": 0.3897669315338135,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.5602153539657593,
+        "heading_rad": 0.1989850103855133,
+        "speed_mps": 2.153090463252738e-06,
+        "yaw_rate_rmse": Infinity,
+        "position_median_m": 0.29277193546295166,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "bnn_prior": {
+      "instance": {
+        "position_m": 0.5015953183174133,
+        "heading_rad": 0.12240691483020782,
+        "speed_mps": 0.00206547137349844,
+        "yaw_rate_rmse": 0.24523431062698364,
+        "position_median_m": 0.2031519114971161,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.5123782157897949,
+        "heading_rad": 0.16918639838695526,
+        "speed_mps": 0.0021832005586475134,
+        "yaw_rate_rmse": 0.2562463879585266,
+        "position_median_m": 0.20718935132026672,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "residual_prior": {
+      "instance": {
+        "position_m": 0.5020612478256226,
+        "heading_rad": 0.12223532050848007,
+        "speed_mps": 5.977763430564664e-05,
+        "yaw_rate_rmse": 0.2459888458251953,
+        "position_median_m": 0.20263037085533142,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.5118846893310547,
+        "heading_rad": 0.16858288645744324,
+        "speed_mps": 5.399433575803414e-05,
+        "yaw_rate_rmse": 0.25421300530433655,
+        "position_median_m": 0.21028314530849457,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "ours": {
+      "instance": {
+        "position_m": 0.7206984758377075,
+        "heading_rad": 0.06380932778120041,
+        "speed_mps": 0.28423866629600525,
+        "yaw_rate_rmse": 0.12100956588983536,
+        "position_median_m": 0.5657559633255005,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.5267430543899536,
+        "heading_rad": 0.08263450860977173,
+        "speed_mps": 0.19005320966243744,
+        "yaw_rate_rmse": 0.13771376013755798,
+        "position_median_m": 0.4064751863479614,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "ours_true_state": {
+      "instance": {
+        "position_m": 0.16291026771068573,
+        "heading_rad": 0.04135564714670181,
+        "speed_mps": 0.012336800806224346,
+        "yaw_rate_rmse": 0.08646891266107559,
+        "position_median_m": 0.08060692250728607,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.176641047000885,
+        "heading_rad": 0.06645863503217697,
+        "speed_mps": 0.008738198317587376,
+        "yaw_rate_rmse": 0.10699865967035294,
+        "position_median_m": 0.09137597680091858,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "bicycle_est": {
+      "instance": {
+        "position_m": 1.3101494312286377,
+        "heading_rad": 0.15670116245746613,
+        "speed_mps": 0.418373167514801,
+        "yaw_rate_rmse": Infinity,
+        "position_median_m": 1.048879623413086,
+        "nonfinite_rollouts": 2,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.9220597147941589,
+        "heading_rad": 0.21427659690380096,
+        "speed_mps": 0.3574085235595703,
+        "yaw_rate_rmse": Infinity,
+        "position_median_m": 0.6945516467094421,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "bnn_prior_est": {
+      "instance": {
+        "position_m": 1.2363110780715942,
+        "heading_rad": 0.14243613183498383,
+        "speed_mps": 0.4214773178100586,
+        "yaw_rate_rmse": 0.27021417021751404,
+        "position_median_m": 0.9544353485107422,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.8703184127807617,
+        "heading_rad": 0.18400046229362488,
+        "speed_mps": 0.35771873593330383,
+        "yaw_rate_rmse": 0.2593297064304352,
+        "position_median_m": 0.6567298769950867,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "residual_prior_est": {
+      "instance": {
+        "position_m": 1.2363513708114624,
+        "heading_rad": 0.14219555258750916,
+        "speed_mps": 0.4183567762374878,
+        "yaw_rate_rmse": 0.27100223302841187,
+        "position_median_m": 0.9539386034011841,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.8688512444496155,
+        "heading_rad": 0.18408392369747162,
+        "speed_mps": 0.35740983486175537,
+        "yaw_rate_rmse": 0.2570573687553406,
+        "position_median_m": 0.6540182828903198,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "kf_oracle": {
+      "instance": {
+        "position_m": 0.023764465004205704,
+        "heading_rad": 0.007631151936948299,
+        "speed_mps": 0.00023224989126902074,
+        "yaw_rate_rmse": 0.020160317420959473,
+        "position_median_m": 0.010116394609212875,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 0.04150542616844177,
+        "heading_rad": 0.017650499939918518,
+        "speed_mps": 0.00030821372638456523,
+        "yaw_rate_rmse": 0.038157869130373,
+        "position_median_m": 0.010183547623455524,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "kf_estimated": {
+      "instance": {
+        "position_m": 7.552134990692139,
+        "heading_rad": 1.3948365449905396,
+        "speed_mps": 1.4004122018814087,
+        "yaw_rate_rmse": 29.79705238342285,
+        "position_median_m": 6.085424423217773,
+        "nonfinite_rollouts": 0,
+        "starts": 4836
+      },
+      "change": {
+        "position_m": 4.019206523895264,
+        "heading_rad": 1.232103705406189,
+        "speed_mps": 1.1033998727798462,
+        "yaw_rate_rmse": 18.43621826171875,
+        "position_median_m": 2.843075752258301,
+        "nonfinite_rollouts": 0,
+        "starts": 1581
+      }
+    },
+    "kf_ekf": {
+      "instance": {
+        "position_m": 5.651911735534668,
+        "heading_rad": 1.3226975202560425,
+        "speed_mps": 0.982465386390686,
+        "yaw_rate_rmse": 10.026432037353516,
+        "position_median_m": 4.258504867553711,
+        "nonfinite_rollouts": 0,
+        "starts": 1162
+      }
+    },
+    "ours_on_ekf_items": {
+      "instance": {
+        "position_m": 0.6748995780944824,
+        "heading_rad": 0.04471152648329735,
+        "speed_mps": 0.27692610025405884,
+        "yaw_rate_rmse": 0.0780116394162178,
+        "position_median_m": 0.5257837772369385,
+        "nonfinite_rollouts": 0,
+        "starts": 1162
+      }
+    }
+  },
+  "adaptation": {
+    "step": {
+      "-20..0 s": {
+        "bicycle": 0.6150368055276063,
+        "bnn_prior": 0.5484429917591193,
+        "residual_prior": 0.5477193962627765,
+        "ours": 0.4642932119354475,
+        "ours_true_state": 0.17668293469251697,
+        "bicycle_est": 0.9778929147449203,
+        "bnn_prior_est": 0.9223334928064194,
+        "residual_prior_est": 0.9210977983920086,
+        "kf_oracle": 0.028158608552251264,
+        "kf_estimated": 4.398995901642363,
+        "starts": 399
+      },
+      "0..0.5 s": {
+        "bicycle": 0.5427525791304145,
+        "bnn_prior": 0.4575851480881481,
+        "residual_prior": 0.45390064547245856,
+        "ours": 0.730183300845649,
+        "ours_true_state": 0.23405214347471687,
+        "bicycle_est": 1.0026335314564083,
+        "bnn_prior_est": 0.9040475876434989,
+        "residual_prior_est": 0.8993795269533343,
+        "kf_oracle": 0.14305749567954437,
+        "kf_estimated": 3.726968346406584,
+        "starts": 23
+      },
+      "0.5..1 s": {
+        "bicycle": 0.4067607210827586,
+        "bnn_prior": 0.3400967468244388,
+        "residual_prior": 0.3398577348106419,
+        "ours": 0.6080780176688796,
+        "ours_true_state": 0.14288075252071672,
+        "bicycle_est": 0.9112492506594762,
+        "bnn_prior_est": 0.8168185369476028,
+        "residual_prior_est": 0.8134530960865642,
+        "kf_oracle": 0.13294962425361914,
+        "kf_estimated": 4.561064696182376,
+        "starts": 23
+      },
+      "1..2 s": {
+        "bicycle": 0.5498702122890593,
+        "bnn_prior": 0.4864693224662915,
+        "residual_prior": 0.48852266813691647,
+        "ours": 0.5754179039403148,
+        "ours_true_state": 0.15829771007512414,
+        "bicycle_est": 0.9591447715040134,
+        "bnn_prior_est": 0.892312293143376,
+        "residual_prior_est": 0.8925894161929255,
+        "kf_oracle": 0.07043763551526987,
+        "kf_estimated": 4.109134373457535,
+        "starts": 46
+      },
+      "2..5 s": {
+        "bicycle": 0.6046618105052218,
+        "bnn_prior": 0.5752223462450142,
+        "residual_prior": 0.5751684425823455,
+        "ours": 0.6203854155551264,
+        "ours_true_state": 0.15179464483863095,
+        "bicycle_est": 1.0063662705268117,
+        "bnn_prior_est": 0.9534051303846248,
+        "residual_prior_est": 0.9516853605923445,
+        "kf_oracle": 0.029691353925559466,
+        "kf_estimated": 4.31261489826484,
+        "starts": 138
+      },
+      "5..30 s": {
+        "bicycle": 0.6595081105704529,
+        "bnn_prior": 0.5371522965021893,
+        "residual_prior": 0.5370894159470383,
+        "ours": 0.6647830020703442,
+        "ours_true_state": 0.18311974094752725,
+        "bicycle_est": 1.1665734361253075,
+        "bnn_prior_est": 1.0732445641471124,
+        "residual_prior_est": 1.0710307239462529,
+        "kf_oracle": 0.017495564144934046,
+        "kf_estimated": 4.506118982224851,
+        "starts": 222
+      }
+    },
+    "patch": {
+      "-20..0 s": {
+        "bicycle": 0.48716102288032836,
+        "bnn_prior": 0.5172161330452915,
+        "residual_prior": 0.5155233029028508,
+        "ours": 0.4052542874704595,
+        "ours_true_state": 0.16989012573117881,
+        "bicycle_est": 0.703389608852052,
+        "bnn_prior_est": 0.7039428349659554,
+        "residual_prior_est": 0.7018161235275433,
+        "kf_oracle": 0.030702476342300073,
+        "kf_estimated": 3.789465143497936,
+        "starts": 421
+      },
+      "0..0.5 s": {
+        "bicycle": 0.5116434953126469,
+        "bnn_prior": 0.3999733826831767,
+        "residual_prior": 0.39761596398526117,
+        "ours": 0.5965098744552386,
+        "ours_true_state": 0.4008667708227509,
+        "bicycle_est": 0.8949061600785506,
+        "bnn_prior_est": 0.8038253862606851,
+        "residual_prior_est": 0.7993484515892831,
+        "kf_oracle": 0.1852905973792076,
+        "kf_estimated": 4.1206809250931995,
+        "starts": 19
+      },
+      "0.5..1 s": {
+        "bicycle": 0.629319265190708,
+        "bnn_prior": 0.4566302969561596,
+        "residual_prior": 0.45782981303177384,
+        "ours": 0.6616802041075731,
+        "ours_true_state": 0.32107795471031414,
+        "bicycle_est": 1.1671791723684262,
+        "bnn_prior_est": 1.0370037845875089,
+        "residual_prior_est": 1.0361971772815053,
+        "kf_oracle": 0.09495309387382708,
+        "kf_estimated": 3.8652597289336357,
+        "starts": 19
+      },
+      "1..2 s": {
+        "bicycle": 0.666416649069441,
+        "bnn_prior": 0.5167144708041298,
+        "residual_prior": 0.5170234736594322,
+        "ours": 0.5722529988147711,
+        "ours_true_state": 0.2357598981133809,
+        "bicycle_est": 1.116038638902338,
+        "bnn_prior_est": 1.001157653959174,
+        "residual_prior_est": 1.001633326473989,
+        "kf_oracle": 0.06971956083342727,
+        "kf_estimated": 2.921959278810965,
+        "starts": 38
+      },
+      "2..5 s": {
+        "bicycle": 0.534321125787461,
+        "bnn_prior": 0.49301818176172674,
+        "residual_prior": 0.49215622162113765,
+        "ours": 0.5743679829163566,
+        "ours_true_state": 0.21265914033477504,
+        "bicycle_est": 0.9155700520035767,
+        "bnn_prior_est": 0.8690518994593904,
+        "residual_prior_est": 0.8675152009264344,
+        "kf_oracle": 0.11450740353293007,
+        "kf_estimated": 3.263849990140824,
+        "starts": 105
+      },
+      "5..30 s": {
+        "bicycle": 0.43057197691064175,
+        "bnn_prior": 0.36299138802814923,
+        "residual_prior": 0.36564044332362755,
+        "ours": 0.6289971474907361,
+        "ours_true_state": 0.11478783208804089,
+        "bicycle_est": 0.8417841399786994,
+        "bnn_prior_est": 0.7568410520034377,
+        "residual_prior_est": 0.758507641061442,
+        "kf_oracle": 0.030406906100040487,
+        "kf_estimated": 3.3061389320064336,
+        "starts": 128
+      }
+    }
+  },
+  "z_separation": {
+    "friction": {
+      "r2_test": 0.9172739316419464,
+      "rmse_test": 0.06145562953671737,
+      "trajectories_train": 1679,
+      "trajectories_test": 270
+    },
+    "mass_ratio": {
+      "r2_test": 0.2694922758684348,
+      "rmse_test": 0.12372654733987068,
+      "trajectories_train": 1679,
+      "trajectories_test": 270
+    }
+  }
+}

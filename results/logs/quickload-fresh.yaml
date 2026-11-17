@@ -1,0 +1,6 @@
+extends: ../../configs/f1tenth-ros-known.yaml
+output:
+  exp_name: quickload-fresh
+  quick_load: true
+  quick_load_init: true
+  init_path: results/Spielberg/fresh25/init.npz
