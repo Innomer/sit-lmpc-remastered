@@ -1,0 +1,6 @@
+# Low-grip patch (mu 0.6) over the braking zone and entry of the hairpin (s 85-115 m) from lap 7 on;
+# the rest of the track keeps mu 1.0489.
+map: Spielberg
+events:
+  - lap: 7
+    patches: [{s_start: 85.0, s_end: 115.0, mu: 0.6}]

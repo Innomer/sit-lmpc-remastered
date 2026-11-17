@@ -16,7 +16,7 @@ output:
 
 
 simulation:
-  backend: gym  # [gym, ros] gym steps the bundled standalone F1TENTH Gym in-process; ros drives f1tenth_gym_ros through odometry and Ackermann drive topics (see configs/f1tenth-ros-known.yaml).
+  backend: gym  # [gym, ros, replay] gym steps the bundled standalone F1TENTH Gym in-process; ros drives f1tenth_gym_ros through odometry and Ackermann drive topics (see configs/f1tenth-ros-known.yaml).
   ros:  # Only read when backend is ros. Topics without a leading slash are relative to namespace.
     namespace: ego_racecar  # The bridge's ego_namespace.
     odom_topic: odom  # nav_msgs/Odometry with base_link pose and body-frame twist; converted to the ST CoG state.
@@ -31,6 +31,7 @@ simulation:
     wait_timeout: 5.0  # Seconds to wait for odometry before failing.
     launch_timeout: 5.0  # Seconds of simulated time allowed to reach initial_speed after a reset.
     timing_report_steps: 100  # Emit control_step_timing (planning and simulator wall time) every this many steps; 0 disables.
+  replay_path: null  # Only read when backend is replay: a recorded attempt .npz (cartesian, frenet) replayed as the plant to time the planner without a simulator.
   steering_limit: null  # Front-wheel steering limit in rad for both the controlled vehicle and the planner model; null keeps the vehicle default (F1TENTH sim 0.4189). Set 0.34 for the real car.
   model: dynamic_ST  # [dynamic_ST] Only supported simulator model. Actual F1TENTH simulation model; planner.dynamics independently selects the predictor. [resume]
   map: custom1  # [custom1, Spielberg, or an existing local map prefix without _map] yaml. Custom maps must provide the map/centerline/raceline resources used by Track. [resume]

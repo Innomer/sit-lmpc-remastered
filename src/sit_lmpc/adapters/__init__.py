@@ -2,7 +2,7 @@
 
 
 def vehicle_parameters_for(simulation, friction, mass_ratio=1.0):
-    if simulation.backend == "ros":
+    if simulation.backend in ("ros", "replay"):
         from .ros_f1tenth import f1tenth_vehicle_parameters
 
         params = f1tenth_vehicle_parameters(friction, mass_ratio)

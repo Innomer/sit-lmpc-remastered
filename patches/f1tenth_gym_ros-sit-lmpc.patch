@@ -1,8 +1,26 @@
 diff --git a/f1tenth_gym_ros/gym_bridge.py b/f1tenth_gym_ros/gym_bridge.py
-index d476873..9a96d8f 100644
+index d476873..dcf88a8 100644
 --- a/f1tenth_gym_ros/gym_bridge.py
 +++ b/f1tenth_gym_ros/gym_bridge.py
-@@ -274,6 +274,8 @@ class GymBridge(Node):
+@@ -20,6 +20,8 @@
+ # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ # SOFTWARE.
+ 
++import dataclasses
++import json
+ import math
+ import os
+ import pathlib
+@@ -38,7 +40,7 @@ import rclpy
+ from rclpy.executors import ExternalShutdownException
+ from rclpy.node import Node
+ from rosgraph_msgs.msg import Clock
+-from std_msgs.msg import Bool, Float32, Int32
++from std_msgs.msg import Bool, Float32, Int32, String
+ 
+ from sensor_msgs.msg import LaserScan
+ from nav_msgs.msg import Odometry
+@@ -274,6 +276,8 @@ class GymBridge(Node):
          self.declare_parameter('scale', 1.0)
          self.declare_parameter('vehicle_params', 'f1tenth')
          self.declare_parameter('async_mode', True)
@@ -11,7 +29,7 @@ index d476873..9a96d8f 100644
          # Flag to know whether to publish the sim time or not
          # Has to be different than use_sim_time so we can still use real time to trigger timer callbacks
          self.declare_parameter('use_sim_time_bridge', False)
-@@ -387,10 +389,21 @@ class GymBridge(Node):
+@@ -387,10 +391,21 @@ class GymBridge(Node):
              # the clock, so lap 1 and every lap_time are full circuits.
              count_partial_first_lap=False,
          )
@@ -37,7 +55,66 @@ index d476873..9a96d8f 100644
          observation_cfg = ObservationConfig(type=ObservationType.DEFAULT)
          reset_cfg = ResetConfig(strategy=ResetStrategy.MAP_RANDOM_STATIC)
  
-@@ -587,16 +600,26 @@ class GymBridge(Node):
+@@ -543,6 +558,17 @@ class GymBridge(Node):
+                 10)
+ 
+         self.sim_paused = False
++        self.base_vehicle_params = self.vehicle_params
++        self.condition = {"mu": float(self.vehicle_params.mu), "mass_ratio": 1.0}
++        self.friction_zones = []
++        self.applied_condition = None
++        self.zone_active = False
++        self.condition_sub = self.create_subscription(
++            String, '/sim/vehicle_condition', self.condition_callback, 10)
++        self.zones_sub = self.create_subscription(
++            String, '/sim/friction_zones', self.zones_callback, 10)
++        self.condition_pub = self.create_publisher(String, '/sim/vehicle_condition_state', 10)
++
+         self.pause_subscriber = self.create_subscription(
+             Bool,
+             '/pause_sim',
+@@ -583,20 +609,67 @@ class GymBridge(Node):
+         lr = float(self.vehicle_params.lr)
+         return [pose[0] - lr * math.cos(pose[2]), pose[1] - lr * math.sin(pose[2]), pose[2]]
+ 
++    def condition_callback(self, msg):
++        values = json.loads(msg.data)
++        for name in ("mu", "mass_ratio"):
++            if name in values:
++                self.condition[name] = float(values[name])
++        self.get_logger().info(f'vehicle condition set to {self.condition}')
++        self._apply_condition()
++
++    def zones_callback(self, msg):
++        self.friction_zones = [
++            (float(zone["x_min"]), float(zone["y_min"]), float(zone["x_max"]), float(zone["y_max"]), float(zone["mu"]))
++            for zone in json.loads(msg.data)
++        ]
++        self.get_logger().info(f'{len(self.friction_zones)} friction zones set')
++        self._apply_condition()
++
++    def _apply_condition(self):
++        mu = self.condition["mu"]
++        inside = False
++        for x_min, y_min, x_max, y_max, zone_mu in self.friction_zones:
++            if x_min <= self.ego_pose[0] <= x_max and y_min <= self.ego_pose[1] <= y_max:
++                mu = zone_mu
++                inside = True
++        key = (mu, self.condition["mass_ratio"])
++        if key == self.applied_condition:
++            return
++        base = self.base_vehicle_params
++        params = dataclasses.replace(base, mu=mu, m=float(base.m) * self.condition["mass_ratio"])
++        self.env.update_params(params)
++        self.vehicle_params = params
++        self.applied_condition = key
++        self.zone_active = inside
++        self.condition_pub.publish(String(data=json.dumps({
++            "mu": mu, "mass_ratio": self.condition["mass_ratio"], "in_zone": inside,
++            "sim_time": float(self.env.unwrapped.sim_time),
++        })))
++
+     def pause_callback(self, msg):
          self.sim_paused = msg.data
          self.get_logger().info(f"Simulation {'paused' if self.sim_paused else 'resumed'}")
  
@@ -67,7 +144,7 @@ index d476873..9a96d8f 100644
              self.timer_callback()
  
      def opp_drive_callback(self, drive_msg, opp_index):
-@@ -604,8 +627,7 @@ class GymBridge(Node):
+@@ -604,8 +677,7 @@ class GymBridge(Node):
              return  # Skip stepping the sim if paused
  
          opp = self.opps[opp_index]
@@ -77,7 +154,16 @@ index d476873..9a96d8f 100644
  
          if not self.get_parameter('async_mode').value:
              # step the sim immediately and publish odom and scan
-@@ -839,9 +861,13 @@ class GymBridge(Node):
+@@ -659,6 +731,8 @@ class GymBridge(Node):
+         if self.sim_paused:
+             return  # Skip stepping the sim if paused
+ 
++        if self.friction_zones or self.applied_condition is not None:
++            self._apply_condition()
+         actions = [[self.ego_steer, self.ego_requested_speed]]
+         actions += [[opp.steer, opp.requested_speed] for opp in self.opps]
+         _, _, self.done, _, _ = self.env.step(np.array(actions))
+@@ -839,9 +913,13 @@ class GymBridge(Node):
              self.br.sendTransform(ts_msg)
  
      def _publish_wheel_transforms(self, ts):
@@ -94,24 +180,3 @@ index d476873..9a96d8f 100644
              # Front wheels steer about z first, then roll about their own
              # (steered) axle; rear wheels only roll. 'ZY' = intrinsic Rz @ Ry.
              front_quat = Rotation.from_euler('ZY', [steer, spin]).as_quat()
-diff --git a/config/sim.yaml b/config/sim.yaml
-index 3ea76ee..ee7af55 100644
---- a/config/sim.yaml
-+++ b/config/sim.yaml
-@@ -116,6 +116,16 @@ bridge:
-     # If true, the simulation will step using a timer callback.
-     async_mode: True
- 
-+    # How /drive messages are interpreted.
-+    # 'speed_steering_angle': drive.speed and drive.steering_angle, tracked by the gym's P controllers (default).
-+    # 'accel_steering_speed': drive.acceleration and drive.steering_angle_velocity applied directly
-+    # (for acceleration-based controllers such as SIT-LMPC). Keyboard teleop assumes the default mode.
-+    control_mode: 'speed_steering_angle'
-+
-+    # Synchronous mode only: physics steps (of 0.01 s) taken per ego /drive message before odom is
-+    # published. 1 = one step per message (default); 10 lets a 10 Hz controller advance 0.1 s per message.
-+    substeps_per_drive: 1
-+
- foxglove:
-   ros__parameters:
-     # Automatically open Foxglove when the launch file starts.

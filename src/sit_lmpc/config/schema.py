@@ -28,6 +28,7 @@ class RosConfig:
 class SimulationConfig:
     backend: str = "gym"
     ros: RosConfig = field(default_factory=RosConfig)
+    replay_path: str | None = None
     steering_limit: float | None = None
     model: str = "dynamic_ST"
     map: str = "custom1"
@@ -316,13 +317,15 @@ class ExperimentConfig:
             if s.backend != "ros" or s.ros.stepping != "lockstep" or s.ros.bridge_substeps != 1:
                 raise ValueError("planner.warmup pure_pursuit runs at the bridge rate: it needs backend ros, "
                                  "lockstep stepping and simulation.ros.bridge_substeps 1")
-        if s.backend not in ("gym", "ros"):
-            raise ValueError("simulation.backend must be gym or ros")
+        if s.backend not in ("gym", "ros", "replay"):
+            raise ValueError("simulation.backend must be gym, ros or replay")
+        if s.backend == "replay" and (not isinstance(s.replay_path, str) or not Path(s.replay_path).expanduser().is_file()):
+            raise ValueError("simulation.backend replay needs simulation.replay_path, a recorded attempt .npz")
         if s.ros.drive_mode not in ("accel_steering_speed", "speed_steering_angle"):
             raise ValueError("simulation.ros.drive_mode must be accel_steering_speed or speed_steering_angle")
         if s.ros.stepping not in ("lockstep", "realtime"):
             raise ValueError("simulation.ros.stepping must be lockstep or realtime")
-        if s.backend == "ros":
+        if s.backend in ("ros", "replay"):
             substeps = s.timestep / s.ros.bridge_timestep
             if abs(substeps - round(substeps)) > 1e-6 or round(substeps) < 1:
                 raise ValueError("simulation.timestep must be a positive multiple of simulation.ros.bridge_timestep")

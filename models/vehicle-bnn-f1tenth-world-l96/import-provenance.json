@@ -1,0 +1,12 @@
+{
+  "source": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/runs/dynamics-world/best_refit",
+  "fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+  "latent_dimension": 96,
+  "timestep": 0.1,
+  "integrator_timestep": 0.01,
+  "copied_at": "2026-11-16T17:26:07.166564-05:00",
+  "sha256": {
+    "manifest.json": "8dd1d4176c4d0f3778c7d4fa73413a4d2f1fcf2309ae14145d41d59c7966e963",
+    "model.msgpack": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997"
+  }
+}

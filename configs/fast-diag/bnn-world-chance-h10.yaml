@@ -1,0 +1,7 @@
+# Chance-constrained BNN fast baseline with the 1 s horizon: with 1.5 s the 64 prior-width sampled cars spread so far
+# that every candidate had P(terminal outside safe set) = 1 and the planner fell back and stopped.
+extends: bnn-world-chance.yaml
+output:
+  exp_name: fast-bnn-world-chance-h10
+planner:
+  horizon: 10

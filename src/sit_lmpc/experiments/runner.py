@@ -807,7 +807,11 @@ def _run(config, tracking_only, keyboard_cleanup):
     try:
         if not tracking_only:
             learned.precompile_hulls(events.emit)
-        if simulation.backend == "ros":
+        if simulation.backend == "replay":
+            from sit_lmpc.adapters.replay import ReplaySimulator
+
+            simulator = ReplaySimulator(simulation, track, events.emit, directory)
+        elif simulation.backend == "ros":
             from sit_lmpc.adapters.ros_f1tenth import RosSimulator
 
             simulator = RosSimulator(simulation, track, simulator_params, events.emit, directory)

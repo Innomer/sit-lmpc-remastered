@@ -1,0 +1,6 @@
+# Grip drops from the sim car's mu 1.0489 to 0.75 for the rest of the session after lap 7
+# (5 warm-up laps + 2 learned laps under normal conditions).
+map: Spielberg
+events:
+  - lap: 7
+    condition: {mu: 0.75}
