@@ -8,8 +8,10 @@ config=$1
 scenario=$2
 name=$3
 laps=${4:-15}
+set +u
 source /opt/ros/jazzy/setup.bash
 source ~/sim_ws/install/setup.bash
+set -u
 export ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-77}
 out=results/Spielberg/$name
 mkdir -p "$out"

@@ -1,8 +1,9 @@
 # Physics-grounded world model: architecture and data flow
 
 ESE 6150 Team 8. This is our method, as implemented on `ros-sim`. Code: `src/sit_lmpc/world/`
-(`data.py`, `model.py`, `train.py`, `ekf.py`, `evaluate.py`) and the residual transition in `vendor/dyna-dist`.
-Status 2026-11-17: transition trained; encoder v2-fixed trained and evaluated (`results/world-eval-v2-fixed`). Not yet connected to the planner.
+(`data.py`, `model.py`, `train.py`, `ekf.py`, `evaluate.py`, `runtime.py`, `readout.py`) and the residual transition in `vendor/dyna-dist`.
+Status 2026-11-17: transition trained; encoder v3 trained and evaluated (`results/world-eval-v3`); connected to the
+planner with a condition-aware safe set and tested in the sim (`results/world-closed-loop`). Car integration not yet run.
 
 ## 1. The idea in one line
 
@@ -184,7 +185,11 @@ flowchart TB
 Loss = 1·anchor + 1·prediction + (v2: 1·true-state prediction) + 0.1·sensor NLL + 0.01·ramp·KL. Adam 1e-3,
 gradient clip 5, 20k steps (about 25 min on the laptop GPU), best validation checkpoint kept.
 
-## 6. Data flow: on the car (planned integration)
+## 6. Data flow: in the planner loop
+
+Implemented for the sim (`belief_update: encoder`); the car uses the same path with real topics.
+The diagram below also shows planned parts that are not built yet: delay compensation with the encoder, the EKF
+fallback switch and chance constraints with our model.
 
 ```mermaid
 flowchart LR
@@ -208,6 +213,16 @@ flowchart LR
   CHK -.->|yes| EKF["EKF fallback state"] -.-> DLY
 ```
 
+What runs every 0.1 s today (`world/runtime.py: EncoderBelief`, `experiments/runner.py`):
+
+1. The ROS adapter collects the 9 encoder inputs from `/ego_racecar/imu`, `/wheel_odom`, `/pf_odom` and the last applied command.
+2. One GRU step gives ŝ_t, the z mean and the z covariance factor (L·σ).
+3. The planner's z belief is set to that mean and factor; steering, speed, yaw rate and slip in the planner state are
+   replaced by ŝ_t.
+4. The friction read-out (`world/readout.py`, linear in w) gives a grip estimate; each lap is tagged with its mean.
+5. Condition-aware safe set: the planner uses only stored laps whose tag is within 0.12 of the current estimate, or the
+   4 nearest laps if fewer qualify. The value function still uses all laps.
+
 Only z (and the GRU memory) change while driving. The networks are fixed online. The car-bag fine-tune (later) adapts
 the encoder and decoder offline, with the transition frozen and sim batches mixed in.
 
@@ -216,7 +231,7 @@ the encoder and decoder offline, with the transition frozen and sim batches mixe
 | Stage | What trains | Data | Status |
 |---|---|---|---|
 | 1 | residual transition (b, B, z prior, noise) | sim cars, constant conditions | done (`runs/residual-world`) |
-| 2 | encoder + decoder, transition frozen | sim cars + change episodes + sensors | done (v2-fixed) |
+| 2 | encoder + decoder, transition frozen | sim cars + change episodes + sensors | done (v3, after the sensor timing fix) |
 | 3 | joint, low learning rate on the transition; then check that z still separates friction and mass | same | not started |
 | 4 | encoder + decoder on car bags, transition frozen, sim batches with anchor loss in every update | car bags + sim | needs car data |
 
@@ -229,7 +244,10 @@ the encoder and decoder offline, with the transition frozen and sim batches mixe
 | Adaptation | prediction error vs time since a friction/mass change or patch |
 | z separation | linear fit z → friction, mass on train cars; R² on test cars |
 
-Planned additions: per-step closed-form z update and between-lap BNN posterior as baselines; prediction calibration.
+Also included: per-step closed-form z update (Kalman filter on z) and EKF-fed baselines. Still to add: between-lap BNN
+posterior as a baseline; prediction calibration.
+
+Closed-loop sim results (lap times, grip estimate per lap, crashes): `results/world-closed-loop/README.md`.
 
 ## 9. Design choices and known limits
 
@@ -242,5 +260,10 @@ Planned additions: per-step closed-form z update and between-lap BNN posterior a
 - **v1 flaw and KL bug:** the original KL was numerically broken and exploitable; after whitening and a tested KL, the
   encoder's z predicts 3.4× better than the prior from the true state. The true-state loss adds a small further gain
   (see `docs/PROGRESS_LOG.md`).
-- **Adaptation speed:** z follows a grip change in ~2–3 s in the example episode; the random-walk step (0.05) may be too
-  small.
+- **Adaptation speed:** offline, z follows a grip change in ~2–3 s in the example episode; the random-walk step (0.05)
+  may be too small. In the closed loop the per-step grip estimate swings ±0.3 with cornering, so only the lap average
+  (0.72–0.76 after a drop to 0.75) is reliable.
+- **Mass:** barely identifiable in the single-track model (mass cancels in lateral dynamics, acceleration is
+  commanded); mass modelling is deferred.
+- **Closed-loop spins:** one spin in 15 attempts in both sim runs; the planner pushes a fast corner past the grip
+  limit. Not yet diagnosed.
