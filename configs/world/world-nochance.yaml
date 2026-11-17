@@ -1,0 +1,17 @@
+# Our method, fast start: the residual transition (bicycle + b + B z, z 16) as the planner model, its belief over z set
+# every control step by the world-model encoder from simulated sensors. Same planner settings as the BNN fast baseline
+# (configs/fast-diag/bnn-world-nochance.yaml, run-4 fixes). Bridge: configs/ros-bridge-lockstep-sensors.yaml.
+extends: ../fast-diag/bnn-world-nochance.yaml
+output:
+  exp_name: world-nochance
+simulation:
+  ros:
+    imu_topic: imu
+    wheel_topic: wheel_odom
+    pose_topic: pf_odom
+planner:
+  dynamics:
+    checkpoint: runs/residual-world/best_refit
+    belief_update: encoder
+    encoder: runs/world-encoder-v3
+    encoder_state: true

@@ -199,6 +199,9 @@ class SafeSet:
         self.frenet, self.cartesian = [], []
         self.controls, self.control_masks = [], []
         self.state_ids = []
+        self.tags = []
+        self.previous_tag = None
+        self.condition = None
         self._array_cache = None
 
     @staticmethod
@@ -266,14 +269,31 @@ class SafeSet:
     def state_count(self):
         return self._state_count(len(self.frenet))
 
+    def active(self):
+        """Records used for the hull: all of them, or with condition tags those closest to the current belief."""
+        count = len(self.frenet)
+        threshold = getattr(self.config, "condition_threshold", 0.0)
+        if self.condition is None or threshold <= 0 or not any(tag is not None for tag in self.tags):
+            return tuple(range(count))
+        tags = self.tags + [None] * (count - len(self.tags))
+        distances = np.array([np.inf if tag is None else float(np.linalg.norm(np.asarray(tag) - self.condition))
+                              for tag in tags])
+        chosen = np.flatnonzero(distances <= threshold)
+        minimum = min(getattr(self.config, "condition_min_laps", self.config.safe_set_size), count)
+        if len(chosen) < minimum:
+            chosen = np.argsort(distances, kind="stable")[:minimum]
+        return tuple(sorted(int(i) for i in chosen))
+
     def trim(self):
         """Keep the newest sufficient suffix, preserving the configured lap floor."""
+        while len(self.tags) < len(self.frenet):
+            self.tags.insert(0, None)
         count = min(self.config.safe_set_size, len(self.frenet))
         minimum = self.config.safe_set_min_states
         if minimum:
             while count < len(self.frenet) and self._state_count(count) < minimum:
                 count += 1
-        for field in ("frenet", "cartesian", "controls", "control_masks", "state_ids"):
+        for field in ("frenet", "cartesian", "controls", "control_masks", "state_ids", "tags"):
             values = getattr(self, field)
             setattr(self, field, values[-count:] if count else [])
         return count
@@ -281,13 +301,14 @@ class SafeSet:
     @property
     def signature(self):
         # Records are immutable; keep ownership in the cache to prevent id reuse.
-        return tuple(id(row) for row in self.frenet), tuple(id(row) for row in self.cartesian)
+        return tuple(id(row) for row in self.frenet), tuple(id(row) for row in self.cartesian), self.active()
 
     def arrays(self):
         signature = self.signature
         if self._array_cache is None or self._array_cache[0] != signature:
-            self._array_cache = (signature, np.concatenate(self.frenet),
-                                 np.concatenate(self.cartesian),
+            active = signature[2]
+            self._array_cache = (signature, np.concatenate([self.frenet[i] for i in active]),
+                                 np.concatenate([self.cartesian[i] for i in active]),
                                  tuple(self.frenet), tuple(self.cartesian))
         return self._array_cache[1:3]
 
@@ -318,7 +339,7 @@ class SafeSet:
         hull = build_safe_geometry(selected[:, :5], self.config, dtype=dtype)
         return selected, reference, hull, deepcopy(rng.bit_generator.state), self.signature
 
-    def add_lap(self, lap, trajectory=None):
+    def add_lap(self, lap, trajectory=None, tag=None):
         # Summaries/dynamics retain measured wrapped states; only this learning
         # view lifts the finish-crossing endpoint to L+s. Offline lap-only input
         # has no collector progress, so unwrap its consecutive post-step states.
@@ -349,8 +370,11 @@ class SafeSet:
             combined_c = np.column_stack([combined_c, combined_f[:, -1]])
             combined_f.setflags(write=False)
             combined_c.setflags(write=False)
+            while len(self.tags) < len(self.frenet):
+                self.tags.insert(0, None)
             self.frenet.append(combined_f)
             self.cartesian.append(combined_c)
+            self.tags.append(self.previous_tag)
             ids = np.concatenate((
                 self._state_ids(self.previous_trajectory, len(previous.times)),
                 self._state_ids(trajectory, len(lap.times))[indices],
@@ -393,6 +417,7 @@ class SafeSet:
             new = True
         self.previous = lap
         self.previous_trajectory = trajectory
+        self.previous_tag = None if tag is None else np.asarray(tag, dtype=float)
         return new
 
     @property

@@ -40,7 +40,7 @@ def derivatives(rhs, states, controls, vehicle):
     result = np.zeros((count + 1, states.shape[1]))
     vehicle = np.asarray(vehicle, dtype=np.float64)
     for index in range(count + 1):
-        control = controls[min(index, count - 1)]
+        control = controls[max(index - 1, 0)]
         parameters = vehicle[min(index, len(vehicle) - 1)] if vehicle.ndim == 2 else vehicle
         result[index] = rhs(states[index], np.asarray(control, dtype=np.float64), parameters)
     return result
@@ -65,7 +65,8 @@ def lagged(values, times, lag):
 
 
 def simulate_sensors(states, controls, rhs, vehicle, timestep, rng, parameters):
-    """Sensor readings at every recorded state; accelerations use the control applied from that state."""
+    """Sensor readings at every recorded state; accelerations use the control acting just before that state
+    (controls[t-1]), as a real IMU would measure them; the first state uses controls[0]."""
     rates = derivatives(rhs, states, controls, vehicle)
     accel_x, accel_y = body_accelerations(states, rates, parameters["imu_offset_x"], parameters["imu_offset_y"])
     angle = parameters["imu_yaw_misalignment"]

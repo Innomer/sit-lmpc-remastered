@@ -1,0 +1,8 @@
+# Our method + condition-aware safe set: the hull uses only laps whose mean estimated friction (encoder z read-out)
+# is within 0.12 of the current estimate (within-car spread 0.03-0.065, between test cars >= 0.15), at least 4 laps.
+extends: world-nochance.yaml
+output:
+  exp_name: world-nochance-condition
+planner:
+  condition_threshold: 0.12
+  condition_min_laps: 4

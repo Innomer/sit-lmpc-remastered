@@ -31,6 +31,9 @@ simulation:
     wait_timeout: 5.0  # Seconds to wait for odometry before failing.
     launch_timeout: 5.0  # Seconds of simulated time allowed to reach initial_speed after a reset.
     timing_report_steps: 100  # Emit control_step_timing (planning and simulator wall time) every this many steps; 0 disables.
+    imu_topic: ""  # sensor_msgs/Imu from the bridge's simulated sensors (sensors_enabled); used by belief_update encoder. "" disables.
+    wheel_topic: ""  # nav_msgs/Odometry whose twist.linear.x is the simulated wheel speed; used by belief_update encoder.
+    pose_topic: ""  # nav_msgs/Odometry with the simulated noisy, lagged particle-filter pose; used by belief_update encoder.
   replay_path: null  # Only read when backend is replay: a recorded attempt .npz (cartesian, frenet) replayed as the plant to time the planner without a simulator.
   steering_limit: null  # Front-wheel steering limit in rad for both the controlled vehicle and the planner model; null keeps the vehicle default (F1TENTH sim 0.4189). Set 0.34 for the real car.
   model: dynamic_ST  # [dynamic_ST] Only supported simulator model. Actual F1TENTH simulation model; planner.dynamics independently selects the predictor. [resume]
@@ -57,7 +60,9 @@ planner:
     chance_estimation: independent  # [independent, planning_samples] independent reserves verification samples; planning_samples reuses planning paths for empirical fractions without a confidence bound.
     verification_particles: 2048  # Independent function samples for final chance verification only; no extra sampling when disabled.
     verification_confidence: 0.95  # Simultaneous Monte Carlo confidence under the learned model, not a real-system safety guarantee.
-    belief_update: frozen  # [frozen, posterior] frozen keeps BNN prior sampling; posterior updates the Gaussian function belief. ST uses planner.belief.
+    belief_update: frozen  # [frozen, posterior, encoder] frozen keeps BNN prior sampling; posterior updates the Gaussian function belief between laps; encoder sets it every step from the world-model encoder (residual checkpoint + planner.dynamics.encoder). ST uses planner.belief.
+    encoder: null  # belief_update encoder only: a trained world-encoder run folder (sit_lmpc.world.train output).
+    encoder_state: true  # belief_update encoder: true replaces steering, speed, yaw rate and slip with the encoder's estimate; false keeps the measured state.
     likelihood_power: 1.0  # BNN posterior only: maximum calibrated evidence power; with legacy standard, 1 is ordinary Bayes and (0,1) manually tempers it.
     posterior_method: tempered  # [standard, tempered, noise, noise_tempered] standard uses uncalibrated Bayes; tempered calibrates evidence power; noise calibrates observation noise; noise_tempered calibrates both. Used for BNN posterior updates.
     calibration_fraction: 0.2  # Dynamics hold-out fraction; NF safe-set density uses all retained states for both training and calibration.
@@ -133,6 +138,8 @@ planner:
   lambda_count: 16  # Positive integer number of levels per safe-set/boundary lambda axis. LMPPI evaluates lambda_count^2 weight combinations (16 -> 256 candidates).
   lambda_max: 20.0  # Positive, exclusive upper grid limit; lower limit is fixed at zero. Each axis uses [0, lambda_max) with spacing lambda_max / lambda_count.
   safe_set_size: 4  # Positive minimum number of extended lap records retained. LMPPI starts after safe_set_size + 1 completed warm-up laps (here: five).
+  condition_threshold: 0.0  # Condition-aware safe set (belief_update encoder): use only laps whose mean estimated friction (encoder z read-out, sit_lmpc.world.readout) lies within this many units of μ of the current estimate; 0 uses every lap.
+  condition_min_laps: 4  # Condition-aware safe set: if fewer laps lie within condition_threshold, use this many closest laps.
   safe_set_min_states: 0  # Nonnegative integer; 0 disables the state-count minimum. Shared by controller safe-set retention and fixed-step NF training history. Keep at least safe_set_size laps and add older successful laps to reach this many unique states; NF uses all retained states and repeats passes to reach steps.
   safe_set_max_points: 2000000  # Positive cap on combined safe-set candidate points before local selection. Excess points are randomly subsampled; full saved lap data is not discarded.
   hull_selection_points: 1000  # Maximum local points used to construct the five-dimensional hull; integer >= 6. Higher values can increase hull construction and evaluation cost.

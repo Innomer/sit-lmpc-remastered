@@ -22,6 +22,9 @@ class RosConfig:
     wait_timeout: float = 5.0
     launch_timeout: float = 5.0
     timing_report_steps: int = 100
+    imu_topic: str = ""
+    wheel_topic: str = ""
+    pose_topic: str = ""
 
 
 @dataclass(frozen=True)
@@ -104,6 +107,8 @@ class DynamicsConfig:
     verification_particles: int = 2048
     verification_confidence: float = 0.95
     belief_update: str = "frozen"
+    encoder: str | None = None
+    encoder_state: bool = True
     likelihood_power: float = 1.0
     update_batch_size: int = 512
     validation_fraction: float = 0.2
@@ -189,6 +194,8 @@ class PlannerConfig:
     lambda_count: int = 16
     lambda_max: float = 20.0
     safe_set_size: int = 6
+    condition_threshold: float = 0.0
+    condition_min_laps: int = 4
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000
@@ -362,8 +369,18 @@ class ExperimentConfig:
         if dynamics.backend == "gaussian_bnn":
             if p.sit_lmpc_mode or p.belief.enabled:
                 raise ValueError("gaussian_bnn requires sit_lmpc_mode=false and belief.enabled=false; use dynamics.belief_update=frozen or posterior")
-        if dynamics.belief_update not in ("frozen", "posterior"):
-            raise ValueError("planner.dynamics.belief_update must be frozen or posterior")
+        if dynamics.belief_update not in ("frozen", "posterior", "encoder"):
+            raise ValueError("planner.dynamics.belief_update must be frozen, posterior or encoder")
+        if p.condition_threshold > 0 and not (dynamics.belief_update == "encoder" and isinstance(dynamics.encoder, str)
+                                               and (Path(dynamics.encoder).expanduser() / "condition_readout.npz").is_file()):
+            raise ValueError("planner.condition_threshold needs belief_update encoder and a fitted read-out "
+                             "(python -m sit_lmpc.world.readout --encoder <run>)")
+        if dynamics.belief_update == "encoder":
+            if not isinstance(dynamics.encoder, str) or not (Path(dynamics.encoder).expanduser() / "best.msgpack").is_file():
+                raise ValueError("belief_update encoder needs planner.dynamics.encoder, a trained world-encoder run folder")
+            if s.backend != "ros" or not (s.ros.imu_topic and s.ros.wheel_topic and s.ros.pose_topic):
+                raise ValueError("belief_update encoder needs backend ros with simulation.ros imu_topic, wheel_topic and "
+                                 "pose_topic (bridge sensors_enabled)")
         if dynamics.belief_update != "frozen" and dynamics.backend != "gaussian_bnn":
             raise ValueError("posterior belief_update requires gaussian_bnn dynamics")
         if dynamics.posterior_method not in ("standard", "tempered", "noise", "noise_tempered"):

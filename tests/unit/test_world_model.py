@@ -123,3 +123,29 @@ def test_world_loss_terms_are_finite_and_kl_nonnegative(transition):
     for name, value in terms.items():
         assert np.isfinite(float(value)), name
     assert float(terms["kl"]) >= 0
+
+
+def test_runtime_stepping_matches_the_whole_sequence_encoder(transition):
+    from dyna_dist.models.features import prior_moments_and_variance
+    from sit_lmpc.world.data import WorldData
+    from sit_lmpc.world.evaluate import load_encoder
+    from sit_lmpc.world.model import hidden_from_raw
+    from sit_lmpc.world.runtime import EncoderBelief
+
+    run = ROOT / "runs/world-encoder-v2-fixed"
+    if not (run / "best.msgpack").exists():
+        pytest.skip("needs a trained encoder run")
+    item = WorldData(DATASET, "test").items[0]
+    belief = EncoderBelief(run)
+    stepped = [belief.step(observation) for observation in item["observations"]]
+    encoder, params, mean, std, _ = load_encoder(run, 16, item["observations"].shape[-1])
+    _, raw, w_mean, w_log_std, _ = encoder.apply(params["encoder"], ((item["observations"] - mean) / std)[None])
+    prior_mean, prior_factor, _ = prior_moments_and_variance(transition.parameters, transition.config)
+    hidden = np.asarray(hidden_from_raw(raw))[0]
+    z_mean = np.asarray(prior_mean) + np.asarray(w_mean)[0] @ np.asarray(prior_factor).T
+    np.testing.assert_allclose(np.stack([s[0] for s in stepped]), hidden, rtol=1e-4, atol=1e-5)
+    np.testing.assert_allclose(np.stack([s[3] for s in stepped]), np.asarray(w_mean)[0], rtol=1e-4, atol=1e-5)
+    np.testing.assert_allclose(np.stack([s[1] for s in stepped]), z_mean, rtol=1e-4, atol=1e-5)
+    std_z = np.stack([np.sqrt(np.sum(s[2] ** 2, axis=1)) for s in stepped])
+    reference_std = np.sqrt((np.asarray(prior_factor)[None] ** 2 * np.exp(2 * np.clip(np.asarray(w_log_std)[0], -6, 2))[:, None, :]).sum(-1))
+    np.testing.assert_allclose(std_z, reference_std, rtol=1e-4, atol=1e-6)

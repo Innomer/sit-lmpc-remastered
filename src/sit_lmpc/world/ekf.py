@@ -96,7 +96,7 @@ def run_ekf(pose, gyro, wheel, controls, parameters=None, accel=None, accel_std=
     for index in range(len(controls)):
         measurement = jnp.array([pose[index + 1, 0], pose[index + 1, 1], pose[index + 1, 2], gyro[index + 1],
                                  wheel[index + 1], accel[index + 1, 0], accel[index + 1, 1]], dtype=jnp.float32)
-        next_control = controls[min(index + 1, len(controls) - 1)]
+        next_control = controls[index]
         state, covariance = ekf_step(state, covariance, jnp.asarray(controls[index]), jnp.asarray(next_control),
                                      measurement, parameters, process, noise)
         estimates.append(np.asarray(state)[:7])

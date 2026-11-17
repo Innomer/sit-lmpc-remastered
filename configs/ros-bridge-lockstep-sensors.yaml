@@ -1,0 +1,52 @@
+# Lockstep bridge with simulated sensors (IMU, wheel speed, noisy lagged PF pose) for the world-model encoder.
+# Values lie inside the training ranges (dyna_dist.data.sensors.DEFAULT_SENSOR_RANGES).
+# ros2 run f1tenth_gym_ros gym_bridge --ros-args -r __node:=bridge --params-file configs/ros-bridge-lockstep-sensors.yaml
+bridge:
+  ros__parameters:
+    ego_namespace: 'ego_racecar'
+    ego_scan_topic: 'scan'
+    ego_odom_topic: 'odom'
+    ego_opp_odom_topic: 'opp_odom'
+    ego_drive_topic: 'drive'
+    opp_namespace: 'opp_racecar'
+    opp_scan_topic: 'opp_scan'
+    opp_odom_topic: 'odom'
+    opp_ego_odom_topic: 'opp_odom'
+    opp_drive_topic: 'opp_drive'
+    lidar_enabled: False
+    lidar_base_link_to_lidar_tf: [0.275, 0.0, 0.0]
+    lidar_noise_std: 0.01
+    scan_num_beams: 819
+    scan_range_min: 0.05
+    scan_range_max: 25.0
+    scan_angle_min: -135.0
+    scan_angle_max: 135.0
+    map_path: 'maps/Spielberg'
+    map_img_ext: '.png'
+    vehicle_params: 'f1tenth'
+    scale: 1.0
+    num_agents: 1
+    sx: 0.0
+    sy: 0.0
+    stheta: -2.879
+    kb_teleop: False
+    use_sim_time: False
+    use_sim_time_bridge: True
+    async_mode: False
+    control_mode: 'accel_steering_speed'
+    sensors_enabled: True
+    sensor_seed: 20261117
+    imu_offset_x: 0.05
+    imu_offset_y: 0.01
+    imu_yaw_misalignment: 0.01
+    accel_bias_x: 0.2
+    accel_bias_y: -0.15
+    accel_noise: 0.3
+    gyro_bias: 0.01
+    gyro_noise: 0.01
+    gyro_scale: 1.01
+    wheel_scale: 1.03
+    wheel_noise: 0.05
+    pose_noise: 0.02
+    yaw_noise: 0.01
+    pose_lag: 0.05

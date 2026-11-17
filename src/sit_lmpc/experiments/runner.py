@@ -312,6 +312,11 @@ def _run(config, tracking_only, keyboard_cleanup):
             planner.dynamics, simulation, randomness.next_key(),
             source=source, destination=directory / "dynamics_model",
         )
+    encoder_belief = None
+    if planner.dynamics.belief_update == "encoder":
+        from sit_lmpc.world.runtime import EncoderBelief
+
+        encoder_belief = EncoderBelief(planner.dynamics.encoder)
     belief_learner = (
         DynamicsBeliefLearner(
             planner.belief, model, planner.model_bank.frictions, directory,
@@ -335,6 +340,32 @@ def _run(config, tracking_only, keyboard_cleanup):
                     training_integrator_timestep=model.integrator_timestep,
                     simulator_integrator_timestep=simulation.integrator_timestep,
                     numerical_substep_mismatch=model.integrator_timestep != simulation.integrator_timestep)
+
+    def apply_encoder(cartesian, frenet):
+        nonlocal model
+        observation, _ = simulator.encoder_observation()
+        hidden, z_mean, z_factor, w_mean = encoder_belief.step(observation)
+        friction = encoder_belief.friction(w_mean)
+        if friction is not None:
+            lap_condition.append([friction])
+            if planner.condition_threshold > 0:
+                safe_set.condition = np.array([friction])
+        friction_trace.append(np.nan if friction is None else friction)
+        dtype = model.params.dtype
+        model = model.replace(posterior_mean=jnp.asarray(z_mean, dtype), posterior_factor=jnp.asarray(z_factor, dtype))
+        nominal.model = learned.model = model
+        learned.scenario_provider = current_distribution()
+        encoder_trace.append(z_mean)
+        if not planner.dynamics.encoder_state:
+            return cartesian, frenet
+        cartesian, frenet = np.array(cartesian, copy=True), np.array(frenet, copy=True)
+        cartesian[[2, 3, 5, 6]] = hidden
+        frenet[[2, 3, 5, 6]] = hidden
+        return cartesian, frenet
+
+    encoder_trace = []
+    lap_condition = []
+    friction_trace = []
 
     def current_distribution():
         if not (planner.probabilistic_safety.enabled or (
@@ -614,6 +645,7 @@ def _run(config, tracking_only, keyboard_cleanup):
     )
 
     def begin_attempt(cartesian, frenet):
+        lap_condition.clear()
         return AttemptCollector(
             sum(dataset.counts.values()) + 1,
             dataset.trials + 1,
@@ -998,6 +1030,9 @@ def _run(config, tracking_only, keyboard_cleanup):
             (cartesian, frenet), _ = simulator.restore(initial, resume_state["simulator"])
         else:
             (cartesian, frenet), _ = simulator.reset(initial)
+        if encoder_belief is not None:
+            encoder_belief.reset()
+            cartesian, frenet = apply_encoder(cartesian, frenet)
         if resuming:
             tolerance = getattr(simulator, "restore_tolerance", 1e-5)
             mismatch = np.abs(np.asarray(frenet) - np.asarray(resume_arrays["frenet"]))
@@ -1379,6 +1414,8 @@ def _run(config, tracking_only, keyboard_cleanup):
             (next_cartesian, next_frenet), control, terminated, truncated, info = simulator.step(
                 result.action, physical_noise
             )
+            if encoder_belief is not None:
+                next_cartesian, next_frenet = apply_encoder(next_cartesian, next_frenet)
             insight.applied(next_cartesian, next_frenet, control)
             if insight.enabled:
                 insight.display(simulator.capture_render() if hasattr(simulator, "capture_render") else None)
@@ -1511,6 +1548,9 @@ def _run(config, tracking_only, keyboard_cleanup):
                     risk_trainer.wait()
                     show_validation()
                 (cartesian, frenet), _ = simulator.reset(failed.cartesian[0].copy())
+                if encoder_belief is not None:
+                    encoder_belief.reset()
+                    cartesian, frenet = apply_encoder(cartesian, frenet)
                 nominal.actions = jnp.zeros((planner.horizon, 2), dtype=model.params.dtype)
                 learned.actions = jnp.zeros_like(learned.actions)
                 collector = begin_attempt(cartesian, frenet)
@@ -1540,7 +1580,8 @@ def _run(config, tracking_only, keyboard_cleanup):
                     elapsed=time.perf_counter() - started,
                 )
                 previous_safe_laps = len(safe_set.frenet)
-                safe_set_added = safe_set.add_lap(lap, finished[0])
+                lap_tag = np.mean(lap_condition, axis=0) if lap_condition else None
+                safe_set_added = safe_set.add_lap(lap, finished[0], tag=lap_tag)
                 if planner.safe_set_min_states and len(safe_set.frenet) != previous_safe_laps:
                     events.emit("safe_set_retention", laps=len(safe_set.frenet),
                                 states=safe_set.state_count, min_states=planner.safe_set_min_states)
@@ -1728,6 +1769,9 @@ def _run(config, tracking_only, keyboard_cleanup):
                 plots.close()
             if simulator is not None:
                 simulator.close()
+            if encoder_trace:
+                np.save(directory / "encoder_z.npy", np.asarray(encoder_trace))
+                np.save(directory / "encoder_friction.npy", np.asarray(friction_trace))
     return RunResult(
         directory,
         status,
