@@ -1,0 +1,42 @@
+[start] learning | seed=1 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[attempt] #1 success | 248 steps
+[lap] trial 1 | 24.8 s | avg speed 13.86 m/s | mppi
+[control_step_timing] steps=300
+[control_step_timing] steps=400
+[attempt] #2 success | 240 steps
+[lap] trial 2 | 24 s | avg speed 14.23 m/s | mppi
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[attempt] #3 success | 240 steps
+[lap] trial 3 | 24 s | avg speed 14.23 m/s | mppi
+[training] generation=1 | epochs=300 | loss=-0.3179 | gradient_steps=600
+[control_step_timing] steps=800
+[control_step_timing] steps=900
+[attempt] #4 success | 240 steps
+[lap] trial 4 | 24 s | avg speed 14.23 m/s | mppi
+[training] generation=2 | epochs=300 | loss=-0.2285 | gradient_steps=1500
+[control_step_timing] steps=1000
+[control_step_timing] steps=1100
+[control_step_timing] steps=1200
+[attempt] #5 success | 240 steps
+[lap] trial 5 | 24 s | avg speed 14.23 m/s | mppi
+[training] generation=3 | epochs=300 | loss=-1.059 | gradient_steps=2700
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/known-ppwarm25/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[learned_controller_started] step=1208 | value_generation=3 | hull_facets=532
+[training] generation=4 | epochs=300 | loss=-1.808 | gradient_steps=3900
+[attempt] #6 failure | 20 steps | collision | lambda_ss mean=3.062 max=15 | lambda_boundary mean=10.69 max=18.75
+[finish] status=collision | trials=6 | successful_laps=5 | failed_attempts=1 | applied_steps=1228 | training_generations=4 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/known-ppwarm25
+[control_timing_summary] steps=1228 | control_period_seconds=0.1 | stepping=lockstep
+EXIT=2

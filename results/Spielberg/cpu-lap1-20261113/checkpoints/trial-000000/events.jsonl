@@ -1,0 +1,6 @@
+{"event": "insight_recording", "time": "2026-11-13T17:56:12.158355+00:00", "steps": 50, "file": "insight.npz"}
+{"event": "start", "time": "2026-11-13T17:56:16.581312+00:00", "dynamics": "dynamic_ST", "simulator": "st", "seed": 1, "tracking_only": false, "simulator_friction": 1.0489, "simulator_mass_ratio": 1.0, "simulator_mass_kg": 3.74, "predictor_friction": 1.0489, "predictor_mass_ratio": 1.0, "predictor_kind": "single", "predictor": {"kind": "single", "friction": 1.0489000082015991}, "sit_lmpc_mode": true, "candidate_frictions": [1.0489], "dynamics_belief_enabled": false, "value_input_mode": "state", "risk_input_mode": null}
+{"event": "hull_precompile_started", "time": "2026-11-13T17:56:16.581845+00:00", "bucket": 10, "max_facets": 1190, "variants": 238, "dtype": "float32"}
+{"event": "hull_precompile_finished", "time": "2026-11-13T17:56:30.821124+00:00", "variants": 238, "elapsed": 14.239319324999997}
+{"event": "ros_launch", "time": "2026-11-13T17:56:32.058699+00:00", "target_speed": 2.5, "seconds": 0.5, "speed": 2.4999988079071045}
+{"event": "model_bank_warmup", "time": "2026-11-13T17:56:32.723046+00:00", "seconds": 0.46672883699966405, "frictions": [1.0489]}

@@ -1,0 +1,5 @@
+extends: ../../configs/f1tenth-ros-known-ppwarm.yaml
+planner:
+  sample_std: [0.0625, 0.25]
+  warmup:
+    speed_scale: 0.6

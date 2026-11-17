@@ -85,6 +85,7 @@ class RosSimulator:
         from geometry_msgs.msg import PoseWithCovarianceStamped
         from nav_msgs.msg import Odometry
         from std_msgs.msg import Bool
+        from sensor_msgs.msg import Imu
 
         self.simulation, self.track, self.params = simulation, track, parameters
         self.ros = simulation.ros
@@ -131,11 +132,47 @@ class RosSimulator:
         self.reset_pub = self.node.create_publisher(
             PoseWithCovarianceStamped, self._topic(self.ros.reset_topic), 10
         )
+        self.sensors = {"imu": None, "wheel": None, "pose": None}
+        self.encoder_pose = None
+        self.applied_control = np.zeros(2)
+        if self.ros.imu_topic:
+            self.node.create_subscription(Imu, self._topic(self.ros.imu_topic),
+                                          lambda m: self.sensors.__setitem__("imu", m), 10)
+            self.node.create_subscription(Odometry, self._topic(self.ros.wheel_topic),
+                                          lambda m: self.sensors.__setitem__("wheel", m), 10)
+            self.node.create_subscription(Odometry, self._topic(self.ros.pose_topic),
+                                          lambda m: self.sensors.__setitem__("pose", m), 10)
 
     def _topic(self, name):
         if name.startswith("/"):
             return name
         return f"/{self.ros.namespace}/{name}"
+
+    def encoder_observation(self):
+        """The world-model encoder's 9 inputs at the latest odometry time (same layout as sit_lmpc.world.data)."""
+        target = (self.odom.header.stamp.sec, self.odom.header.stamp.nanosec)
+        deadline = time.perf_counter() + self.ros.wait_timeout
+        while not all(m is not None and (m.header.stamp.sec, m.header.stamp.nanosec) == target
+                      for m in self.sensors.values()):
+            if time.perf_counter() > deadline:
+                raise RuntimeError("simulated sensor messages did not arrive with the odometry; "
+                                   "is the bridge running with sensors_enabled?")
+            self._spin(0.002)
+        imu, wheel, pose = self.sensors["imu"], self.sensors["wheel"], self.sensors["pose"]
+        q = pose.pose.pose.orientation
+        yaw = math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
+        current = (pose.pose.pose.position.x, pose.pose.pose.position.y, yaw)
+        previous = current if self.encoder_pose is None else self.encoder_pose
+        dx, dy = current[0] - previous[0], current[1] - previous[1]
+        body_dx = math.cos(previous[2]) * dx + math.sin(previous[2]) * dy
+        body_dy = -math.sin(previous[2]) * dx + math.cos(previous[2]) * dy
+        dyaw = wrap_angle(current[2] - previous[2])
+        self.encoder_pose = current
+        dt = self.simulation.timestep
+        observation = np.array([imu.linear_acceleration.x, imu.linear_acceleration.y, imu.angular_velocity.z,
+                                wheel.twist.twist.linear.x, body_dx / dt, body_dy / dt, dyaw / dt,
+                                self.applied_control[0], self.applied_control[1]], dtype=np.float32)
+        return observation, np.array(current)
 
     def _odom_callback(self, msg):
         self.odom = msg
@@ -285,6 +322,8 @@ class RosSimulator:
         self.delta = 0.0
         self.yaw = None
         self.track.s_guess = None
+        self.encoder_pose = None
+        self.applied_control = np.zeros(2)
         self.collision = False
         deadline = time.perf_counter() + self.ros.wait_timeout
         while True:
@@ -387,6 +426,7 @@ class RosSimulator:
             self.window_plan, self.window_step = [], []
         info = {"collision": self.collision, "sim_time": self.stamp}
         self.returned_at = time.perf_counter()
+        self.applied_control = np.asarray(control, dtype=float)
         return observation, control, False, False, info
 
     def render(self):

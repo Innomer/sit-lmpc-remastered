@@ -1,5 +1,5 @@
 diff --git a/f1tenth_gym_ros/gym_bridge.py b/f1tenth_gym_ros/gym_bridge.py
-index d476873..dcf88a8 100644
+index d476873..3ddee55 100644
 --- a/f1tenth_gym_ros/gym_bridge.py
 +++ b/f1tenth_gym_ros/gym_bridge.py
 @@ -20,6 +20,8 @@
@@ -11,16 +11,20 @@ index d476873..dcf88a8 100644
  import math
  import os
  import pathlib
-@@ -38,7 +40,7 @@ import rclpy
+@@ -38,9 +40,10 @@ import rclpy
  from rclpy.executors import ExternalShutdownException
  from rclpy.node import Node
  from rosgraph_msgs.msg import Clock
 -from std_msgs.msg import Bool, Float32, Int32
 +from std_msgs.msg import Bool, Float32, Int32, String
  
- from sensor_msgs.msg import LaserScan
+-from sensor_msgs.msg import LaserScan
++from sensor_msgs.msg import Imu, LaserScan
++from collections import deque
  from nav_msgs.msg import Odometry
-@@ -274,6 +276,8 @@ class GymBridge(Node):
+ from geometry_msgs.msg import PoseStamped
+ from geometry_msgs.msg import PoseWithCovarianceStamped
+@@ -274,6 +277,8 @@ class GymBridge(Node):
          self.declare_parameter('scale', 1.0)
          self.declare_parameter('vehicle_params', 'f1tenth')
          self.declare_parameter('async_mode', True)
@@ -29,7 +33,7 @@ index d476873..dcf88a8 100644
          # Flag to know whether to publish the sim time or not
          # Has to be different than use_sim_time so we can still use real time to trigger timer callbacks
          self.declare_parameter('use_sim_time_bridge', False)
-@@ -387,10 +391,21 @@ class GymBridge(Node):
+@@ -387,10 +392,21 @@ class GymBridge(Node):
              # the clock, so lap 1 and every lap_time are full circuits.
              count_partial_first_lap=False,
          )
@@ -55,7 +59,7 @@ index d476873..dcf88a8 100644
          observation_cfg = ObservationConfig(type=ObservationType.DEFAULT)
          reset_cfg = ResetConfig(strategy=ResetStrategy.MAP_RANDOM_STATIC)
  
-@@ -543,6 +558,17 @@ class GymBridge(Node):
+@@ -543,6 +559,38 @@ class GymBridge(Node):
                  10)
  
          self.sim_paused = False
@@ -70,10 +74,31 @@ index d476873..dcf88a8 100644
 +            String, '/sim/friction_zones', self.zones_callback, 10)
 +        self.condition_pub = self.create_publisher(String, '/sim/vehicle_condition_state', 10)
 +
++        self.declare_parameter('sensors_enabled', False)
++        for name, default in (('imu_offset_x', 0.0), ('imu_offset_y', 0.0), ('imu_yaw_misalignment', 0.0),
++                              ('accel_bias_x', 0.0), ('accel_bias_y', 0.0), ('accel_noise', 0.3),
++                              ('gyro_bias', 0.0), ('gyro_noise', 0.01), ('gyro_scale', 1.0),
++                              ('wheel_scale', 1.0), ('wheel_noise', 0.05), ('pose_noise', 0.02),
++                              ('yaw_noise', 0.01), ('pose_lag', 0.05), ('sensor_seed', 0)):
++            self.declare_parameter(name, default)
++        self.sensors_enabled = self.get_parameter('sensors_enabled').value
++        self.sensor = {name: self.get_parameter(name).value for name in (
++            'imu_offset_x', 'imu_offset_y', 'imu_yaw_misalignment', 'accel_bias_x', 'accel_bias_y', 'accel_noise',
++            'gyro_bias', 'gyro_noise', 'gyro_scale', 'wheel_scale', 'wheel_noise', 'pose_noise', 'yaw_noise', 'pose_lag')}
++        self.sensor_rng = np.random.default_rng(self.get_parameter('sensor_seed').value)
++        self.sensor_previous = None
++        self.sensor_reading = None
++        self.pose_history = deque(maxlen=int(round(self.sensor['pose_lag'] / self.sim_timestep)) + 1)
++        if self.sensors_enabled:
++            self.imu_pub = self.create_publisher(Imu, self.ego_namespace + '/imu', 10)
++            self.wheel_pub = self.create_publisher(Odometry, self.ego_namespace + '/wheel_odom', 10)
++            self.pf_pub = self.create_publisher(Odometry, self.ego_namespace + '/pf_odom', 10)
++            self.get_logger().info(f'simulated sensors on: {self.sensor}')
++
          self.pause_subscriber = self.create_subscription(
              Bool,
              '/pause_sim',
-@@ -583,20 +609,67 @@ class GymBridge(Node):
+@@ -583,20 +631,121 @@ class GymBridge(Node):
          lr = float(self.vehicle_params.lr)
          return [pose[0] - lr * math.cos(pose[2]), pose[1] - lr * math.sin(pose[2]), pose[2]]
  
@@ -114,6 +139,60 @@ index d476873..dcf88a8 100644
 +            "sim_time": float(self.env.unwrapped.sim_time),
 +        })))
 +
++    def _update_sensors(self):
++        s = self.sensor
++        vx, vy, rate = self.ego_speed
++        if self.sensor_previous is None:
++            self.sensor_previous = (vx, vy, rate)
++        pvx, pvy, prate = self.sensor_previous
++        dt = self.sim_timestep
++        accel_x = (vx - pvx) / dt - rate * vy
++        accel_y = (vy - pvy) / dt + rate * vx
++        rate_dot = (rate - prate) / dt
++        accel_x += -rate_dot * s['imu_offset_y'] - rate ** 2 * s['imu_offset_x']
++        accel_y += rate_dot * s['imu_offset_x'] - rate ** 2 * s['imu_offset_y']
++        angle = s['imu_yaw_misalignment']
++        imu_x = math.cos(angle) * accel_x + math.sin(angle) * accel_y + s['accel_bias_x']
++        imu_y = -math.sin(angle) * accel_x + math.cos(angle) * accel_y + s['accel_bias_y']
++        noise = self.sensor_rng.normal(0.0, 1.0, 7)
++        rear = self._cog_to_base_link(list(self.ego_pose))
++        self.pose_history.append(rear)
++        lagged = self.pose_history[0]
++        self.sensor_reading = {
++            'accel_x': imu_x + s['accel_noise'] * noise[0],
++            'accel_y': imu_y + s['accel_noise'] * noise[1],
++            'gyro_z': s['gyro_scale'] * rate + s['gyro_bias'] + s['gyro_noise'] * noise[2],
++            'wheel': s['wheel_scale'] * vx + s['wheel_noise'] * noise[3],
++            'pose_x': lagged[0] + s['pose_noise'] * noise[4],
++            'pose_y': lagged[1] + s['pose_noise'] * noise[5],
++            'pose_yaw': lagged[2] + s['yaw_noise'] * noise[6],
++        }
++        self.sensor_previous = (vx, vy, rate)
++
++    def _publish_sensors(self, ts):
++        reading = self.sensor_reading
++        if reading is None:
++            return
++        imu = Imu()
++        imu.header.stamp = ts
++        imu.header.frame_id = self.ego_namespace + '/base_link'
++        imu.linear_acceleration.x = float(reading['accel_x'])
++        imu.linear_acceleration.y = float(reading['accel_y'])
++        imu.angular_velocity.z = float(reading['gyro_z'])
++        self.imu_pub.publish(imu)
++        wheel = Odometry()
++        wheel.header.stamp = ts
++        wheel.twist.twist.linear.x = float(reading['wheel'])
++        self.wheel_pub.publish(wheel)
++        pose = Odometry()
++        pose.header.stamp = ts
++        pose.header.frame_id = 'map'
++        pose.pose.pose.position.x = float(reading['pose_x'])
++        pose.pose.pose.position.y = float(reading['pose_y'])
++        pose.pose.pose.orientation.z = math.sin(reading['pose_yaw'] / 2)
++        pose.pose.pose.orientation.w = math.cos(reading['pose_yaw'] / 2)
++        self.pf_pub.publish(pose)
++
      def pause_callback(self, msg):
          self.sim_paused = msg.data
          self.get_logger().info(f"Simulation {'paused' if self.sim_paused else 'resumed'}")
@@ -144,7 +223,7 @@ index d476873..dcf88a8 100644
              self.timer_callback()
  
      def opp_drive_callback(self, drive_msg, opp_index):
-@@ -604,8 +677,7 @@ class GymBridge(Node):
+@@ -604,8 +753,7 @@ class GymBridge(Node):
              return  # Skip stepping the sim if paused
  
          opp = self.opps[opp_index]
@@ -154,7 +233,7 @@ index d476873..dcf88a8 100644
  
          if not self.get_parameter('async_mode').value:
              # step the sim immediately and publish odom and scan
-@@ -659,6 +731,8 @@ class GymBridge(Node):
+@@ -659,10 +807,14 @@ class GymBridge(Node):
          if self.sim_paused:
              return  # Skip stepping the sim if paused
  
@@ -163,7 +242,22 @@ index d476873..dcf88a8 100644
          actions = [[self.ego_steer, self.ego_requested_speed]]
          actions += [[opp.steer, opp.requested_speed] for opp in self.opps]
          _, _, self.done, _, _ = self.env.step(np.array(actions))
-@@ -839,9 +913,13 @@ class GymBridge(Node):
+         self._update_sim_state()
++        if self.sensors_enabled:
++            self._update_sensors()
+ 
+         # Advance the visual wheel spin by the no-slip rolling rate v/r. The ST
+         # dynamics model carries no wheel-speed states, so this is the closest
+@@ -729,6 +881,8 @@ class GymBridge(Node):
+ 
+         # pub tf
+         self._publish_odom(ts)
++        if self.sensors_enabled:
++            self._publish_sensors(ts)
+         self._publish_transforms(ts)
+         self._publish_laser_transforms(ts)
+         self._publish_wheel_transforms(ts)
+@@ -839,9 +993,13 @@ class GymBridge(Node):
              self.br.sendTransform(ts_msg)
  
      def _publish_wheel_transforms(self, ts):

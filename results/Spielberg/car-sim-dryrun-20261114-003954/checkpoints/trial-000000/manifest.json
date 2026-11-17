@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/car-sim-dryrun-20261114-003954",
+  "files": {
+    "state.json": "5509495f511ca2a59b4cbb5437c84cd43e83acc9cd9e959de56083902cd942ed",
+    "events.jsonl": "693e6f4ab1ddbcbb4d9145aa93ce9bffa906cae4ad2273227c2bf0fe8bc9b9b1",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "e1e80daa870060309d17bc4d5221ce76e4bf47849d2da481336f9571c14fc4a4",
+    "config.yaml": "5269341877234c9d49fda0ed8631cbf4e2f61421b0f259fa29d794183390e10f",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "59cb317aa2d23004e94a64fc8f0100fb6d5a60407690dbb4e7273d67b57b9ac2"
+  }
+}

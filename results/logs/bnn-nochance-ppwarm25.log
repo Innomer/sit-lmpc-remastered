@@ -1,0 +1,126 @@
+[dynamics_model_loaded] kind=gaussian_bnn | latent_dimension=96 | particles=64 | adaptation=gaussian_posterior | numerical_substep_mismatch=True
+[start] learning | seed=1 | friction actual/model=1.049/None | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[attempt] #1 success | 384 steps
+[dynamics_observation_skipped] attempt_id=1 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 1 | 38.4 s | avg speed 8.92 m/s | mppi
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[attempt] #2 success | 381 steps
+[dynamics_observation_skipped] attempt_id=2 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 2 | 38.1 s | avg speed 8.987 m/s | mppi
+[control_step_timing] steps=800
+[control_step_timing] steps=900
+[training] generation=1 | epochs=300 | loss=-0.3848 | gradient_steps=600
+[control_step_timing] steps=1000
+[control_step_timing] steps=1100
+[attempt] #3 success | 380 steps
+[dynamics_observation_skipped] attempt_id=3 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 3 | 38 s | avg speed 8.974 m/s | mppi
+[control_step_timing] steps=1200
+[control_step_timing] steps=1300
+[training] generation=2 | epochs=300 | loss=-1.269 | gradient_steps=1800
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[attempt] #4 success | 381 steps
+[dynamics_observation_skipped] attempt_id=4 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 4 | 38.1 s | avg speed 8.987 m/s | mppi
+[control_step_timing] steps=1600
+[control_step_timing] steps=1700
+[training] generation=3 | epochs=300 | loss=-1.742 | gradient_steps=3300
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[attempt] #5 success | 380 steps
+[dynamics_observation_skipped] attempt_id=5 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 5 | 38 s | avg speed 8.974 m/s | mppi
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/bnn-nochance-ppwarm25/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[learned_controller_started] step=1906 | value_generation=3 | hull_facets=764
+[training] generation=4 | epochs=300 | loss=-2.087 | gradient_steps=5100
+[control_step_timing] steps=2000
+[control_step_timing] steps=2100
+[control_step_timing] steps=2200
+[attempt] #6 success | 383 steps
+[dynamics_observed] attempt_id=6 | valid_transitions=383 | rejected_transitions=0
+[dynamics_posterior_training] generation=1 | status=ready | posterior_method=tempered | new_training_transitions=221 | training_transitions=221 | likelihood_power=0.0001 | heldout_xy10_rmse=0.05799 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=1 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 6 | 38.3 s | avg speed 8.851 m/s | lmppi | safe-set violation=0.04242 | lambda_ss mean=2.089 max=18.75 | lambda_boundary mean=1.599 max=18.75
+[control_step_timing] steps=2300
+[training] generation=5 | epochs=300 | loss=-2.795 | gradient_steps=6900
+[control_step_timing] steps=2400
+[control_step_timing] steps=2500
+[control_step_timing] steps=2600
+[attempt] #7 success | 386 steps
+[dynamics_observed] attempt_id=7 | valid_transitions=386 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=ready | posterior_method=tempered | new_training_transitions=227 | training_transitions=448 | likelihood_power=0.0001 | heldout_xy10_rmse=0.0792 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=2 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 7 | 38.6 s | avg speed 8.801 m/s | lmppi | lambda_ss mean=2.574 max=18.75 | lambda_boundary mean=1.493 max=18.75
+[control_step_timing] steps=2700
+[training] generation=6 | epochs=300 | loss=-3.051 | gradient_steps=8700
+[control_step_timing] steps=2800
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[attempt] #8 success | 387 steps
+[dynamics_observed] attempt_id=8 | valid_transitions=387 | rejected_transitions=0
+[dynamics_posterior_training] generation=3 | status=ready | posterior_method=tempered | new_training_transitions=225 | training_transitions=673 | likelihood_power=0.001 | heldout_xy10_rmse=0.01471 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=3 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 8 | 38.7 s | avg speed 8.781 m/s | lmppi | lambda_ss mean=1.305 max=18.75 | lambda_boundary mean=0.1615 max=16.25
+[control_step_timing] steps=3100
+[training] generation=7 | epochs=300 | loss=-3.059 | gradient_steps=10500
+[control_step_timing] steps=3200
+[control_step_timing] steps=3300
+[control_step_timing] steps=3400
+[attempt] #9 success | 388 steps
+[dynamics_observed] attempt_id=9 | valid_transitions=388 | rejected_transitions=0
+[dynamics_posterior_training] generation=3 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=222 | training_transitions=895 | likelihood_power=0.001 | heldout_xy10_rmse=0.04546 | heldout_coverage10=1
+[lap] trial 9 | 38.8 s | avg speed 8.696 m/s | lmppi | lambda_ss mean=1.256 max=3.75 | lambda_boundary mean=0.06121 max=3.75
+[control_step_timing] steps=3500
+[training] generation=8 | epochs=300 | loss=-3.054 | gradient_steps=12300
+[control_step_timing] steps=3600
+[control_step_timing] steps=3700
+[control_step_timing] steps=3800
+[attempt] #10 success | 389 steps
+[dynamics_observed] attempt_id=10 | valid_transitions=389 | rejected_transitions=0
+[dynamics_posterior_training] generation=3 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=226 | training_transitions=1121 | likelihood_power=0.001 | heldout_xy10_rmse=0.03353 | heldout_coverage10=1
+[lap] trial 10 | 38.9 s | avg speed 8.702 m/s | lmppi | lambda_ss mean=1.237 max=2.5 | lambda_boundary mean=0.04499 max=2.5
+[training] generation=9 | epochs=300 | loss=-3.005 | gradient_steps=14100
+[checkpoint_saved] file=checkpoints/trial-000010 | trials=10
+[control_step_timing] steps=3900
+[control_step_timing] steps=4000
+[control_step_timing] steps=4100
+[control_step_timing] steps=4200
+[attempt] #11 success | 391 steps
+[dynamics_observed] attempt_id=11 | valid_transitions=391 | rejected_transitions=0
+[dynamics_posterior_training] generation=4 | status=ready | posterior_method=tempered | new_training_transitions=221 | training_transitions=1342 | likelihood_power=0.001 | heldout_xy10_rmse=0.009711 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=4 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 11 | 39.1 s | avg speed 8.644 m/s | lmppi | lambda_ss mean=1.295 max=10 | lambda_boundary mean=0.08951 max=2.5
+[training] generation=10 | epochs=300 | loss=-3.28 | gradient_steps=15900
+[control_step_timing] steps=4300
+[control_step_timing] steps=4400
+[control_step_timing] steps=4500
+[control_step_timing] steps=4600
+[attempt] #12 success | 391 steps
+[dynamics_observed] attempt_id=12 | valid_transitions=391 | rejected_transitions=0
+[dynamics_posterior_training] generation=5 | status=ready | posterior_method=tempered | new_training_transitions=225 | training_transitions=1567 | likelihood_power=0.001 | heldout_xy10_rmse=0.03343 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=5 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 12 | 39.1 s | avg speed 8.671 m/s | lmppi | lambda_ss mean=1.359 max=18.75 | lambda_boundary mean=0.09271 max=5
+[training] generation=11 | epochs=300 | loss=-3.41 | gradient_steps=17700
+[control_step_timing] steps=4700
+[attempt] #13 incomplete | 124 steps | speed_too_low | lambda_ss mean=1.452 max=7.5 | lambda_boundary mean=0.1411 max=1.25
+[dynamics_observed] attempt_id=13 | valid_transitions=124 | rejected_transitions=0
+[partial_lap] attempt_id=13 | steps=124 | termination_reason=speed_too_low
+[finish] status=speed_too_low | trials=12 | successful_laps=12 | failed_attempts=0 | applied_steps=4745 | training_generations=11 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/bnn-nochance-ppwarm25
+[control_timing_summary] steps=4745 | control_period_seconds=0.1 | stepping=lockstep
+EXIT=2

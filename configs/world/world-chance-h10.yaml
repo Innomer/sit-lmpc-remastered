@@ -1,0 +1,15 @@
+# Our method with chance constraints (1 s horizon, as the working BNN + chance baseline).
+extends: ../fast-diag/bnn-world-chance-h10.yaml
+output:
+  exp_name: world-chance-h10
+simulation:
+  ros:
+    imu_topic: imu
+    wheel_topic: wheel_odom
+    pose_topic: pf_odom
+planner:
+  dynamics:
+    checkpoint: runs/residual-world/best_refit
+    belief_update: encoder
+    encoder: runs/world-encoder-v3
+    encoder_state: true

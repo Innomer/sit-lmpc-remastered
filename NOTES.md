@@ -638,6 +638,8 @@ which term (hull vs value) forces the braking.
 
 ## 7. Status and open questions (2026-11-14)
 
+Later status (world model, closed-loop sim runs, car code): see `docs/PROGRESS_LOG.md`.
+
 Sim baselines on Spielberg, all done:
 
 | run | warm-up | best LMPPI lap | LMPPI laps | planning p50 |

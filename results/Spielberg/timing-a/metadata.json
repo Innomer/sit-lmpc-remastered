@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "package": "sit-lmpc-remastered",
+  "version": "0.1.0",
+  "devices": [
+    "cuda:0"
+  ],
+  "dependencies": {
+    "jax": "0.11.1",
+    "jaxlib": "0.11.1",
+    "flax": "0.12.10",
+    "distrax": "0.1.9",
+    "optax": "0.2.8",
+    "orbax-checkpoint": "0.12.7"
+  },
+  "resumed_from_checkpoint": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/lmppi6/checkpoints/trial-000006",
+  "checkpoint_trial": 6
+}

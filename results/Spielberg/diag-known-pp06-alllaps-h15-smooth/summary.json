@@ -1,0 +1,46 @@
+{
+  "status": "lap_limit",
+  "laps": 25,
+  "successful_laps": 25,
+  "trials": 25,
+  "history_laps": 0,
+  "attempts": 25,
+  "failed_attempts": 0,
+  "incomplete_attempts": 0,
+  "applied_steps": 9262,
+  "learned_steps": 7356,
+  "training_generations": 24,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 0,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": null,
+  "predictor_friction": 1.0489000082015991,
+  "dynamics_predictor": {
+    "kind": "single",
+    "friction": 1.0489000082015991
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.05,
+    "lambda_count": 16,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 1451.6667230869998,
+  "partial_lap": null,
+  "device_memory": {
+    "bytes_in_use": 2469632,
+    "peak_bytes_in_use": 339750400,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 6167724032
+  }
+}

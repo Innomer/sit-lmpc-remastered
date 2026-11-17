@@ -1,0 +1,2 @@
+{"attempt_id": 1, "lap": 1, "outcome": "success", "termination_reason": "lap_completed", "steps": 248, "duration": 24.800000000000082, "file": "success/attempt-000001.npz"}
+{"attempt_id": 2, "lap": 2, "outcome": "success", "termination_reason": "lap_completed", "steps": 240, "duration": 24.00000000000007, "file": "success/attempt-000002.npz"}

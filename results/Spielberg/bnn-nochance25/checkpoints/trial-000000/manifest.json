@@ -1,0 +1,22 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/bnn-nochance25",
+  "files": {
+    "state.json": "5f23aefd597d737b791b2b8bd97910aa6f5c3ae5a44245c143aec10c952d32b7",
+    "dynamics_posterior.json": "9d20d822db5e1636e280ad0077ae117982acd98ba3a275338bee02f8c93cda9a",
+    "events.jsonl": "d4af9e9bb72f07167115b1fd6994e216a8a5037cd94b8588589bb05feb184f21",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "7516b5bbc9ddeaa913fd833bb10ab806d581dba96d1b09b3d463f8d2e36911bb",
+    "config.yaml": "40aa5b8554ff3279d0875a1a872833d25ac4990034c4a7f6ebc61cbe10adbf33",
+    "dynamics_posterior.npz": "c2ce4929c118e5a277a86bfe205c2addbb2feb78ef8b62f1364d0b549e635b10",
+    "dynamics_model/manifest.json": "70620227e40b876ada74661d2e795c04457f837988e60d851bd11f9d3a03eceb",
+    "dynamics_model/model.msgpack": "44e86501e558113ca489069202694834e15f6fd83e6c12994bbced438de694c0",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "b4bb911426984271b6f2856f18191195ab03f65b8bf03e6027d999247b4519b1"
+  }
+}

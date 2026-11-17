@@ -1,0 +1,2257 @@
+{
+  "schema": 2,
+  "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+  "feature_dtype": "float32",
+  "config": {
+    "backend": "gaussian_bnn",
+    "checkpoint": "models/vehicle-bnn-f1tenth-world-l96",
+    "particles": 64,
+    "verification_particles": 2048,
+    "verification_confidence": 0.95,
+    "belief_update": "posterior",
+    "likelihood_power": 1.0,
+    "update_batch_size": 512,
+    "validation_fraction": 0.2,
+    "validation_particles": 64,
+    "validation_max_windows": 64,
+    "chance_estimation": "planning_samples",
+    "posterior_method": "tempered",
+    "calibration_fraction": 0.2,
+    "calibration_split": "random_windows",
+    "calibration_horizon": 10,
+    "calibration_min_windows": 4,
+    "calibration_target_coverage": 0.95,
+    "calibration_score_slack": 0.05,
+    "calibration_powers": [
+      1.0,
+      0.1,
+      0.01,
+      0.001,
+      0.0001,
+      1e-05,
+      1e-06
+    ]
+  },
+  "generation": 7,
+  "training_transitions": 1888,
+  "processed": {
+    "6": "88edb2e96130967158da99568d436f6cfdba22fdcb647eca533b3f5423b65ece",
+    "7": "edca22a1ad87a6983a4d2e396361b30b178a6a8eb05dc79269c3725f1cea3e83",
+    "8": "c96929aede075aeaa81d740541516cc59fd65abe4eea211c847b31303ce45d9e",
+    "9": "25d13db2310bd8ccc523242d0c8bb7f752c4246584d235071565e138f82968e1",
+    "10": "d9d27d5374939ed85ea0607ff032a455ad923995c79fd51bdde8b0f1d79745e3",
+    "11": "0e0e33bdfdbde640a7e85b63b10b51e03241170903ea3bc497cf58b81777b81d",
+    "12": "fb4c1b03d9dc14a3d6376be6e68021110bc5a2c2a9b8f8473c77a10d5b3e4606",
+    "13": "f4e3cd512d69252280d64ce07eb14f241f6b96e79e60e807c8f8394b98363636",
+    "14": "a3b83a5ec4012e0480ac3b17cc7f2e0115e31a505c6893db684abcee5bb13701",
+    "15": "737859abfc4383659d5c8da8f8898626e93b54d5e2a4f773f15145365d814b39"
+  },
+  "history": [
+    {
+      "generation": 1,
+      "status": "ready",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "6"
+      ],
+      "new_training_transitions": 216,
+      "training_transitions": 216,
+      "calibration_transitions": 80,
+      "held_out_transitions": 76,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.3039633166008584,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 8,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 8,
+            "endpoint_xy_rmse": 0.08824589103460312,
+            "path_coverage_95": 0.25,
+            "path_radius_95": 0.012270290404558182,
+            "energy_score": 0.02561204321682453,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 8,
+            "endpoint_xy_rmse": 0.08125164359807968,
+            "path_coverage_95": 0.25,
+            "path_radius_95": 0.030070895329117775,
+            "energy_score": 0.022891990840435028,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 8,
+            "endpoint_xy_rmse": 0.0503225103020668,
+            "path_coverage_95": 0.875,
+            "path_radius_95": 0.06708002835512161,
+            "energy_score": 0.014627686701714993,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 8,
+            "endpoint_xy_rmse": 0.043899886310100555,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.1401369869709015,
+            "energy_score": 0.015280584804713726,
+            "eligible": true
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 8,
+            "endpoint_xy_rmse": 0.10418500006198883,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.28161102533340454,
+            "energy_score": 0.030194858089089394,
+            "eligible": true
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 8,
+            "endpoint_xy_rmse": 0.24025467038154602,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.5470277070999146,
+            "energy_score": 0.06694714725017548,
+            "eligible": true
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 8,
+            "endpoint_xy_rmse": 0.40665778517723083,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.8688632249832153,
+            "energy_score": 0.11964920908212662,
+            "eligible": true
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 8,
+          "endpoint_xy_rmse": 0.4552437663078308,
+          "path_coverage_95": 1.0,
+          "path_radius_95": 1.0336577892303467,
+          "energy_score": 0.1367233693599701
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "ready",
+        "selected": {
+          "status": "ready",
+          "windows": 8,
+          "endpoint_xy_rmse": 0.043899886310100555,
+          "path_coverage_95": 1.0,
+          "path_radius_95": 0.1401369869709015,
+          "energy_score": 0.015280584804713726
+        },
+        "selected_power": 0.001
+      },
+      "published": true,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 372,
+        "one_step_xy_rmse": 0.0070598858246612335,
+        "component_rmse": [
+          0.0021621421794344874,
+          0.006720649451739238,
+          0.00020386221480530987,
+          0.0020575161745096035,
+          0.006934921976194538,
+          0.09532423519911451,
+          0.019162367375634193
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 76,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -2.9868286342817063,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.008681460616609966,
+            "path_coverage_95": 0.859375,
+            "path_radius_95": 0.00804293341934681,
+            "energy_score": 0.004485767340075708
+          },
+          "5": {
+            "windows": 41,
+            "endpoint_xy_rmse": 0.12182911038663596,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.19595959782600403,
+            "energy_score": 0.036404424247048615
+          },
+          "10": {
+            "windows": 11,
+            "endpoint_xy_rmse": 0.4189764617602543,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.8034773468971252,
+            "energy_score": 0.09072371821102244
+          },
+          "15": {
+            "windows": 2,
+            "endpoint_xy_rmse": 0.028994268629757416,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.49965399503707886,
+            "energy_score": 0.02514574878528397
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 76,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -3.688082077510124,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0015212044172609022,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0032977648079395294,
+            "energy_score": 0.0008789671471002636
+          },
+          "5": {
+            "windows": 41,
+            "endpoint_xy_rmse": 0.0143616609642455,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.02402491308748722,
+            "energy_score": 0.004934901706737545
+          },
+          "10": {
+            "windows": 11,
+            "endpoint_xy_rmse": 0.03380163248503591,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.08099482208490372,
+            "energy_score": 0.011816915834688003
+          },
+          "15": {
+            "windows": 2,
+            "endpoint_xy_rmse": 0.10049317840236693,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.16519996523857117,
+            "energy_score": 0.028420668225860125
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.6666461489985522
+    },
+    {
+      "generation": 1,
+      "status": "held_no_calibrated_candidate",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "7"
+      ],
+      "new_training_transitions": 212,
+      "training_transitions": 428,
+      "calibration_transitions": 165,
+      "held_out_transitions": 80,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.3039633166008584,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 30,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 30,
+            "endpoint_xy_rmse": 0.0471317358314991,
+            "path_coverage_95": 0.13333334028720856,
+            "path_radius_95": 0.0068203448317945,
+            "energy_score": 0.012777341529726982,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 30,
+            "endpoint_xy_rmse": 0.05011748895049095,
+            "path_coverage_95": 0.5,
+            "path_radius_95": 0.018513783812522888,
+            "energy_score": 0.012517055496573448,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 30,
+            "endpoint_xy_rmse": 0.052105698734521866,
+            "path_coverage_95": 0.8333333730697632,
+            "path_radius_95": 0.03929152712225914,
+            "energy_score": 0.01206174399703741,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 30,
+            "endpoint_xy_rmse": 0.06155770272016525,
+            "path_coverage_95": 0.9000000357627869,
+            "path_radius_95": 0.07384893298149109,
+            "energy_score": 0.014150135219097137,
+            "eligible": false
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 30,
+            "endpoint_xy_rmse": 0.0804634615778923,
+            "path_coverage_95": 0.9666666984558105,
+            "path_radius_95": 0.12638729810714722,
+            "energy_score": 0.017961090430617332,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 30,
+            "endpoint_xy_rmse": 0.11693274974822998,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.2270226776599884,
+            "energy_score": 0.030116433277726173,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 30,
+            "endpoint_xy_rmse": 0.24132728576660156,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.44376495480537415,
+            "energy_score": 0.06701590865850449,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 30,
+          "endpoint_xy_rmse": 0.06581347435712814,
+          "path_coverage_95": 0.9333333969116211,
+          "path_radius_95": 0.09065765142440796,
+          "energy_score": 0.014425890520215034
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "held_no_calibrated_candidate"
+      },
+      "published": false,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 377,
+        "one_step_xy_rmse": 0.0021077446044658436,
+        "component_rmse": [
+          0.0018255006594886105,
+          0.0010536292800893128,
+          0.0001512810258937276,
+          0.0019025531217863024,
+          0.0016798345658075406,
+          0.02576788748476574,
+          0.0025766726713377344
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 80,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -3.723451142399204,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0018587241652243615,
+            "path_coverage_95": 0.96875,
+            "path_radius_95": 0.0034891455434262753,
+            "energy_score": 0.0010102590810134936
+          },
+          "5": {
+            "windows": 40,
+            "endpoint_xy_rmse": 0.007478882373458667,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.01919059082865715,
+            "energy_score": 0.003266394779973722
+          },
+          "10": {
+            "windows": 8,
+            "endpoint_xy_rmse": 0.024174566805997496,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0770101249217987,
+            "energy_score": 0.009310098339261124
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 80,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -3.723451142399204,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0018587241652243615,
+            "path_coverage_95": 0.96875,
+            "path_radius_95": 0.0034891455434262753,
+            "energy_score": 0.0010102590810134936
+          },
+          "5": {
+            "windows": 40,
+            "endpoint_xy_rmse": 0.007478882373458667,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.01919059082865715,
+            "energy_score": 0.003266394779973722
+          },
+          "10": {
+            "windows": 8,
+            "endpoint_xy_rmse": 0.024174566805997496,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0770101249217987,
+            "energy_score": 0.009310098339261124
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.3097053429992229
+    },
+    {
+      "generation": 2,
+      "status": "ready",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "8"
+      ],
+      "new_training_transitions": 207,
+      "training_transitions": 635,
+      "calibration_transitions": 243,
+      "held_out_transitions": 79,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.23079192297579382,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 45,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 45,
+            "endpoint_xy_rmse": 0.03608032688498497,
+            "path_coverage_95": 0.06666667014360428,
+            "path_radius_95": 0.0048984382301568985,
+            "energy_score": 0.010158689692616463,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 45,
+            "endpoint_xy_rmse": 0.03837835043668747,
+            "path_coverage_95": 0.4444444477558136,
+            "path_radius_95": 0.013845640234649181,
+            "energy_score": 0.009618953801691532,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 45,
+            "endpoint_xy_rmse": 0.03967663645744324,
+            "path_coverage_95": 0.8444444537162781,
+            "path_radius_95": 0.031182914972305298,
+            "energy_score": 0.008737809956073761,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 45,
+            "endpoint_xy_rmse": 0.042324479669332504,
+            "path_coverage_95": 0.9777777791023254,
+            "path_radius_95": 0.061101362109184265,
+            "energy_score": 0.009478229098021984,
+            "eligible": true
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 45,
+            "endpoint_xy_rmse": 0.05406038835644722,
+            "path_coverage_95": 0.9777777791023254,
+            "path_radius_95": 0.10156198590993881,
+            "energy_score": 0.012279105372726917,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 45,
+            "endpoint_xy_rmse": 0.08886242657899857,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.18085314333438873,
+            "energy_score": 0.020521018654108047,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 45,
+            "endpoint_xy_rmse": 0.19782498478889465,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.3303931951522827,
+            "energy_score": 0.04698321223258972,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 45,
+          "endpoint_xy_rmse": 0.04856683313846588,
+          "path_coverage_95": 0.9555555582046509,
+          "path_radius_95": 0.08115531504154205,
+          "energy_score": 0.010480864904820919
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "ready",
+        "selected": {
+          "status": "ready",
+          "windows": 45,
+          "endpoint_xy_rmse": 0.042324479669332504,
+          "path_coverage_95": 0.9777777791023254,
+          "path_radius_95": 0.061101362109184265,
+          "energy_score": 0.009478229098021984
+        },
+        "selected_power": 0.001
+      },
+      "published": true,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 364,
+        "one_step_xy_rmse": 0.001791305883428628,
+        "component_rmse": [
+          0.0011857131523036982,
+          0.0013427066278454294,
+          0.0001232826934846576,
+          0.0008545846144623738,
+          0.0010545815316644357,
+          0.02115113175299983,
+          0.0024650780022616664
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 79,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -3.751752490726503,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0016794866686232566,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0029830136336386204,
+            "energy_score": 0.0008183949985222281
+          },
+          "5": {
+            "windows": 40,
+            "endpoint_xy_rmse": 0.014362814818004638,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.029235783964395523,
+            "energy_score": 0.004259709464871242
+          },
+          "10": {
+            "windows": 12,
+            "endpoint_xy_rmse": 0.06004009217683708,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.14914272725582123,
+            "energy_score": 0.017452000188999044
+          },
+          "15": {
+            "windows": 4,
+            "endpoint_xy_rmse": 0.13626812910347394,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.3304329216480255,
+            "energy_score": 0.03792629577072418
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 79,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -3.897854190929985,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0012058505482181218,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0024312487803399563,
+            "energy_score": 0.0006238867587123266
+          },
+          "5": {
+            "windows": 40,
+            "endpoint_xy_rmse": 0.007272802433427161,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.018302753567695618,
+            "energy_score": 0.0024605384393284794
+          },
+          "10": {
+            "windows": 12,
+            "endpoint_xy_rmse": 0.028225372680178957,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.08272318542003632,
+            "energy_score": 0.008602245438628123
+          },
+          "15": {
+            "windows": 4,
+            "endpoint_xy_rmse": 0.0675527939535601,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.1757107377052307,
+            "energy_score": 0.018467551614251076
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.31343003700021654
+    },
+    {
+      "generation": 3,
+      "status": "ready",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "9"
+      ],
+      "new_training_transitions": 209,
+      "training_transitions": 844,
+      "calibration_transitions": 322,
+      "held_out_transitions": 80,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.21556410636659262,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 64,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.021711964160203934,
+            "path_coverage_95": 0.09375,
+            "path_radius_95": 0.004385906737297773,
+            "energy_score": 0.006493075750768185,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.025114087387919426,
+            "path_coverage_95": 0.5625,
+            "path_radius_95": 0.011797773651778698,
+            "energy_score": 0.006390945985913277,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.027483448386192322,
+            "path_coverage_95": 0.9375,
+            "path_radius_95": 0.027454134076833725,
+            "energy_score": 0.006024680566042662,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.030027657747268677,
+            "path_coverage_95": 0.96875,
+            "path_radius_95": 0.054992422461509705,
+            "energy_score": 0.007554234005510807,
+            "eligible": true
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.039034049957990646,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.10444483906030655,
+            "energy_score": 0.012116597965359688,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.10752604156732559,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.2283240407705307,
+            "energy_score": 0.030075738206505775,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.27798065543174744,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.5748660564422607,
+            "energy_score": 0.08015914261341095,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.03050253912806511,
+          "path_coverage_95": 0.96875,
+          "path_radius_95": 0.05832631140947342,
+          "energy_score": 0.007841046899557114
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "ready",
+        "selected": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.030027657747268677,
+          "path_coverage_95": 0.96875,
+          "path_radius_95": 0.054992422461509705,
+          "energy_score": 0.007554234005510807
+        },
+        "selected_power": 0.001
+      },
+      "published": true,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 368,
+        "one_step_xy_rmse": 0.001098980908650968,
+        "component_rmse": [
+          0.0009391277711323287,
+          0.0005707872344992762,
+          0.00011290247478381109,
+          0.0007313355098778641,
+          0.000632702832814576,
+          0.010175681171912905,
+          0.0009985708060527003
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 80,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.099979169446416,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.000752911672395695,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0019784735050052404,
+            "energy_score": 0.0004386147563253575
+          },
+          "5": {
+            "windows": 48,
+            "endpoint_xy_rmse": 0.005975756621215177,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.013413235545158386,
+            "energy_score": 0.0021645105607963613
+          },
+          "10": {
+            "windows": 28,
+            "endpoint_xy_rmse": 0.026255151561016692,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.05396614223718643,
+            "energy_score": 0.00811153276050419
+          },
+          "15": {
+            "windows": 14,
+            "endpoint_xy_rmse": 0.08290260497381849,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.14367544651031494,
+            "energy_score": 0.024299599036922886
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 80,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.117319261033689,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.000736551867714379,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0019091975409537554,
+            "energy_score": 0.0004250316799262431
+          },
+          "5": {
+            "windows": 48,
+            "endpoint_xy_rmse": 0.00547040012360793,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.01269607711583376,
+            "energy_score": 0.0020130661660961594
+          },
+          "10": {
+            "windows": 28,
+            "endpoint_xy_rmse": 0.02307980629054597,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.050762470811605453,
+            "energy_score": 0.007229470442124673
+          },
+          "15": {
+            "windows": 14,
+            "endpoint_xy_rmse": 0.07331061834655411,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.13555559515953064,
+            "energy_score": 0.0213073100067262
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.31836694499907026
+    },
+    {
+      "generation": 4,
+      "status": "ready",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "10"
+      ],
+      "new_training_transitions": 199,
+      "training_transitions": 1043,
+      "calibration_transitions": 403,
+      "held_out_transitions": 77,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.21061796046247927,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 64,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.02587835304439068,
+            "path_coverage_95": 0.09375,
+            "path_radius_95": 0.004234062973409891,
+            "energy_score": 0.007311845198273659,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.027452051639556885,
+            "path_coverage_95": 0.453125,
+            "path_radius_95": 0.011417743749916553,
+            "energy_score": 0.006998238153755665,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.026506396010518074,
+            "path_coverage_95": 0.84375,
+            "path_radius_95": 0.025404244661331177,
+            "energy_score": 0.006008977070450783,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.028046006336808205,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.05004279315471649,
+            "energy_score": 0.006808633916079998,
+            "eligible": true
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.043955232948064804,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0953582301735878,
+            "energy_score": 0.011201608926057816,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.09354215860366821,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.20515751838684082,
+            "energy_score": 0.02533949352800846,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.22469452023506165,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.45851826667785645,
+            "energy_score": 0.06031850725412369,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.02850845269858837,
+          "path_coverage_95": 0.984375,
+          "path_radius_95": 0.05203799158334732,
+          "energy_score": 0.006970103830099106
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "ready",
+        "selected": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.028046006336808205,
+          "path_coverage_95": 0.984375,
+          "path_radius_95": 0.05004279315471649,
+          "energy_score": 0.006808633916079998
+        },
+        "selected_power": 0.001
+      },
+      "published": true,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 357,
+        "one_step_xy_rmse": 0.0013009263133900602,
+        "component_rmse": [
+          0.0009505577952734821,
+          0.0008881718024771276,
+          0.00011928222802623136,
+          0.000559814984987491,
+          0.0004441072064267054,
+          0.008976211351296118,
+          0.0009669426020596417
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 77,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -3.869909029369451,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.002148182617354188,
+            "path_coverage_95": 0.9375,
+            "path_radius_95": 0.0021258501801639795,
+            "energy_score": 0.0008634500565812952
+          },
+          "5": {
+            "windows": 44,
+            "endpoint_xy_rmse": 0.011003838784809834,
+            "path_coverage_95": 0.9772727272727273,
+            "path_radius_95": 0.015915650874376297,
+            "energy_score": 0.003161318407605612
+          },
+          "10": {
+            "windows": 20,
+            "endpoint_xy_rmse": 0.03815794161330389,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.06803590804338455,
+            "energy_score": 0.009064404252479044
+          },
+          "15": {
+            "windows": 11,
+            "endpoint_xy_rmse": 0.12307472012529132,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.22499538958072662,
+            "energy_score": 0.02967836317366028
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 77,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -3.884383858859552,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0021389342981463365,
+            "path_coverage_95": 0.9375,
+            "path_radius_95": 0.002077903598546982,
+            "energy_score": 0.0008556906029916266
+          },
+          "5": {
+            "windows": 44,
+            "endpoint_xy_rmse": 0.010872597768438214,
+            "path_coverage_95": 0.9772727272727273,
+            "path_radius_95": 0.015116512775421143,
+            "energy_score": 0.0031219751162997497
+          },
+          "10": {
+            "windows": 20,
+            "endpoint_xy_rmse": 0.03765328746113318,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.06589211523532867,
+            "energy_score": 0.008885796085157547
+          },
+          "15": {
+            "windows": 11,
+            "endpoint_xy_rmse": 0.1224393494959357,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.22139295935630798,
+            "energy_score": 0.029198629800590816
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.29126078599983884
+    },
+    {
+      "generation": 5,
+      "status": "ready",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "11"
+      ],
+      "new_training_transitions": 208,
+      "training_transitions": 1251,
+      "calibration_transitions": 483,
+      "held_out_transitions": 73,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.19773238715019142,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 64,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.021590841934084892,
+            "path_coverage_95": 0.078125,
+            "path_radius_95": 0.0031694425269961357,
+            "energy_score": 0.0068711028434336185,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0238222423940897,
+            "path_coverage_95": 0.3125,
+            "path_radius_95": 0.008713636547327042,
+            "energy_score": 0.006803244352340698,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.025131946429610252,
+            "path_coverage_95": 0.859375,
+            "path_radius_95": 0.02130843512713909,
+            "energy_score": 0.005923609249293804,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.024978453293442726,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.04496701806783676,
+            "energy_score": 0.006261780858039856,
+            "eligible": true
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.030120162293314934,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.08735005557537079,
+            "energy_score": 0.009477484971284866,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.07672849297523499,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.18236523866653442,
+            "energy_score": 0.0229038018733263,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.21450354158878326,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.41062965989112854,
+            "energy_score": 0.05614320933818817,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.024342939257621765,
+          "path_coverage_95": 0.984375,
+          "path_radius_95": 0.048483602702617645,
+          "energy_score": 0.006312968209385872
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "ready",
+        "selected": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.024978453293442726,
+          "path_coverage_95": 0.984375,
+          "path_radius_95": 0.04496701806783676,
+          "energy_score": 0.006261780858039856
+        },
+        "selected_power": 0.001
+      },
+      "published": true,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 361,
+        "one_step_xy_rmse": 0.0014902818242484791,
+        "component_rmse": [
+          0.001011271440381428,
+          0.0010946551920829899,
+          0.0001318756263276277,
+          0.0008190799746748032,
+          0.0005903682601336503,
+          0.010831197347618457,
+          0.0012565989851137146
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 73,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.0788193444254555,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.000910885143009267,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0018228742992505431,
+            "energy_score": 0.0005062193762432416
+          },
+          "5": {
+            "windows": 46,
+            "endpoint_xy_rmse": 0.00506873863985964,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.010975751094520092,
+            "energy_score": 0.0018346026600558963
+          },
+          "10": {
+            "windows": 24,
+            "endpoint_xy_rmse": 0.01952872604587423,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.039456311613321304,
+            "energy_score": 0.005524619870069441
+          },
+          "15": {
+            "windows": 14,
+            "endpoint_xy_rmse": 0.04828744020062608,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.09522170573472977,
+            "energy_score": 0.013064884261032323
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 73,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.09483735113553,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0009039716322413432,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0017702417680993676,
+            "energy_score": 0.0004989648341351335
+          },
+          "5": {
+            "windows": 46,
+            "endpoint_xy_rmse": 0.004781588798098215,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.010155699215829372,
+            "energy_score": 0.0017397265002943947
+          },
+          "10": {
+            "windows": 24,
+            "endpoint_xy_rmse": 0.01759870360775235,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.03605799749493599,
+            "energy_score": 0.004947377485567891
+          },
+          "15": {
+            "windows": 14,
+            "endpoint_xy_rmse": 0.043143509695464474,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.08922086656093597,
+            "energy_score": 0.011316975100096592
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.31005054999877757
+    },
+    {
+      "generation": 6,
+      "status": "ready",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "12"
+      ],
+      "new_training_transitions": 207,
+      "training_transitions": 1458,
+      "calibration_transitions": 557,
+      "held_out_transitions": 78,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.19096944028062057,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 64,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.017458155751228333,
+            "path_coverage_95": 0.03125,
+            "path_radius_95": 0.003168797353282571,
+            "energy_score": 0.006301075220108032,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.020243704319000244,
+            "path_coverage_95": 0.34375,
+            "path_radius_95": 0.008781429380178452,
+            "energy_score": 0.006390899419784546,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.023002514615654945,
+            "path_coverage_95": 0.84375,
+            "path_radius_95": 0.02082691341638565,
+            "energy_score": 0.005873831920325756,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.026518210768699646,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.04065292328596115,
+            "energy_score": 0.00635866355150938,
+            "eligible": true
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.032244954258203506,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.08071158826351166,
+            "energy_score": 0.009195590391755104,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.07497046142816544,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.18443860113620758,
+            "energy_score": 0.02107207477092743,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.19912834465503693,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.4648418724536896,
+            "energy_score": 0.052412569522857666,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.026370080187916756,
+          "path_coverage_95": 0.984375,
+          "path_radius_95": 0.04241742193698883,
+          "energy_score": 0.006385507993400097
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "ready",
+        "selected": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.026518210768699646,
+          "path_coverage_95": 0.984375,
+          "path_radius_95": 0.04065292328596115,
+          "energy_score": 0.00635866355150938
+        },
+        "selected_power": 0.001
+      },
+      "published": true,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 359,
+        "one_step_xy_rmse": 0.0011029383015102772,
+        "component_rmse": [
+          0.0008837621596636893,
+          0.0006598767628011661,
+          0.0001266954951849844,
+          0.0005971763274825069,
+          0.0004741204755465451,
+          0.006707700415795993,
+          0.0007809193329583908
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 78,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.080381597293253,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.000915041996040147,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0017128762556239963,
+            "energy_score": 0.0005321625518456592
+          },
+          "5": {
+            "windows": 45,
+            "endpoint_xy_rmse": 0.00506453852137948,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.010736285708844662,
+            "energy_score": 0.0019831322100135034
+          },
+          "10": {
+            "windows": 20,
+            "endpoint_xy_rmse": 0.0170991899035908,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.03833046555519104,
+            "energy_score": 0.004871188255006723
+          },
+          "15": {
+            "windows": 11,
+            "endpoint_xy_rmse": 0.04690939831560024,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.1098824068903923,
+            "energy_score": 0.011956634286536406
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 78,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.092317328884171,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0009124425618561732,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.0016751515213400126,
+            "energy_score": 0.000531034148418549
+          },
+          "5": {
+            "windows": 45,
+            "endpoint_xy_rmse": 0.004898464083189147,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.010201819241046906,
+            "energy_score": 0.0019432027481950597
+          },
+          "10": {
+            "windows": 20,
+            "endpoint_xy_rmse": 0.01723319837982002,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.036164212971925735,
+            "energy_score": 0.0048975547268733325
+          },
+          "15": {
+            "windows": 11,
+            "endpoint_xy_rmse": 0.04927957611392708,
+            "path_coverage_95": 0.9090909090909091,
+            "path_radius_95": 0.10577522963285446,
+            "energy_score": 0.012586404815531476
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.3271136219991604
+    },
+    {
+      "generation": 6,
+      "status": "held_no_calibrated_candidate",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "13"
+      ],
+      "new_training_transitions": 207,
+      "training_transitions": 1665,
+      "calibration_transitions": 629,
+      "held_out_transitions": 80,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.19096944028062057,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 64,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.022636227309703827,
+            "path_coverage_95": 0.078125,
+            "path_radius_95": 0.0033900169655680656,
+            "energy_score": 0.007140465080738068,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.02472851425409317,
+            "path_coverage_95": 0.265625,
+            "path_radius_95": 0.009048720821738243,
+            "energy_score": 0.0075208935886621475,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.025523442775011063,
+            "path_coverage_95": 0.71875,
+            "path_radius_95": 0.021425576880574226,
+            "energy_score": 0.006771909072995186,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0278325155377388,
+            "path_coverage_95": 0.921875,
+            "path_radius_95": 0.04377324879169464,
+            "energy_score": 0.006868831813335419,
+            "eligible": false
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.03875167295336723,
+            "path_coverage_95": 0.96875,
+            "path_radius_95": 0.07936225086450577,
+            "energy_score": 0.00929109938442707,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.06569992750883102,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.15760274231433868,
+            "energy_score": 0.017195381224155426,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.16812928020954132,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.3846571445465088,
+            "energy_score": 0.04156525433063507,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.0281166173517704,
+          "path_coverage_95": 0.921875,
+          "path_radius_95": 0.04497620463371277,
+          "energy_score": 0.006914478726685047
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "held_no_calibrated_candidate"
+      },
+      "published": false,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 359,
+        "one_step_xy_rmse": 0.0012875661180462798,
+        "component_rmse": [
+          0.001073420397444627,
+          0.0007110521490654434,
+          0.00010025694615642709,
+          0.0007783800698702066,
+          0.000455517445939516,
+          0.0069626957832446094,
+          0.0008454631669890564
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 80,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.088045924294555,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0009742922293147132,
+            "path_coverage_95": 0.96875,
+            "path_radius_95": 0.001659527188166976,
+            "energy_score": 0.0005118627842919086
+          },
+          "5": {
+            "windows": 43,
+            "endpoint_xy_rmse": 0.006310204294574465,
+            "path_coverage_95": 0.9534883720930233,
+            "path_radius_95": 0.010997726581990719,
+            "energy_score": 0.002256069370133135
+          },
+          "10": {
+            "windows": 15,
+            "endpoint_xy_rmse": 0.031410874846211884,
+            "path_coverage_95": 0.9333333333333333,
+            "path_radius_95": 0.05821818485856056,
+            "energy_score": 0.009378635660803823
+          },
+          "15": {
+            "windows": 5,
+            "endpoint_xy_rmse": 0.09359123737950513,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.18799573183059692,
+            "energy_score": 0.0245906957135432
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 80,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.088045924294555,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0009742922293147132,
+            "path_coverage_95": 0.96875,
+            "path_radius_95": 0.001659527188166976,
+            "energy_score": 0.0005118627842919086
+          },
+          "5": {
+            "windows": 43,
+            "endpoint_xy_rmse": 0.006310204294574465,
+            "path_coverage_95": 0.9534883720930233,
+            "path_radius_95": 0.010997726581990719,
+            "energy_score": 0.002256069370133135
+          },
+          "10": {
+            "windows": 15,
+            "endpoint_xy_rmse": 0.031410874846211884,
+            "path_coverage_95": 0.9333333333333333,
+            "path_radius_95": 0.05821818485856056,
+            "energy_score": 0.009378635660803823
+          },
+          "15": {
+            "windows": 5,
+            "endpoint_xy_rmse": 0.09359123737950513,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.18799573183059692,
+            "energy_score": 0.0245906957135432
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.3231468119993224
+    },
+    {
+      "generation": 6,
+      "status": "held_no_calibrated_candidate",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "14"
+      ],
+      "new_training_transitions": 204,
+      "training_transitions": 1869,
+      "calibration_transitions": 711,
+      "held_out_transitions": 83,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.19096944028062057,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 64,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.025434011593461037,
+            "path_coverage_95": 0.0625,
+            "path_radius_95": 0.0028500338084995747,
+            "energy_score": 0.0069709233939647675,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.02866286411881447,
+            "path_coverage_95": 0.265625,
+            "path_radius_95": 0.007762610912322998,
+            "energy_score": 0.00728626037016511,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.03165367990732193,
+            "path_coverage_95": 0.703125,
+            "path_radius_95": 0.018499506637454033,
+            "energy_score": 0.0070175956934690475,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.03072534315288067,
+            "path_coverage_95": 0.890625,
+            "path_radius_95": 0.037360407412052155,
+            "energy_score": 0.006703787948936224,
+            "eligible": false
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.02778969146311283,
+            "path_coverage_95": 0.96875,
+            "path_radius_95": 0.0708831250667572,
+            "energy_score": 0.007606080267578363,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.03917683660984039,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.15111351013183594,
+            "energy_score": 0.013333459384739399,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.09897493571043015,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.3243978023529053,
+            "energy_score": 0.02884705923497677,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.030372023582458496,
+          "path_coverage_95": 0.90625,
+          "path_radius_95": 0.039353616535663605,
+          "energy_score": 0.006710079498589039
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "held_no_calibrated_candidate"
+      },
+      "published": false,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 369,
+        "one_step_xy_rmse": 0.0011426686856481762,
+        "component_rmse": [
+          0.0009375069073970926,
+          0.0006532782896619708,
+          0.00010950130328923113,
+          0.0005241432051861032,
+          0.0004644278347358834,
+          0.00625067848675752,
+          0.0007502135945983739
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 83,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.051729172530029,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0013279368037125304,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.0019875895231962204,
+            "energy_score": 0.0005829646905008228
+          },
+          "5": {
+            "windows": 39,
+            "endpoint_xy_rmse": 0.004348663014138895,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.010588274337351322,
+            "energy_score": 0.0018232691915232608
+          },
+          "10": {
+            "windows": 8,
+            "endpoint_xy_rmse": 0.011254353530900285,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.03334997221827507,
+            "energy_score": 0.00401079314062748
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 64,
+        "transitions": 83,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.051729172530029,
+        "horizons": {
+          "1": {
+            "windows": 64,
+            "endpoint_xy_rmse": 0.0013279368037125304,
+            "path_coverage_95": 0.984375,
+            "path_radius_95": 0.0019875895231962204,
+            "energy_score": 0.0005829646905008228
+          },
+          "5": {
+            "windows": 39,
+            "endpoint_xy_rmse": 0.004348663014138895,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.010588274337351322,
+            "energy_score": 0.0018232691915232608
+          },
+          "10": {
+            "windows": 8,
+            "endpoint_xy_rmse": 0.011254353530900285,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.03334997221827507,
+            "energy_score": 0.00401079314062748
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.3143223000006401
+    },
+    {
+      "generation": 7,
+      "status": "ready",
+      "posterior_method": "tempered",
+      "active_posterior_method": "tempered",
+      "model_fingerprint": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+      "attempt_ids": [
+        "15"
+      ],
+      "new_training_transitions": 19,
+      "training_transitions": 1888,
+      "calibration_transitions": 721,
+      "held_out_transitions": 10,
+      "new_gap_transitions": 0,
+      "likelihood_power": 0.001,
+      "effective_likelihood_variance": [
+        9.045563274412416e-06,
+        9.498841791355517e-06,
+        1.0826576726685744e-05,
+        9.16837507247692e-06,
+        1.0957553968182765e-05,
+        7.241368439281359e-05,
+        0.00018692892626859248
+      ],
+      "inference": "calibrated_working_likelihood",
+      "latent_covariance_trace_ratio": 0.1814981031780791,
+      "calibration": {
+        "method": "tempered",
+        "horizon": 10,
+        "windows": 64,
+        "split": "random_windows",
+        "window_sampling": "random_sliding",
+        "target_coverage": 0.95,
+        "candidates": [
+          {
+            "power": 1.0,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.023121284320950508,
+            "path_coverage_95": 0.109375,
+            "path_radius_95": 0.002981599885970354,
+            "energy_score": 0.006102880463004112,
+            "eligible": false
+          },
+          {
+            "power": 0.1,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.026131900027394295,
+            "path_coverage_95": 0.375,
+            "path_radius_95": 0.008027784526348114,
+            "energy_score": 0.0066698454320430756,
+            "eligible": false
+          },
+          {
+            "power": 0.01,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.02733657695353031,
+            "path_coverage_95": 0.765625,
+            "path_radius_95": 0.019479671493172646,
+            "energy_score": 0.006140814162790775,
+            "eligible": false
+          },
+          {
+            "power": 0.001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.02448350563645363,
+            "path_coverage_95": 0.953125,
+            "path_radius_95": 0.04026162624359131,
+            "energy_score": 0.0058304909616708755,
+            "eligible": true
+          },
+          {
+            "power": 0.0001,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.025935010984539986,
+            "path_coverage_95": 0.96875,
+            "path_radius_95": 0.07334685325622559,
+            "energy_score": 0.007739900145679712,
+            "eligible": false
+          },
+          {
+            "power": 1e-05,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.05559777840971947,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.14188995957374573,
+            "energy_score": 0.0150101687759161,
+            "eligible": false
+          },
+          {
+            "power": 1e-06,
+            "status": "ready",
+            "windows": 64,
+            "endpoint_xy_rmse": 0.13525989651679993,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.30258041620254517,
+            "energy_score": 0.0346464179456234,
+            "eligible": false
+          }
+        ],
+        "definition": "95% function-only XY path tube; empirical calibration, not a safety guarantee",
+        "previous": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.024355124682188034,
+          "path_coverage_95": 0.953125,
+          "path_radius_95": 0.042481809854507446,
+          "energy_score": 0.005907949060201645
+        },
+        "working_variance": [
+          9.045563274412416e-06,
+          9.498841791355517e-06,
+          1.0826576726685744e-05,
+          9.16837507247692e-06,
+          1.0957553968182765e-05,
+          7.241368439281359e-05,
+          0.00018692892626859248
+        ],
+        "status": "ready",
+        "selected": {
+          "status": "ready",
+          "windows": 64,
+          "endpoint_xy_rmse": 0.02448350563645363,
+          "path_coverage_95": 0.953125,
+          "path_radius_95": 0.04026162624359131,
+          "energy_score": 0.0058304909616708755
+        },
+        "selected_power": 0.001
+      },
+      "published": true,
+      "pre_update_prediction": {
+        "status": "pre_update",
+        "transitions": 39,
+        "one_step_xy_rmse": 0.0005513324195433966,
+        "component_rmse": [
+          0.0004517129705246249,
+          0.0003161057245596721,
+          7.483735082389762e-05,
+          0.0003662639324964754,
+          0.0003648398372684397,
+          0.005565895142756344,
+          0.0005874830173643208
+        ]
+      },
+      "validation_before": {
+        "status": "ready",
+        "windows": 10,
+        "transitions": 10,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.33503416066897,
+        "horizons": {
+          "1": {
+            "windows": 10,
+            "endpoint_xy_rmse": 0.00028347654236632726,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.0010270954808220267,
+            "energy_score": 0.00021073845841090372
+          },
+          "5": {
+            "windows": 6,
+            "endpoint_xy_rmse": 0.0025368477307413603,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.005893297493457794,
+            "energy_score": 0.0009540774834147994
+          },
+          "10": {
+            "windows": 1,
+            "endpoint_xy_rmse": 0.01838887474105327,
+            "path_coverage_95": 0.0,
+            "path_radius_95": 0.017575889825820923,
+            "energy_score": 0.005671555082945618
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "validation_after": {
+        "status": "ready",
+        "windows": 10,
+        "transitions": 10,
+        "finite_fraction": 1.0,
+        "nll_normalized_per_component": -4.345434870076758,
+        "horizons": {
+          "1": {
+            "windows": 10,
+            "endpoint_xy_rmse": 0.00026950370476783067,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.00098507571965456,
+            "energy_score": 0.00020160799163312354
+          },
+          "5": {
+            "windows": 6,
+            "endpoint_xy_rmse": 0.00248577253410238,
+            "path_coverage_95": 1.0,
+            "path_radius_95": 0.005575816612690687,
+            "energy_score": 0.0009285983740650707
+          },
+          "10": {
+            "windows": 1,
+            "endpoint_xy_rmse": 0.018019129963630882,
+            "path_coverage_95": 0.0,
+            "path_radius_95": 0.01741107553243637,
+            "energy_score": 0.0055587812175673604
+          }
+        },
+        "coverage_definition": "95% coherent whole-XY-path tube; observation noise excluded; not a safety certificate"
+      },
+      "update_seconds": 0.9741818830007105
+    }
+  ],
+  "initial_present": false,
+  "active_power": 0.001,
+  "active_method": "tempered",
+  "calibration_status": "ready",
+  "partition_seed": 1
+}

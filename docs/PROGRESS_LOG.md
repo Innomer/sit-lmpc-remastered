@@ -2,7 +2,7 @@
 
 ESE 6150 Team 8. A running history of what was built, tried and found, one line per item.
 Details are in `NOTES.md`, `docs/CAR_DEPLOYMENT.md` and `results/baselines/README.md`.
-Last updated 2026-11-16.
+Last updated 2026-11-17.
 
 ## 1. Methods in play
 
@@ -11,7 +11,7 @@ Last updated 2026-11-16.
 | SIT-LMPC, known model | F1TENTH single-track (bicycle) with the sim car's exact parameters | safe set, value function (per lap) | sim baselines done; car runs pending |
 | TAs' BNN (remastered SIT-LMPC) | learned network, mean + 96 basis functions, Gaussian over z (96) | + z belief, closed form, between laps | sim baselines done; retrained on the world dataset |
 | TAs' BNN + chance constraints | same | same, plus P(off track) ≤ 0.05, P(end outside safe set) ≤ 0.9 | sim baselines done |
-| Ours: physics-grounded world model | bicycle + learned residual b + B·z (z 16) | + z belief every 0.1 s from a sensor encoder; condition-aware safe set | data and transition trained; encoder not yet built |
+| Ours: physics-grounded world model | bicycle + learned residual b + B·z (z 16) | + z belief every 0.1 s from a sensor encoder; condition-aware safe set | encoder v3 trained; drives the sim end to end (14/15 laps, no change and grip drop) |
 
 ## 2. Sim setup (ROS 2 F1TENTH sim, Spielberg)
 
@@ -79,7 +79,33 @@ Frozen copies: `results/baselines/` (configs, seeds, commit, summaries, figures)
 | 11-16 | Residual guard | one of 2,182 transitions blocked training; now excluded from normalization if under 1% |
 | 11-16 | Transition trained (`runs/residual-world`) | 20k steps, held-out NLL −3.20/component, no overfitting |
 | 11-16 | TAs' BNN retrained on the same data (`runs/dynamics-world`) | 20k steps, held-out NLL −3.61/component (different normalization; not comparable) |
-| next | Encoder + observation decoder, EKF, offline evaluation | not started |
+| 11-16 | Encoder v1 (`runs/world-encoder`): GRU over IMU, wheel speed, PF pose change, last control → steering, speed, yaw rate, slip + z (16, diagonal) + sensor calibration; decoder; transition frozen; KL warm-up 3k steps | 20k steps in 25 min; validation loss −75 |
+| 11-16 | v1 offline eval (test split) | 1 s position error: ours 0.38 m (constant) / 0.29 m (changes) vs bicycle 0.65 / 0.56, TAs' BNN prior 0.50 / 0.51; slip RMSE 0.020 rad vs kinematic 0.18; z → friction R² 0.89, mass R² 0.29 |
+| 11-16 | **Flaw found in v1** | ours from the TRUE state with the encoder's z predicts worse (0.58–0.89 m) than the prior z (0.50 m). The encoder was graded only on (its state estimate + its z) together, so z learned to cancel the encoder's own state-estimate errors instead of only describing the car. Breaks "z = conditions" (condition-aware safe set, EKF fallback, the scientific claim). |
+| 11-16 | Fix → encoder v2 | extra loss: rollouts from the true state with the encoder's z (sim only), so z only helps by describing the car; check: v2 true-state error must not exceed the prior's |
+| 11-16 | EKF baseline | NaN at low speed (jacfwd through the ST low-speed branch) → numerical Jacobian + non-finite guard; still **diverges** on some trajectories (yaw-rate error ~1e10), slip RMSE 0.26 rad; needs a divergence guard + accelerometer before it is a usable baseline |
+| 11-16 | v1 re-eval with medians | 1 s position median: TAs' BNN prior 0.20 / 0.21 m vs ours 0.31 / 0.23 m. Ours wins the mean through fewer large misses, not the typical case. Baselines started from the TRUE state, ours from its estimate (unfair to ours); fair comparison from an estimated state still to add |
+| 11-16 | Per-step closed-form z baseline (Kalman filter on z, random-walk forgetting = the TAs' Gaussian update every step) + estimated-state baselines; 40-trajectory test subset, v1 encoder | 1 s position mean/median, constant / change: KF fed TRUE states 0.007/0.004 / 0.055/0.015 m (transition is excellent; the bottleneck is state estimation); ours from sensors 0.22/0.19 / 0.34/0.26; BNN prior from the hand-built estimate 0.46/0.41 / 1.09/0.89; KF fed the hand-built estimate 3.2/2.2 / 4.6/3.0, and still worse than no adaptation even with noise ×1e5 (0.48 / 1.59). In the realistic setting the encoder is 2–3× better than all baselines. Caveat: KF on EKF-smoothed states untested (EKF still diverges) |
+| 11-16 | EKF divergence guard (reset on Mahalanobis > 200, |r| > 10, v > 25 or covariance trace > 100; clamp slip, speed, steering) | stable; 40 test trajectories: slip 0.041 rad, yaw rate 0.045 rad/s, speed 0.45 m/s, steering 0.030 rad (encoder v1: 0.020 / 0.10 / 0.12 / 0.010) |
+| 11-16 | EKF + accelerometer (predicted from bicycle-model rates), with and without accel-bias states, noise 1–4 m/s² | slip 0.062–0.065 rad with accel vs 0.041 without; accel only helps yaw rate slightly. Unmodelled IMU mounting offset dominates. Evaluation uses the EKF's best slip configuration (no accel) |
+| 11-16 | robot_localization considered as baseline/fallback | rejected: omnidirectional motion model (no car kinematics), no IMU bias states, no steering estimate (the planner needs it), not installed on the laptop. Bicycle-model EKF stays as classical baseline and car fallback; validate on car bags before trusting it |
+| 11-16 | **v2 failed; root cause: KL bug** | the start KL inverted a near-singular prior covariance (condition number ~1e7) in float32 and went negative (−7,978 v1, −27,307 v2); the optimizer exploited it and checkpoint selection (by total loss) picked the exploited final models. v2 encoder: speed RMSE 1.74 m/s, 1 s error 1.70 m. v1 also affected (less) |
+| 11-16 | Fix | z whitened (encoder outputs w, z = m₀ + L w, prior N(0, I)); KL from TensorFlow Probability's JAX version (tested library); checkpoint selection by anchor + prediction + true-state prediction only |
+| 11-16 | Reference checks (`tests/unit/test_world_model.py`, 6 pass) | KL vs float64; whitened z moments vs prior; rollout vs dyna-dist `_predict_prior`; per-step update with no drift vs dyna-dist `GaussianEvidence`; EKF on noise-free data; loss terms finite, KL ≥ 0 |
+| 11-16 | Audit: simulated IMU | vs numerically differentiated body velocity at 1 ms (slip to 1.4 rad): error 0.001 m/s² on ~20 m/s² signals, incl. mounting offset |
+| 11-16 | Audit: encoder inputs | noise-free: pose-change features, previous control alignment, gyro, wheel and PF→CoG all exact (errors ~1e-14) |
+| 11-16 | Audit: change episodes | 38/39 diverge exactly one step after the recorded change; the 39th is a patch on a straight (grip acts only through cornering in the ST model). Limit: mass and friction only affect cornering, not acceleration or braking |
+| 11-17 | v1-fixed / v2-fixed retrained and evaluated (full test split; `results/world-eval-{v1,v2}-fixed`, figures in each `figures/`) | **Flaw fixed:** 1 s median error from the true state with encoder z 0.08 (v1-fixed) / 0.06 m (v2-fixed) vs prior z 0.20 m; the v1 flaw was mostly the KL bug. **Realistic (sensors only):** ours 0.61 m (constant) / 0.45 m (changes) vs best realistic baseline 0.95 / 0.65 m (≈1.5×; the earlier 2–3× came from the buggy model); per-step closed-form on realistic inputs 2.9–6.1 m; oracle 0.01 m. **State RMSE** encoder vs EKF: slip 0.021 vs 0.024 rad, speed 0.36 vs 0.46 m/s, yaw rate 0.125 vs 0.051 rad/s, steering 0.009 vs 0.025 rad (kinematic slip 0.18). **z:** friction R² 0.92, mass 0.29. **Adaptation** in the example patch episode: z follows the drop and recovery but takes ~2–3 s and reads ~0.1 low |
+| 11-17 | Findings | bottleneck = state estimate (mainly speed); adaptation slower than claimed (`walk_std` 0.05 likely too small); keep v2-fixed (better z quality, small realistic cost) |
+| 11-17 | Sensor timing leak: the simulated accelerometer used the upcoming control | fixed to the control acting before the state (`controls[t-1]`); data regenerated (trajectories identical, accel columns change up to 10.2 m/s²) |
+| 11-17 | Encoder v3 (v2-fixed recipe on the fixed data; `results/world-eval-v3`) | 1 s median, sensors only: 0.53 m (constant) / 0.35 m (changes) vs best realistic baseline 0.95 / 0.66 m; from the true state 0.058 / 0.064 m vs prior z 0.20 m; slip RMSE 0.020 rad; speed RMSE 0.44 m/s (EKF 0.46); z → friction R² 0.91 |
+| 11-17 | Condition read-out (`world/readout.py`) | linear map from whitened z to friction, fitted on train cars: test R² 0.92, within-car std 0.03–0.07. Label-free functional distance (difference in predicted motion on 256 probe states) separates friction but not mass (±20–25 % mass is inside within-car noise) |
+| 11-17 | Condition-aware safe set (`planners/safe_set.py`) | each lap tagged with its mean grip estimate; the planner uses only laps within 0.12 of the current estimate, or the 4 nearest if fewer; value function not filtered |
+| 11-17 | Planner integration (`runner.py`, `adapters/ros_f1tenth.py`, `belief_update: encoder`) | encoder steps every 0.1 s on IMU / wheel / PF topics from the bridge; sets the z belief and replaces steering, speed, yaw rate, slip in the planner state; v2 smoke test passed |
+| 11-17 | **Closed loop, no change** (`results/world-closed-loop/world-nochange`) | 14/15; learned laps 37.8 → best 35.7 s (warm-up 38.0 s); spin on attempt 15 (entered a fast corner ~0.5 m/s faster than before); grip estimate 0.92–0.99 per lap (true 1.05); planning p50 470 ms |
+| 11-17 | **Closed loop, grip drop 1.05 → 0.75 after lap 7, grip filter on** (`.../change-friction-world-condition`) | 14/15; no slow-down at the drop (37.8 s on the first slippery lap), best 35.8 s on lap 15; grip estimate per lap 0.75 on the first slippery lap, 0.72–0.76 after; spin on attempt 12 at the first corner (lap 11 already slid to 0.5 rad there; first lap with an all-low-grip safe set) |
+| 11-17 | Findings | ours drives safely and improves under both conditions; lap-average grip estimate is accurate, the per-step one swings ±0.3 with cornering (so "2–3 s adaptation" is not shown; only "within the first lap"); one spin per run: the controller pushes past the grip limit |
+| next | baselines on the grip drop (known model, TAs' BNN), ours without the filter; then look into the spins | — |
 
 ## 7. Tools
 
@@ -89,6 +115,9 @@ Frozen copies: `results/baselines/` (configs, seeds, commit, summaries, figures)
 | `scripts/make_track.py` | track files from a raceline, with or without the PF map |
 | `scripts/car_check.py` | pre-drive input check on the car |
 | `scripts/jetson_setup.sh` | Jetson venv, package and GPU JAX |
+| `scripts/run_change_experiment.sh` | one mid-session change run: sensor bridge + condition scheduler + controller |
+| `scripts/render_run_video.py` | top-down video of a run from its saved laps, with lap info and the grip estimate vs true |
+| `python -m sit_lmpc.world.readout` | fits the friction read-out and functional distance for an encoder run |
 | `scripts/benchmark_planning.py` + replay backend | planning time per step without sim or ROS (laptop and Jetson); not yet run |
 
 ## 8. Decisions
@@ -111,10 +140,15 @@ Frozen copies: `results/baselines/` (configs, seeds, commit, summaries, figures)
 | ros-sim | `9ca8261` | results for known and BNN + chance | yes |
 | ros-sim | `cd702d3` | pure-pursuit warm start, ablations, figures | yes |
 | ros-sim | `164a7da` | NOTES status | yes |
-| ros-sim | `45d9e9e` | world dataset, training configs, diagnosis configs | no |
-| ros-sim | `5c6b48c` | dataset fixes, fast-baseline configs | no |
+| ros-sim | `45d9e9e` | world dataset, training configs, diagnosis configs | yes |
+| ros-sim | `5c6b48c` | dataset fixes, fast-baseline configs | yes |
+| ros-sim | `0537143` | mid-session changes, replay benchmark, retrained BNN baselines | yes |
+| ros-sim | `402708e` | sensor encoder, EKF baseline, offline evaluation | yes |
+| ros-sim | `e8158a6` | world model in the planner loop, condition-aware safe set, sensor timing fix | yes |
+| ros-sim | `d47d98b` | functional distance for the read-out | yes |
+| ros-sim | (this commit) | closed-loop results, encoder v3 evaluation, video script | yes |
 | irl | `9fcd351` | real-car backend | yes |
 | irl | `dcc01e2` | car path without f1tenth-gym | yes |
 | irl | `910a837` | Jetson CUDA detection, memory note | yes |
 | irl | `ea7e5fb` | frozen sim baselines | yes |
-| — | uncommitted | replay benchmark, go-button check, this log | — |
+| irl | `c54aad5` | merge of ros-sim up to `0537143` | yes |
