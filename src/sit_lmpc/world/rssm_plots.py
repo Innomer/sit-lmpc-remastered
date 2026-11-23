@@ -10,6 +10,16 @@ TRUE = "#0b0b0b"
 MODEL = "#2a78d6"
 PRED = "#d6612a"
 NAMES = ("steering [rad]", "speed [m/s]", "yaw rate [rad/s]", "slip [rad]")
+LR = 0.17145
+LIDAR_OFFSET = 0.275
+
+
+def scan_points(state, ranges, angles_deg, limit=9.5):
+    yaw = state[4]
+    origin = state[:2] + (LIDAR_OFFSET - LR) * np.array([np.cos(yaw), np.sin(yaw)])
+    keep = ranges < limit
+    bearing = yaw + np.deg2rad(angles_deg[keep])
+    return origin[0] + ranges[keep] * np.cos(bearing), origin[1] + ranges[keep] * np.sin(bearing)
 
 
 def figure_image(fig):
@@ -83,8 +93,14 @@ def lidar_and_paths(batch, aux, fov_deg=270.0):
         xs = aux["rollout_x"][i]
         path = np.concatenate([aux["x_filtered"][int(start)][None, :2], xs[:, :2]])
         ax.plot(path[:, 0], path[:, 1], color=PRED, linewidth=1.4, label="1 s predictions" if i == 0 else None)
+    for n, t in enumerate(np.linspace(10, len(recon) - 1, 3).astype(int)):
+        tx, ty = scan_points(states[t + 1], lidar[t + 1], angles)
+        rx, ry = scan_points(states[t + 1], recon[t], angles)
+        ax.scatter(tx, ty, s=7, color=TRUE, label="true scan points" if n == 0 else None, zorder=3)
+        ax.scatter(rx, ry, s=7, color=MODEL, alpha=0.7, label="reconstructed scan points" if n == 0 else None, zorder=4)
+        ax.plot(*states[t + 1, :2], marker="o", color=PRED, markersize=6, zorder=5)
     ax.set_aspect("equal", adjustable="datalim")
-    ax.set_title("paths: 1 s open-loop predictions from the filtered state", fontsize=10, loc="left")
+    ax.set_title("top-down: paths, 1 s predictions, and LiDAR points at 3 moments (dots = car)", fontsize=10, loc="left")
     ax.legend(fontsize=8, frameon=False)
     ax.grid(alpha=0.3)
     ax = fig.add_subplot(grid[1, 2])

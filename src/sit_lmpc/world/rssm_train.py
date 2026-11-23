@@ -161,6 +161,46 @@ def scalars(writer, prefix, terms, step):
             writer.add_scalar(f"{prefix}/{name}", float(value), step)
 
 
+SIGNALS = (("steering", 2, 0), ("speed", 3, 1), ("yaw_rate", 5, 2), ("slip", 6, 3))
+
+
+def comparison_layout(labels):
+    layout = {}
+    for label in labels:
+        charts = {name: ["Multiline", [f"^{label}/{name}/(true|model)$"]] for name, _, _ in SIGNALS}
+        charts["grip"] = ["Multiline", [f"^{label}/grip/(true|model)$"]]
+        charts["mass_ratio"] = ["Multiline", [f"^{label}/mass_ratio/(true|model)$"]]
+        charts["lidar_last_scan"] = ["Multiline", [f"^{label}/lidar_last_scan/(true|reconstructed|predicted_1s)$"]]
+        charts["prediction_error_m"] = ["Multiline", [f"^{label}/prediction_error_m/(mean|worst)$"]]
+        layout[label] = charts
+    return layout
+
+
+def log_comparisons(writer, label, batch, aux):
+    states, conditions = batch["states"], batch["conditions"]
+    anchor, condition = aux["filtered"]["anchor"], aux["filtered"]["condition"]
+    for t in range(len(anchor)):
+        for name, index, column in SIGNALS:
+            writer.add_scalar(f"{label}/{name}/true", float(states[t + 1, index]), t + 1)
+            writer.add_scalar(f"{label}/{name}/model", float(anchor[t, column]), t + 1)
+        for name, column in (("grip", 0), ("mass_ratio", 1)):
+            writer.add_scalar(f"{label}/{name}/true", float(conditions[t + 1, column]), t + 1)
+            writer.add_scalar(f"{label}/{name}/model", float(condition[t, column]), t + 1)
+    lidar, recon = np.exp(batch["lidar"]), np.exp(aux["filtered"]["lidar_mean"])
+    last = len(recon) - 1
+    predicted = np.exp(aux["rollout_lidar"][-1, -1])
+    for beam in range(lidar.shape[1]):
+        writer.add_scalar(f"{label}/lidar_last_scan/true", float(lidar[last + 1, beam]), beam)
+        writer.add_scalar(f"{label}/lidar_last_scan/reconstructed", float(recon[last, beam]), beam)
+        writer.add_scalar(f"{label}/lidar_last_scan/predicted_1s", float(predicted[beam]), beam)
+    starts, k = aux["starts"], aux["rollout_x"].shape[1]
+    errors = np.asarray([np.hypot(*(aux["rollout_x"][i][:, :2] - states[int(s) + 1:int(s) + 1 + k, :2]).T)
+                         for i, s in enumerate(starts)])
+    for j in range(k):
+        writer.add_scalar(f"{label}/prediction_error_m/mean", float(errors[:, j].mean()), j + 1)
+        writer.add_scalar(f"{label}/prediction_error_m/worst", float(errors[:, j].max()), j + 1)
+
+
 def total(terms, weights, kl_scale):
     return sum(weights[name] * terms[name] for name in weights if name != "kl") + kl_scale * weights["kl"] * terms["kl"]
 
@@ -220,6 +260,7 @@ def main():
     windows = diagnostic_windows(val, config["diagnostic_window"], np.random.default_rng(config["seed"] + 2))
     diagnostic_batches = [(label, {k: v[0] for k, v in val.gather([(index, start)], config["diagnostic_window"]).items()})
                           for label, index, start in windows]
+    writer.add_custom_scalars(comparison_layout([label for label, _ in diagnostic_batches]))
     run_one = jax.jit(lambda p, b, k: run_sequence(p, model, st_params, dt, integrator, b, k, settings, obs_mean, obs_std))
     history = []
     best = np.inf
@@ -251,6 +292,10 @@ def main():
                 aux = jax.tree_util.tree_map(np.asarray, aux)
                 writer.add_image(f"{label}/signals", signals(b, aux), step, dataformats="HWC")
                 writer.add_image(f"{label}/lidar_and_paths", lidar_and_paths(b, aux), step, dataformats="HWC")
+                if step % config["comparison_every"] == 0 or step == steps:
+                    comparison = SummaryWriter(str(output / "tb" / f"diag-{step:06d}"))
+                    log_comparisons(comparison, label, b, aux)
+                    comparison.close()
             writer.flush()
             if selection < best:
                 best = selection
