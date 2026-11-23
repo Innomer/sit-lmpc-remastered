@@ -15,10 +15,10 @@ Contents: 1 Summary · 2 Differences from v3 · 3 Notation · 4 Inputs · 5 Mode
 | What it is | A recurrent state-space world model: memory h (GRU) + stochastic latent s, filtered every 0.1 s from LiDAR, IMU, wheel speed and PF pose, with the bicycle model kept inside its prediction |
 | Size | 523,269 parameters (GRU 128, latent 8 + 24, LiDAR 64 beams) |
 | Data | 789 on-track episodes, 293k transitions, 3 maps, 1080-beam LiDAR, grip/mass changes and low-grip patches |
-| Training | `rssm-v1` unstable after step 9,800 (fixed); `rssm-v2` training, best so far: 1 s position error 0.66 m, slip error 0.019 rad, grip head 0.76 |
+| Training | `rssm-v3` stable over 30,000 steps (v1 and v2 went unstable, fixed); best: 1 s position error 0.62 m, slip error 0.019 rad, yaw rate 0.086 rad/s; reconstructed LiDAR walls line up with the real ones; grip head still weak (0.80) |
 | Planner | variant A (full latent rollout, 1024 candidates, 15 × 0.1 s) is the default for sim work; B, C and 10 × 0.15 s will be options |
 | Timing | laptop: every variant ~30 ms p95 per step; Jetson not measured yet (`bash scripts/jetson_timing.sh`) |
-| Next | finish v2, offline evaluation (step E), planner integration (step F) |
+| Next | stronger grip head (looser KL on c), offline evaluation (step E), planner integration (step F) |
 
 ## 2. How it differs from the v3 encoder model
 
@@ -145,7 +145,7 @@ wrapped.
 | Sensors | 1 | $\mathrm{NLL}(\text{IMU}, \text{gyro}, \text{wheel};\ \text{decoder}(h_t, s_t, u_{t-1}))$ | reconstruct the car's sensors | ties the latent to motion the car feels |
 | KL | 1 × warm-up | $\max\big(\overline{KL(q(d_t)\,\|\,p(d_t \mid h_t))},\ 1\big) + \overline{KL(q(c_t)\,\|\,p(c_t \mid c_{t-1}))} + KL(q(s_0)\,\|\,\mathcal N(0,I))/L$ | keep the latent predictable | the planner rolls out the prior; $c$ follows a random walk |
 | Condition | 3 | squared error of the condition head on $c_t$ vs standardised (grip, mass ratio) | $c$ holds the conditions | stops $c$ absorbing driving state (the corner-dip problem) |
-| Prediction | 1 | scaled squared state error over a 1 s (10-step) open-loop rollout, every 1 s in the window | multi-step prediction | this is exactly what the planner uses |
+| Prediction | 0.3 | scaled squared state error over a 1 s (10-step) open-loop rollout, every 1 s in the window | multi-step prediction | this is exactly what the planner uses |
 | Prediction LiDAR | 0.5 | LiDAR NLL along the rollout | predict future scans | trains the clearance safety term |
 | Consistency | 0.5 | $\big((A(h_k, s_k) - b(x_k))/\text{scale}\big)^2$ along the rollout | latent and physical state agree | otherwise the latent could drift away from the physics during a plan |
 
@@ -159,13 +159,17 @@ as the v3 KL bug: a broken or exploited KL must not decide the checkpoint).
 | Setting | Value | Why |
 |---|---|---|
 | Window, batch | 40 steps (4 s), 32 windows | long enough for adaptation and a 1 s prediction from several start points |
-| Optimiser | AdamW, learning rate 3e-4, warm-up then cosine decay to 5%, weight decay 1e-5 | standard |
+| Optimiser | AdamW, warm-up then cosine decay to 5%, weight decay 1e-5 | standard |
 | Gradient clip | global norm 1.0 | see change log (v1 blow-up) |
+| Learning rate | 1e-4 peak (was 3e-4) | see change log (v2 drift) |
+| Filter feedback | the filtered state passed to the next step carries no gradient | see change log (v2 drift) |
+| Decoder noise floor | log σ ≥ −3 for LiDAR and sensor decoders | see change log (v2 drift) |
+| Early stop | stop if validation is 3× worse than the best for 3 evaluations | no time wasted after a collapse |
 | Bad-batch guard | drop non-finite updates; skip a batch whose loss is 20× the running average | one bad batch must not wreck Adam's statistics |
 | Bicycle gradients | stopped | its low-speed branch gives NaN gradients |
 | KL warm-up, free nats | 3,000 steps, 1 nat on $d$ | stop the latent collapsing early |
 | Integrator | 0.02 s substeps (the planner's) | training and planning use identical physics |
-| Steps | 30,000 (~25 min on the laptop GPU) | |
+| Steps | 30,000 (~28 min on the laptop GPU) | |
 | Evaluation | every 500 steps on 8 fixed validation batches; figures every 500, comparison charts every 2,500 | |
 | Saved | `best.msgpack`, `last.msgpack`, `observation_scale.npz`, `history.json`, `summary.json`, `config.yaml`, `tb/` | |
 
@@ -308,14 +312,16 @@ flowchart LR
 | 11-22 | Bicycle casts inputs to the parameter dtype | tests (64-bit) failed with a dtype error | 5/5 tests pass |
 | 11-22 | TensorBoard: curves, custom-scalar comparisons, figures, top-down LiDAR | user wanted to see training, reconstructions and outputs | localhost:6006 |
 | 11-22 | Spin tails cut from the data; clip 10 → 1; non-finite updates dropped; bad-batch guard | `rssm-v1` blew up at step 9,800 (losses ×100) on batches with out-of-range spin states | `rssm-v2` past step 10,500 with no spike, no skipped batch |
-| 11-22 | Condition-head weight 1 → 3 | grip head only reached 0.85 in v1 (1.0 = no skill) | v2: 0.76 at step 10,500 and falling |
+| 11-22 | Condition-head weight 1 → 3 | grip head only reached 0.85 in v1 (1.0 = no skill) | v2: 0.74–0.76; v3: 0.78–0.80 |
+| 11-22 | Prediction weight 1 → 0.3; filtered state fed back without gradient; decoder noise floor (log σ ≥ −3); learning rate 3e-4 → 1e-4; early stop | `rssm-v2` drifted from step ~15,000 with all losses rising together (no single bad batch): prediction was ~90% of the loss and backpropagated through 10 GRU steps, the filter's own estimate was fed back with gradients across the window, decoders could become overconfident, learning rate still ~2.3e-4 | `rssm-v3` stable for all 30,000 steps and the best of the three; several changes at once, so the decisive one is not isolated |
 
 ## 14. Results so far (validation)
 
 | Run | Step | Anchor error: steering / speed / yaw rate / slip | 1 s position | Grip head | Note |
 |---|---|---|---|---|---|
 | rssm-v1 | 9,000 (best) | 0.016 / 0.30 / 0.12 / 0.025 | 0.69–0.78 m | 0.85 | unstable afterwards |
-| rssm-v2 | 10,500 (best so far) | 0.015 / 0.28 / 0.10 / 0.019 | 0.66 m | 0.76 | training |
+| rssm-v2 | 10,500 (best) | 0.015 / 0.28 / 0.10 / 0.019 | 0.66 m | 0.76 | drifted from step ~15,000 |
+| **rssm-v3** | **26,500 (best)** | **0.014 / 0.27 / 0.086 / 0.019** | **0.62 m** | 0.80 | stable to 30,000 (final 0.014 / 0.27 / 0.084 / 0.018, 0.64 m); LiDAR NLL −1.19 |
 | v3 encoder (offline eval, different data) | — | steering 0.010, speed 0.44, slip 0.020 | 0.53 m (median, 1 s) | grip R² 0.91 (lap average) | not directly comparable yet; step E compares on the same data |
 
 Grip head: mean squared error on standardised grip and mass; 1.0 = no better than guessing the average.
@@ -324,7 +330,7 @@ Grip head: mean squared error on standardised grip and mass; 1.0 = no better tha
 
 | Item | Plan |
 |---|---|
-| Grip head still weak (0.76) | if it stalls: looser random walk on c or free nats on c |
+| Grip head still weak (0.80, about 20% of the grip/mass variance explained) | looser random walk on c (0.05 → 0.2) and/or free nats on c |
 | Jetson timing | `bash scripts/jetson_timing.sh` from a `world-model` clone; choose A/B/C |
 | Offline evaluation (step E) | vs known model, v3 encoder, EKF; ablations without in-lap update, safe-set tags, LiDAR; two-stage vs full agreement after changes |
 | Planner integration (step F) | variants A/B/C and 10 × 0.15 s as config options; LiDAR clearance term; latent-tagged safe set per lap per stretch |
