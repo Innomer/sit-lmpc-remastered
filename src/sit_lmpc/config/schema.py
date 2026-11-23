@@ -25,6 +25,7 @@ class RosConfig:
     imu_topic: str = ""
     wheel_topic: str = ""
     pose_topic: str = ""
+    lidar_topic: str = ""
 
 
 @dataclass(frozen=True)
@@ -109,6 +110,10 @@ class DynamicsConfig:
     belief_update: str = "frozen"
     encoder: str | None = None
     encoder_state: bool = True
+    rssm: str | None = None
+    rssm_variant: str = "latent"
+    rssm_model_timestep: float = 0.1
+    rssm_state: bool = True
     likelihood_power: float = 1.0
     update_batch_size: int = 512
     validation_fraction: float = 0.2
@@ -354,8 +359,20 @@ class ExperimentConfig:
             if d.render:
                 raise ValueError("simulation.backend ros has no simulator window; set diagnostics.render false")
         dynamics = p.dynamics
-        if not isinstance(dynamics, DynamicsConfig) or dynamics.backend not in ("st", "gaussian_bnn"):
-            raise ValueError("planner.dynamics.backend must be st or gaussian_bnn")
+        if not isinstance(dynamics, DynamicsConfig) or dynamics.backend not in ("st", "gaussian_bnn", "rssm"):
+            raise ValueError("planner.dynamics.backend must be st, gaussian_bnn or rssm")
+        if dynamics.backend == "rssm":
+            if not isinstance(dynamics.rssm, str) or not (Path(dynamics.rssm).expanduser() / "best.msgpack").is_file():
+                raise ValueError("planner.dynamics.backend rssm needs planner.dynamics.rssm, a trained RSSM run folder")
+            if dynamics.rssm_variant == "two_stage":
+                raise ValueError("planner.dynamics.rssm_variant two_stage is not built yet; use latent or cheap")
+            if dynamics.rssm_variant not in ("latent", "cheap"):
+                raise ValueError("planner.dynamics.rssm_variant must be latent or cheap")
+            if not dynamics.rssm_model_timestep > 0:
+                raise ValueError("planner.dynamics.rssm_model_timestep must be > 0")
+            if s.backend != "ros" or not (s.ros.imu_topic and s.ros.wheel_topic and s.ros.pose_topic and s.ros.lidar_topic):
+                raise ValueError("planner.dynamics.backend rssm needs backend ros with simulation.ros imu_topic, "
+                                 "wheel_topic, pose_topic and lidar_topic (bridge sensors and LiDAR enabled)")
         if dynamics.checkpoint is not None and (not isinstance(dynamics.checkpoint, str) or not dynamics.checkpoint.strip()):
             raise ValueError("planner.dynamics.checkpoint must be null or a nonempty path")
         for name in ("particles", "verification_particles", "update_batch_size",
@@ -373,13 +390,14 @@ class ExperimentConfig:
                 raise ValueError("gaussian_bnn requires sit_lmpc_mode=false and belief.enabled=false; use dynamics.belief_update=frozen or posterior")
         if dynamics.belief_update not in ("frozen", "posterior", "encoder"):
             raise ValueError("planner.dynamics.belief_update must be frozen, posterior or encoder")
-        if p.condition_threshold > 0 and not (dynamics.belief_update == "encoder" and isinstance(dynamics.encoder, str)
-                                               and (Path(dynamics.encoder).expanduser() / "condition_readout.npz").is_file()):
+        if p.condition_threshold > 0 and dynamics.backend != "rssm" and not (
+                dynamics.belief_update == "encoder" and isinstance(dynamics.encoder, str)
+                and (Path(dynamics.encoder).expanduser() / "condition_readout.npz").is_file()):
             raise ValueError("planner.condition_threshold needs belief_update encoder and a fitted read-out "
                              "(python -m sit_lmpc.world.readout --encoder <run>)")
         if p.condition_mode not in ("lap", "state"):
             raise ValueError("planner.condition_mode must be lap or state")
-        if p.condition_mode == "state" and p.condition_threshold > 0 and not (
+        if p.condition_mode == "state" and p.condition_threshold > 0 and dynamics.backend != "rssm" and not (
                 Path(dynamics.encoder).expanduser() / "grip_readout.npz").is_file():
             raise ValueError("planner.condition_mode state needs grip_readout.npz in the encoder run "
                              "(python scripts/grip_estimate_eval.py --encoder <run>)")

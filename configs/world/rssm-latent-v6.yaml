@@ -1,0 +1,7 @@
+# Variant A with rssm-v6 (trained with the planner's own laps and hard-manoeuvre episodes), normal warm-up.
+extends: rssm-latent.yaml
+output:
+  exp_name: rssm-latent-v6
+planner:
+  dynamics:
+    rssm: runs/rssm-v6

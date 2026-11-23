@@ -24,6 +24,7 @@ from sit_lmpc.track.track import Track
 
 MAPS = {"Spielberg": "Spielberg", "custom1": "custom1", "levine": "tracks/levine_sim/levine_sim"}
 SPEED_CAPS = {"Spielberg": (4.0, 10.0), "custom1": (5.0, 14.0), "levine": (3.0, 7.0)}
+EXCITE = {"probability": 0.0}
 LIDAR_OFFSET = 0.275
 G = 9.81
 
@@ -61,7 +62,8 @@ def sample_episode(rng, steps, path_length, caps):
         change.update(patches=patches, step=int(rng.integers(0, steps // 2)) if rng.random() < 0.5 else 0)
     driver = {"aggression": float(rng.uniform(0.5, 1.3)), "speed_cap": float(rng.uniform(*caps)),
               "belief_error": float(rng.uniform(0.8, 1.2)), "steer_noise": float(rng.uniform(0.0, 0.08)),
-              "accel_noise": float(rng.uniform(0.0, 0.12)), "lookahead_gain": float(rng.uniform(0.12, 0.25))}
+              "accel_noise": float(rng.uniform(0.0, 0.12)), "lookahead_gain": float(rng.uniform(0.12, 0.25)),
+              "excite": bool(rng.random() < EXCITE["probability"])}
     return base, change, driver
 
 
@@ -109,6 +111,7 @@ def drive(track, path, rng, steps, timestep, integrator, max_slip, max_yaw, caps
     believed = base[0] * driver["belief_error"]
     profile = speed_profile(path, believed, driver["aggression"], driver["speed_cap"], 0.5 * believed * G)
     noise = np.zeros(2)
+    burst = {"left": 0, "accel": 0.0, "steer": 0.0}
     reason = "step_limit"
     guess = float(path.ss[index])
     for step in range(steps):
@@ -138,6 +141,24 @@ def drive(track, path, rng, steps, timestep, integrator, max_slip, max_yaw, caps
                                        parameters["sv_max"]))
         acceleration = float(np.clip(acceleration + noise[1] * parameters["a_max"], -parameters["a_max"],
                                      min(parameters["a_max"], (20.0 - speed) / timestep)))
+        if driver["excite"]:
+            if burst["left"] == 0 and rng.random() < 0.04:
+                kinds = ["steer"] + (["throttle"] if speed < driver["speed_cap"] else []) + (["brake"] if speed > 2.0 else [])
+                kind = rng.choice(kinds)
+                burst["left"] = int(rng.integers(5, 11))
+                burst["accel"] = {"throttle": 1.0, "brake": -1.0, "steer": 0.6}[kind] * parameters["a_max"]
+                burst["steer"] = float(rng.choice([-1, 1]) * rng.uniform(0.15, 0.4)) if kind == "steer" else 0.0
+            if burst["left"] > 0 and ((burst["accel"] > 0 and speed > driver["speed_cap"] + 1.0) or
+                                      (burst["accel"] < 0 and speed < 1.5)):
+                burst["left"] = 0
+            if burst["left"] > 0:
+                burst["left"] -= 1
+                kicked = float(np.clip(target_steer + burst["steer"], parameters["s_min"], parameters["s_max"]))
+                steering_speed = float(np.clip(np.sign(kicked - state[2]) * min(abs(kicked - state[2]) / 0.1,
+                                                                                 parameters["sv_max"]),
+                                               parameters["sv_min"], parameters["sv_max"]))
+                acceleration = float(np.clip(burst["accel"], -parameters["a_max"],
+                                             min(parameters["a_max"], (20.0 - speed) / timestep)))
         control = np.array([steering_speed, acceleration])
         state = simulator.step(state, control)
         controls.append(control)
@@ -171,6 +192,8 @@ def main():
     parser.add_argument("--start-index", type=int, default=0, help="first episode index (new seeds, new files)")
     parser.add_argument("--speed-cap", nargs="+", default=[], help="name=low,high overrides of the per-map speed cap")
     parser.add_argument("--append", action="store_true", help="add to an existing dataset's manifest")
+    parser.add_argument("--excite", type=float, default=0.0,
+                        help="share of episodes with random 0.5-1 s bursts of full throttle, full brake or steering kicks")
     args = parser.parse_args()
 
     import jax
@@ -185,6 +208,7 @@ def main():
                 "episodes": []}
     counts = ({k: int(v) for k, v in (item.split("=") for item in args.episodes)} if "=" in args.episodes[0]
               else {name: int(args.episodes[0]) for name in args.maps})
+    EXCITE["probability"] = args.excite
     for item in args.speed_cap:
         key, values = item.split("=")
         SPEED_CAPS[key] = tuple(float(v) for v in values.split(","))

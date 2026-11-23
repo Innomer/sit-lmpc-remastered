@@ -34,6 +34,7 @@ simulation:
     imu_topic: ""  # sensor_msgs/Imu from the bridge's simulated sensors (sensors_enabled); used by belief_update encoder. "" disables.
     wheel_topic: ""  # nav_msgs/Odometry whose twist.linear.x is the simulated wheel speed; used by belief_update encoder.
     pose_topic: ""  # nav_msgs/Odometry with the simulated noisy, lagged particle-filter pose; used by belief_update encoder.
+    lidar_topic: ""  # sensor_msgs/LaserScan for the RSSM world model (planner.dynamics.backend rssm), resampled to 1080 beams over 270 degrees. "" disables.
   replay_path: null  # Only read when backend is replay: a recorded attempt .npz (cartesian, frenet) replayed as the plant to time the planner without a simulator.
   steering_limit: null  # Front-wheel steering limit in rad for both the controlled vehicle and the planner model; null keeps the vehicle default (F1TENTH sim 0.4189). Set 0.34 for the real car.
   model: dynamic_ST  # [dynamic_ST] Only supported simulator model. Actual F1TENTH simulation model; planner.dynamics independently selects the predictor. [resume]
@@ -63,6 +64,10 @@ planner:
     belief_update: frozen  # [frozen, posterior, encoder] frozen keeps BNN prior sampling; posterior updates the Gaussian function belief between laps; encoder sets it every step from the world-model encoder (residual checkpoint + planner.dynamics.encoder). ST uses planner.belief.
     encoder: null  # belief_update encoder only: a trained world-encoder run folder (sit_lmpc.world.train output).
     encoder_state: true  # belief_update encoder: true replaces steering, speed, yaw rate and slip with the encoder's estimate; false keeps the measured state.
+    rssm: null  # backend rssm: trained RSSM run folder (sit_lmpc.world.rssm_train), filtered every control step from IMU, wheel speed, PF pose and LiDAR.
+    rssm_variant: latent  # [latent, cheap] latent: full world-model rollout of every candidate (h, s, x); cheap: bicycle + residual with h and s held fixed.
+    rssm_model_timestep: 0.1  # Model step for planning rollouts in seconds (0.15 with horizon 10 covers 1.5 s); control stays at simulation.timestep.
+    rssm_state: true  # Replace steering, speed, yaw rate and slip in the planner state with the RSSM estimate.
     likelihood_power: 1.0  # BNN posterior only: maximum calibrated evidence power; with legacy standard, 1 is ordinary Bayes and (0,1) manually tempers it.
     posterior_method: tempered  # [standard, tempered, noise, noise_tempered] standard uses uncalibrated Bayes; tempered calibrates evidence power; noise calibrates observation noise; noise_tempered calibrates both. Used for BNN posterior updates.
     calibration_fraction: 0.2  # Dynamics hold-out fraction; NF safe-set density uses all retained states for both training and calibration.

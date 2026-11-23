@@ -312,6 +312,13 @@ def _run(config, tracking_only, keyboard_cleanup):
             planner.dynamics, simulation, randomness.next_key(),
             source=source, destination=directory / "dynamics_model",
         )
+    rssm_filter = None
+    if planner.dynamics.backend == "rssm":
+        from sit_lmpc.world.rssm_runtime import RSSMFilter
+
+        rssm_filter = RSSMFilter(planner.dynamics.rssm, model.params, model.action_scale, planner.dynamics.rssm_variant,
+                                 planner.dynamics.rssm_model_timestep, model.integrator_timestep)
+        model = rssm_filter.predictor()
     encoder_belief = None
     if planner.dynamics.belief_update == "encoder":
         from sit_lmpc.world.runtime import EncoderBelief
@@ -340,6 +347,30 @@ def _run(config, tracking_only, keyboard_cleanup):
                     training_integrator_timestep=model.integrator_timestep,
                     simulator_integrator_timestep=simulation.integrator_timestep,
                     numerical_substep_mismatch=model.integrator_timestep != simulation.integrator_timestep)
+
+    def apply_rssm(cartesian, frenet):
+        nonlocal model
+        observation, pose = simulator.encoder_observation()
+        scan = simulator.lidar_scan()
+        observation_trace.append(observation)
+        true_state_trace.append(np.array(cartesian, copy=True))
+        anchor, _, grip = rssm_filter.step(observation, scan, pose, simulator.applied_control)
+        lidar_trace.append(np.asarray(rssm_filter.lidar_features(scan), np.float32))
+        memory_trace.append(np.asarray(rssm_filter.h, np.float32))
+        lap_condition.append([grip])
+        grip_trace.append(grip)
+        friction_trace.append(grip)
+        if planner.condition_threshold > 0:
+            safe_set.condition = np.array([grip])
+        model = rssm_filter.predictor()
+        nominal.model = learned.model = model
+        encoder_trace.append(np.asarray(rssm_filter.s))
+        if not planner.dynamics.rssm_state:
+            return cartesian, frenet
+        cartesian, frenet = np.array(cartesian, copy=True), np.array(frenet, copy=True)
+        cartesian[[2, 3, 5, 6]] = anchor
+        frenet[[2, 3, 5, 6]] = anchor
+        return cartesian, frenet
 
     def apply_encoder(cartesian, frenet):
         nonlocal model
@@ -381,6 +412,8 @@ def _run(config, tracking_only, keyboard_cleanup):
     true_state_trace = []
     grip_trace = []
     grip_filter = [0.0, 0.0]
+    lidar_trace = []
+    memory_trace = []
     lap_condition = []
     friction_trace = []
 
@@ -1050,6 +1083,9 @@ def _run(config, tracking_only, keyboard_cleanup):
         if encoder_belief is not None:
             encoder_belief.reset()
             cartesian, frenet = apply_encoder(cartesian, frenet)
+        if rssm_filter is not None:
+            rssm_filter.reset()
+            cartesian, frenet = apply_rssm(cartesian, frenet)
         if resuming:
             tolerance = getattr(simulator, "restore_tolerance", 1e-5)
             mismatch = np.abs(np.asarray(frenet) - np.asarray(resume_arrays["frenet"]))
@@ -1433,6 +1469,8 @@ def _run(config, tracking_only, keyboard_cleanup):
             )
             if encoder_belief is not None:
                 next_cartesian, next_frenet = apply_encoder(next_cartesian, next_frenet)
+            if rssm_filter is not None:
+                next_cartesian, next_frenet = apply_rssm(next_cartesian, next_frenet)
             insight.applied(next_cartesian, next_frenet, control)
             if insight.enabled:
                 insight.display(simulator.capture_render() if hasattr(simulator, "capture_render") else None)
@@ -1568,6 +1606,9 @@ def _run(config, tracking_only, keyboard_cleanup):
                 if encoder_belief is not None:
                     encoder_belief.reset()
                     cartesian, frenet = apply_encoder(cartesian, frenet)
+                if rssm_filter is not None:
+                    rssm_filter.reset()
+                    cartesian, frenet = apply_rssm(cartesian, frenet)
                 nominal.actions = jnp.zeros((planner.horizon, 2), dtype=model.params.dtype)
                 learned.actions = jnp.zeros_like(learned.actions)
                 collector = begin_attempt(cartesian, frenet)
@@ -1802,6 +1843,9 @@ def _run(config, tracking_only, keyboard_cleanup):
                 np.save(directory / "encoder_true_states.npy", np.asarray(true_state_trace))
                 if grip_trace:
                     np.save(directory / "encoder_grip.npy", np.asarray(grip_trace))
+                if lidar_trace:
+                    np.save(directory / "rssm_lidar.npy", np.asarray(lidar_trace))
+                    np.save(directory / "rssm_memory.npy", np.asarray(memory_trace))
     return RunResult(
         directory,
         status,

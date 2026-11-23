@@ -138,11 +138,27 @@ class RosSimulator:
                                           lambda m: self.sensors.__setitem__("wheel", m), 10)
             self.node.create_subscription(Odometry, self._topic(self.ros.pose_topic),
                                           lambda m: self.sensors.__setitem__("pose", m), 10)
+        self.scan = None
+        if self.ros.lidar_topic:
+            from sensor_msgs.msg import LaserScan
+            self.node.create_subscription(LaserScan, self._topic(self.ros.lidar_topic),
+                                          lambda m: setattr(self, "scan", m), 10)
 
     def _topic(self, name):
         if name.startswith("/"):
             return name
         return f"/{self.ros.namespace}/{name}"
+
+    def lidar_scan(self):
+        """The LiDAR scan at the latest odometry time, resampled to the RSSM training layout (1080 beams, 270 deg)."""
+        from sit_lmpc.world.rssm_runtime import resample_scan
+        target = (self.odom.header.stamp.sec, self.odom.header.stamp.nanosec)
+        deadline = time.perf_counter() + self.ros.wait_timeout
+        while self.scan is None or (self.scan.header.stamp.sec, self.scan.header.stamp.nanosec) != target:
+            if time.perf_counter() > deadline:
+                raise RuntimeError("LiDAR scan did not arrive with the odometry; is the bridge running with lidar_enabled?")
+            self._spin(0.002)
+        return resample_scan(self.scan.ranges, self.scan.angle_min, self.scan.angle_increment)
 
     def encoder_observation(self):
         """The world-model encoder's 9 inputs at the latest odometry time (same layout as sit_lmpc.world.data)."""

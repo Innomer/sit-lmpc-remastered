@@ -79,3 +79,43 @@ def test_downsample_keeps_the_nearest_return():
     scan[0, 500] = 0.3
     small_scan = downsample(scan, 64)
     assert small_scan.shape == (2, 64) and small_scan[0].min() == 0.3 and small_scan[1].min() == 5.0
+
+
+def test_runtime_filter_matches_training_filter(tmp_path):
+    import yaml
+    from flax import serialization
+    from sit_lmpc.world.rssm_runtime import RSSMFilter, resample_scan
+    from sit_lmpc.world.rssm_train import run_sequence
+    config, model, params = small()
+    st, scale = st_params()
+    model_config = {"hidden": 16, "condition": 2, "fast": 4, "beams": 16, "head": 16, "decoder": 16}
+    (tmp_path / "config.yaml").write_text(yaml.safe_dump({"model": model_config, "timestep": 0.1,
+                                                         "integrator_timestep": 0.02}))
+    (tmp_path / "best.msgpack").write_bytes(serialization.to_bytes(params))
+    np.savez(tmp_path / "observation_scale.npz", mean=np.zeros(9), std=np.ones(9))
+    runtime = RSSMFilter(tmp_path, st, scale)
+    rng = np.random.default_rng(1)
+    length = 8
+    scans = rng.uniform(0.5, 8.0, (length + 1, 1080)).astype(np.float32)
+    sensors = rng.normal(0, 1, (length + 1, 9)).astype(np.float32)
+    controls = rng.normal(0, 0.5, (length, 2)).astype(np.float32)
+    pose = np.column_stack((np.arange(length + 1) * 0.5, np.zeros(length + 1), np.zeros(length + 1))).astype(np.float32)
+    rear = pose.copy()
+    rear[:, 0] -= 0.17145
+    anchors = [runtime.step(sensors[t], scans[t], rear[t], controls[t - 1] if t else np.zeros(2))[0]
+               for t in range(length + 1)]
+    states = np.zeros((length + 1, 7), np.float32)
+    states[:, 3] = 5.0
+    batch = {"states": states, "controls": controls, "sensors": sensors, "pose": pose,
+             "lidar": np.asarray(runtime.lidar_features(scans[0]))[None].repeat(length + 1, 0),
+             "conditions": np.tile([0.9, 1.0], (length + 1, 1)).astype(np.float32)}
+    batch["lidar"] = np.stack([np.asarray(runtime.lidar_features(s)) for s in scans])
+    batch = {k: jnp.asarray(v) for k, v in batch.items()}
+    settings = {"condition_walk_std": 0.05, "free_nats": 1.0, "prediction_steps": 4, "prediction_stride": 4}
+    _, aux = run_sequence(params, model, st, 0.1, 0.02, batch, jax.random.key(0), settings, jnp.zeros(9), jnp.ones(9),
+                          sample=False)
+    assert np.allclose(np.asarray(anchors[1:]), np.asarray(aux["filtered"]["anchor"]), atol=1e-4)
+    predictor = runtime.predictor()
+    xs = predictor.rollout_members(jnp.asarray(runtime.x), jnp.zeros((5, 2)))
+    assert xs.shape == (1, 5, 7) and bool(jnp.all(jnp.isfinite(xs)))
+    assert resample_scan(np.full(819, 3.0), -np.deg2rad(135), np.deg2rad(270) / 818).shape == (1080,)

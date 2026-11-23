@@ -16,7 +16,7 @@ export ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-77}
 out=results/Spielberg/$name
 mkdir -p "$out"
 PYTHONPATH=~/sim_ws/src/f1tenth_gym_ros:${PYTHONPATH:-} ~/sim_ws/.venv/bin/python -m f1tenth_gym_ros.gym_bridge \
-  --ros-args -r __node:=bridge --params-file configs/ros-bridge-lockstep-sensors.yaml > "$out.bridge.log" 2>&1 &
+  --ros-args -r __node:=bridge --params-file ${BRIDGE_CONFIG:-configs/ros-bridge-lockstep-sensors.yaml} > "$out.bridge.log" 2>&1 &
 bridge=$!
 trap 'kill -INT $bridge $scheduler 2>/dev/null || true' EXIT
 for _ in $(seq 60); do grep -q "simulated sensors on" "$out.bridge.log" && break; sleep 1; done

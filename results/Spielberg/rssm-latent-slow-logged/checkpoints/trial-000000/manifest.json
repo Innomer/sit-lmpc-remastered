@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rssm-latent-slow-logged",
+  "files": {
+    "state.json": "e4ae0aa35e56099b5c235fe3f1c0883fe0f1c7473afc08807540ae358afa683a",
+    "events.jsonl": "09e9e4638bb38028cd369d85e24d86738321cd94b25559f61de6f147f067d787",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "cf0928a1bfee9f9107bef3b64efa7e17f3a2c0350308e498dbaed71fd8369ff9",
+    "config.yaml": "53191cc1a935eb2ff3931adbeecd5eea0aa2081a037ebf6b9effefa4bda00ae4",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "2e11a09b7e239cbf38b0d8ddfd45cd08ec448271b674f55f4a8171ec8d2fe946"
+  }
+}

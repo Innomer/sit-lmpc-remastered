@@ -17,11 +17,11 @@ import flax.linen as nn
 from sit_lmpc.dynamics.st import rk4
 
 BODY_INDEX = jnp.array([2, 3, 5, 6])
-BODY_SCALE = jnp.array([0.4, 10.0, 2.0, 0.3])
-CONTROL_SCALE = jnp.array([3.2, 9.51])
+BODY_SCALE = jnp.array([0.4, 10.0, 2.0, 0.3], jnp.float32)
+CONTROL_SCALE = jnp.array([3.2, 9.51], jnp.float32)
 DECODER_MIN_LOG_STD = -3.0
-BODY_LOW = jnp.array([-0.42, 0.0, -10.0, -1.2])
-BODY_HIGH = jnp.array([0.42, 20.0, 10.0, 1.2])
+BODY_LOW = jnp.array([-0.42, 0.0, -10.0, -1.2], jnp.float32)
+BODY_HIGH = jnp.array([0.42, 20.0, 10.0, 1.2], jnp.float32)
 
 
 @dataclass(frozen=True)

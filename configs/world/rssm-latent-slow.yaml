@@ -1,0 +1,8 @@
+# Variant A (rssm-v5) with the pure-pursuit warm-up capped at 9 m/s, inside the Spielberg training data (max 10.3 m/s,
+# 95% under 8.7 m/s). The first sim test crashed because the uncapped warm-up reached 14.7 m/s, beyond the model's data.
+extends: rssm-latent.yaml
+output:
+  exp_name: rssm-latent-slow
+planner:
+  warmup:
+    max_speed: 9.0

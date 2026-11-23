@@ -1,0 +1,20 @@
+# Our method, world-model planning (variant A): the RSSM (rssm-v5) is filtered every control step from simulated IMU,
+# wheel speed, PF pose and LiDAR, and LMPPI rolls out every candidate through the full world model (h, s, x).
+# Fast-start settings as the known-model baseline (pure-pursuit warm-up, all laps, 1.5 s horizon, action-rate 0.1).
+# Bridge: BRIDGE_CONFIG=configs/ros-bridge-lockstep-sensors-lidar.yaml bash scripts/run_change_experiment.sh ...
+extends: ../fast-diag/known-pp06-alllaps-h15-smooth.yaml
+output:
+  exp_name: rssm-latent
+simulation:
+  ros:
+    imu_topic: imu
+    wheel_topic: wheel_odom
+    pose_topic: pf_odom
+    lidar_topic: /scan  # the bridge publishes the ego scan outside the car namespace
+planner:
+  dynamics:
+    backend: rssm
+    rssm: runs/rssm-v5
+    rssm_variant: latent
+    rssm_model_timestep: 0.1
+    rssm_state: true

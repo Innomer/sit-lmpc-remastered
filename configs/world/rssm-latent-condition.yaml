@@ -1,0 +1,9 @@
+# Variant A + condition-aware safe set: every stored state tagged with the RSSM's grip read-out from c; per hull window,
+# laps whose grip there matches the newest lap (or a much lower current estimate) within 0.12, at least 4 laps.
+extends: rssm-latent.yaml
+output:
+  exp_name: rssm-latent-condition
+planner:
+  condition_threshold: 0.12
+  condition_mode: state
+  condition_min_laps: 4

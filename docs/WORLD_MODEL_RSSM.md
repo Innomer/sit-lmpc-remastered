@@ -342,6 +342,9 @@ flowchart LR
 | 11-22 | Spin tails cut from the data; clip 10 → 1; non-finite updates dropped; bad-batch guard | `rssm-v1` blew up at step 9,800 (losses ×100) on batches with out-of-range spin states | `rssm-v2` past step 10,500 with no spike, no skipped batch |
 | 11-22 | Condition-head weight 1 → 3 | grip head only reached 0.85 in v1 (1.0 = no skill) | v2: 0.74–0.76; v3: 0.78–0.80 |
 | 11-23 | `rssm-v5`: speed weighted 3× in the anchor loss (per-variable anchor weights), prediction weight 0.3 → 0.6 | offline evaluation: RSSM speed estimate 0.29 m/s vs 0.18 for v3, 1 s error 0.35 m vs 0.25 m | stable; small mixed change (median 0.35 → 0.34 m, speed 0.29 → 0.28 m/s) |
+| 11-23 | First sim test of variant A (`rssm-latent`, `rssm-v5`): crashed 3.4 s into the first learned lap | **the model had never seen these speeds on Spielberg**: the Spielberg training data was capped at 4–10 m/s (max 10.3 m/s, 0% above 11 m/s) to cut crashes in collection, but the pure-pursuit warm-up laps drive above 11 m/s 24% of the time (max 14.7 m/s). Out of its training range the speed estimate read ~1.1 m/s low at 13.6 m/s and the plans weaved (yaw rate swinging ±3.5 rad/s) into the wall | collect ~250 more Spielberg episodes at 8–14 m/s, retrain (`rssm-v6`), re-evaluate, rerun the sim test |
+| 11-23 | Warm-up capped at 9 m/s (`configs/world/rssm-latent-slow.yaml`); known-model control run; LiDAR and GRU memory logged per step (`rssm_lidar.npy`, `rssm_memory.npy`); crash replay script | second sim test still crashed at the first corner; needed to tell model error from setup | known model with the same setup completes all laps; replay shows the RSSM predicted no spin where the car spun (section 14.5) |
+| 11-23 | Sim test, first try: no LiDAR reached the model | the bridge publishes the ego scan at `/scan`, outside the car namespace; the adapter listened on `/ego_racecar/scan` | `lidar_topic: /scan` in `configs/world/rssm-latent.yaml` |
 | 11-23 | State estimate from the posterior mean, not a random sample, in evaluation and planning (`run_sequence(..., sample=False)`); training still samples | the RSSM's estimates used a random draw of the latent, which adds noise the v3 encoder (means) does not have | `rssm-v5`: median 0.34 → 0.29 m, speed 0.28 → 0.25 m/s, yaw rate 0.097 → 0.069 rad/s |
 | 11-22 | Prediction weight 1 → 0.3; filtered state fed back without gradient; decoder noise floor (log σ ≥ −3); learning rate 3e-4 → 1e-4; early stop | `rssm-v2` drifted from step ~15,000 with all losses rising together (no single bad batch): prediction was ~90% of the loss and backpropagated through 10 GRU steps, the filter's own estimate was fed back with gradients across the window, decoders could become overconfident, learning rate still ~2.3e-4 | `rssm-v3` stable for all 30,000 steps and the best of the three; several changes at once, so the decisive one is not isolated |
 
@@ -448,12 +451,33 @@ line (bicycle from the true state) is a reference the car can never reach, becau
 
 ![Cumulative 1 s position error](figures/rssm_cdf_position_1s.png)
 
+### 14.4 First sim test (variant A, `rssm-v5`)
+
+| Item | Result |
+|---|---|
+| Plumbing | LiDAR feed, per-step filter and world-model planning all run; planning 38 ms median, 60 ms p95 per step (laptop) |
+| Warm-up laps 1–5 (pure pursuit) | normal, 38.0–38.4 s |
+| First learned lap | crashed after 3.4 s: speed estimate ~1.1 m/s low at 13.6 m/s, plans weaving with yaw rate ±3.5 rad/s |
+| Cause | **the model had not seen these speeds on Spielberg** (training data ≤ 10.3 m/s there; warm-up laps up to 14.7 m/s, 24% of the time above 11 m/s). A learned model is only trustworthy inside the conditions it was trained on |
+| Lesson | the data must cover the speeds the planner will actually drive, not only speeds the data collector can drive safely |
+
+### 14.5 Second sim test: warm-up capped at 9 m/s, control run and crash replay
+
+| Run | Result |
+|---|---|
+| RSSM, warm-up capped at 9 m/s (twice, the second with LiDAR and memory logged) | warm-up 63.7–63.8 s; first learned lap braked to 3–4 m/s and crashed at the first corner (~29 m) after 9–10 s, both times |
+| Known model, same setup (control) | 8/8 laps, no crash, but learned laps got slower (68.8, 68.3, 83.7 s): slow warm-up laps make SIT-LMPC drift slower even with exact physics, so the braking is the setup, not the world model |
+| Replay of the crashed lap (`scripts/replay_rssm_crash.py`) | 1.5 s position error: RSSM from its own estimate 0.33 m, RSSM from the true state 0.14 m, bicycle from the true state 0.00 m (the sim is the bicycle model with nominal parameters) |
+| Cause of the crash | the plan carried out (turn in while accelerating hard at ~3 m/s) leads to a spin (true slip 1.07 rad within 1.5 s); **the RSSM predicted 0.12 rad, i.e. no spin**, because it had not seen this kind of manoeuvre: the collector drives smoothly and spin tails were cut from the data |
+| Lessons | (1) a learned model in the planner must have seen the manoeuvres the planner will try, not only the driving style of the data collector; (2) in this sim the known model is exact when grip is nominal, so a learned model can only lose there; its value shows under changed conditions or on the real car |
+
 ## 15. Open items
 
 | Item | Plan |
 |---|---|
 | Grip head weak (~0.8) | accepted for now (user decision 11-22); a looser random walk on c (v4) did not help |
 | Speed estimate (0.25 vs 0.18 m/s for v3) | main remaining gap to the v3 encoder |
+| Training data does not cover the planner's speeds or manoeuvres | 232 fast Spielberg episodes added (88% crashed, only 1.4% of Spielberg data above 11 m/s; `rssm-v6` stopped). Next: data from the closed-loop laps and hard accel/steer episodes, and/or a bicycle-model spin check in the planner |
 | Jetson timing | `bash scripts/jetson_timing.sh` from a `world-model` clone; choose A/B/C |
 | Offline evaluation (step E) | vs known model, v3 encoder, EKF; ablations without in-lap update, safe-set tags, LiDAR; two-stage vs full agreement after changes |
 | Planner integration (step F) | variants A/B/C and 10 × 0.15 s as config options; LiDAR clearance term; latent-tagged safe set per lap per stretch |

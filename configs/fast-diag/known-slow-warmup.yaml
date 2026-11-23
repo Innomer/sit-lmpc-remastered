@@ -1,0 +1,8 @@
+# Control for the RSSM sim test: known-model fast-start baseline with the warm-up capped at 9 m/s, as
+# configs/world/rssm-latent-slow.yaml. If this also brakes and crashes, the problem is the setup, not the world model.
+extends: known-pp06-alllaps-h15-smooth.yaml
+output:
+  exp_name: known-slow-warmup
+planner:
+  warmup:
+    max_speed: 9.0
