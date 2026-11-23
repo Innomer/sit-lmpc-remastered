@@ -22,7 +22,7 @@ import jax.numpy as jnp
 
 from sit_lmpc.config import load_config
 from sit_lmpc.experiments.runner import build_vehicle_dynamics
-from sit_lmpc.world.rssm import RSSM, RSSMConfig, bicycle, cheap_rollout, init_params, latent_rollout
+from sit_lmpc.world.rssm import BODY_INDEX, RSSM, RSSMConfig, bicycle, cheap_rollout, init_params, latent_rollout
 
 
 def timed(fn, repeats, *args):
@@ -97,7 +97,7 @@ def main():
 
             @jax.jit
             def filter_step(h, s, lidar, sensors):
-                x = model.apply(params, h, s, method=RSSM.anchor)
+                x = jnp.zeros((1, 7)).at[:, BODY_INDEX].set(model.apply(params, h, s, method=RSSM.anchor))
                 return model.apply(params, h, s, jnp.zeros((1, 2)), x, lidar, sensors)
 
             for samples in args.samples:
@@ -114,7 +114,7 @@ def main():
                                  "p50_ms": p50, "p95_ms": p95})
                     print(f"{hidden:6d} {steps:4d} x {dt:.2f} {part:>14s} {samples:5d} {p50:7.2f} {p95:7.2f}")
         p50, p95 = timed(filter_step, args.repeats, h0[None], s0[None], jnp.ones((1, rssm_config.beams)),
-                         jnp.zeros((1, 5)))
+                         jnp.zeros((1, rssm_config.sensors)))
         rows.append({"hidden": hidden, "part": "filter", "p50_ms": p50, "p95_ms": p95})
         print(f"{hidden:6d} {'':10s} {'filter':>14s} {1:5d} {p50:7.2f} {p95:7.2f}")
     if args.out:

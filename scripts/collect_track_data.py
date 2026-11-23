@@ -168,6 +168,9 @@ def main():
     parser.add_argument("--beams", type=int, default=1080)
     parser.add_argument("--fov", type=float, default=270.0)
     parser.add_argument("--crash-clearance", type=float, default=0.18)
+    parser.add_argument("--start-index", type=int, default=0, help="first episode index (new seeds, new files)")
+    parser.add_argument("--speed-cap", nargs="+", default=[], help="name=low,high overrides of the per-map speed cap")
+    parser.add_argument("--append", action="store_true", help="add to an existing dataset's manifest")
     args = parser.parse_args()
 
     import jax
@@ -182,16 +185,27 @@ def main():
                 "episodes": []}
     counts = ({k: int(v) for k, v in (item.split("=") for item in args.episodes)} if "=" in args.episodes[0]
               else {name: int(args.episodes[0]) for name in args.maps})
+    for item in args.speed_cap:
+        key, values = item.split("=")
+        SPEED_CAPS[key] = tuple(float(v) for v in values.split(","))
+    previous = json.loads((out / "manifest.json").read_text()) if args.append and (out / "manifest.json").exists() else None
+    if previous is not None:
+        manifest["episodes"] = previous["episodes"]
+        manifest["maps"] = sorted(set(previous["maps"]) | set(args.maps))
+        manifest["additions"] = previous.get("additions", []) + [{"maps": args.maps, "start_index": args.start_index,
+                                                                    "episodes": args.episodes, "speed_caps": args.speed_cap}]
     for map_index, name in enumerate(args.maps):
+        map_index = list(MAPS).index(name)
         track = Track.from_track_path(map_path(MAPS[name]))
         path = track.centerline if track.centerline is not None else track.raceline
         scanner = SegmentScanSimulator2D(args.beams, np.deg2rad(args.fov), std_dev=0.0, min_range=0.05, max_range=30.0,
                                          device="gpu" if any(d.platform == "gpu" for d in jax.devices()) else "cpu")
         scanner.set_map(track)
         batch_scan = jax.jit(lambda poses: jax.lax.map(scanner._scan, poses, batch_size=16))
-        for episode_index in range(counts[name]):
+        for episode_index in range(args.start_index, args.start_index + counts[name]):
             rng = np.random.default_rng([args.seed, map_index, episode_index])
             episode, meta, simulator = drive(track, path, rng, args.steps, timestep, integrator, 1.2, 10.0, SPEED_CAPS[name])
+            meta["speed_caps"] = list(SPEED_CAPS[name])
             states = episode["states"]
             yaw = states[:, 4]
             rear = states[:, :2] - meta["lr"] * np.stack([np.cos(yaw), np.sin(yaw)], 1)
@@ -225,7 +239,8 @@ def main():
             slip = np.abs(episode["states"][:, 6])
             manifest["episodes"].append({"file": filename, "map": name, "split": split, "steps": int(count - 1),
                                          "reason": meta["reason"], "base": meta["base"], "change": meta["change"],
-                                         "driver": meta["driver"], "max_slip": float(slip.max()),
+                                         "driver": meta["driver"], "speed_caps": meta["speed_caps"],
+                                         "max_slip": float(slip.max()),
                                          "max_speed": float(episode["states"][:, 3].max())})
             print(f"{name:9s} {episode_index:4d} {split:5s} {count - 1:4d} steps  {meta['reason']:14s} "
                   f"change {meta['change']['kind']:7s} max slip {slip.max():.2f} max speed {episode['states'][:, 3].max():5.1f}",
