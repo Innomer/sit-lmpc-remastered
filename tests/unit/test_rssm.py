@@ -119,3 +119,14 @@ def test_runtime_filter_matches_training_filter(tmp_path):
     xs = predictor.rollout_members(jnp.asarray(runtime.x), jnp.zeros((5, 2)))
     assert xs.shape == (1, 5, 7) and bool(jnp.all(jnp.isfinite(xs)))
     assert resample_scan(np.full(819, 3.0), -np.deg2rad(135), np.deg2rad(270) / 818).shape == (1080,)
+
+
+def test_high_slip_windows_find_exactly_the_windows_with_high_slip():
+    from sit_lmpc.world.rssm_data import TrackData
+    data = TrackData.__new__(TrackData)
+    states = np.zeros((31, 7), np.float32)
+    states[20, 6] = 0.6
+    data.episodes = [{"states": states, "controls": np.zeros((30, 2), np.float32)}]
+    windows = data.high_slip_windows(10, 0.4)
+    starts = sorted(t for _, t in windows)
+    assert starts == list(range(10, 21))

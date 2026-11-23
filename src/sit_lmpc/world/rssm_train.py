@@ -226,8 +226,14 @@ def main():
     rssm_config = RSSMConfig(**config["model"])
     model, params = init_params(rssm_config, jax.random.key(config["seed"]))
 
-    train = TrackData(config["dataset"], "train", rssm_config.beams)
-    val = TrackData(config["dataset"], "val", rssm_config.beams)
+    cut = dict(zip(("max_slip", "max_yaw_rate"), config.get("data_cut", [1.0, 8.0])))
+    train = TrackData(config["dataset"], "train", rssm_config.beams, **cut)
+    val = TrackData(config["dataset"], "val", rssm_config.beams, **cut)
+    high_slip_fraction = config.get("high_slip_fraction", 0.0)
+    high_slip = train.high_slip_windows(config["window"], config.get("high_slip_threshold", 0.4)) if high_slip_fraction else None
+    if high_slip is not None:
+        print(f"{len(high_slip)} training windows with |slip| > {config.get('high_slip_threshold', 0.4)} rad; "
+              f"{high_slip_fraction:.0%} of each batch drawn from them", flush=True)
     obs_mean, obs_std = train.observation_scale()
     np.savez(output / "observation_scale.npz", mean=obs_mean, std=obs_std)
     obs_mean, obs_std = jnp.asarray(obs_mean), jnp.asarray(obs_std)
@@ -274,7 +280,8 @@ def main():
     key = jax.random.key(config["seed"])
     for step in range(1, steps + 1):
         key, sub = jax.random.split(key)
-        batch = train.sample(rng, config["batch"], config["window"])
+        batch = train.sample(rng, config["batch"], config["window"], high_slip=high_slip,
+                             high_slip_fraction=high_slip_fraction)
         kl_scale = min(1.0, step / config["kl_warmup"])
         new_params, new_opt_state, value, terms = update(params, opt_state, batch, sub, kl_scale)
         value_f = float(value)

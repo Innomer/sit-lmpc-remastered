@@ -23,7 +23,7 @@ def log_range(ranges):
 
 
 class TrackData:
-    def __init__(self, root, split, beams=64, maps=None):
+    def __init__(self, root, split, beams=64, maps=None, max_slip=MAX_SLIP, max_yaw_rate=MAX_YAW_RATE):
         self.root = Path(root)
         manifest = json.loads((self.root / "manifest.json").read_text())
         self.episodes = []
@@ -32,7 +32,7 @@ class TrackData:
                 continue
             data = np.load(self.root / record["file"])
             states = data["states"].astype(np.float32)
-            outside = np.flatnonzero((np.abs(states[:, 6]) > MAX_SLIP) | (np.abs(states[:, 5]) > MAX_YAW_RATE))
+            outside = np.flatnonzero((np.abs(states[:, 6]) > max_slip) | (np.abs(states[:, 5]) > max_yaw_rate))
             count = int(outside[0]) if len(outside) else len(states)
             if count < 2:
                 continue
@@ -57,11 +57,27 @@ class TrackData:
     def starts(self, window):
         return [(i, t) for i, e in enumerate(self.episodes) for t in range(0, len(e["controls"]) - window + 1)]
 
-    def sample(self, rng, size, window, noise=True):
+    def high_slip_windows(self, window, threshold):
+        """(episode, start) of every window whose states include |slip| above threshold."""
+        items = []
+        for i, e in enumerate(self.episodes):
+            count = len(e["controls"]) - window + 1
+            if count <= 0:
+                continue
+            high = np.abs(e["states"][:, 6]) > threshold
+            running = np.concatenate(([0], np.cumsum(high)))
+            hits = running[window + 1:window + 1 + count] - running[:count]
+            items.extend((i, int(t)) for t in np.flatnonzero(hits > 0))
+        return items
+
+    def sample(self, rng, size, window, noise=True, high_slip=None, high_slip_fraction=0.0):
         pool = [i for i, e in enumerate(self.episodes) if len(e["controls"]) >= window]
-        chosen = rng.choice(pool, size)
-        starts = [int(rng.integers(0, len(self.episodes[i]["controls"]) - window + 1)) for i in chosen]
-        return self.gather(list(zip(chosen, starts)), window, rng if noise else None)
+        special = int(round(size * high_slip_fraction)) if high_slip else 0
+        chosen = rng.choice(pool, size - special)
+        items = [(int(i), int(rng.integers(0, len(self.episodes[i]["controls"]) - window + 1))) for i in chosen]
+        if special:
+            items += [high_slip[j] for j in rng.integers(0, len(high_slip), special)]
+        return self.gather(items, window, rng if noise else None)
 
     def gather(self, items, window, rng=None):
         batch = {key: [] for key in ("states", "controls", "sensors", "pose", "lidar", "conditions")}

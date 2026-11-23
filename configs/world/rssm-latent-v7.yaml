@@ -1,0 +1,7 @@
+# Variant A with rssm-v7 (more spin data, high-slip windows oversampled), normal warm-up.
+extends: rssm-latent.yaml
+output:
+  exp_name: rssm-latent-v7
+planner:
+  dynamics:
+    rssm: runs/rssm-v7
