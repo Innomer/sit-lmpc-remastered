@@ -1,14 +1,19 @@
-# Adaptive world-model SIT-LMPC (RSSM): design, changes and status
+# Adaptive world-model SIT-LMPC (RSSM)
 
 ESE 6150 Team 8, branch `world-model`. Started 2026-11-21 after the TA asked for a real world model rather than an
-adaptive dynamics model. The earlier encoder model (v3, `docs/WORLD_MODEL.md`) stays as a baseline.
+adaptive dynamics model. The earlier encoder model (v3, `docs/WORLD_MODEL.md`) is kept as a baseline.
 Last updated 2026-11-22.
+
+Contents: 1 Summary · 2 Differences from v3 · 3 Notation · 4 Inputs · 5 Model structure · 6 Equations ·
+7 Losses · 8 Training procedure · 9 Data · 10 Planning · 11 Data flow diagrams · 12 Files and commands ·
+13 Change log · 14 Results · 15 Open items
 
 ## 1. Summary
 
 | Item | State |
 |---|---|
 | What it is | A recurrent state-space world model: memory h (GRU) + stochastic latent s, filtered every 0.1 s from LiDAR, IMU, wheel speed and PF pose, with the bicycle model kept inside its prediction |
+| Size | 523,269 parameters (GRU 128, latent 8 + 24, LiDAR 64 beams) |
 | Data | 789 on-track episodes, 293k transitions, 3 maps, 1080-beam LiDAR, grip/mass changes and low-grip patches |
 | Training | `rssm-v1` unstable after step 9,800 (fixed); `rssm-v2` training, best so far: 1 s position error 0.66 m, slip error 0.019 rad, grip head 0.76 |
 | Planner | variant A (full latent rollout, 1024 candidates, 15 × 0.1 s) is the default for sim work; B, C and 10 × 0.15 s will be options |
@@ -22,61 +27,157 @@ Last updated 2026-11-22.
 | Inputs | IMU, wheel speed, PF pose, last control | + downsampled LiDAR (64 beams) | a world model should see the world, not only the car |
 | Latent | z (16) only describes the car | h (memory) + s = c (8, conditions) + d (24, fast) | separate "what the car is like" (slow) from "what is happening now" (fast) |
 | What it predicts | next state | next state **and** what the sensors will read (LiDAR, IMU, wheel) | predicting observations forces the latent to hold real information |
-| Prediction | bicycle + b + B·z, z fixed | bicycle + residual(x, u, h, s), with h and s rolled forward | the memory and fast latent can follow the car through a manoeuvre |
+| Prediction | bicycle + b + B·z, z fixed | bicycle + residual(x, u, h, s), with h and s rolled forward | the memory and fast latent follow the car through a manoeuvre |
 | Planning | z fixed over the plan | full latent rollout (A), or two-stage (B) | lets the plan "imagine" sensors, e.g. predicted LiDAR clearance |
 | Safety | track limits + safe set | + predicted LiDAR clearance term | catches plans the model expects to bring the car close to a wall |
 | Safe set tags | grip read-out per lap / per stretch | latent c per stored state, matched by distance | c is the model's own condition variable |
 
-## 3. Architecture (`src/sit_lmpc/world/rssm.py`)
+## 3. Notation
 
-| Part | What it does | Why it is there |
+| Symbol | Size | Meaning |
 |---|---|---|
-| GRU memory h (128) | carries what the model has seen | slip, steering and conditions are not measured directly; they have to be inferred over time |
-| Latent c (8), random-walk prior | slow condition variables | grip and load change rarely; a random walk lets them drift and jump without forgetting |
-| Latent d (24), learned prior p(d \| h) | fast driving state | lets the model represent what happens in a manoeuvre without polluting c (the "corner dip" problem of the v3 read-out) |
-| Posterior q(s \| h, observation) | updates s from the current sensors | in-lap adaptation every 0.1 s |
-| LiDAR encoder (2 conv layers) + sensor MLP | turns 64 beams + 9 sensor features into one vector | small and fast enough for the car |
-| Physical state x' = bicycle(x, u) + residual(x, u, h, s) | rolls the 7-dim state forward | keeps physics in the loop so 15-step predictions stay physical |
-| h' = GRU(h, s, u, x') | memory update | the memory sees the predicted physical state |
-| Anchor head A(h, s) | steering, speed, yaw rate, slip | ties the latent to real quantities; this is the state estimate the planner uses |
-| Pose (x, y, heading) | taken from the PF, not learned | learning absolute map position from LiDAR would tie the model to particular maps |
-| LiDAR decoder | 64 log-ranges with uncertainty | reconstruction loss, and the clearance safety term in planning |
-| Sensor decoder | IMU x/y, gyro, wheel speed with uncertainty | reconstruction loss |
-| Condition head c → (grip, mass ratio) | sim-only auxiliary target | forces c to hold the conditions, not driving state |
-| Inputs to the networks | steering, speed, yaw rate, slip (normalised), controls | no map position or absolute heading, so the model does not depend on where the car is |
-| Bounds | anchor through a sigmoid to physical limits; rollout states clamped | an untrained or confused model must not produce impossible states |
+| $x_t$ | 7 | physical state at the centre of gravity: $(p_x, p_y, \delta, v, \psi, r, \beta)$ = position, steering angle, speed, heading, yaw rate, slip angle |
+| $b(x)$ | 4 | body part of the state $(\delta, v, r, \beta)$, divided by scales $(0.4, 10, 2, 0.3)$ before entering a network |
+| $u_t$ | 2 | control (steering rate, acceleration), divided by $(3.2, 9.51)$ before entering a network |
+| $o_t$ | 9 + 64 | observation: 9 sensor features (section 4) and 64 LiDAR log-ranges |
+| $h_t$ | 128 | GRU memory |
+| $s_t = (c_t, d_t)$ | 8 + 24 | latent: $c$ slow condition part, $d$ fast part |
+| $e_t$ | 128 | observation embedding |
+| $\hat b_t = A(h_t, s_t)$ | 4 | anchor head output: estimated steering, speed, yaw rate, slip |
+| $\tilde x_t$ | 7 | filtered state: PF pose $(p_x, p_y, \psi)$ + anchor $\hat b_t$ |
+| $f_{ST}$ | — | F1TENTH single-track (bicycle) model, nominal sim-car parameters, RK4 with 0.02 s substeps |
+| $\Delta t$ | — | 0.1 s control period |
 
-## 4. Training (`src/sit_lmpc/world/rssm_train.py`, `configs/train-rssm.yaml`)
+## 4. Inputs
 
-| Loss | What it compares | Why it is there |
+### 4.1 Sensor features (9 per step, `sit_lmpc.world.data.observations`, same as the v3 encoder)
+
+| # | Feature | Source |
 |---|---|---|
-| Anchor | A(h, s) vs true steering, speed, yaw rate, slip | state estimation |
-| Residual (teacher-forced) | bicycle + residual from the true previous state vs true next state | learns the correction to the physics |
-| LiDAR NLL | decoded scan vs real scan (log range, Gaussian) | world-model reconstruction |
-| Sensor NLL | decoded IMU/gyro/wheel vs real | reconstruction of the car's own sensors |
-| KL on d | q(d) vs learned prior p(d \| h) | keeps the fast latent predictable for planning |
-| KL on c | q(c_t) vs N(c_{t-1}, var + 0.05²); N(0, I) at the start | random-walk prior for condition changes |
-| Free nats (1.0) and KL warm-up (3,000 steps) | — | stop the latent collapsing early |
-| Condition head (weight 3) | c → true grip and mass | keeps c about conditions |
-| 1 s prediction | open-loop rollout from the filtered state vs true states (10 steps) | the planner uses exactly this rollout |
-| 1 s LiDAR prediction (0.5) | decoded scan along the rollout vs real | trains the clearance safety term |
-| Consistency (0.5) | anchor of the rolled-forward latent vs rolled-forward physical state | latent and physics must agree over the plan |
+| 1–2 | IMU acceleration x, y (body frame) | IMU |
+| 3 | gyro yaw rate | IMU |
+| 4 | wheel speed | VESC / wheel odometry |
+| 5–6 | PF pose change in the previous body frame, divided by $\Delta t$ | particle filter |
+| 7 | PF heading change divided by $\Delta t$ | particle filter |
+| 8–9 | previous control (steering rate, acceleration) | the command applied in the last step |
+
+Normalised with the training-set mean and standard deviation (`observation_scale.npz` in each run).
+
+### 4.2 LiDAR (64 values per step, `sit_lmpc.world.rssm_data`)
+
+| Step | Operation | Why |
+|---|---|---|
+| 1 | full scan: 1080 beams over 270° (−135° right to +135° left) | matches the car's LiDAR |
+| 2 | split into 64 equal groups, keep the **closest** return in each | a downsampled scan must never lose the nearest wall |
+| 3 | clip to 0.05–10 m, take the natural log | walls nearby matter more than far ones; log range evens out the scale |
+| 4 | training only: Gaussian noise (σ 0–0.03 m per window), 1% of beams set to max range | robustness to real sensor noise and dropouts |
+
+## 5. Model structure (`src/sit_lmpc/world/rssm.py`)
+
+All MLPs are Dense → ELU → Dense → ELU → Dense. "Gaussian" outputs are split into a mean and a log standard
+deviation, the log std clipped to [−6, 2].
+
+| Module | Input → output | Layers | Parameters | Why it is there |
+|---|---|---|---|---|
+| LiDAR encoder | 64 log-ranges → 512 | Conv1D 16 ch, kernel 5, stride 2 → ELU → Conv1D 32 ch, kernel 5, stride 2 → ELU (16 × 32, flattened) | 2,688 | small, fast, picks up wall shapes |
+| Observation encoder | [512 LiDAR features, 9 sensor features] = 521 → $e_t$ 128 | MLP 128, 128 | 99,840 | one vector per step for the posterior |
+| GRU cell | input $[s, u, b(x')]$ = 38, state 128 | Flax GRUCell | 64,256 | memory of what has been seen |
+| Prior | $h$ 128 → $(\mu, \log\sigma)$ of $d$, 2 × 24 | MLP 128, 128 | 39,216 | predicts the fast latent when there is no observation (planning) |
+| Posterior | $[h, e]$ 256 → $(\mu, \log\sigma)$ of $s$, 2 × 32 | MLP 128, 128 | 57,664 | updates the latent from the current sensors |
+| Residual | $[b(x), u, h, s]$ = 166 → 7, × 0.1 | MLP 128, 128 | 38,791 | correction to the bicycle model |
+| Anchor | $[h, s]$ 160 → 4, through a sigmoid into $[(-0.42, 0, -10, -1.2), (0.42, 20, 10, 1.2)]$ | MLP 128, 128 | 37,636 | state estimate tied to real quantities, always physical |
+| LiDAR decoder | $[h, s]$ 160 → $(\mu, \log\sigma)$ of 64 log-ranges | MLP 256, 256 | 139,904 | reconstruction and the clearance safety term |
+| Sensor decoder | $[h, s, u]$ 162 → $(\mu, \log\sigma)$ of 4 (IMU x, y, gyro, wheel) | MLP 128, 128 | 38,408 | reconstruction of the car's own sensors |
+| Condition head | $c$ 8 → (grip, mass ratio), standardised | MLP 64, 64 | 4,866 | sim-only target that keeps $c$ about conditions |
+| **Total** | | | **523,269** | |
+
+Design rules:
+
+| Rule | Why |
+|---|---|
+| Networks get only $b(x)$ (steering, speed, yaw rate, slip) and controls, never position or absolute heading | the model must not depend on where the car is or which way it points on the map |
+| Pose $(p_x, p_y, \psi)$ comes from the PF and is not learned | learning absolute map position from LiDAR would tie the model to particular maps |
+| Rollout states are clamped to the anchor's physical limits | an untrained or confused model must not produce impossible states |
+| $c$ is carried unchanged through a planning rollout; only $d$ is sampled | matches the random-walk prior: conditions do not change within 1.5 s of imagination |
+
+## 6. Equations
+
+### 6.1 Filtering (every control step; training and on the car)
+
+Start ($t = 0$): $h_0 = 0$, $s_0 \sim q(s \mid h_0, e_0)$, $\tilde x_0 = [\text{PF pose}_0, A(h_0, s_0)]$.
+
+For $t = 1, 2, \dots$:
+
+$$x^{pred}_t = \mathrm{clamp}\big(f_{ST}(\tilde x_{t-1}, u_{t-1}) + 0.1\, R(b(\tilde x_{t-1}), u_{t-1}, h_{t-1}, s_{t-1})\big)$$
+
+$$h_t = \mathrm{GRU}\big(h_{t-1},\, [s_{t-1},\, u_{t-1},\, b(x^{pred}_t)]\big)$$
+
+$$e_t = E(\text{LiDAR}_t, \text{sensors}_t), \qquad s_t \sim q(s \mid h_t, e_t) = \mathcal N(\mu^q_t, \sigma^{q\,2}_t)$$
+
+$$\hat b_t = A(h_t, s_t), \qquad \tilde x_t = [p_{x,t}^{PF},\, p_{y,t}^{PF},\, \hat\delta_t,\, \hat v_t,\, \psi_t^{PF},\, \hat r_t,\, \hat\beta_t]$$
+
+Priors: $p(d_t \mid h_t) = \mathcal N(\mu^p_t, \sigma^{p\,2}_t)$ from the prior head;
+$p(c_t \mid c_{t-1}) = \mathcal N(\mu^q_{c,t-1},\ \sigma^{q\,2}_{c,t-1} + 0.05^2)$ (random walk from the previous posterior);
+$p(s_0) = \mathcal N(0, I)$.
+
+### 6.2 Planning rollout (prior only, from the filtered $(h_t, s_t, \tilde x_t)$)
+
+For $k = 0, \dots, H-1$ with candidate controls $u_{t+k}$:
+
+$$x_{k+1} = \mathrm{clamp}\big(f_{ST}(x_k, u_{t+k}) + 0.1\, R(b(x_k), u_{t+k}, h_k, s_k)\big)$$
+
+$$h_{k+1} = \mathrm{GRU}(h_k, [s_k, u_{t+k}, b(x_{k+1})]), \qquad s_{k+1} = [c_k,\ d_{k+1}],\ d_{k+1} \sim p(d \mid h_{k+1})$$
+
+Decoded along the rollout: LiDAR $\mu_{k}$ from $(h_k, s_k)$ for the clearance term.
+In training the 1 s prediction uses the prior mean for $d$ (deterministic).
+
+## 7. Losses (per 4 s window, averaged over steps and batch)
+
+$\mathrm{NLL}(y; \mu, \log\sigma) = \tfrac12\big((y - \mu)/\sigma\big)^2 + \log\sigma$, averaged over dimensions.
+State errors use the v3 scales $(0.1, 0.1, 0.02, 0.2, 0.02, 0.2, 0.02)$ for $(p_x, p_y, \delta, v, \psi, r, \beta)$, with heading and slip
+wrapped.
+
+| Loss | Weight | Formula | What it teaches | Why it is there |
+|---|---|---|---|---|
+| Anchor | 1 | mean of $\big((\hat b_t - b_t)/(0.1 \cdot \text{scale})\big)^2$ | state estimation (steering, speed, yaw rate, slip) | the planner starts from this estimate |
+| Residual | 1 | scaled squared error of $f_{ST}(x_{t-1}) + 0.1R(\cdot) - x_t$, from the **true** previous state | the physics correction | learns what the bicycle model gets wrong |
+| LiDAR | 1 | $\mathrm{NLL}(\text{LiDAR}_t;\ \text{decoder}(h_t, s_t))$ | reconstruct the scan | the latent must hold information about the surroundings |
+| Sensors | 1 | $\mathrm{NLL}(\text{IMU}, \text{gyro}, \text{wheel};\ \text{decoder}(h_t, s_t, u_{t-1}))$ | reconstruct the car's sensors | ties the latent to motion the car feels |
+| KL | 1 × warm-up | $\max\big(\overline{KL(q(d_t)\,\|\,p(d_t \mid h_t))},\ 1\big) + \overline{KL(q(c_t)\,\|\,p(c_t \mid c_{t-1}))} + KL(q(s_0)\,\|\,\mathcal N(0,I))/L$ | keep the latent predictable | the planner rolls out the prior; $c$ follows a random walk |
+| Condition | 3 | squared error of the condition head on $c_t$ vs standardised (grip, mass ratio) | $c$ holds the conditions | stops $c$ absorbing driving state (the corner-dip problem) |
+| Prediction | 1 | scaled squared state error over a 1 s (10-step) open-loop rollout, every 1 s in the window | multi-step prediction | this is exactly what the planner uses |
+| Prediction LiDAR | 0.5 | LiDAR NLL along the rollout | predict future scans | trains the clearance safety term |
+| Consistency | 0.5 | $\big((A(h_k, s_k) - b(x_k))/\text{scale}\big)^2$ along the rollout | latent and physical state agree | otherwise the latent could drift away from the physics during a plan |
+
+Total $= \sum_i w_i L_i$, with the KL multiplied by $\min(1, \text{step}/3000)$.
+
+Checkpoint selection (validation): anchor + residual + prediction + LiDAR. The KL is left out on purpose (same lesson
+as the v3 KL bug: a broken or exploited KL must not decide the checkpoint).
+
+## 8. Training procedure (`src/sit_lmpc/world/rssm_train.py`, `configs/train-rssm.yaml`)
 
 | Setting | Value | Why |
 |---|---|---|
-| Window | 4 s (40 steps), batch 32 | long enough for adaptation and 1 s predictions |
-| Optimiser | AdamW 3e-4, warm-up + cosine | standard |
-| Gradient clip | 1.0 | see change log (v1 blow-up) |
-| Bad-batch guard | skip a batch 20× above the running loss; drop non-finite updates | see change log |
-| Bicycle gradients | stopped | its low-speed branch has NaN gradients |
-| Checkpoint selection | anchor + residual + prediction + LiDAR on validation | same idea as the v3 selection fix (no KL in the selection) |
-| Integrator | 0.02 s (planner's) | training and planning use identical physics |
+| Window, batch | 40 steps (4 s), 32 windows | long enough for adaptation and a 1 s prediction from several start points |
+| Optimiser | AdamW, learning rate 3e-4, warm-up then cosine decay to 5%, weight decay 1e-5 | standard |
+| Gradient clip | global norm 1.0 | see change log (v1 blow-up) |
+| Bad-batch guard | drop non-finite updates; skip a batch whose loss is 20× the running average | one bad batch must not wreck Adam's statistics |
+| Bicycle gradients | stopped | its low-speed branch gives NaN gradients |
+| KL warm-up, free nats | 3,000 steps, 1 nat on $d$ | stop the latent collapsing early |
+| Integrator | 0.02 s substeps (the planner's) | training and planning use identical physics |
+| Steps | 30,000 (~25 min on the laptop GPU) | |
+| Evaluation | every 500 steps on 8 fixed validation batches; figures every 500, comparison charts every 2,500 | |
+| Saved | `best.msgpack`, `last.msgpack`, `observation_scale.npz`, `history.json`, `summary.json`, `config.yaml`, `tb/` | |
 
-TensorBoard (`tensorboard --logdir runs`, localhost:6006): loss curves (SCALARS), true-vs-model charts per checkpoint
-(CUSTOM SCALARS, runs `diag-<step>`), and figures (IMAGES) with true vs reconstructed vs predicted LiDAR, a top-down
-view of scan points and 1 s predicted paths, anchor vs truth and the grip read-out.
+TensorBoard (`tensorboard --logdir runs`, localhost:6006):
 
-## 5. Data (`scripts/collect_track_data.py`, `data/f1tenth-track`, not in git)
+| Tab | Content |
+|---|---|
+| SCALARS | every training loss every 50 steps, every validation metric every 500 steps, per-variable anchor errors, 1 s position error, learning rate, KL scale, skipped batches |
+| CUSTOM SCALARS | per map window: steering, speed, yaw rate, slip, grip, mass (true vs model), last LiDAR scan (true / reconstructed / predicted 1 s ahead), position error vs prediction time. Tick one `diag-<step>` run; "step" there is time step or beam index |
+| IMAGES | LiDAR true vs reconstructed vs predicted, LiDAR over time (columns = scans), top-down view of scan points, paths and 1 s predictions, anchor vs truth, grip read-out |
+
+## 9. Data (`scripts/collect_track_data.py`, `data/f1tenth-track`, not in git)
 
 | Map | Episodes (train / val / test) | Steps (train / val / test) | Speed caps |
 |---|---|---|---|
@@ -89,24 +190,105 @@ view of scan points and 1 s predicted paths, anchor vs truth and the grip read-o
 | Vehicles | grip 0.4–1.2, cornering stiffness ±15%, mass 0.8–1.3 | same ranges as the earlier dataset |
 | Changes | 30% none, 30% step change (grip and/or mass), 40% low-grip patches (1–3, 10–40 m, 35–70% of base grip) | in-lap changes are the point of the method |
 | Driver | 10 Hz pure pursuit on the centre line, braking-aware speed profile, steering/accel noise | one control per 0.1 s, as the model assumes |
+| Physics | dyna-dist GymST (the gym's single-track model), 0.01 s substeps | same model as the sim |
 | Sensors | dyna-dist IMU / wheel / PF-pose model, per-step vehicle parameters | already validated; correct accelerations on patches |
-| LiDAR | 1080 beams, 270°, bridge gym segment scanner, clean (noise added in training) | same LiDAR model as the closed-loop sim |
-| Training LiDAR | 64 beams, closest return per group, log range, 0.05–10 m, noise + 1% dropouts | keeps the nearest wall, small enough for the car |
-| Crash | LiDAR clearance < 0.18 m ends the episode | crash data up to the crash is still good driving data |
-| Spin tails | cut before slip > 1.0 rad or yaw rate > 8 rad/s (at load time) | see change log (v1 blow-up) |
+| LiDAR | 1080 beams, 270°, bridge gym segment scanner, mounted 0.275 m ahead of the rear axle, clean (noise added in training) | same LiDAR model as the closed-loop sim |
+| Crash | LiDAR clearance < 0.18 m ends the episode | data up to the crash is still good driving data |
+| Spin tails | cut at load time before slip > 1.0 rad or yaw rate > 8 rad/s | see change log (v1 blow-up) |
+| Splits | by episode index (every 10th test, every 9th of 10 validation) | no window shares an episode across splits |
 
-## 6. Planner variants and timing (laptop, RTX 3070, safe set capped at 4 laps)
+Per-episode file: `states` (T+1, 7), `controls` (T, 2), `conditions` (T+1, 4: grip under the car, front/rear
+cornering scale, mass ratio), `frenet` (T+1, 3), `lidar` (T+1, 1080, float16), `sensors` (T+1, 7) and the sensor
+noise parameters. `manifest.json` lists every episode with its map, split, change, driver settings and end reason.
 
-| Variant | What | 15 × 0.1 s p50 / p95 | 10 × 0.15 s p50 / p95 |
-|---|---|---|---|
-| A (default) | full latent rollout of all 1024 candidates | 26 / 32 ms | 16 / 20 ms |
-| A, 512 / 256 | fewer candidates | 14 / 22, 11 / 19 ms | 9 / 10, 7 / 10 ms |
-| B | cheap screen of 1024, full rollout + LiDAR decode of top 32/64/128 | 27 / 33 ms | 17 / 21 ms |
-| C | cheap only (bicycle + residual, h and s held) | 25 / 30 ms | 15 / 19 ms |
+## 10. Planning
 
-The world model adds 1–3 ms; the rest is the SIT-LMPC planner itself. Jetson numbers decide the car variant.
+### 10.1 Variants
 
-## 7. Change log: what was changed and why
+| Variant | What | Status |
+|---|---|---|
+| A (default for sim) | full latent rollout (section 6.2) of all 1024 candidates, LiDAR decoded for the clearance term | default |
+| B | screen 1024 candidates with the cheap model, full rollout + LiDAR decode of the top N (32/64/128), re-score, MPPI-weight over N | option |
+| C | cheap only: bicycle + residual with $h, s$ held fixed | option / fallback |
+| Horizon | 15 × 0.1 s, or 10 × 0.15 s (control stays at 0.1 s) | option |
+
+Unchanged from SIT-LMPC: hull safe set (capped on the car), track limits, value function. Added: LiDAR clearance
+penalty; latent-tagged safe set (per lap per stretch, from the grip-filter lesson). Not built yet (step F).
+
+### 10.2 Timing (laptop, RTX 3070, safe set capped at 4 laps, per control step)
+
+| Variant | 15 × 0.1 s p50 / p95 | 10 × 0.15 s p50 / p95 |
+|---|---|---|
+| A, 1024 | 26 / 32 ms | 16 / 20 ms |
+| A, 512 / 256 | 14 / 22, 11 / 19 ms | 9 / 10, 7 / 10 ms |
+| B, top 32 / 64 / 128 | 27 / 33 ms (all three) | 17 / 21 ms |
+| C, 1024 | 25 / 30 ms | 15 / 19 ms |
+
+The world model adds 1–3 ms; the rest is the SIT-LMPC planner. Method: real planner with the known model on the
+replay benchmark, minus its bicycle rollout, plus the world-model parts timed on the GPU with random weights
+(timing does not depend on training). Jetson numbers decide the car variant.
+
+## 11. Data flow diagrams
+
+### 11.1 Training
+
+```mermaid
+flowchart LR
+  D["data/f1tenth-track<br/>episodes (.npz)"] --> W["4 s windows<br/>LiDAR 64 beams, log range, noise<br/>9 sensor features, PF pose"]
+  W --> F["Filtering scan<br/>x_pred = f_ST + residual<br/>h = GRU, s ~ q(s | h, e)"]
+  F --> A["Anchor A(h, s)<br/>vs true steering, speed,<br/>yaw rate, slip"]
+  F --> R["Decoders<br/>LiDAR, IMU, wheel NLL"]
+  F --> K["KL<br/>d vs p(d | h)<br/>c vs random walk"]
+  F --> C["Condition head<br/>c vs true grip, mass"]
+  F --> P["1 s open-loop rollouts<br/>state, LiDAR, consistency"]
+  W --> T["Teacher-forced residual<br/>from true states"]
+  A & R & K & C & P & T --> L["Weighted total<br/>AdamW, clip 1, bad-batch guard"]
+  L --> S["best.msgpack<br/>TensorBoard"]
+```
+
+### 11.2 On the car / in the sim loop (step F, planned)
+
+```mermaid
+flowchart LR
+  L["LiDAR /scan"] --> O["64 log-ranges"]
+  I["IMU, wheel speed"] --> F9["9 sensor features"]
+  PF["particle filter pose"] --> F9
+  U["last command"] --> F9
+  O & F9 --> FS["Filter step<br/>h, s, anchor"]
+  PF --> X["x̃ = PF pose + anchor"]
+  FS --> X
+  FS --> TAG["safe set tags (c)"]
+  X & FS --> PL["LMPPI<br/>A: latent rollout of 1024<br/>B: screen + top N<br/>C: cheap"]
+  PL --> CL["cost: progress, track limits,<br/>safe set, value,<br/>LiDAR clearance"]
+  CL --> CMD["steering + speed command"]
+  TAG --> PL
+```
+
+## 12. Files and commands
+
+| File | What |
+|---|---|
+| `src/sit_lmpc/world/rssm.py` | model, bicycle step, latent and cheap rollouts |
+| `src/sit_lmpc/world/rssm_data.py` | dataset loading, LiDAR preprocessing, windows |
+| `src/sit_lmpc/world/rssm_train.py` | losses, training loop, TensorBoard logging |
+| `src/sit_lmpc/world/rssm_plots.py` | TensorBoard figures |
+| `configs/train-rssm.yaml` | training settings |
+| `scripts/collect_track_data.py` | on-track data collector |
+| `tracks/levine_sim/` | Levine sim map in the planner's track format |
+| `scripts/time_world_model.py`, `scripts/combine_timing.py`, `scripts/jetson_timing.sh` | timing test |
+| `tests/unit/test_rssm.py` | unit tests |
+
+| Task | Command (from the repo root, `~/sim_ws/.venv`) |
+|---|---|
+| Collect data | `python scripts/collect_track_data.py --out data/f1tenth-track` |
+| Add Levine episodes | `python scripts/collect_track_data.py --out data/f1tenth-track --maps levine --episodes 200 --start-index 150 --speed-cap levine=2.0,5.0 --append` |
+| Train | `python -m sit_lmpc.world.rssm_train --config configs/train-rssm.yaml --output runs/rssm-v2` |
+| Watch | `tensorboard --logdir runs --host localhost --port 6006` |
+| Timing (laptop) | `python scripts/time_world_model.py --out results/wm-timing/laptop-parts.json` |
+| Timing (Jetson, one command) | `bash scripts/jetson_timing.sh` |
+| Tests | `JAX_PLATFORMS=cpu python -m pytest -q tests/unit/test_rssm.py` |
+
+## 13. Change log: what was changed and why
 
 | Date | Change | Because | Effect |
 |---|---|---|---|
@@ -128,7 +310,7 @@ The world model adds 1–3 ms; the rest is the SIT-LMPC planner itself. Jetson n
 | 11-22 | Spin tails cut from the data; clip 10 → 1; non-finite updates dropped; bad-batch guard | `rssm-v1` blew up at step 9,800 (losses ×100) on batches with out-of-range spin states | `rssm-v2` past step 10,500 with no spike, no skipped batch |
 | 11-22 | Condition-head weight 1 → 3 | grip head only reached 0.85 in v1 (1.0 = no skill) | v2: 0.76 at step 10,500 and falling |
 
-## 8. Results so far (validation)
+## 14. Results so far (validation)
 
 | Run | Step | Anchor error: steering / speed / yaw rate / slip | 1 s position | Grip head | Note |
 |---|---|---|---|---|---|
@@ -136,7 +318,9 @@ The world model adds 1–3 ms; the rest is the SIT-LMPC planner itself. Jetson n
 | rssm-v2 | 10,500 (best so far) | 0.015 / 0.28 / 0.10 / 0.019 | 0.66 m | 0.76 | training |
 | v3 encoder (offline eval, different data) | — | steering 0.010, speed 0.44, slip 0.020 | 0.53 m (median, 1 s) | grip R² 0.91 (lap average) | not directly comparable yet; step E compares on the same data |
 
-## 9. Open items
+Grip head: mean squared error on standardised grip and mass; 1.0 = no better than guessing the average.
+
+## 15. Open items
 
 | Item | Plan |
 |---|---|
