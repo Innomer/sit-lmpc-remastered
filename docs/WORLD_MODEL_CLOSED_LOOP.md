@@ -1,94 +1,96 @@
 # World-model SIT-LMPC: closed-loop status
 
-ESE 6150 Team 8, 2026-11-23. Branch `world-model`. Full documentation: `docs/WORLD_MODEL_RSSM.md`.
+ESE 6150 Team 8, 23 Nov 2026, branch `world-model`. Details of the model and training are in `docs/WORLD_MODEL_RSSM.md`.
 
-## 1. Summary
+## Summary
 
-We built an adaptive world model (RSSM with LiDAR, IMU, wheel speed and PF pose, physics-anchored) and plugged it into
-the SIT-LMPC planner. Offline it works: it beats the bicycle model + EKF pipeline on 1 s prediction,
-estimates slip and yaw rate well, tracks grip, and reconstructs and predicts LiDAR. **In closed loop it crashes within
-one to three learned laps.** Every crash replay shows the same thing: the planner picks a plan that spins the car, and
-the world model predicts that plan will not spin. More and better data has not fixed this. We think the planner is
-exploiting the learned model's errors at the handling limit; this is the open problem.
+The RSSM world model (LiDAR, IMU, wheel speed and PF pose in, bicycle model inside the prediction) is running inside
+the SIT-LMPC planner. Offline it predicts better than the bicycle model with an EKF, gives good slip and yaw-rate
+estimates, tracks grip and predicts LiDAR scans. In closed loop the car crashes within one to three learned laps. In
+each crash the planner chose a manoeuvre that spun the car, while the model predicted it would stay stable. Adding
+more data, including the planner's own laps and hard manoeuvres, has not fixed this. Our current explanation is that
+the planner keeps finding the places where the learned model is too optimistic, and those are at the grip limit.
 
-## 2. What we built
+## System
 
-| Part | What it is |
-|---|---|
-| World model | RSSM: GRU memory h (128) + latent s = slow condition part c (8, random-walk prior) + fast part d (24, learned prior). Inputs every 0.1 s: 64-beam LiDAR, IMU, wheel speed, PF pose, last command |
-| Physics anchor | the 7-dim physical state is rolled forward inside the model: x′ = bicycle(x, u) + learned residual(x, u, h, s); an anchor head maps (h, s) to steering, speed, yaw rate, slip |
-| Training | ELBO (LiDAR and IMU/wheel reconstruction + KL), anchor loss, 1 s open-loop prediction loss, condition head (grip, mass) in sim. 523k parameters, ~30 min per run on a laptop GPU |
-| Data | 612k transitions (0.1 s each) on Spielberg, custom1 and the Levine sim map: random vehicles, grip/mass changes and low-grip patches, the planner's own laps from 35 earlier closed-loop runs (179k steps), and hard throttle/brake/steering episodes |
-| Planner integration | the filter runs every step and gives the planner its state estimate; LMPPI rolls all 1024 candidates through the full world model (15 × 0.1 s). Planning time 38 ms median, 60 ms p95 on the laptop |
+- World model: GRU memory (128) plus a latent split into a slow condition part (8, random-walk prior) and a fast part
+  (24). Inputs every 0.1 s: 64-beam LiDAR, IMU, wheel speed, PF pose and the last command.
+- The physical state is rolled forward inside the model as bicycle(x, u) plus a learned residual. An anchor head gives
+  steering, speed, yaw rate and slip.
+- Trained with LiDAR and IMU/wheel reconstruction, KL, an anchor loss, a 1 s prediction loss and a grip/mass head.
+  523k parameters, about 30 min per run on a laptop GPU.
+- Data: 612k steps of 0.1 s on Spielberg, custom1 and the Levine sim map. Random vehicles, grip and mass changes,
+  low-grip patches, 179k steps of the planner's own laps from earlier runs, and hard throttle/brake/steering episodes.
+- In the planner, the model is filtered every step and LMPPI rolls all 1024 candidates through it for 15 × 0.1 s.
+  Planning takes 38 ms median and 60 ms p95 on the laptop.
 
-## 3. What works (offline, held-out test set, 4,688 one-second predictions)
+## Offline results
 
-| | Bicycle + EKF (what the car has) | Our earlier encoder model (v3) | **World model (rssm-v7)** |
+Held-out test set, 4,688 predictions of 1 s. Each model starts from its own sensor-based state estimate.
+
+| | Bicycle + EKF | v3 encoder model | World model (rssm-v7) |
 |---|---|---|---|
-| 1 s position error, median | 0.44 m | 0.22 m | 0.29 m |
-| 1 s position error, 90% under | 1.55 m | 0.64 m | 0.81 m |
-| Right after a grip change, median | 0.52 m | 0.26 m | 0.31 m |
-| State estimate RMSE: steering / speed / yaw rate / slip | 0.029 / 0.25 / 0.050 / 0.044 | 0.012 / 0.21 / 0.132 / 0.019 | 0.013 / 0.22 / 0.058 / 0.018 |
-| Grip error (averaged over 8 s) | — | 0.133 | **0.095** |
+| Position error after 1 s, median | 0.44 m | 0.22 m | 0.29 m |
+| Position error after 1 s, 90th percentile | 1.55 m | 0.64 m | 0.81 m |
+| Same, within 2 s of a grip change (median) | 0.52 m | 0.26 m | 0.31 m |
+| Steering / speed / yaw rate / slip RMSE | 0.029 / 0.25 / 0.050 / 0.044 | 0.012 / 0.21 / 0.132 / 0.019 | 0.013 / 0.22 / 0.058 / 0.018 |
+| Grip error, 8 s average | – | 0.133 | 0.095 |
 
-Reconstructed LiDAR lines up with the real walls, and 1 s-ahead scans match closely (TensorBoard figures in
-`runs/rssm-v7/tb`). Each model starts from its own sensor-based estimate; "bicycle from the true state" would be
-near-perfect because the simulator *is* the bicycle model with nominal parameters.
+Reconstructed LiDAR matches the walls and the 1 s-ahead scans are close to the real ones (TensorBoard logs in
+`runs/rssm-v7/tb`). The bicycle model started from the true state would be almost perfect here, since the simulator
+itself is the bicycle model with nominal parameters.
 
-Cumulative 1 s position error from an earlier evaluation (world model `rssm-v5`, 2,408 predictions on the original
-test set); the picture for v7 is very similar. Higher and further left is better.
+The plot below is from an earlier evaluation (rssm-v5, 2,408 predictions); v7 looks much the same.
 
 ![1 s prediction error, cumulative](figures/rssm_cdf_position_1s.png)
 
-## 4. Where we are stuck: closed loop
+## Closed-loop runs
 
-All runs: Spielberg, ROS lockstep sim, 5 pure-pursuit warm-up laps, then SIT-LMPC with the world model.
+Spielberg, ROS lockstep sim, 5 pure-pursuit warm-up laps, then SIT-LMPC with the world model.
 
-| Run | Result |
+| Run | What happened |
 |---|---|
-| rssm-v5, normal warm-up (up to 14.7 m/s) | crashed 3.4 s into the first learned lap. The training data on Spielberg stopped at 10.3 m/s, so the model was outside its data |
-| rssm-v5, warm-up capped at 9 m/s (twice) | crashed at the first corner, 9–10 s into the first learned lap, both times |
-| Known model, same capped warm-up (control) | 8/8 laps, no crash (but laps got slower: 68.8, 68.3, 83.7 s; slow warm-up is a poor setup for SIT-LMPC in general) |
-| rssm-v6 (+ planner's own laps and hard-manoeuvre data), normal warm-up | **2 learned laps, both faster than warm-up (37.4 s, 36.7 s vs 38.0 s)**, then a crash early in lap 8 |
-| rssm-v7 (+ more spin data, high-slip windows oversampled) | 1 learned lap (38.3 s), then a crash at ~14 m/s in lap 7 |
+| rssm-v5, normal warm-up | Crashed 3.4 s into the first learned lap. The warm-up reached 14.7 m/s; the Spielberg training data only went to 10.3 m/s. |
+| rssm-v5, warm-up capped at 9 m/s (2 runs) | Crashed at the first corner after 9–10 s, both times. |
+| Known model, same capped warm-up | All 8 laps, no crash. Laps got slower though (68.8, 68.3, 83.7 s), so the capped warm-up is not a good setup in general. |
+| rssm-v6 (added the planner's laps and hard manoeuvres), normal warm-up | Two learned laps at 37.4 s and 36.7 s, both faster than the 38.0 s warm-up. Crashed early in lap 8. |
+| rssm-v7 (more spin data, high-slip windows oversampled) | One learned lap (38.3 s), then crashed at about 14 m/s in lap 7. |
 
-Replays of the crashed laps (`scripts/replay_rssm_crash.py`): at each step, predict 1.5 s ahead with the controls that
-were actually applied, and compare with what happened.
+We replayed each crashed lap (`scripts/replay_rssm_crash.py`): at every step, predict 1.5 s ahead with the controls that
+were actually used and compare with what happened.
 
-| Crash | True slip 1.5 s later | World model predicted | 1.5 s position error before the crash: world model (own estimate) / world model (true state) / bicycle (true state) |
+| Crash | Slip 1.5 s later (actual) | Slip predicted by the world model | 1.5 s position error: world model from its estimate / world model from the true state / bicycle from the true state |
 |---|---|---|---|
-| v5, capped warm-up, first corner, ~3 m/s | 1.07 rad (spin) | 0.12 rad | 0.33 / 0.14 / 0.00 m (median over the lap) |
-| v6, lap 8, ~8 m/s | 1.11 rad (spin) | 0.32 rad | 0.47 / 0.36 / 0.01 m (last 10 steps) |
-| v7, lap 7, ~14 m/s | −0.75 rad (spin) | −0.19 rad | 0.80 / 0.82 / 0.00 m (last 10 steps) |
+| v5, first corner, ~3 m/s | 1.07 rad | 0.12 rad | 0.33 / 0.14 / 0.00 m (median over the lap) |
+| v6, lap 8, ~8 m/s | 1.11 rad | 0.32 rad | 0.47 / 0.36 / 0.01 m (last 10 steps) |
+| v7, lap 7, ~14 m/s | −0.75 rad | −0.19 rad | 0.80 / 0.82 / 0.00 m (last 10 steps) |
 
-## 5. Our diagnosis
+## What we think is going on
 
-1. **The planner exploits the model's errors.** Every step LMPPI picks the plan with the best predicted outcome. Plans
-   where the model is wrongly optimistic (an aggressive corner entry it thinks will not spin) score best, so those are
-   the ones it executes. Better data shrinks the errors, but the planner keeps pushing until it finds the remaining
-   ones, and they sit at the handling limit, where data is rarest.
-2. **The learned residual damps spins.** Even from the true state, the world model is 0.8 m off just before the v7
-   crash, while the bicycle model is exact. The residual is learned mostly from normal driving; near the limit its
-   small biases suppress the slip runaway that the physics alone would predict.
-3. **Spin onset is rare in any realistic data.** After all additions, steps with slip above 0.5 rad are under 1% of
-   the training data.
+- LMPPI picks the candidate with the best predicted outcome at every step. If the model is too optimistic about an
+  aggressive corner entry, that candidate wins. More data reduces the error but the planner still finds what is left,
+  and that is always near the limit where there is least data.
+- The learned residual seems to damp spins. Just before the v7 crash the world model is 0.8 m off even when started
+  from the true state, while the bicycle model is exact. The residual is mostly fit on normal driving, and near the
+  limit it holds back the slip growth the physics would otherwise predict.
+- Spin onset is rare in the data. Even now, steps with slip above 0.5 rad are under 1% of the training set.
 
-## 6. What we tried
+## What we tried
 
-| Tried | Why | Result |
+| Change | Reason | Result |
 |---|---|---|
-| Cap the warm-up at 9 m/s | keep the planner inside the model's data | still crashed; known model with the same setup did not |
-| Add 232 fast Spielberg episodes (8–14 m/s) | speed coverage | 88% crashed in collection; only 1.4% of Spielberg data above 11 m/s |
-| Add the planner's own laps from 35 earlier runs (179k steps) | train on the driving the planner actually does | first clean learned laps (v6) |
-| Add 450 hard throttle/brake/steering episodes | teach the model where the car spins | part of v6; spin still under-predicted |
-| Keep more of each spin (cut at slip 1.2 rad instead of 1.0) and draw 15% of each batch from high-slip windows | more practice on spin onset | v7: offline about the same, spin still under-predicted |
-| State estimate from the posterior mean instead of a sample | remove sampling noise | clear offline gain (median 0.34 → 0.29 m), no closed-loop fix |
+| Warm-up capped at 9 m/s | keep the planner inside the model's data | still crashed; the known model did not |
+| 232 fast Spielberg episodes (8–14 m/s) | speed coverage | 88% crashed during collection, only 1.4% of Spielberg data ended up above 11 m/s |
+| The planner's own laps from 35 earlier runs (179k steps) | train on the driving the planner actually does | first clean learned laps (v6) |
+| 450 hard throttle/brake/steering episodes | show the model where the car spins | part of v6; spins still under-predicted |
+| Cut spins at 1.2 rad instead of 1.0, and draw 15% of each batch from high-slip windows | more spin examples | v7: offline about the same, spins still under-predicted |
+| Posterior mean instead of a sample for the state estimate | remove sampling noise | offline median 0.34 → 0.29 m, no closed-loop change |
 
-## 7. Options we see
+## Possible next steps
 
-| Option | Idea | Our concern |
+| Idea | How | Downside |
 |---|---|---|
-| Uncertainty-aware planning | the model predicts its own uncertainty (ensemble or latent spread); LMPPI penalises or rejects candidates where it is high | the model must know when it is wrong exactly where it has least data; needs calibration |
-| Physics cross-check in the planner | also roll each candidate through the bicycle model; reject plans where it predicts a spin or where the two models strongly disagree | on the real car the bicycle model is itself approximate; partly hides what the world model gets wrong |
-| Make the physics carry the dynamics (latent sets grip and cornering stiffness, small residual) | spins come from the physics and cannot be damped away | considered; we are not keen on it |
-| Limit the residual near the limit | penalise or switch off the residual at high slip | considered; we are not keen on it |
+| Uncertainty in the planner | the model gives an uncertainty (ensemble or latent spread) and LMPPI penalises uncertain candidates | the model has to know it is wrong exactly where it has the least data; needs calibration |
+| Bicycle-model check | also roll candidates through the bicycle model and drop ones where it predicts a spin or disagrees a lot with the world model | the bicycle model is only approximate on the real car, and it covers up the world model's errors |
+| Grip and stiffness from the latent instead of a free residual | spins come from the physics | not pursued |
+| Turn the residual down at high slip | limit the damping effect | not pursued |
