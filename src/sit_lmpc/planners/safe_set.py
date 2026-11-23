@@ -53,7 +53,9 @@ def build_hull(points, bucket=10, dtype=None):
     # Build the mask on the host: JAX arange/comparison would compile separately
     # for each facet count while the car is running.
     mask = np.arange(padded) < count
-    return Hull(jnp.asarray(array, dtype=dtype), jnp.asarray(mask))
+    if dtype is not None:
+        array = array.astype(np.dtype(dtype))
+    return Hull(jax.device_put(array), jax.device_put(mask))
 
 
 def build_safe_geometry(points, config, dtype=None):
@@ -132,9 +134,10 @@ class PrecompiledHullEvaluator:
         self.precompile_many((len(states),))
         result = None
         maximum = self.sizes[-1]
-        for start in range(0, len(hull.mask), maximum):
-            end = min(start + maximum, len(hull.mask))
-            block = Hull(hull.equations[start:end], hull.mask[start:end])
+        equations, mask = np.asarray(hull.equations), np.asarray(hull.mask)
+        for start in range(0, len(mask), maximum):
+            end = min(start + maximum, len(mask))
+            block = Hull(jax.device_put(equations[start:end]), jax.device_put(mask[start:end]))
             distance = self.compiled_many[len(states), end - start](states, block)
             result = distance if result is None else jnp.maximum(result, distance)
         return result
@@ -180,9 +183,10 @@ class PrecompiledHullEvaluator:
         # Oversized hulls reuse the same bounded executables; never drop facets or
         # add a new hull scorer to the table during driving.
         result = None
-        for start in range(0, len(hull.mask), maximum):
-            end = min(start + maximum, len(hull.mask))
-            block = Hull(hull.equations[start:end], hull.mask[start:end])
+        equations, mask = np.asarray(hull.equations), np.asarray(hull.mask)
+        for start in range(0, len(mask), maximum):
+            end = min(start + maximum, len(mask))
+            block = Hull(jax.device_put(equations[start:end]), jax.device_put(mask[start:end]))
             distance = self.compiled[len(states), end - start](states, block)
             result = distance if result is None else jnp.maximum(result, distance)
         return result
