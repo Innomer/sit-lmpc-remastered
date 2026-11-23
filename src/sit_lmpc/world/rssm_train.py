@@ -84,10 +84,10 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
         }
         aux = {"anchor": anchor, "lidar_mean": l_mean, "lidar_log_std": l_log_std,
                "condition": condition * CONDITION_SCALE + CONDITION_MEAN}
-        carry = (h_next, s_next, x_next, q_mean[:c], jnp.exp(2 * q_log_std[:c]))
+        carry = (h_next, s_next, jax.lax.stop_gradient(x_next), q_mean[:c], jnp.exp(2 * q_log_std[:c]))
         return carry, (out, aux, h_next, s_next, x_next)
 
-    init = (h0, s0, x0, q_mean[:c], jnp.exp(2 * q_log_std[:c]))
+    init = (h0, s0, jax.lax.stop_gradient(x0), q_mean[:c], jnp.exp(2 * q_log_std[:c]))
     _, (terms, filtered, hs, ss, xs) = jax.lax.scan(step, init, (jnp.arange(1, length + 1), keys[1:]))
     hs = jnp.concatenate([h0[None], hs])
     ss = jnp.concatenate([s0[None], ss])
@@ -236,7 +236,8 @@ def main():
     weights = config["weights"]
     settings = config["settings"]
     schedule = optax.warmup_cosine_decay_schedule(0.0, config["learning_rate"], min(500, steps // 2), steps, config["learning_rate"] * 0.05)
-    optimizer = optax.chain(optax.clip_by_global_norm(config["clip"]), optax.adamw(schedule, weight_decay=1e-5))
+    optimizer = optax.chain(optax.zero_nans(), optax.clip_by_global_norm(config["clip"]),
+                            optax.adamw(schedule, weight_decay=1e-5))
     opt_state = optimizer.init(params)
 
     def batch_terms(params, batch, key):
@@ -264,13 +265,23 @@ def main():
     run_one = jax.jit(lambda p, b, k: run_sequence(p, model, st_params, dt, integrator, b, k, settings, obs_mean, obs_std))
     history = []
     best = np.inf
+    running = None
+    skipped = 0
+    worse = 0
     started = time.time()
     key = jax.random.key(config["seed"])
     for step in range(1, steps + 1):
         key, sub = jax.random.split(key)
         batch = train.sample(rng, config["batch"], config["window"])
         kl_scale = min(1.0, step / config["kl_warmup"])
-        params, opt_state, value, terms = update(params, opt_state, batch, sub, kl_scale)
+        new_params, new_opt_state, value, terms = update(params, opt_state, batch, sub, kl_scale)
+        value_f = float(value)
+        if running is not None and step > 500 and (not np.isfinite(value_f) or value_f > config["skip_factor"] * running):
+            skipped += 1
+            writer.add_scalar("train/skipped_batches", skipped, step)
+            continue
+        params, opt_state = new_params, new_opt_state
+        running = value_f if running is None else 0.98 * running + 0.02 * value_f
         if step % 50 == 0:
             scalars(writer, "train", terms, step)
             writer.add_scalar("train/total", float(value), step)
@@ -281,7 +292,7 @@ def main():
             mean = {k: float(np.mean([np.asarray(t[k]) for t in val_terms])) for k in val_terms[0] if k != "anchor_rmse"}
             mean["anchor_rmse"] = np.mean([np.asarray(t["anchor_rmse"]) for t in val_terms], axis=0).tolist()
             selection = sum(mean[k] for k in config["selection"])
-            record = {"step": step, "train_total": float(value), "selection": selection,
+            record = {"step": step, "train_total": float(value), "selection": selection, "skipped": skipped,
                       "elapsed_min": (time.time() - started) / 60, "val": mean}
             history.append(record)
             scalars(writer, "val", {k: v for k, v in mean.items()}, step)
@@ -297,6 +308,7 @@ def main():
                     log_comparisons(comparison, label, b, aux)
                     comparison.close()
             writer.flush()
+            worse = worse + 1 if selection > config["stop_factor"] * best else 0
             if selection < best:
                 best = selection
                 (output / "best.msgpack").write_bytes(serialization.to_bytes(params))
@@ -307,6 +319,10 @@ def main():
                   f"v {rmse[1]:.2f} r {rmse[2]:.2f} slip {rmse[3]:.3f})  pred {mean['prediction']:.2f}  "
                   f"1s pos {mean['position_1s']:.2f} m  lidar {mean['lidar']:.3f}  kl_c {mean['kl_c']:.2f} "
                   f"kl_d {mean['kl_d']:.2f}  cond {mean['condition']:.3f}  {record['elapsed_min']:.1f} min", flush=True)
+            if worse >= config["stop_patience"]:
+                print(f"early stop at step {step}: validation {config['stop_factor']}x worse than best for "
+                      f"{worse} evaluations", flush=True)
+                break
     (output / "summary.json").write_text(json.dumps({"best_selection": best, "steps": steps,
                                                      "final": history[-1]}, indent=2) + "\n")
 

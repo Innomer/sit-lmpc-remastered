@@ -19,6 +19,7 @@ from sit_lmpc.dynamics.st import rk4
 BODY_INDEX = jnp.array([2, 3, 5, 6])
 BODY_SCALE = jnp.array([0.4, 10.0, 2.0, 0.3])
 CONTROL_SCALE = jnp.array([3.2, 9.51])
+DECODER_MIN_LOG_STD = -3.0
 BODY_LOW = jnp.array([-0.42, 0.0, -10.0, -1.2])
 BODY_HIGH = jnp.array([0.42, 20.0, 10.0, 1.2])
 
@@ -95,10 +96,12 @@ class RSSM(nn.Module):
         return BODY_LOW + (BODY_HIGH - BODY_LOW) * jax.nn.sigmoid(raw)
 
     def decode_lidar(self, h, s):
-        return self.gaussian(self.lidar_decoder(jnp.concatenate([h, s], -1)))
+        mean, log_std = self.gaussian(self.lidar_decoder(jnp.concatenate([h, s], -1)))
+        return mean, jnp.maximum(log_std, DECODER_MIN_LOG_STD)
 
     def decode_sensors(self, h, s, u):
-        return self.gaussian(self.sensor_decoder(jnp.concatenate([h, s, u / CONTROL_SCALE], -1)))
+        mean, log_std = self.gaussian(self.sensor_decoder(jnp.concatenate([h, s, u / CONTROL_SCALE], -1)))
+        return mean, jnp.maximum(log_std, DECODER_MIN_LOG_STD)
 
     def condition_readout(self, s):
         return self.condition_head(s[..., :self.config.condition])
