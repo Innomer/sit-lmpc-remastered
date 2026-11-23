@@ -671,3 +671,11 @@ Open questions:
 
 Next steps (agreed roadmap): the IRL branch (Levine lobby,
 particle-filter odom, VESC IMU yaw rate, steering limit 0.34, delay compensation, Jetson setup).
+
+### Hull recompile fix (2026-11-22)
+
+The safe-set hull code compiled small GPU programs during control steps whenever the hull's facet count changed
+(fixed in "Safe set: stop hull recompiles while driving"). It only cost wall-clock planning time. All ros-sim
+baselines and experiments before the fix ran on the lockstep bridge, where the simulator waits for the planner, so
+their driving results (lap times, crashes, trajectories) stay valid. Planning-time numbers recorded before the fix
+(p95, steps over 100 ms) include the recompiles and overstate the cost, most of all with the 15-step horizon.
