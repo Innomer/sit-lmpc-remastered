@@ -706,3 +706,11 @@ Written and dry-run in the sim; not yet run on the car. Full guide: `docs/CAR_DE
   import → Jazzy container or Jazzy install. JAX GPU on the Orin is unverified; CPU LMPPI is ~500 ms/step.
 - Pre-existing test failures (not from this work): `test_experiment_resume` (gym `fullscale_vehicle_params`),
   `test_bnn_belief` quick-load, `test_probability_safety` errors.
+
+### Hull recompile fix (2026-11-22)
+
+The safe-set hull code compiled small GPU programs during control steps whenever the hull's facet count changed
+(fixed in "Safe set: stop hull recompiles while driving"). It only cost wall-clock planning time. All ros-sim
+baselines and experiments before the fix ran on the lockstep bridge, where the simulator waits for the planner, so
+their driving results (lap times, crashes, trajectories) stay valid. Planning-time numbers recorded before the fix
+(p95, steps over 100 ms) include the recompiles and overstate the cost, most of all with the 15-step horizon.
