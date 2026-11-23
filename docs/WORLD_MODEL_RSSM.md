@@ -15,10 +15,11 @@ Contents: 1 Summary · 2 Differences from v3 · 3 Notation · 4 Inputs · 5 Mode
 | What it is | A recurrent state-space world model: memory h (GRU) + stochastic latent s, filtered every 0.1 s from LiDAR, IMU, wheel speed and PF pose, with the bicycle model kept inside its prediction |
 | Size | 523,269 parameters (GRU 128, latent 8 + 24, LiDAR 64 beams) |
 | Data | 789 on-track episodes, 293k transitions, 3 maps, 1080-beam LiDAR, grip/mass changes and low-grip patches |
-| Training | `rssm-v3` stable over 30,000 steps (v1 and v2 went unstable, fixed); best: 1 s position error 0.62 m, slip error 0.019 rad, yaw rate 0.086 rad/s; reconstructed LiDAR walls line up with the real ones; grip head still weak (0.80) |
+| Training | v3 and v5 stable over 30,000 steps (v1 and v2 went unstable, fixed); reconstructed LiDAR walls line up with the real ones; grip head weak (~0.8) but usable |
+| Test results (`rssm-v5`, posterior mean) | 1 s position error median 0.29 m (v3 encoder 0.25 m, bicycle from EKF 0.58 m); best yaw-rate estimate of the three (0.069 rad/s) |
 | Planner | variant A (full latent rollout, 1024 candidates, 15 × 0.1 s) is the default for sim work; B, C and 10 × 0.15 s will be options |
 | Timing | laptop: every variant ~30 ms p95 per step; Jetson not measured yet (`bash scripts/jetson_timing.sh`) |
-| Next | stronger grip head (looser KL on c), offline evaluation (step E), planner integration (step F) |
+| Next | planner integration (step F) |
 
 ## 2. How it differs from the v3 encoder model
 
@@ -173,6 +174,33 @@ as the v3 KL bug: a broken or exploited KL must not decide the checkpoint).
 | Evaluation | every 500 steps on 8 fixed validation batches; figures every 500, comparison charts every 2,500 | |
 | Saved | `best.msgpack`, `last.msgpack`, `observation_scale.npz`, `history.json`, `summary.json`, `config.yaml`, `tb/` | |
 
+### 8.1 What a step, window, transition and pass mean
+
+| Term | Meaning here |
+|---|---|
+| Transition | one 0.1 s step: the car was in state $x_t$, control $u_t$ was applied, 0.1 s later it was in $x_{t+1}$ (with the sensor readings and LiDAR at both times). The training split has ~228,000 transitions (~6.3 h of driving) |
+| Window | a 4 s slice of one episode: 40 transitions, i.e. 41 states, 40 controls, 41 sets of sensor features, PF poses, 64-beam LiDAR scans and true grip/mass. The model filters over the window and makes 1 s predictions from several points in it |
+| Training step | one weight update from one batch of 32 windows = 1,280 transitions |
+| 30,000 steps | 30,000 × 32 = 960,000 windows ≈ 38 million transitions seen (~28 min on the laptop GPU) |
+| Pass (epoch) | every training transition seen once. 38 M / 228 k ≈ **170 passes**: each 0.1 s moment was used ~170 times on average, in overlapping windows |
+
+### 8.2 How windows are sampled across maps
+
+`TrackData.sample`: pick an episode at random, every episode (at least 41 steps long) equally likely, then a random
+4 s start inside it. The map mix therefore follows the number of episodes, not the amount of driving:
+
+| Map | Share of training windows | Share of the driving data |
+|---|---|---|
+| Spielberg | 46.5% | 43.6% |
+| custom1 | 15.6% | 20.1% |
+| Levine sim | 37.9% | 36.3% |
+
+Close to proportional across maps; custom1 (long, 60 s episodes) slightly under-sampled. Inside a map, short episodes
+(many of them ended in a crash) get more windows per second of driving, so the last seconds before losing grip are
+weighted up. Not a deliberate choice; sampling by transition or weighting Levine up are options.
+
+### 8.3 TensorBoard
+
 TensorBoard (`tensorboard --logdir runs`, localhost:6006):
 
 | Tab | Content |
@@ -313,24 +341,119 @@ flowchart LR
 | 11-22 | TensorBoard: curves, custom-scalar comparisons, figures, top-down LiDAR | user wanted to see training, reconstructions and outputs | localhost:6006 |
 | 11-22 | Spin tails cut from the data; clip 10 → 1; non-finite updates dropped; bad-batch guard | `rssm-v1` blew up at step 9,800 (losses ×100) on batches with out-of-range spin states | `rssm-v2` past step 10,500 with no spike, no skipped batch |
 | 11-22 | Condition-head weight 1 → 3 | grip head only reached 0.85 in v1 (1.0 = no skill) | v2: 0.74–0.76; v3: 0.78–0.80 |
+| 11-23 | `rssm-v5`: speed weighted 3× in the anchor loss (per-variable anchor weights), prediction weight 0.3 → 0.6 | offline evaluation: RSSM speed estimate 0.29 m/s vs 0.18 for v3, 1 s error 0.35 m vs 0.25 m | stable; small mixed change (median 0.35 → 0.34 m, speed 0.29 → 0.28 m/s) |
+| 11-23 | State estimate from the posterior mean, not a random sample, in evaluation and planning (`run_sequence(..., sample=False)`); training still samples | the RSSM's estimates used a random draw of the latent, which adds noise the v3 encoder (means) does not have | `rssm-v5`: median 0.34 → 0.29 m, speed 0.28 → 0.25 m/s, yaw rate 0.097 → 0.069 rad/s |
 | 11-22 | Prediction weight 1 → 0.3; filtered state fed back without gradient; decoder noise floor (log σ ≥ −3); learning rate 3e-4 → 1e-4; early stop | `rssm-v2` drifted from step ~15,000 with all losses rising together (no single bad batch): prediction was ~90% of the loss and backpropagated through 10 GRU steps, the filter's own estimate was fed back with gradients across the window, decoders could become overconfident, learning rate still ~2.3e-4 | `rssm-v3` stable for all 30,000 steps and the best of the three; several changes at once, so the decisive one is not isolated |
 
-## 14. Results so far (validation)
+## 14. Results
+
+### 14.1 Training validation (per training run)
 
 | Run | Step | Anchor error: steering / speed / yaw rate / slip | 1 s position | Grip head | Note |
 |---|---|---|---|---|---|
 | rssm-v1 | 9,000 (best) | 0.016 / 0.30 / 0.12 / 0.025 | 0.69–0.78 m | 0.85 | unstable afterwards |
 | rssm-v2 | 10,500 (best) | 0.015 / 0.28 / 0.10 / 0.019 | 0.66 m | 0.76 | drifted from step ~15,000 |
 | **rssm-v3** | **26,500 (best)** | **0.014 / 0.27 / 0.086 / 0.019** | **0.62 m** | 0.80 | stable to 30,000 (final 0.014 / 0.27 / 0.084 / 0.018, 0.64 m); LiDAR NLL −1.19 |
+| rssm-v4 | 18,000 (stopped) | 0.016 / 0.30 / 0.095 / 0.020 | 0.69 m | 0.83 | looser random walk on c (0.2); no better than v3 |
+| rssm-v5 | 17,000 (best) | 0.017 / 0.26 / 0.10 / 0.022 | 0.69 m | 0.79 | speed weighted 3×, prediction 0.6; stable to 30,000 |
 | v3 encoder (offline eval, different data) | — | steering 0.010, speed 0.44, slip 0.020 | 0.53 m (median, 1 s) | grip R² 0.91 (lap average) | not directly comparable yet; step E compares on the same data |
 
 Grip head: mean squared error on standardised grip and mass; 1.0 = no better than guessing the average.
+
+### 14.2 Offline evaluation on the test split (`scripts/eval_world_models.py`)
+
+Protocol, the same for every model:
+
+| Item | Choice | Why |
+|---|---|---|
+| Data | on-track test split: 301 windows of 10 s from 76 test episodes (Spielberg, custom1, Levine) | episodes never used in training or checkpoint selection |
+| Warm-up | every estimator (EKF, v3 encoder, RSSM filter) starts fresh at the window start and gets 2 s to settle | same history for everyone |
+| Predictions | from every 1 s after the warm-up, predict 1 s ahead with the true controls: 2,408 predictions per model | the planner's horizon is 1–1.5 s |
+| Start state | each model starts from its own estimate, built from sensors only | what each would have on the car |
+| Bicycle (EKF) | nominal single-track model from the bicycle-model EKF | the classic setup (known model) |
+| Bicycle (true state) | nominal single-track model from the true state | reference only: model error without estimation error |
+| v3 encoder | residual transition with the encoder's z, from PF pose + encoder state | previous method; trained on the map-free data, never saw these tracks |
+| RSSM | latent rollout (prior mean) from the filtered state | this model |
+| After a change | predictions where the true grip changed within 2 s before or during the prediction (215 of 2,408) | in-lap adaptation |
+
+Results (rows marked "sampled" used a random draw of the latent for the state estimate; "mean" uses the posterior
+mean, which is what the planner uses; see the change log for 11-23):
+
+| Model | 1 s position error, mean | median | 90% under | heading (median) | speed (median) |
+|---|---|---|---|---|---|
+| Bicycle from EKF | 0.81 m | 0.58 m | 1.69 m | 0.176 rad | 0.18 m/s |
+| **v3 encoder** | **0.31 m** | **0.25 m** | **0.59 m** | **0.041 rad** | **0.13 m/s** |
+| RSSM `rssm-v3`, sampled | 0.46 m | 0.35 m | 0.95 m | 0.069 rad | 0.21 m/s |
+| RSSM `rssm-v5`, sampled | 0.45 m | 0.34 m | 0.96 m | 0.070 rad | 0.20 m/s |
+| **RSSM `rssm-v5`, mean** | **0.40 m** | **0.29 m** | **0.87 m** | **0.058 rad** | **0.18 m/s** |
+| Bicycle from true state (reference) | 0.29 m | 0.11 m | 0.81 m | 0.030 rad | 0.00 m/s |
+
+| Median 1 s position error by group | Spielberg | custom1 | Levine | After a grip change |
+|---|---|---|---|---|
+| Bicycle from EKF | 0.71 m | 1.06 m | 0.30 m | 0.59 m |
+| v3 encoder | 0.30 m | 0.42 m | 0.15 m | 0.25 m |
+| RSSM `rssm-v3`, sampled | 0.47 m | 0.60 m | 0.20 m | 0.35 m |
+| RSSM `rssm-v5`, sampled | 0.45 m | 0.59 m | 0.19 m | 0.31 m |
+| **RSSM `rssm-v5`, mean** | **0.42 m** | **0.56 m** | **0.16 m** | **0.30 m** |
+| Bicycle from true state | 0.16 m | 0.49 m | 0.02 m | 0.13 m |
+
+| State estimation RMSE | Steering | Speed | Yaw rate | Slip |
+|---|---|---|---|---|
+| EKF | 0.032 rad | 0.28 m/s | **0.050 rad/s** | 0.054 rad |
+| v3 encoder | **0.009 rad** | **0.18 m/s** | 0.122 rad/s | **0.019 rad** |
+| RSSM `rssm-v3`, sampled | 0.013 rad | 0.29 m/s | 0.081 rad/s | 0.020 rad |
+| RSSM `rssm-v5`, sampled | 0.017 rad | 0.28 m/s | 0.097 rad/s | 0.024 rad |
+| **RSSM `rssm-v5`, mean** | 0.015 rad | 0.25 m/s | **0.069 rad/s** | 0.021 rad |
+
+| Grip absolute error | Every step | Averaged over each window |
+|---|---|---|
+| v3 read-out | 0.117 | 0.085 |
+| RSSM condition head `rssm-v3`, sampled | 0.115 | 0.093 |
+| RSSM condition head `rssm-v5`, mean | 0.120 | 0.105 |
+
+What it means:
+
+| Finding | Detail |
+|---|---|
+| The RSSM works | ~40% lower 1 s error than the bicycle model from the EKF (what the car has today), grip tracking about equal to v3, and it predicts LiDAR, which v3 cannot |
+| The v3 encoder is better at dynamics | 0.25 m vs 0.35 m median, although it never saw on-track data or LiDAR: the map-free training data transfers to real tracks |
+| RSSM's weak spot is its speed estimate | 0.29 m/s RMSE vs 0.18 m/s for v3; a wrong starting speed grows into position error over 1 s |
+| Likely cause | the prediction weight was cut to 0.3 for stability, so LiDAR reconstruction takes a larger share of training than the dynamics |
+| Bicycle from the true state | very accurate on Levine (slow driving) and good overall (0.11 m median), but the car never has the true state: from the EKF it is 5× worse. State estimation is the bottleneck, as found with v3 |
+| `rssm-v5` (speed weighted 3×, prediction weight 0.6) | small, mixed change with sampled estimates: speed 0.29 → 0.28 m/s, median 0.35 → 0.34 m, after a grip change 0.35 → 0.31 m; steering, yaw rate, slip and grip slightly worse. Loss weighting alone does not close the gap to v3 |
+| Posterior mean instead of a sample | the bigger effect: same `rssm-v5` checkpoint, median 0.34 → 0.29 m, speed 0.28 → 0.25 m/s, yaw rate 0.097 → 0.069 rad/s (now the best of the three). The remaining gap to the v3 encoder is 0.04 m median, mostly from the speed estimate |
+
+### 14.3 Figures
+
+Made with `python scripts/plot_wm_summary.py --eval results/wm-eval-v5-mean --label rssm-v5` and
+`python scripts/plot_world_eval.py results/wm-eval-v5-mean` (RSSM = `rssm-v5`, posterior mean).
+
+**Training runs.** Validation error against training step for every RSSM run. v1 (blue) blows up at step 9,800 and
+v2 (orange) drifts from step 15,000; v3 (green) stays stable to the end and is the model in use. Values above the top
+of each panel are cut off.
+
+![RSSM training curves](figures/rssm_training_curves.png)
+
+**Offline evaluation overview.** Top left: 1 s position error per model (bar = median, line to the 90% value). Top
+right: median by map and right after a grip change. Bottom: state-estimate error for each quantity.
+
+![Offline evaluation](figures/rssm_offline_eval.png)
+
+**Cumulative plot (how to read):** for any error on the x-axis, the height of a line is the share of predictions that
+were at least that accurate. Higher and further left is better. Left: all 2,408 test predictions. Right: the 215 made
+within 2 s of a grip change. The v3 encoder (blue) is best overall; the RSSM (orange) is close behind and almost
+overlaps it right after grip changes (up to ~0.5 m error), and both are far better than the bicycle model from the EKF
+(dark grey), which is what the car has without a learned model. The dashed
+line (bicycle from the true state) is a reference the car can never reach, because it needs the exact true state.
+
+![Cumulative 1 s position error](figures/rssm_cdf_position_1s.png)
 
 ## 15. Open items
 
 | Item | Plan |
 |---|---|
-| Grip head still weak (0.80, about 20% of the grip/mass variance explained) | looser random walk on c (0.05 → 0.2) and/or free nats on c |
+| Grip head weak (~0.8) | accepted for now (user decision 11-22); a looser random walk on c (v4) did not help |
+| Speed estimate (0.25 vs 0.18 m/s for v3) | main remaining gap to the v3 encoder |
 | Jetson timing | `bash scripts/jetson_timing.sh` from a `world-model` clone; choose A/B/C |
 | Offline evaluation (step E) | vs known model, v3 encoder, EKF; ablations without in-lap update, safe-set tags, LiDAR; two-stage vs full agreement after changes |
 | Planner integration (step F) | variants A/B/C and 10 × 0.15 s as config options; LiDAR clearance term; latent-tagged safe set per lap per stretch |

@@ -37,12 +37,13 @@ def sequence_loss(params, model, st_params, dt, integrator, batch, key, settings
     return run_sequence(params, model, st_params, dt, integrator, batch, key, settings, obs_mean, obs_std)[0]
 
 
-def run_sequence(params, model, st_params, dt, integrator, batch, key, settings, obs_mean, obs_std):
+def run_sequence(params, model, st_params, dt, integrator, batch, key, settings, obs_mean, obs_std, sample=True):
     states, controls, pose = batch["states"], batch["controls"], batch["pose"]
     sensors = (batch["sensors"] - obs_mean) / obs_std
     lidar, conditions = batch["lidar"], batch["conditions"]
     c = model.config.condition
     walk = settings["condition_walk_std"]
+    anchor_weights = jnp.asarray(settings.get("anchor_weights", [1.0, 1.0, 1.0, 1.0]))
     length = len(controls)
     keys = jax.random.split(key, length + 1)
 
@@ -51,7 +52,7 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
 
     h0 = jnp.zeros(model.config.hidden)
     q_mean, q_log_std = apply(RSSM.posterior, h0, apply(RSSM.embed, lidar[0], sensors[0]))
-    s0 = q_mean + jnp.exp(q_log_std) * jax.random.normal(keys[0], q_mean.shape)
+    s0 = q_mean + jnp.exp(q_log_std) * jax.random.normal(keys[0], q_mean.shape) * sample
     kl0 = kl_diag(q_mean, q_log_std, 0.0, 1.0)
     x0 = merge(pose[0], apply(RSSM.anchor, h0, s0))
 
@@ -63,7 +64,7 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
         h_next = apply(RSSM.advance, h, s, u, x_pred)
         p_mean, p_log_std = apply(RSSM.prior, h_next)
         q_mean, q_log_std = apply(RSSM.posterior, h_next, apply(RSSM.embed, lidar[t], sensors[t]))
-        s_next = q_mean + jnp.exp(q_log_std) * jax.random.normal(k, q_mean.shape)
+        s_next = q_mean + jnp.exp(q_log_std) * jax.random.normal(k, q_mean.shape) * sample
         kl_c = kl_diag(q_mean[:c], q_log_std[:c], c_mean, c_var + walk ** 2)
         kl_d = kl_diag(q_mean[c:], q_log_std[c:], p_mean, jnp.exp(2 * p_log_std))
         anchor = apply(RSSM.anchor, h_next, s_next)
@@ -73,7 +74,8 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
         o_mean, o_log_std = apply(RSSM.decode_sensors, h_next, s_next, u)
         condition = apply(RSSM.condition_readout, s_next)
         out = {
-            "anchor": jnp.mean(((anchor - states[t, BODY_INDEX]) / (0.1 * BODY_SCALE)) ** 2),
+            "anchor": jnp.sum(anchor_weights * ((anchor - states[t, BODY_INDEX]) / (0.1 * BODY_SCALE)) ** 2)
+                      / jnp.sum(anchor_weights),
             "residual": jnp.mean(state_error(teacher, states[t]) ** 2),
             "lidar": jnp.mean(gaussian_nll(lidar[t], l_mean, l_log_std)),
             "sensors": jnp.mean(gaussian_nll(sensors[t, :4], o_mean, o_log_std)),
