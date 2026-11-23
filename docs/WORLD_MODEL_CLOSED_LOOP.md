@@ -1,15 +1,15 @@
-# World-model SIT-LMPC: where we are and where we are stuck
+# World-model SIT-LMPC: closed-loop status
 
 ESE 6150 Team 8, 2026-11-23. Branch `world-model`. Full documentation: `docs/WORLD_MODEL_RSSM.md`.
 
 ## 1. Summary
 
-We built the adaptive world model you suggested (RSSM with LiDAR, IMU, wheel speed and PF pose, physics-anchored) and
-plugged it into the SIT-LMPC planner. Offline it works: it beats the bicycle model + EKF pipeline on 1 s prediction,
+We built an adaptive world model (RSSM with LiDAR, IMU, wheel speed and PF pose, physics-anchored) and plugged it into
+the SIT-LMPC planner. Offline it works: it beats the bicycle model + EKF pipeline on 1 s prediction,
 estimates slip and yaw rate well, tracks grip, and reconstructs and predicts LiDAR. **In closed loop it crashes within
 one to three learned laps.** Every crash replay shows the same thing: the planner picks a plan that spins the car, and
 the world model predicts that plan will not spin. More and better data has not fixed this. We think the planner is
-exploiting the learned model's errors at the handling limit, and we would like your advice on how to handle that.
+exploiting the learned model's errors at the handling limit; this is the open problem.
 
 ## 2. What we built
 
@@ -92,14 +92,3 @@ were actually applied, and compare with what happened.
 | Physics cross-check in the planner | also roll each candidate through the bicycle model; reject plans where it predicts a spin or where the two models strongly disagree | on the real car the bicycle model is itself approximate; partly hides what the world model gets wrong |
 | Make the physics carry the dynamics (latent sets grip and cornering stiffness, small residual) | spins come from the physics and cannot be damped away | considered; we are not keen on it |
 | Limit the residual near the limit | penalise or switch off the residual at high slip | considered; we are not keen on it |
-
-## 8. Questions for you
-
-1. Is this "model exploitation at the limit" problem expected for learned models inside MPPI/LMPC, and is there a
-   standard way you would handle it in this course's setup?
-2. Would you accept a planner-level safeguard (uncertainty penalty or physics cross-check) as part of the method, or
-   should the world model itself predict spins correctly?
-3. If uncertainty-aware planning: is an ensemble of world models the right way to get the uncertainty, or is the
-   latent's own spread enough?
-4. For the final evaluation, is it acceptable to show the world model's advantage mainly in the grip-change scenarios
-   (where the known model is wrong) and report the closed-loop limit as an open problem?
