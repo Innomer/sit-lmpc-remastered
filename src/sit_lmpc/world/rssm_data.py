@@ -8,6 +8,8 @@ from sit_lmpc.world.data import observations, pf_cog_pose
 
 MIN_RANGE = 0.05
 MAX_RANGE = 10.0
+MAX_SLIP = 1.0
+MAX_YAW_RATE = 8.0
 
 
 def downsample(lidar, beams):
@@ -30,15 +32,20 @@ class TrackData:
                 continue
             data = np.load(self.root / record["file"])
             states = data["states"].astype(np.float32)
-            controls = data["controls"].astype(np.float32)
-            sensors = data["sensors"]
+            outside = np.flatnonzero((np.abs(states[:, 6]) > MAX_SLIP) | (np.abs(states[:, 5]) > MAX_YAW_RATE))
+            count = int(outside[0]) if len(outside) else len(states)
+            if count < 2:
+                continue
+            states = states[:count]
+            controls = data["controls"][:count - 1].astype(np.float32)
+            sensors = data["sensors"][:count]
             self.episodes.append({
                 "states": states,
                 "controls": controls,
                 "sensors": observations(sensors, controls).astype(np.float32),
                 "pose": pf_cog_pose(sensors).astype(np.float32),
-                "lidar": downsample(data["lidar"].astype(np.float32), beams),
-                "conditions": data["conditions"][:, [0, 3]].astype(np.float32),
+                "lidar": downsample(data["lidar"][:count].astype(np.float32), beams),
+                "conditions": data["conditions"][:count, [0, 3]].astype(np.float32),
                 "map": record["map"],
                 "change": record["change"]["kind"],
             })

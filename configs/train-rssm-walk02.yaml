@@ -1,0 +1,44 @@
+# rssm-v4: configs/train-rssm.yaml with a looser random walk on c (0.05 -> 0.2), to let c carry grip/mass.
+# RSSM world model on the on-track dataset (scripts/collect_track_data.py). Planning default for sim work: full latent
+# rollout (variant A), 1024 candidates, 15 x 0.1 s; variants B (two-stage), C (cheap) and 10 x 0.15 s are planner
+# options (step F).
+dataset: data/f1tenth-track
+vehicle_config: configs/world/world-nochance.yaml
+timestep: 0.1
+integrator_timestep: 0.02
+seed: 20261122
+model:
+  hidden: 128
+  condition: 8
+  fast: 24
+  beams: 64
+  sensors: 9
+steps: 30000
+batch: 32
+window: 40
+learning_rate: 0.0001
+clip: 1.0
+skip_factor: 20.0
+stop_factor: 3.0
+stop_patience: 3
+kl_warmup: 3000
+eval_every: 500
+val_batches: 8
+diagnostic_window: 80
+comparison_every: 2500
+settings:
+  condition_walk_std: 0.2
+  free_nats: 1.0
+  prediction_steps: 10
+  prediction_stride: 10
+weights:
+  anchor: 1.0
+  residual: 1.0
+  lidar: 1.0
+  sensors: 1.0
+  kl: 1.0
+  condition: 3.0
+  prediction: 0.3
+  prediction_lidar: 0.5
+  consistency: 0.5
+selection: [anchor, residual, prediction, lidar]
