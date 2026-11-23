@@ -2,7 +2,7 @@
 
 ESE 6150 Team 8. A running history of what was built, tried and found, one line per item.
 Details are in `NOTES.md`, `docs/CAR_DEPLOYMENT.md` and `results/baselines/README.md`.
-Last updated 2026-11-17.
+Last updated 2026-11-22.
 
 ## 1. Methods in play
 
@@ -152,3 +152,32 @@ Frozen copies: `results/baselines/` (configs, seeds, commit, summaries, figures)
 | irl | `910a837` | Jetson CUDA detection, memory note | yes |
 | irl | `ea7e5fb` | frozen sim baselines | yes |
 | irl | `c54aad5` | merge of ros-sim up to `0537143` | yes |
+
+## 10. Issues and fixes (2026-11-17 to 2026-11-22)
+
+Problems hit in the grip-change experiments and the shared planner fix: cause, change, and status. World-model (RSSM) work is logged on the `world-model` branch.
+
+### 10.1 Grip-change experiments (old technique, `ros-sim`)
+
+| Date | Issue | Cause | Fix | Result / status |
+|---|---|---|---|---|
+| 11-17 | Video renderer crashed with GPU out-of-memory | the track code imports JAX, which tried to reserve most of the GPU while a run held it | `render_run_video.py` forces JAX onto the CPU | fixed |
+| 11-17 | Wrong run name gave "no saved attempts yet" | missing-folder case not handled | clear message listing runs with saved laps | fixed |
+| 11-17 | Grip chart in videos unreadable | true grip drawn flat at the current value; raw per-step guess swings ±0.3; colour bar overlapped | true grip as a step line, 2 s average of the guess, horizontal colour bar | fixed |
+| 11-17 | Video showed the grip drop one attempt early in the TAs' BNN run | the scheduler counts finished laps, the video counted attempts (a crash shifts it) | video counts finished laps like the scheduler | fixed; runs themselves were right |
+| 11-17 | Re-render wiped both run videos | libx264 needs an even frame height (12×7.5 in at 110 dpi = 825) | 112 dpi (1344×840) | originals lost; re-rendered copies are the only ones |
+| 11-17 | A video was committed while still rendering, and its push never reached GitHub | commit ran before the render finished | recommitted the finished file and pushed again | fixed |
+| 11-17 | Closed-loop grip guess swung ±0.23 (warm-up) / ±0.10–0.16 (learned), against ±0.06 offline | the linear read-out picks up cornering-dependent changes in z, worst in the hairpin; encoder inputs checked and found consistent (gyro 0.015 rad/s, wheel 0.28 m/s, controls exact) | read-out refit on per-step z + confidence-weighted filter (τ 1 s) | swing roughly halved (0.06–0.09 on learned laps); per-step noise remains |
+| 11-17 | Grip filter could flip which laps it used within seconds | it compared lap tags with the jumpy per-step guess | per-state tags from the steadier estimate | superseded by the next two rows |
+| 11-17 | Per-point grip filter made the car crawl and stall in the hairpin (`speed_too_low`) | keeping single points by grip kept only part of each corner (the guess dips in tight corners), so the hull ended behind the plan and the planner braked | keep or drop whole laps per stretch of track (median tag per lap per hull window, at least 4 laps) | fixed; rerun stopped by user after 9 clean laps (2 on the patch) |
+| 11-17 | Patch test can't show the filter well | the read-out reads ~0.70 in the hairpin even on normal grip, and the patch (μ 0.6) sits exactly there | none yet | open: move the patch to a fast stretch or make the read-out manoeuvre-aware |
+| 11-17 | Lap-12 spin was blamed on the filter switching to low-grip laps | wrong guess | checked: only 3 low-grip laps were stored then, every step still used a high-grip lap | claim corrected in the results README |
+| 11-17 | Unclear why our runs spin once per run | — | compared slip at the spin corners across models | planner drives 0.55–0.76 rad slip with every model; known model never spins, learned models spin at ~0.72–0.80 (likely model error at high slip, little data there) |
+| 11-17 | "Lateral acceleration vs grip limit" metric gave impossible values | the sim's single-track tyre model is linear, with no friction cap | use slip angle instead | fixed |
+| 11-17 | Known-model runs end at the first collision; other configs carry on | not checked yet | none | open (makes "laps finished" unfair to compare) |
+
+### 10.2 Planner (shared fix, also on `irl` and `world-model`)
+
+| Date | Issue | Cause | Fix | Result / status |
+|---|---|---|---|---|
+| 11-22 | With the 15-step horizon, 41% of planning steps took over 100 ms (p95 236 ms), at any sample count | XLA compiles while driving: hulls copied with `jnp.asarray` (new shape each step) and oversized hulls (>1190 facets) sliced on the GPU | host-side `device_put` and host-side chunking | p95 30 ms, no step over 100 ms; own commit on each branch; lockstep results before it stay valid (NOTES.md) |
