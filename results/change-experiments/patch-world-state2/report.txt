@@ -1,0 +1,14 @@
+== patch-world-state2
+attempt  1  success    mppi    38.4 s  grip guess 0.86
+attempt  2  success    mppi    38.1 s  grip guess 0.88
+attempt  3  success    mppi    38.0 s  grip guess 0.88
+attempt  4  success    mppi    38.1 s  grip guess 0.88
+attempt  5  success    mppi    38.0 s  grip guess 0.88
+attempt  6  success    lmppi   37.8 s  grip guess 0.92
+attempt  7  success    lmppi   37.9 s  grip guess 0.92
+attempt  8  success    lmppi   38.0 s  grip guess 0.88
+attempt  9  success    lmppi   36.9 s  grip guess 0.87
+attempt 10  incomplete lmppi   27.4 s  ended at s 251 m, max |slip| 0.39  grip guess 0.89
+[finish] status=interrupted | trials=9 | successful_laps=9 | failed_attempts=0 | applied_steps=3686 | training
+planning (learned laps) p50 487 ms, p95 662 ms
+condition: {'lap': 7, 'patches': [{'s_start': 85.0, 's_end': 115.0, 'mu': 0.6}]}

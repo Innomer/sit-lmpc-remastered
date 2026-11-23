@@ -1,0 +1,22 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/change-friction-bnn",
+  "files": {
+    "state.json": "26025ac51b7a9b6d9a0a10ea0a7da0fd124d342972b4f1156c6d12f94a068284",
+    "dynamics_posterior.json": "e5cc9f4f56d23e20564bc83569635548346d1ff462163ec77946d8f460249eb3",
+    "events.jsonl": "456e220b42620b621ce7eb4992ae449424c4f1dd9179467ea05f7cf2498bbd16",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "a413aaec477853d7f7d5019a4479807e36065c0065f29702450bca320b0b7740",
+    "config.yaml": "1db84fb44d84b0fffcd3599b2393f24461f9aeee85f13918b01fba250fcac6aa",
+    "dynamics_posterior.npz": "e64098443d8646b846cb07f7b7d0ba9e21faafed9ef0fce77b0ffb6a7bafdd72",
+    "dynamics_model/manifest.json": "8dd1d4176c4d0f3778c7d4fa73413a4d2f1fcf2309ae14145d41d59c7966e963",
+    "dynamics_model/model.msgpack": "a2ce7937eac9f9e7ac62d3eea88684eda47e7219bfeae4a293db568810dbb997",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "7aeca8593504083287f35aca6778b439df83658de1fe6ff0b99380ad09f31fb8"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/patch-world-state2",
+  "files": {
+    "state.json": "1685567a3c2a2b3ddfebcd61fd47c7ef96f36c43f64b11a2ef7ebf2622106b01",
+    "events.jsonl": "7d7ad3873c5784ebdfafe97f6cd31384b7f97f6b738955473aa46df067c0b32f",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "f5535f583333873f54eb2105b61536381d3cc5fe0dd0d0d3f582fc000c64a707",
+    "config.yaml": "e3763809241c41b2dfe1a91af41a6a73b0588c6bcb1d895dc939d3f771345eb5",
+    "dynamics_model/manifest.json": "0e1b9875340fa2973b146a5e657b6e09b3061d4402df6fc62261723a8f7d37ce",
+    "dynamics_model/model.msgpack": "23d2cfb4144cf8542f0d450345408d57ef0f3592f310d041dbcbdf82eee916ee",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "8c62e8c21bacd0e20aa0bab4918b0c5a574a66714a00652e172445ba3194905c"
+  }
+}

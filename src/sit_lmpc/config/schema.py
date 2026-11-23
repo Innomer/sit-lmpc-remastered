@@ -196,6 +196,8 @@ class PlannerConfig:
     safe_set_size: int = 6
     condition_threshold: float = 0.0
     condition_min_laps: int = 4
+    condition_mode: str = "lap"
+    condition_tau: float = 1.0
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000
@@ -375,6 +377,14 @@ class ExperimentConfig:
                                                and (Path(dynamics.encoder).expanduser() / "condition_readout.npz").is_file()):
             raise ValueError("planner.condition_threshold needs belief_update encoder and a fitted read-out "
                              "(python -m sit_lmpc.world.readout --encoder <run>)")
+        if p.condition_mode not in ("lap", "state"):
+            raise ValueError("planner.condition_mode must be lap or state")
+        if p.condition_mode == "state" and p.condition_threshold > 0 and not (
+                Path(dynamics.encoder).expanduser() / "grip_readout.npz").is_file():
+            raise ValueError("planner.condition_mode state needs grip_readout.npz in the encoder run "
+                             "(python scripts/grip_estimate_eval.py --encoder <run>)")
+        if not p.condition_tau > 0:
+            raise ValueError("planner.condition_tau must be > 0")
         if dynamics.belief_update == "encoder":
             if not isinstance(dynamics.encoder, str) or not (Path(dynamics.encoder).expanduser() / "best.msgpack").is_file():
                 raise ValueError("belief_update encoder needs planner.dynamics.encoder, a trained world-encoder run folder")

@@ -344,9 +344,22 @@ def _run(config, tracking_only, keyboard_cleanup):
     def apply_encoder(cartesian, frenet):
         nonlocal model
         observation, _ = simulator.encoder_observation()
+        observation_trace.append(observation)
+        true_state_trace.append(np.array(cartesian, copy=True))
         hidden, z_mean, z_factor, w_mean = encoder_belief.step(observation)
         friction = encoder_belief.friction(w_mean)
-        if friction is not None:
+        if planner.condition_mode == "state":
+            grip = encoder_belief.grip(w_mean, encoder_belief.last_w_std)
+            if grip is not None:
+                keep = np.exp(-simulation.timestep / planner.condition_tau)
+                weight = 1.0 / max(grip[1], 1e-6)
+                grip_filter[0] = keep * grip_filter[0] + weight * grip[0]
+                grip_filter[1] = keep * grip_filter[1] + weight
+                lap_condition.append([grip[0]])
+                grip_trace.append(grip_filter[0] / grip_filter[1])
+                if planner.condition_threshold > 0:
+                    safe_set.condition = np.array([grip_trace[-1]])
+        elif friction is not None:
             lap_condition.append([friction])
             if planner.condition_threshold > 0:
                 safe_set.condition = np.array([friction])
@@ -364,6 +377,10 @@ def _run(config, tracking_only, keyboard_cleanup):
         return cartesian, frenet
 
     encoder_trace = []
+    observation_trace = []
+    true_state_trace = []
+    grip_trace = []
+    grip_filter = [0.0, 0.0]
     lap_condition = []
     friction_trace = []
 
@@ -1580,7 +1597,16 @@ def _run(config, tracking_only, keyboard_cleanup):
                     elapsed=time.perf_counter() - started,
                 )
                 previous_safe_laps = len(safe_set.frenet)
-                lap_tag = np.mean(lap_condition, axis=0) if lap_condition else None
+                if planner.condition_mode == "state":
+                    raw = np.asarray(lap_condition, dtype=float)[:, 0] if lap_condition else None
+                    if raw is not None and len(raw) > 1:
+                        window = min(int(round(2.0 / simulation.timestep)), len(raw))
+                        lap_tag = np.convolve(np.pad(raw, (window // 2, window - 1 - window // 2), mode="edge"),
+                                              np.ones(window) / window, mode="valid")
+                    else:
+                        lap_tag = None
+                else:
+                    lap_tag = np.mean(lap_condition, axis=0) if lap_condition else None
                 safe_set_added = safe_set.add_lap(lap, finished[0], tag=lap_tag)
                 if planner.safe_set_min_states and len(safe_set.frenet) != previous_safe_laps:
                     events.emit("safe_set_retention", laps=len(safe_set.frenet),
@@ -1772,6 +1798,10 @@ def _run(config, tracking_only, keyboard_cleanup):
             if encoder_trace:
                 np.save(directory / "encoder_z.npy", np.asarray(encoder_trace))
                 np.save(directory / "encoder_friction.npy", np.asarray(friction_trace))
+                np.save(directory / "encoder_observations.npy", np.asarray(observation_trace))
+                np.save(directory / "encoder_true_states.npy", np.asarray(true_state_trace))
+                if grip_trace:
+                    np.save(directory / "encoder_grip.npy", np.asarray(grip_trace))
     return RunResult(
         directory,
         status,

@@ -1,0 +1,18 @@
+== change-friction-known
+attempt  1  success    mppi    38.4 s
+attempt  2  success    mppi    38.1 s
+attempt  3  success    mppi    38.0 s
+attempt  4  success    mppi    38.1 s
+attempt  5  success    mppi    38.0 s
+attempt  6  success    lmppi   37.4 s
+attempt  7  success    lmppi   38.3 s
+attempt  8  success    lmppi   38.4 s
+attempt  9  success    lmppi   38.4 s
+attempt 10  success    lmppi   38.1 s
+attempt 11  success    lmppi   37.3 s
+attempt 12  success    lmppi   37.5 s
+attempt 13  success    lmppi   38.0 s
+attempt 14  failure    lmppi   34.6 s  ended at s 325 m, max |slip| 0.86
+[finish] status=collision | trials=14 | successful_laps=13 | failed_attempts=1 | applied_steps=5286 | training
+planning (learned laps) p50 40 ms, p95 280 ms
+condition: {'lap': 7, 'condition': {'mu': 0.75}}

@@ -1,0 +1,19 @@
+== change-friction-world
+attempt  1  success    mppi    38.4 s  grip guess 0.92
+attempt  2  success    mppi    38.1 s  grip guess 0.92
+attempt  3  success    mppi    38.0 s  grip guess 0.92
+attempt  4  success    mppi    38.1 s  grip guess 0.92
+attempt  5  success    mppi    38.0 s  grip guess 0.93
+attempt  6  success    lmppi   37.8 s  grip guess 0.94
+attempt  7  success    lmppi   38.4 s  grip guess 0.98
+attempt  8  success    lmppi   37.1 s  grip guess 0.76
+attempt  9  success    lmppi   37.9 s  grip guess 0.74
+attempt 10  success    lmppi   36.8 s  grip guess 0.75
+attempt 11  success    lmppi   38.1 s  grip guess 0.74
+attempt 12  success    lmppi   37.0 s  grip guess 0.75
+attempt 13  success    lmppi   36.4 s  grip guess 0.75
+attempt 14  success    lmppi   36.9 s  grip guess 0.75
+attempt 15  success    lmppi   36.0 s  grip guess 0.72
+[finish] status=lap_limit | trials=15 | successful_laps=15 | failed_attempts=0 | applied_steps=5630 | training
+planning (learned laps) p50 484 ms, p95 663 ms
+condition: {'lap': 7, 'condition': {'mu': 0.75}}

@@ -1,0 +1,19 @@
+== change-friction-bnn
+attempt  1  success    mppi    38.4 s
+attempt  2  success    mppi    38.1 s
+attempt  3  success    mppi    38.0 s
+attempt  4  success    mppi    38.1 s
+attempt  5  success    mppi    38.0 s
+attempt  6  failure    lmppi   28.0 s  ended at s 260 m, max |slip| 0.79
+attempt  7  success    lmppi   36.3 s
+attempt  8  success    lmppi   36.1 s
+attempt  9  failure    lmppi   26.4 s  ended at s 244 m, max |slip| 0.59
+attempt 10  success    lmppi   37.2 s
+attempt 11  success    lmppi   36.2 s
+attempt 12  success    lmppi   36.9 s
+attempt 13  success    lmppi   36.2 s
+attempt 14  success    lmppi   36.6 s
+attempt 15  success    lmppi   36.2 s
+[finish] status=lap_limit | trials=15 | successful_laps=13 | failed_attempts=2 | applied_steps=5367 | training
+planning (learned laps) p50 577 ms, p95 783 ms
+condition: {'lap': 7, 'condition': {'mu': 0.75}}

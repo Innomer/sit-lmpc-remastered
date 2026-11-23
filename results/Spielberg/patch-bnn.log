@@ -1,0 +1,151 @@
+[dynamics_model_loaded] kind=gaussian_bnn | latent_dimension=96 | particles=64 | adaptation=gaussian_posterior | numerical_substep_mismatch=True
+[start] learning | seed=1 | friction actual/model=1.049/None | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[attempt] #1 success | 384 steps
+[dynamics_observation_skipped] attempt_id=1 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 1 | 38.4 s | avg speed 8.92 m/s | mppi
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[attempt] #2 success | 381 steps
+[dynamics_observation_skipped] attempt_id=2 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 2 | 38.1 s | avg speed 8.987 m/s | mppi
+[safe_set_retention] laps=1 | states=431 | min_states=1000000
+[control_step_timing] steps=800
+[control_step_timing] steps=900
+[training] generation=1 | epochs=300 | loss=-0.316 | gradient_steps=600
+[control_step_timing] steps=1000
+[control_step_timing] steps=1100
+[attempt] #3 success | 380 steps
+[dynamics_observation_skipped] attempt_id=3 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 3 | 38 s | avg speed 8.974 m/s | mppi
+[safe_set_retention] laps=2 | states=811 | min_states=1000000
+[control_step_timing] steps=1200
+[control_step_timing] steps=1300
+[training] generation=2 | epochs=300 | loss=-1.593 | gradient_steps=1800
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[attempt] #4 success | 381 steps
+[dynamics_observation_skipped] attempt_id=4 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 4 | 38.1 s | avg speed 8.987 m/s | mppi
+[safe_set_retention] laps=3 | states=1192 | min_states=1000000
+[control_step_timing] steps=1600
+[control_step_timing] steps=1700
+[training] generation=3 | epochs=300 | loss=-1.806 | gradient_steps=3300
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[attempt] #5 success | 380 steps
+[dynamics_observation_skipped] attempt_id=5 | reason=pure_pursuit warm-up controls change within each step; step-mean labels are inexact
+[lap] trial 5 | 38 s | avg speed 8.974 m/s | mppi
+[safe_set_retention] laps=4 | states=1572 | min_states=1000000
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/patch-bnn/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[learned_controller_started] step=1906 | value_generation=3 | hull_facets=2000
+[training] generation=4 | epochs=300 | loss=-2.292 | gradient_steps=5400
+[control_step_timing] steps=2000
+[control_step_timing] steps=2100
+[control_step_timing] steps=2200
+[attempt] #6 success | 379 steps
+[dynamics_observed] attempt_id=6 | valid_transitions=379 | rejected_transitions=0
+[dynamics_posterior_training] generation=1 | status=ready | posterior_method=tempered | new_training_transitions=218 | training_transitions=218 | likelihood_power=0.001 | heldout_xy10_rmse=0.02047 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=1 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 6 | 37.9 s | avg speed 8.908 m/s | lmppi | lambda_ss mean=3.635 max=18.75 | lambda_boundary mean=3.394 max=18.75
+[safe_set_retention] laps=5 | states=1955 | min_states=1000000
+[control_step_timing] steps=2300
+[training] generation=5 | epochs=300 | loss=-2.919 | gradient_steps=7800
+[control_step_timing] steps=2400
+[control_step_timing] steps=2500
+[control_step_timing] steps=2600
+[attempt] #7 success | 388 steps
+[dynamics_observed] attempt_id=7 | valid_transitions=388 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=ready | posterior_method=tempered | new_training_transitions=227 | training_transitions=445 | likelihood_power=0.001 | heldout_xy10_rmse=0.03688 | heldout_coverage10=1
+[dynamics_predictor_changed] generation=2 | predictor=gaussian_bnn | risk_context=continuation policy changed; reassess cutoff on fresh attempts
+[lap] trial 7 | 38.8 s | avg speed 8.778 m/s | lmppi | lambda_ss mean=2.88 max=18.75 | lambda_boundary mean=2.806 max=18.75
+[safe_set_retention] laps=6 | states=2333 | min_states=1000000
+[control_step_timing] steps=2700
+[training] generation=6 | epochs=300 | loss=-2.868 | gradient_steps=10500
+[control_step_timing] steps=2800
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[attempt] #8 success | 366 steps
+[dynamics_observed] attempt_id=8 | valid_transitions=366 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=210 | training_transitions=655 | likelihood_power=0.001 | heldout_xy10_rmse=0.1509 | heldout_coverage10=0.9333
+[lap] trial 8 | 36.6 s | avg speed 9.304 m/s | lmppi | lambda_ss mean=1.045 max=18.75 | lambda_boundary mean=1.322 max=18.75
+[safe_set_retention] laps=7 | states=2721 | min_states=1000000
+[training] generation=7 | epochs=300 | loss=-2.952 | gradient_steps=13800
+[control_step_timing] steps=3100
+[control_step_timing] steps=3200
+[control_step_timing] steps=3300
+[attempt] #9 success | 359 steps
+[dynamics_observed] attempt_id=9 | valid_transitions=359 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=204 | training_transitions=859 | likelihood_power=0.001 | heldout_xy10_rmse=0.7056 | heldout_coverage10=0.5
+[lap] trial 9 | 35.9 s | avg speed 9.486 m/s | lmppi | lambda_ss mean=0.7521 max=5 | lambda_boundary mean=1.187 max=18.75
+[safe_set_retention] laps=8 | states=3082 | min_states=1000000
+[control_step_timing] steps=3400
+[training] generation=8 | epochs=300 | loss=-2.937 | gradient_steps=17400
+[control_step_timing] steps=3500
+[control_step_timing] steps=3600
+[control_step_timing] steps=3700
+[attempt] #10 success | 357 steps
+[dynamics_observed] attempt_id=10 | valid_transitions=357 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=199 | training_transitions=1058 | likelihood_power=0.001 | heldout_xy10_rmse=0.5893 | heldout_coverage10=0.4
+[lap] trial 10 | 35.7 s | avg speed 9.535 m/s | lmppi | lambda_ss mean=0.8053 max=8.75 | lambda_boundary mean=1.075 max=18.75
+[safe_set_retention] laps=9 | states=3442 | min_states=1000000
+[training] generation=9 | epochs=300 | loss=-2.916 | gradient_steps=21600
+[checkpoint_saved] file=checkpoints/trial-000010 | trials=10
+[control_step_timing] steps=3800
+[control_step_timing] steps=3900
+[control_step_timing] steps=4000
+[control_step_timing] steps=4100
+[attempt] #11 success | 356 steps
+[dynamics_observed] attempt_id=11 | valid_transitions=356 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=206 | training_transitions=1264 | likelihood_power=0.001 | heldout_xy10_rmse=0.04905 | heldout_coverage10=0.8462
+[lap] trial 11 | 35.6 s | avg speed 9.585 m/s | lmppi | lambda_ss mean=0.7409 max=5 | lambda_boundary mean=0.8603 max=6.25
+[safe_set_retention] laps=10 | states=3798 | min_states=1000000
+[training] generation=10 | epochs=300 | loss=-2.88 | gradient_steps=26100
+[control_step_timing] steps=4200
+[control_step_timing] steps=4300
+[control_step_timing] steps=4400
+[attempt] #12 success | 353 steps
+[dynamics_observed] attempt_id=12 | valid_transitions=353 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=211 | training_transitions=1475 | likelihood_power=0.001 | heldout_xy10_rmse=0.4831 | heldout_coverage10=0.9375
+[lap] trial 12 | 35.3 s | avg speed 9.604 m/s | lmppi | lambda_ss mean=0.8322 max=18.75 | lambda_boundary mean=0.9065 max=16.25
+[safe_set_retention] laps=11 | states=4154 | min_states=1000000
+[control_step_timing] steps=4500
+[training] generation=11 | epochs=300 | loss=-2.926 | gradient_steps=30900
+[attempt] #13 failure | 109 steps | collision | lambda_ss mean=0.8372 max=10 | lambda_boundary mean=1.044 max=11.25
+[dynamics_observed] attempt_id=13 | valid_transitions=108 | rejected_transitions=1
+[dynamics_posterior_training] generation=2 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=55 | training_transitions=1530 | likelihood_power=0.001 | heldout_xy10_rmse=1.123 | heldout_coverage10=0.25
+[ros_launch] target_speed=10.74 | speed=10.74
+[ros_reset] run_up=6.013 | requested=-0.04278, -0.103, 0.007135, 10.74, -78.17, 0.1389, -0.02255 | reached=-0.9107, -0.4354, 0, 10.74, -2.776, 0, 0
+[lap_reset] next_attempt=14 | failures=1
+[control_step_timing] steps=4600
+[attempt] #14 failure | 34 steps | collision | lambda_ss mean=0.8088 max=2.5 | lambda_boundary mean=1.066 max=2.5
+[dynamics_observed] attempt_id=14 | valid_transitions=33 | rejected_transitions=1
+[dynamics_posterior_training] generation=2 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=13 | training_transitions=1543 | likelihood_power=0.001 | heldout_xy10_rmse=0.01304 | heldout_coverage10=1
+[ros_launch] target_speed=10.74 | speed=10.74
+[ros_reset] run_up=6.013 | requested=-0.9107, -0.4354, 0, 10.74, -2.776, 0, 0 | reached=-1.779, -0.7679, 0, 10.74, -2.776, 0, 0
+[lap_reset] next_attempt=15 | failures=2
+[control_step_timing] steps=4700
+[control_step_timing] steps=4800
+[control_step_timing] steps=4900
+[attempt] #15 success | 358 steps
+[dynamics_observed] attempt_id=15 | valid_transitions=358 | rejected_transitions=0
+[dynamics_posterior_training] generation=2 | status=held_no_calibrated_candidate | posterior_method=tempered | new_training_transitions=206 | training_transitions=1749 | likelihood_power=0.001 | heldout_xy10_rmse=0.54 | heldout_coverage10=0.8
+[lap] trial 15 | 35.8 s | avg speed 9.475 m/s | lmppi | lambda_ss mean=0.9392 max=18.75 | lambda_boundary mean=1.013 max=18.75
+[safe_set_retention] laps=12 | states=4505 | min_states=1000000
+[training] generation=12 | epochs=300 | loss=-2.962 | gradient_steps=36300
+[checkpoint_saved] file=checkpoints/trial-000015 | trials=15
+[finish] status=lap_limit | trials=15 | successful_laps=13 | failed_attempts=2 | applied_steps=4965 | training_generations=12 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/patch-bnn
+[control_timing_summary] steps=4965 | control_period_seconds=0.1 | stepping=lockstep

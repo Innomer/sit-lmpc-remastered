@@ -1,0 +1,16 @@
+== patch-known
+attempt  1  success    mppi    38.4 s
+attempt  2  success    mppi    38.1 s
+attempt  3  success    mppi    38.0 s
+attempt  4  success    mppi    38.1 s
+attempt  5  success    mppi    38.0 s
+attempt  6  success    lmppi   37.4 s
+attempt  7  success    lmppi   38.6 s
+attempt  8  success    lmppi   37.5 s
+attempt  9  success    lmppi   37.8 s
+attempt 10  success    lmppi   37.9 s
+attempt 11  success    lmppi   37.8 s
+attempt 12  failure    lmppi   11.3 s  ended at s 113 m, max |slip| 0.99
+[finish] status=collision | trials=12 | successful_laps=11 | failed_attempts=1 | applied_steps=4289 | training
+planning (learned laps) p50 131 ms, p95 304 ms
+condition: {'lap': 7, 'patches': [{'s_start': 85.0, 's_end': 115.0, 'mu': 0.6}]}

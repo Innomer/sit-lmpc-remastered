@@ -32,19 +32,38 @@ def load_attempts(run):
         for path in sorted((run / "trajectories" / outcome).glob("attempt-*.npz")):
             with np.load(path, allow_pickle=True) as data:
                 attempts.append({"id": int(path.stem.split("-")[1]), "outcome": outcome,
-                                 "cartesian": data["cartesian"], "controllers": data["controllers"]})
+                                 "cartesian": data["cartesian"], "frenet": data["frenet"],
+                                 "controllers": data["controllers"]})
     return sorted(attempts, key=lambda a: a["id"])
 
 
 def true_friction_events(run):
+    """(lap, track-wide mu or None, patches or None) for each applied scheduler event, in order."""
     path = Path(str(run) + ".conditions.jsonl")
     events = []
     if path.exists():
         for line in path.read_text().splitlines():
-            record = json.loads(line)
-            if "condition" in record["event"] and "mu" in record["event"]["condition"]:
-                events.append((record["lap"], record["event"]["condition"]["mu"]))
+            event = json.loads(line)["event"]
+            mu = event.get("condition", {}).get("mu")
+            events.append((event["lap"], mu, event.get("patches")))
     return events
+
+
+def true_mu(events, finished_before, s):
+    """The scheduler counts finished laps (crashed attempts don't count), so an event "after lap N" applies to every
+    attempt that starts after the N-th finished lap."""
+    mu = 1.0489
+    patches = []
+    for lap, value, new_patches in events:
+        if finished_before >= lap:
+            if value is not None:
+                mu = value
+            if new_patches is not None:
+                patches = new_patches
+    for patch in patches:
+        if patch["s_start"] <= s <= patch["s_end"]:
+            return patch["mu"]
+    return mu
 
 
 def main():
@@ -64,19 +83,22 @@ def main():
     if not attempts:
         raise SystemExit("no saved attempts yet")
     track = Track.from_track_path(map_path("Spielberg"))
-    friction_path = run / "encoder_friction.npy"
+    friction_path = run / "encoder_grip.npy" if (run / "encoder_grip.npy").exists() else run / "encoder_friction.npy"
     friction = np.load(friction_path) if friction_path.exists() else None
     events = true_friction_events(run)
 
-    states, labels = [], []
+    states, labels, true_values = [], [], []
     step = 0
+    finished = sum(1 for a in load_attempts(run) if a["id"] < attempts[0]["id"] and a["outcome"] == "success")
     for attempt in attempts:
         controllers = list(attempt["controllers"]) + [attempt["controllers"][-1]]
         for index, state in enumerate(attempt["cartesian"]):
             states.append(state)
+            true_values.append(true_mu(events, finished, float(attempt["frenet"][index, 0])))
             labels.append((attempt["id"], attempt["outcome"], controllers[min(index, len(controllers) - 1)],
                            index * TIMESTEP, step))
             step += 1
+        finished += attempt["outcome"] == "success"
     states = np.asarray(states)
     stride = max(1, int(round(args.speedup / (args.fps * TIMESTEP))))
     frames = range(0, len(states), stride)
@@ -88,6 +110,14 @@ def main():
     ys = np.asarray(track.centerline.ys)
     ax.plot(xs, ys, color="#d6dde3", linewidth=14, solid_capstyle="round", zorder=1)
     ax.plot(xs, ys, color="#a9a8a2", linewidth=0.8, linestyle="--", zorder=2)
+    arc = np.concatenate(([0.0], np.cumsum(np.hypot(np.diff(xs), np.diff(ys)))))
+    for lap, _, patches in events:
+        for patch in patches or []:
+            inside = (arc >= patch["s_start"]) & (arc <= patch["s_end"])
+            ax.plot(xs[inside], ys[inside], color="#e0a96d", linewidth=14, solid_capstyle="butt", zorder=1.5)
+            middle = np.flatnonzero(inside)[len(np.flatnonzero(inside)) // 2]
+            ax.annotate(f"μ {patch['mu']:g} after {lap} finished laps", (xs[middle], ys[middle]), xytext=(12, 12),
+                        textcoords="offset points", fontsize=9, color=INK)
     pad = 5
     ax.set_xlim(xs.min() - pad, xs.max() + pad)
     ax.set_ylim(ys.min() - pad, ys.max() + pad)
@@ -116,14 +146,7 @@ def main():
         estimate_line = true_line = raw_line = None
     fig.colorbar(trail, ax=ax, orientation="horizontal", fraction=0.04, pad=0.0, shrink=0.5, label="speed [m/s]")
 
-    def true_mu_at(attempt_id):
-        mu = 1.0489
-        for lap, value in events:
-            if attempt_id > lap:
-                mu = value
-        return mu
-
-    true_mu = np.asarray([true_mu_at(label[0]) for label in labels])
+    truth = np.asarray(true_values)
     if friction is not None:
         window = int(2.0 / TIMESTEP)
         smooth = np.convolve(np.nan_to_num(friction, nan=1.0), np.ones(window) / window, mode="full")[:len(friction)]
@@ -143,9 +166,9 @@ def main():
             car.set_data([x], [y])
             heading.set_data([x, x + 2.5 * np.cos(yaw)], [y, y + 2.5 * np.sin(yaw)])
             attempt_id, outcome, controller, lap_time, global_step = labels[frame]
-            mode = "learned (ours)" if controller == "lmppi" else "warm-up (no learning)"
+            mode = "learned (LMPPI)" if controller == "lmppi" else "warm-up (no learning)"
             text = (f"{run.name}\n\nattempt  {attempt_id}\ncontroller {mode}\nlap time {lap_time:5.1f} s\n"
-                    f"speed    {speed:5.2f} m/s\ntrue μ   {true_mu_at(attempt_id):.2f}")
+                    f"speed    {speed:5.2f} m/s\ntrue μ   {truth[frame]:.2f}")
             if outcome != "success" and frame == len(states) - 1:
                 text += f"\n\nattempt ended: {outcome}"
             info.set_text(text)
@@ -154,7 +177,7 @@ def main():
                 t = np.arange(upto) * TIMESTEP
                 raw_line.set_data(t, friction[:upto])
                 estimate_line.set_data(t, smooth[:upto])
-                true_line.set_data(t, true_mu[:upto])
+                true_line.set_data(t, truth[:upto])
                 side.set_xlim(0, max(10.0, t[-1] if upto else 10.0))
             writer.grab_frame()
     print(f"saved {out}  ({len(list(frames))} frames, {args.speedup}x sim speed)")
