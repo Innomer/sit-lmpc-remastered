@@ -145,3 +145,17 @@ def test_clearance_cost_shape_and_range():
     assert bool(jnp.all(cost >= 0)) and bool(jnp.all(cost <= 2.0))
     off = predictor.replace(clearance_weight=0.0).clearance_cost(state, actions)
     assert float(jnp.abs(off).max()) == 0.0
+
+
+def test_safety_costs_speed_cap_and_slip():
+    from types import SimpleNamespace
+    from sit_lmpc.planners.lmppi import safety_step_costs, total_safety
+    config = SimpleNamespace(safety_speed_cap=10.0, safety_speed_weight=2.0, safety_slip_limit=0.35,
+                             safety_slip_weight=1.0)
+    states = jnp.zeros((3, 4, 7))
+    states = states.at[0, :, 3].set(9.0).at[1, 2, 3].set(10.25).at[2, 1, 6].set(-0.5)
+    terms = safety_step_costs(states, config)
+    assert float(terms["speed"][0].max()) == 0.0 and np.isclose(float(terms["speed"][1, 2]), 1.0)
+    assert np.isclose(float(terms["slip"][2, 1]), 1.0) and float(terms["slip"][:2].max()) == 0.0
+    off = SimpleNamespace(safety_speed_cap=None, safety_speed_weight=1.0, safety_slip_limit=0.35, safety_slip_weight=0.0)
+    assert float(jnp.abs(total_safety(states, off)).max()) == 0.0

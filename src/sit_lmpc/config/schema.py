@@ -223,6 +223,10 @@ class PlannerConfig:
     reference_interval: float = 3.0
     search_points: int = 400
     action_rate_penalty: float = 0.01
+    safety_speed_cap: float | None = None
+    safety_speed_weight: float = 1.0
+    safety_slip_limit: float = 0.35
+    safety_slip_weight: float = 1.0
     mean_value: bool = True
     scan_rollout: bool = True
     safe_set_selection: str = "exact"
@@ -774,6 +778,10 @@ class ExperimentConfig:
             not math.isfinite(n) or n < 0 for n in (*s.control_noise, s.state_noise)
         ):
             raise ValueError("noise values must be nonnegative and finite")
+        if p.safety_speed_cap is not None and not p.safety_speed_cap > 0:
+            raise ValueError("planner.safety_speed_cap must be null or > 0")
+        if p.safety_speed_weight < 0 or p.safety_slip_weight < 0 or not p.safety_slip_limit > 0:
+            raise ValueError("planner.safety_speed_weight and safety_slip_weight must be >= 0, safety_slip_limit > 0")
         if p.lambda_max <= 0 or p.safe_set_relaxation < 0 or p.action_rate_penalty < 0:
             raise ValueError("invalid planner penalty or lambda range")
         return self

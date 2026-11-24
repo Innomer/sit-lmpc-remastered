@@ -671,6 +671,15 @@ def _run(config, tracking_only, keyboard_cleanup):
     success_controller_versions = set()
     lap_metrics, step_violations = [], []
     lambda_statistics = LambdaStatistics()
+    safety_trace = []
+
+    def safety_summary():
+        names = sorted({name for step in safety_trace for name in step})
+        return {"steps": len(safety_trace), **{
+            name: {"steps_any_candidate": float(np.mean([step[name][0] > 0 for step in safety_trace])),
+                   "mean_share_of_candidates": float(np.mean([step[name][0] for step in safety_trace])),
+                   "steps_chosen_plan": float(np.mean([step[name][1] for step in safety_trace]))}
+            for name in names}}
     init_saved = initial_snapshot is not None
     learned_steps, lap_time = 0, 0.0
     status = "step_limit"
@@ -724,6 +733,9 @@ def _run(config, tracking_only, keyboard_cleanup):
         metrics.update(attempt_id=trajectory.attempt_id, outcome=outcome)
         metrics["lambda_summary"] = lambda_statistics.summary()
         lambda_statistics.clear()
+        if safety_trace:
+            metrics["safety_summary"] = safety_summary()
+            safety_trace.clear()
         lap_metrics.append(metrics)
         step_violations.clear()
         (directory / "lap_metrics.json").write_text(json.dumps(lap_metrics, indent=2) + "\n")
@@ -1484,6 +1496,8 @@ def _run(config, tracking_only, keyboard_cleanup):
             if mode == "lmppi":
                 lambda_statistics.observe(result.lambdas,
                     result.metrics.get("lambda_terms", ("hull", "boundary")))
+                if "safety_activity" in result.metrics:
+                    safety_trace.append(result.metrics["safety_activity"])
             step_violations.append((result.safe_set_violation, result.boundary_violation))
             if not np.isfinite(next_cartesian).all() or not np.isfinite(next_frenet).all():
                 status = "nonfinite_state"
