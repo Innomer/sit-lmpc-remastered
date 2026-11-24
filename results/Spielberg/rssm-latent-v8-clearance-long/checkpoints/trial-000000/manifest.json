@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rssm-latent-v8-clearance-long",
+  "files": {
+    "state.json": "606b4dc3a002989059ee43ca8a314ac9e56982e8347108863f81f76d01380f60",
+    "events.jsonl": "9e9f91441a70337171a42d96d7f8d0453d252ce937b240ea8c380e20816ef8d4",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "8ada970ef257c0eb0b9f1ec1eb7e5dadbd9861a6c0c200ac4cacf864111cb7ea",
+    "config.yaml": "2779f8e60f51782dcdf762a4ae7ca132e4c783eb20c244ea08ddc89ac9012755",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "c7afc9a8b3b7d179693c34020b0a5ec29568aabc4ca306a552dd68452c19bf8a"
+  }
+}

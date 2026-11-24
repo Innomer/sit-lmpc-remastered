@@ -1,0 +1,8 @@
+{"attempt_id": 1, "lap": 1, "outcome": "success", "termination_reason": "lap_completed", "steps": 638, "duration": 63.80000000000064, "file": "success/attempt-000001.npz"}
+{"attempt_id": 2, "lap": 2, "outcome": "success", "termination_reason": "lap_completed", "steps": 638, "duration": 63.80000000000064, "file": "success/attempt-000002.npz"}
+{"attempt_id": 3, "lap": 3, "outcome": "success", "termination_reason": "lap_completed", "steps": 637, "duration": 63.700000000000635, "file": "success/attempt-000003.npz"}
+{"attempt_id": 4, "lap": 4, "outcome": "success", "termination_reason": "lap_completed", "steps": 638, "duration": 63.80000000000064, "file": "success/attempt-000004.npz"}
+{"attempt_id": 5, "lap": 5, "outcome": "success", "termination_reason": "lap_completed", "steps": 637, "duration": 63.700000000000635, "file": "success/attempt-000005.npz"}
+{"attempt_id": 6, "lap": 6, "outcome": "success", "termination_reason": "lap_completed", "steps": 754, "duration": 75.39999999999999, "file": "success/attempt-000006.npz"}
+{"attempt_id": 7, "lap": 7, "outcome": "success", "termination_reason": "lap_completed", "steps": 720, "duration": 72.00000000000018, "file": "success/attempt-000007.npz"}
+{"attempt_id": 8, "lap": 8, "outcome": "incomplete", "termination_reason": "interrupted", "steps": 313, "duration": 31.300000000000175, "file": "incomplete/attempt-000008.npz"}

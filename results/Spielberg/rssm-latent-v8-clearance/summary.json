@@ -1,0 +1,49 @@
+{
+  "status": "lap_limit",
+  "laps": 8,
+  "successful_laps": 8,
+  "trials": 8,
+  "history_laps": 0,
+  "attempts": 8,
+  "failed_attempts": 0,
+  "incomplete_attempts": 0,
+  "applied_steps": 3049,
+  "learned_steps": 1143,
+  "training_generations": 7,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 0,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": null,
+  "predictor_friction": 1.0489000082015991,
+  "dynamics_predictor": {
+    "kind": "rssm",
+    "variant": "latent",
+    "model_timestep": 0.1,
+    "hidden": 128,
+    "latent": 32
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.05,
+    "lambda_count": 16,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 279.36270872900013,
+  "partial_lap": null,
+  "device_memory": {
+    "bytes_in_use": 2509824,
+    "peak_bytes_in_use": 334740992,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 2879389696
+  }
+}

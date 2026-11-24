@@ -303,6 +303,7 @@ def main():
     best = np.inf
     running = None
     skipped = 0
+    trained_high_slip = {"0.3": 0, "0.5": 0, "windows": 0}
     worse = 0
     started = time.time()
     key = jax.random.key(config["seed"])
@@ -322,6 +323,10 @@ def main():
             writer.add_scalar("train/skipped_batches", skipped, step)
             continue
         params, opt_state = new_params, new_opt_state
+        peak = np.abs(batch["states"][:, :, 6]).max(axis=1)
+        trained_high_slip["0.3"] += int(np.sum(peak > 0.3))
+        trained_high_slip["0.5"] += int(np.sum(peak > 0.5))
+        trained_high_slip["windows"] += len(peak)
         running = value_f if running is None else 0.98 * running + 0.02 * value_f
         if step % 50 == 0:
             scalars(writer, "train", terms, step)
@@ -333,7 +338,10 @@ def main():
             mean = {k: float(np.mean([np.asarray(t[k]) for t in val_terms])) for k in val_terms[0] if k != "anchor_rmse"}
             mean["anchor_rmse"] = np.mean([np.asarray(t["anchor_rmse"]) for t in val_terms], axis=0).tolist()
             selection = sum(mean[k] for k in config["selection"])
+            writer.add_scalar("train/windows_slip_over_0.3", trained_high_slip["0.3"], step)
+            writer.add_scalar("train/windows_slip_over_0.5", trained_high_slip["0.5"], step)
             record = {"step": step, "train_total": float(value), "selection": selection, "skipped": skipped,
+                      "trained_high_slip_windows": dict(trained_high_slip),
                       "elapsed_min": (time.time() - started) / 60, "val": mean}
             history.append(record)
             scalars(writer, "val", {k: v for k, v in mean.items()}, step)
@@ -359,7 +367,9 @@ def main():
             print(f"step {step:6d}  total {float(value):9.3f}  val anchor {mean['anchor']:.3f} (steer {rmse[0]:.3f} "
                   f"v {rmse[1]:.2f} r {rmse[2]:.2f} slip {rmse[3]:.3f})  pred {mean['prediction']:.2f}  "
                   f"1s pos {mean['position_1s']:.2f} m  lidar {mean['lidar']:.3f}  kl_c {mean['kl_c']:.2f} "
-                  f"kl_d {mean['kl_d']:.2f}  cond {mean['condition']:.3f}  {record['elapsed_min']:.1f} min", flush=True)
+                  f"kl_d {mean['kl_d']:.2f}  cond {mean['condition']:.3f}  {record['elapsed_min']:.1f} min  "
+                  f"skipped {skipped}  trained windows |slip|>0.3 {trained_high_slip['0.3']} >0.5 "
+                  f"{trained_high_slip['0.5']} of {trained_high_slip['windows']}", flush=True)
             if worse >= config["stop_patience"]:
                 print(f"early stop at step {step}: validation {config['stop_factor']}x worse than best for "
                       f"{worse} evaluations", flush=True)

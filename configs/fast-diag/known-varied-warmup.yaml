@@ -1,0 +1,9 @@
+# Known-model control with a warm-up whose speed varies around the lap (full pure-pursuit profile, capped at 9 m/s).
+# With speed_scale 0.6 the capped warm-up ran at a constant 5.6 m/s, so the value function could not learn that
+# faster is better and the learned laps got slower each lap.
+extends: known-slow-warmup.yaml
+output:
+  exp_name: known-varied-warmup
+planner:
+  warmup:
+    speed_scale: 1.0
