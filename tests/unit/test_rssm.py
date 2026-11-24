@@ -130,3 +130,18 @@ def test_high_slip_windows_find_exactly_the_windows_with_high_slip():
     windows = data.high_slip_windows(10, 0.4)
     starts = sorted(t for _, t in windows)
     assert starts == list(range(10, 21))
+
+
+def test_clearance_cost_shape_and_range():
+    from sit_lmpc.world.rssm_runtime import RSSMPredictor
+    config, model, params = small()
+    st, scale = st_params()
+    predictor = RSSMPredictor(params, st, scale, jnp.zeros(config.hidden, jnp.float32), jnp.zeros(config.latent, jnp.float32),
+                              model, "latent", 0.1, 0.02, 0.35, 2.0)
+    state = jnp.asarray([0.0, 0.0, 0.0, 5.0, 0.0, 0.0, 0.0], jnp.float32)
+    actions = jax.random.uniform(jax.random.key(7), (6, 5, 2), minval=-1, maxval=1)
+    cost = predictor.clearance_cost(state, actions)
+    assert cost.shape == (6, 5)
+    assert bool(jnp.all(cost >= 0)) and bool(jnp.all(cost <= 2.0))
+    off = predictor.replace(clearance_weight=0.0).clearance_cost(state, actions)
+    assert float(jnp.abs(off).max()) == 0.0

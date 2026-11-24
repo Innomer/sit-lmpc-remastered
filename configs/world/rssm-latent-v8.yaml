@@ -1,0 +1,10 @@
+# Variant A with rssm-v8 (latent overshooting fine-tune, map-free high-slip data) and the LiDAR clearance check:
+# candidates whose predicted nearest LiDAR range drops below 0.35 m are penalised at every step.
+extends: rssm-latent.yaml
+output:
+  exp_name: rssm-latent-v8
+planner:
+  dynamics:
+    rssm: runs/rssm-v8
+    rssm_clearance_margin: 0.35
+    rssm_clearance_weight: 1.0

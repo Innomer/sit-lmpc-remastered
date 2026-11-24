@@ -94,3 +94,36 @@ class TrackData:
                 lidar = np.where(rng.random(lidar.shape) < 0.01, MAX_RANGE, lidar)
             batch["lidar"].append(log_range(lidar))
         return {key: np.asarray(value, np.float32) for key, value in batch.items()}
+
+
+class MapFreeData(TrackData):
+    """The map-free excitation dataset (sit_lmpc.world.data.WorldData) as RSSM windows. Driven in open space, so the
+    LiDAR it would have seen is maximum range on every beam."""
+
+    def __init__(self, root, split, beams=64, max_slip=MAX_SLIP, max_yaw_rate=MAX_YAW_RATE):
+        from sit_lmpc.world.data import WorldData
+        data = WorldData(root, split)
+        instances = {m["instance_id"]: m for m in data.dataset.instances}
+        self.episodes = []
+        for item in data.items:
+            states = item["states"].astype(np.float32)
+            outside = np.flatnonzero((np.abs(states[:, 6]) > max_slip) | (np.abs(states[:, 5]) > max_yaw_rate))
+            count = int(outside[0]) if len(outside) else len(states)
+            if count < 2:
+                continue
+            if "conditions" in item:
+                conditions = item["conditions"][:, [0, 3]]
+                conditions = np.concatenate([conditions, conditions[-1:]])[:count]
+            else:
+                member = instances[item["source"]]
+                conditions = np.tile([member["friction"], member["mass_ratio"]], (count, 1))
+            self.episodes.append({
+                "states": states[:count],
+                "controls": item["controls"][:count - 1].astype(np.float32),
+                "sensors": item["observations"][:count].astype(np.float32),
+                "pose": item["pose"][:count].astype(np.float32),
+                "lidar": np.full((count, beams), MAX_RANGE, np.float32),
+                "conditions": conditions.astype(np.float32),
+                "map": "map-free",
+                "change": item["kind"],
+            })

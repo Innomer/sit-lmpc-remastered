@@ -44,6 +44,8 @@ class RSSMPredictor:
     variant: str = struct.field(pytree_node=False, default="latent")
     timestep: float = struct.field(pytree_node=False, default=0.1)
     integrator_timestep: float = struct.field(pytree_node=False, default=0.02)
+    clearance_margin: float = struct.field(pytree_node=False, default=0.35)
+    clearance_weight: float = struct.field(pytree_node=False, default=0.0)
 
     @property
     def params(self):
@@ -61,6 +63,22 @@ class RSSMPredictor:
                                 sample=False)[0]
         return xs[None]
 
+    @jax.jit
+    def clearance_cost(self, state, actions):
+        """Per-step penalty (candidates, horizon) from the LiDAR the world model predicts along each candidate:
+        weight * max(margin - nearest predicted range, 0) / margin."""
+        state = jnp.asarray(state, self.st_params.dtype)
+
+        def one(sequence):
+            _, hs, ss = latent_rollout(self.model, self.network, self.st_params, self.action_scale, self.timestep,
+                                       self.integrator_timestep, self.h, self.s, state,
+                                       jnp.asarray(sequence, self.st_params.dtype), jax.random.key(0), sample=False)
+            mean, _ = self.model.apply(self.network, hs, ss, method=RSSM.decode_lidar)
+            return jnp.exp(mean).min(axis=-1)
+
+        nearest = jax.vmap(one)(actions)
+        return self.clearance_weight * jnp.clip((self.clearance_margin - nearest) / self.clearance_margin, 0.0, 1.0)
+
     def step_members(self, state, action):
         state = jnp.asarray(state, self.st_params.dtype)
         action = jnp.asarray(action, self.st_params.dtype)
@@ -75,7 +93,8 @@ class RSSMPredictor:
 
 
 class RSSMFilter:
-    def __init__(self, run, st_params, action_scale, variant="latent", model_timestep=0.1, integrator=0.02):
+    def __init__(self, run, st_params, action_scale, variant="latent", model_timestep=0.1, integrator=0.02,
+                 clearance_margin=0.35, clearance_weight=0.0):
         run = Path(run)
         config = yaml.safe_load((run / "config.yaml").read_text())
         self.config = RSSMConfig(**config["model"])
@@ -91,6 +110,8 @@ class RSSMFilter:
         self.variant = variant
         self.model_timestep = model_timestep
         self.planner_integrator = integrator
+        self.clearance_margin = clearance_margin
+        self.clearance_weight = clearance_weight if variant == "latent" else 0.0
         model, network, st = self.model, self.network, self.st_params
 
         def embed(lidar, sensors):
@@ -127,6 +148,21 @@ class RSSMFilter:
     def lidar_features(self, scan):
         return jnp.asarray(log_range(downsample(np.asarray(scan, np.float32)[None], self.config.beams))[0])
 
+    def step_features(self, sensors, lidar, pose_rear, control):
+        """As step, with the LiDAR already as the model's 64 log-range features (e.g. rssm_lidar.npy)."""
+        yaw = float(pose_rear[2])
+        pose = jnp.asarray([pose_rear[0] + LR * np.cos(yaw), pose_rear[1] + LR * np.sin(yaw), yaw], jnp.float32)
+        lidar = jnp.asarray(lidar, jnp.float32)
+        sensors = jnp.asarray(sensors, jnp.float32)
+        if not self.started:
+            self.h, self.s, self.x, anchor, condition = self._first(lidar, sensors, pose)
+            self.started = True
+        else:
+            self.h, self.s, self.x, anchor, condition = self._step(self.h, self.s, self.x,
+                                                                   jnp.asarray(control, jnp.float32), lidar, sensors,
+                                                                   pose)
+        return np.asarray(anchor)
+
     def step(self, sensors, scan, pose_rear, control):
         """sensors: the 9 encoder features (raw); scan: LiDAR ranges on the training layout (1080 beams, 270 deg);
         pose_rear: PF pose (x, y, yaw) at the rear axle; control: the control applied since the last call."""
@@ -147,4 +183,5 @@ class RSSMFilter:
 
     def predictor(self):
         return RSSMPredictor(self.network, self.st_params, self.action_scale, self.h, self.s, self.model,
-                             self.variant, self.model_timestep, self.planner_integrator)
+                             self.variant, self.model_timestep, self.planner_integrator, self.clearance_margin,
+                             self.clearance_weight)

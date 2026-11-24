@@ -114,6 +114,8 @@ class DynamicsConfig:
     rssm_variant: str = "latent"
     rssm_model_timestep: float = 0.1
     rssm_state: bool = True
+    rssm_clearance_margin: float = 0.35
+    rssm_clearance_weight: float = 0.0
     likelihood_power: float = 1.0
     update_batch_size: int = 512
     validation_fraction: float = 0.2
@@ -370,6 +372,8 @@ class ExperimentConfig:
                 raise ValueError("planner.dynamics.rssm_variant must be latent or cheap")
             if not dynamics.rssm_model_timestep > 0:
                 raise ValueError("planner.dynamics.rssm_model_timestep must be > 0")
+            if not dynamics.rssm_clearance_margin > 0 or dynamics.rssm_clearance_weight < 0:
+                raise ValueError("planner.dynamics.rssm_clearance_margin must be > 0 and rssm_clearance_weight >= 0")
             if s.backend != "ros" or not (s.ros.imu_topic and s.ros.wheel_topic and s.ros.pose_topic and s.ros.lidar_topic):
                 raise ValueError("planner.dynamics.backend rssm needs backend ros with simulation.ros imu_topic, "
                                  "wheel_topic, pose_topic and lidar_topic (bridge sensors and LiDAR enabled)")

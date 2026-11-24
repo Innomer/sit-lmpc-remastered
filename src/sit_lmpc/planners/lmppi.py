@@ -87,11 +87,14 @@ def sample_validity(previous, da, states, values, hull_distances):
             & jnp.all(jnp.isfinite(previous)))
 
 
-def _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost=False):
+def _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost=False,
+                  clearance_cost=None):
     valid = sample_validity(previous, da, states, values, hull_distances)
     terminal = jnp.zeros(config.horizon).at[-1].set(1)
     boundary = jnp.abs(jnp.where(valid[:, None], states[:, :, 1], 0.))
     r_boundary = unit_range(jnp.where(boundary > config.boundary_limit, boundary, 0), valid[:, None])
+    if clearance_cost is not None:
+        r_boundary = r_boundary + jnp.where(valid[:, None], clearance_cost, 0.)
     r_value = values.reshape(config.samples, -1)
     if config.mean_value:
         r_value = r_value.mean(axis=1, keepdims=True)
@@ -122,8 +125,10 @@ debug_reward_terms = jax.jit(_reward_terms, static_argnames=("config", "fixed_de
 
 
 @partial(jax.jit, static_argnames=("config", "fixed_density_cost"))
-def propose(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost=False):
-    terms = _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost)
+def propose(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost=False,
+            clearance_cost=None):
+    terms = _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost,
+                          clearance_cost)
     w = weights(returns(terms["reward"]), config.temperature, config.damping, valid=terms["valid"][None, :, None])
     if len(previous) == config.horizon + 1:
         # u_H uses the terminal weights from the SAME sampled sequences.
@@ -145,10 +150,11 @@ def normalized_risk_cost(risk_probabilities, mode):
 @partial(jax.jit, static_argnames=("config", "mode", "fixed_density_cost"))
 def propose_with_risk(
     previous, da, states, values, hull_distances, risk_probabilities, lambdas, config, mode,
-    fixed_density_cost=False,
+    fixed_density_cost=False, clearance_cost=None,
 ):
     """Penalize each selected risk value; retain the separate cutoff gate."""
-    terms = _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost)
+    terms = _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost,
+                          clearance_cost)
     risk_cost = normalized_risk_cost(risk_probabilities, mode)
     reward = terms["reward"] - lambdas[:, 2, None, None] * risk_cost[None]
     w = weights(returns(reward), config.temperature, config.damping, valid=terms["valid"][None, :, None])
@@ -160,9 +166,10 @@ def propose_with_risk(
 
 @partial(jax.jit, static_argnames=("config", "mode", "fixed_density_cost"))
 def propose_with_constraints(previous, da, states, values, hull_distances,
-                             chance, risk, lambdas, config, mode, fixed_density_cost=False):
+                             chance, risk, lambdas, config, mode, fixed_density_cost=False, clearance_cost=None):
     """Optional arguments are absent, not zero arrays or unused lambda columns."""
-    terms = _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost)
+    terms = _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost,
+                          clearance_cost)
     reward = terms["reward"]
     column = 2
     if chance is not None:
@@ -727,6 +734,9 @@ class LMPPI:
             cartesian, da, sampled_actions = sample_rollouts(
                 self.model, state, previous, sample_key, self.config
             )
+        clearance_cost = None
+        if getattr(self.model, "clearance_weight", 0.0) > 0:
+            clearance_cost = self.model.clearance_cost(state, sampled_actions[:, : self.config.horizon])
         speculative = window = None
         if not density_active and self.config.safe_set_selection == "predicted_window" and hasattr(safe_set, "speculate"):
             current_s = float(frenet_state[0])
@@ -869,6 +879,8 @@ class LMPPI:
                                            force_hull=not isinstance(hull, DensitySnapshot))
         fixed_density_cost = isinstance(hull, DensitySnapshot) and hull.fixed_penalty
         proposal_options = {"fixed_density_cost": True} if fixed_density_cost else {}
+        if clearance_cost is not None:
+            proposal_options["clearance_cost"] = clearance_cost
         if chance_active:
             candidates = propose_with_constraints(
                 previous, da, states, values, sample_distances,

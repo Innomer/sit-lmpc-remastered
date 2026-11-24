@@ -6,10 +6,11 @@ ESE 6150 Team 8, 23 Nov 2026, branch `world-model`. Details of the model and tra
 
 The RSSM world model (LiDAR, IMU, wheel speed and PF pose in, bicycle model inside the prediction) is running inside
 the SIT-LMPC planner. Offline it predicts better than the bicycle model with an EKF, gives good slip and yaw-rate
-estimates, tracks grip and predicts LiDAR scans. In closed loop the car crashes within one to three learned laps. In
-each crash the planner chose a manoeuvre that spun the car, while the model predicted it would stay stable. Adding
-more data, including the planner's own laps and hard manoeuvres, has not fixed this. Our current explanation is that
-the planner keeps finding the places where the learned model is too optimistic, and those are at the grip limit.
+estimates, tracks grip and predicts LiDAR scans. In closed loop the car crashes within one to three learned laps.
+Two of the three crashes we replayed were the car driving into the wall, and one (v7, at about 14 m/s) was a real
+spin. In all three the world model's 1.5 s predictions were well off, even when started from the true state, while
+the bicycle model was exact and our earlier v3 model was 3 to 7 times closer. Adding more data, including the
+planner's own laps and hard manoeuvres, has not fixed this.
 
 ## System
 
@@ -56,24 +57,31 @@ Spielberg, ROS lockstep sim, 5 pure-pursuit warm-up laps, then SIT-LMPC with the
 | rssm-v6 (added the planner's laps and hard manoeuvres), normal warm-up | Two learned laps at 37.4 s and 36.7 s, both faster than the 38.0 s warm-up. Crashed early in lap 8. |
 | rssm-v7 (more spin data, high-slip windows oversampled) | One learned lap (38.3 s), then crashed at about 14 m/s in lap 7. |
 
-We replayed each crashed lap (`scripts/replay_rssm_crash.py`): at every step, predict 1.5 s ahead with the controls that
-were actually used and compare with what happened.
+We replayed each crashed lap (`scripts/replay_rssm_crash.py`, `scripts/replay_v3_on_crash.py`): at every step,
+predict 1.5 s ahead with the controls that were actually used and compare with what happened. Slip below is the value
+1.5 s after the last replayed step.
 
-| Crash | Slip 1.5 s later (actual) | Slip predicted by the world model | 1.5 s position error: world model from its estimate / world model from the true state / bicycle from the true state |
+| Crash | What happened | Slip: actual / bicycle (exact) / v3 model / world model | 1.5 s position error from the true state, median: v3 / world model / bicycle |
 |---|---|---|---|
-| v5, first corner, ~3 m/s | 1.07 rad | 0.12 rad | 0.33 / 0.14 / 0.00 m (median over the lap) |
-| v6, lap 8, ~8 m/s | 1.11 rad | 0.32 rad | 0.47 / 0.36 / 0.01 m (last 10 steps) |
-| v7, lap 7, ~14 m/s | −0.75 rad | −0.19 rad | 0.80 / 0.82 / 0.00 m (last 10 steps) |
+| v5, first corner, ~3 m/s | hit the wall | 1.07* / 0.12 / 0.13 / 0.11 rad | 0.02 / 0.14 / 0.00 m |
+| v6, lap 8, ~8 m/s | hit the wall | 1.11* / 0.33 / 0.32 / 0.30 rad | 0.13 / 0.32 / 0.00 m |
+| v7, lap 7, ~14 m/s | spun out | −0.75 / −0.84 / −0.49 / −0.18 rad | 0.21 / 0.52 / 0.00 m |
+
+\* These two values are the wall impact itself (the simulator's collision handling throws the state around on
+contact), not a spin: even the exact bicycle model predicts no spin there. An earlier version of this document read
+them as spins.
 
 ## What we think is going on
 
-- LMPPI picks the candidate with the best predicted outcome at every step. If the model is too optimistic about an
-  aggressive corner entry, that candidate wins. More data reduces the error but the planner still finds what is left,
-  and that is always near the limit where there is least data.
-- The learned residual seems to damp spins. Just before the v7 crash the world model is 0.8 m off even when started
-  from the true state, while the bicycle model is exact. The residual is mostly fit on normal driving, and near the
-  limit it holds back the slip growth the physics would otherwise predict.
-- Spin onset is rare in the data. Even now, steps with slip above 0.5 rad are under 1% of the training set.
+- The world model's multi-step rollout is not accurate enough. From the true state it is 0.14–0.52 m off after 1.5 s
+  (median), against 0.02–0.21 m for the v3 model. It is mostly trained one step at a time, with a 1 s rollout loss
+  at low weight from only a few start points, while the planner rolls it 15 steps.
+- Near the walls that error is enough to crash: Spielberg's edge is about 1.1 m from the centre line, and the planner
+  trusted predicted paths that were 0.3–0.5 m off (v5, v6).
+- Near the grip limit the rollout under-predicts slip growth (v7: −0.18 rad against −0.84 for the exact model). The
+  planner picks the candidate with the best predicted outcome, so it ends up on exactly these optimistic predictions.
+- High-slip driving is rare in the on-track data (under 1% of steps above 0.5 rad), much rarer than in the map-free
+  data the v3 model was trained on.
 
 ## What we tried
 
@@ -91,6 +99,8 @@ were actually used and compare with what happened.
 | Idea | How | Downside |
 |---|---|---|
 | Uncertainty in the planner | the model gives an uncertainty (ensemble or latent spread) and LMPPI penalises uncertain candidates | the model has to know it is wrong exactly where it has the least data; needs calibration |
+| Train the rollout as the planner uses it | 15-step latent rollout loss from many start points (latent overshooting), fine-tuned from v7, with the map-free high-slip data mixed in | in progress |
+| LiDAR clearance check | decode the predicted scans along each candidate and penalise ones that come too close to a wall | in progress |
 | Bicycle-model check | also roll candidates through the bicycle model and drop ones where it predicts a spin or disagrees a lot with the world model | the bicycle model is only approximate on the real car, and it covers up the world model's errors |
 | Grip and stiffness from the latent instead of a free residual | spins come from the physics | not pursued |
 | Turn the residual down at high slip | limit the damping effect | not pursued |

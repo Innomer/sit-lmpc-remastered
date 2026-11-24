@@ -52,7 +52,7 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
 
     h0 = jnp.zeros(model.config.hidden)
     q_mean, q_log_std = apply(RSSM.posterior, h0, apply(RSSM.embed, lidar[0], sensors[0]))
-    s0 = q_mean + jnp.exp(q_log_std) * jax.random.normal(keys[0], q_mean.shape) * sample
+    s0 = q_mean + jnp.exp(q_log_std) * jax.random.normal(keys[0], q_mean.shape, q_mean.dtype) * sample
     kl0 = kl_diag(q_mean, q_log_std, 0.0, 1.0)
     x0 = merge(pose[0], apply(RSSM.anchor, h0, s0))
 
@@ -64,7 +64,7 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
         h_next = apply(RSSM.advance, h, s, u, x_pred)
         p_mean, p_log_std = apply(RSSM.prior, h_next)
         q_mean, q_log_std = apply(RSSM.posterior, h_next, apply(RSSM.embed, lidar[t], sensors[t]))
-        s_next = q_mean + jnp.exp(q_log_std) * jax.random.normal(k, q_mean.shape) * sample
+        s_next = q_mean + jnp.exp(q_log_std) * jax.random.normal(k, q_mean.shape, q_mean.dtype) * sample
         kl_c = kl_diag(q_mean[:c], q_log_std[:c], c_mean, c_var + walk ** 2)
         kl_d = kl_diag(q_mean[c:], q_log_std[c:], p_mean, jnp.exp(2 * p_log_std))
         anchor = apply(RSSM.anchor, h_next, s_next)
@@ -119,6 +119,20 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
         return out
 
     prediction = jax.vmap(predict)(starts)
+
+    def predict_from_truth(start):
+        def roll(carry, i):
+            h, s, x = carry
+            u = controls[start + i]
+            x_next = clamp(jax.lax.stop_gradient(bicycle(st_params, x, u, dt, integrator)) + apply(RSSM.residual, x, u, h, s))
+            h_next = apply(RSSM.advance, h, s, u, x_next)
+            p_mean, _ = apply(RSSM.prior, h_next)
+            s_next = jnp.concatenate([s[:c], p_mean])
+            return (h_next, s_next, x_next), jnp.mean(state_error(x_next, states[start + i + 1]) ** 2)
+        _, out = jax.lax.scan(roll, (hs[start], ss[start], states[start].astype(xs.dtype)), jnp.arange(horizon))
+        return out
+
+    true_state_prediction = jax.vmap(predict_from_truth)(starts)
     free = settings["free_nats"]
     kl = jnp.maximum(terms["kl_d"].mean(), free) + terms["kl_c"].mean() + kl0 / length
     aux = {"filtered": filtered, "x_filtered": xs, "rollout_x": prediction["x"],
@@ -133,6 +147,7 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
         "kl_d": terms["kl_d"].mean(),
         "condition": terms["condition"].mean(),
         "prediction": prediction["state"].mean(),
+        "true_state_prediction": true_state_prediction.mean(),
         "prediction_lidar": prediction["lidar"].mean(),
         "consistency": prediction["consistency"].mean(),
         "position_1s": prediction["position"][:, -1].mean(),
@@ -225,6 +240,10 @@ def main():
     dt, integrator = float(config["timestep"]), float(config["integrator_timestep"])
     rssm_config = RSSMConfig(**config["model"])
     model, params = init_params(rssm_config, jax.random.key(config["seed"]))
+    init_from = config.get("init_from")
+    if init_from:
+        params = serialization.from_bytes(params, (Path(init_from) / "best.msgpack").read_bytes())
+        print(f"initialised from {init_from}", flush=True)
 
     cut = dict(zip(("max_slip", "max_yaw_rate"), config.get("data_cut", [1.0, 8.0])))
     train = TrackData(config["dataset"], "train", rssm_config.beams, **cut)
@@ -235,6 +254,15 @@ def main():
         print(f"{len(high_slip)} training windows with |slip| > {config.get('high_slip_threshold', 0.4)} rad; "
               f"{high_slip_fraction:.0%} of each batch drawn from them", flush=True)
     obs_mean, obs_std = train.observation_scale()
+    if init_from:
+        scale = np.load(Path(init_from) / "observation_scale.npz")
+        obs_mean, obs_std = scale["mean"], scale["std"]
+    map_free = None
+    map_free_fraction = config.get("map_free_fraction", 0.0)
+    if map_free_fraction:
+        from sit_lmpc.world.rssm_data import MapFreeData
+        map_free = MapFreeData(config["map_free_dataset"], "train", rssm_config.beams, **cut)
+        print(f"map-free data: {len(map_free.episodes)} episodes; {map_free_fraction:.0%} of each batch", flush=True)
     np.savez(output / "observation_scale.npz", mean=obs_mean, std=obs_std)
     obs_mean, obs_std = jnp.asarray(obs_mean), jnp.asarray(obs_std)
     rng = np.random.default_rng(config["seed"])
@@ -280,8 +308,12 @@ def main():
     key = jax.random.key(config["seed"])
     for step in range(1, steps + 1):
         key, sub = jax.random.split(key)
-        batch = train.sample(rng, config["batch"], config["window"], high_slip=high_slip,
+        free_count = int(round(config["batch"] * map_free_fraction)) if map_free is not None else 0
+        batch = train.sample(rng, config["batch"] - free_count, config["window"], high_slip=high_slip,
                              high_slip_fraction=high_slip_fraction)
+        if free_count:
+            extra = map_free.sample(rng, free_count, config["window"])
+            batch = {k: np.concatenate([batch[k], extra[k]]) for k in batch}
         kl_scale = min(1.0, step / config["kl_warmup"])
         new_params, new_opt_state, value, terms = update(params, opt_state, batch, sub, kl_scale)
         value_f = float(value)
