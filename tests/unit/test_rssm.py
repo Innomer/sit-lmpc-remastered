@@ -145,3 +145,60 @@ def test_clearance_cost_shape_and_range():
     assert bool(jnp.all(cost >= 0)) and bool(jnp.all(cost <= 2.0))
     off = predictor.replace(clearance_weight=0.0).clearance_cost(state, actions)
     assert float(jnp.abs(off).max()) == 0.0
+
+
+def test_safety_costs_speed_cap_and_slip():
+    from types import SimpleNamespace
+    from sit_lmpc.planners.lmppi import safety_step_costs, total_safety
+    config = SimpleNamespace(safety_speed_cap=10.0, safety_speed_weight=2.0, safety_slip_limit=0.35,
+                             safety_slip_weight=1.0)
+    states = jnp.zeros((3, 4, 7))
+    states = states.at[0, :, 3].set(9.0).at[1, 2, 3].set(10.25).at[2, 1, 6].set(-0.5)
+    terms = safety_step_costs(states, config)
+    assert float(terms["speed"][0].max()) == 0.0 and np.isclose(float(terms["speed"][1, 2]), 1.0)
+    assert np.isclose(float(terms["slip"][2, 1]), 1.0) and float(terms["slip"][:2].max()) == 0.0
+    off = SimpleNamespace(safety_speed_cap=None, safety_speed_weight=1.0, safety_slip_limit=0.35, safety_slip_weight=0.0)
+    assert float(jnp.abs(total_safety(states, off)).max()) == 0.0
+
+
+def test_physics_rollout_matches_bicycle_with_grip():
+    from sit_lmpc.world.rssm_runtime import RSSMPredictor
+    config, model, params = small()
+    st, scale = st_params()
+    predictor = RSSMPredictor(params, st, scale, jnp.zeros(config.hidden, jnp.float32),
+                              jnp.zeros(config.latent, jnp.float32), model, "latent", 0.1, 0.02, 0.35, 0.0,
+                              jnp.float32(0.6), 1.0)
+    state = jnp.asarray([0.0, 0.0, 0.0, 6.0, 0.0, 0.0, 0.0], jnp.float32)
+    actions = jax.random.uniform(jax.random.key(8), (3, 5, 2), minval=-1, maxval=1)
+    xs = predictor.physics_rollout(state, actions)
+    assert xs.shape == (3, 5, 7)
+    x = state
+    low_grip = st.at[0].set(0.6)
+    for a in actions[1]:
+        x = bicycle(low_grip, x, a * scale, 0.1, 0.02)
+    assert np.allclose(xs[1, -1], x, atol=1e-4)
+
+
+def test_ensemble_heads_rollout_and_cost():
+    from sit_lmpc.world.rssm import ensemble_rollout
+    from sit_lmpc.world.rssm_runtime import RSSMPredictor
+    config = RSSMConfig(hidden=16, condition=2, fast=4, beams=16, head=16, decoder=16, heads=3)
+    model, params = init_params(config, jax.random.key(0))
+    st, scale = st_params()
+    h, s = jnp.zeros(config.hidden, jnp.float32), jnp.zeros(config.latent, jnp.float32)
+    x = jnp.asarray([0.0, 0.0, 0.0, 5.0, 0.0, 0.0, 0.0], jnp.float32)
+    actions = jax.random.uniform(jax.random.key(9), (6, 2), jnp.float32, minval=-1, maxval=1)
+    _, hs, ss = latent_rollout(model, params, st, scale, 0.1, 0.02, h, s, x, actions, jax.random.key(0), sample=False)
+    h_in, s_in = jnp.concatenate([h[None], hs[:-1]]), jnp.concatenate([s[None], ss[:-1]])
+    xs = ensemble_rollout(model, params, st, scale, 0.1, 0.02, h_in, s_in, x, actions)
+    assert xs.shape == (6, 3, 7)
+    y = x
+    for t, a in enumerate(actions):
+        u = a * scale
+        res = model.apply(params, jnp.repeat(y[None], 3, 0), u, h_in[t], s_in[t], method=RSSM.ensemble_residual)[1]
+        y = clamp(bicycle(st, y, u, 0.1, 0.02) + res)
+    assert np.allclose(xs[-1, 1], y, atol=1e-4)
+    predictor = RSSMPredictor(params, st, scale, h, s, model, "latent", 0.1, 0.02, 0.35, 0.0, jnp.float32(1.0), 0.0,
+                              2.0, 0.1, 0.3)
+    cost = predictor.ensemble_cost(x, jax.random.uniform(jax.random.key(10), (4, 6, 2), jnp.float32, minval=-1, maxval=1))
+    assert cost.shape == (4, 6) and bool(jnp.all(cost >= 0)) and bool(jnp.all(cost <= 2.0))

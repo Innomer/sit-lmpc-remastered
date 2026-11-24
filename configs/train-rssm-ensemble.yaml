@@ -1,0 +1,18 @@
+# Ensemble transition heads on the frozen rssm-v8 (python -m sit_lmpc.world.rssm_ensemble). Encoder, memory and the
+# main transition are not changed; each head trains on its own random half of the windows (same data mix as v8).
+base: runs/rssm-v8
+heads: 5
+seed: 20261124
+steps: 6000
+batch: 32
+window: 40
+learning_rate: 2.0e-5
+prediction_steps: 15
+prediction_stride: 2
+high_slip_fraction: 0.15
+high_slip_threshold: 0.4
+map_free_fraction: 0.3
+eval_every: 250
+val_batches: 8
+init: perturbed_residual  # each head starts as rssm-v8's residual head with Gaussian noise (init_noise x weight std)
+init_noise: 0.05

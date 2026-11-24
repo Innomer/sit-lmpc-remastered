@@ -116,6 +116,10 @@ class DynamicsConfig:
     rssm_state: bool = True
     rssm_clearance_margin: float = 0.35
     rssm_clearance_weight: float = 0.0
+    rssm_physics_weight: float = 0.0
+    rssm_ensemble_weight: float = 0.0
+    rssm_ensemble_slip_scale: float = 0.1
+    rssm_ensemble_position_scale: float = 0.3
     likelihood_power: float = 1.0
     update_batch_size: int = 512
     validation_fraction: float = 0.2
@@ -223,6 +227,10 @@ class PlannerConfig:
     reference_interval: float = 3.0
     search_points: int = 400
     action_rate_penalty: float = 0.01
+    safety_speed_cap: float | None = None
+    safety_speed_weight: float = 1.0
+    safety_slip_limit: float = 0.35
+    safety_slip_weight: float = 1.0
     mean_value: bool = True
     scan_rollout: bool = True
     safe_set_selection: str = "exact"
@@ -374,6 +382,10 @@ class ExperimentConfig:
                 raise ValueError("planner.dynamics.rssm_model_timestep must be > 0")
             if not dynamics.rssm_clearance_margin > 0 or dynamics.rssm_clearance_weight < 0:
                 raise ValueError("planner.dynamics.rssm_clearance_margin must be > 0 and rssm_clearance_weight >= 0")
+            if min(dynamics.rssm_physics_weight, dynamics.rssm_ensemble_weight) < 0:
+                raise ValueError("planner.dynamics.rssm_physics_weight and rssm_ensemble_weight must be >= 0")
+            if not (dynamics.rssm_ensemble_slip_scale > 0 and dynamics.rssm_ensemble_position_scale > 0):
+                raise ValueError("planner.dynamics.rssm_ensemble_slip_scale and rssm_ensemble_position_scale must be > 0")
             if s.backend != "ros" or not (s.ros.imu_topic and s.ros.wheel_topic and s.ros.pose_topic and s.ros.lidar_topic):
                 raise ValueError("planner.dynamics.backend rssm needs backend ros with simulation.ros imu_topic, "
                                  "wheel_topic, pose_topic and lidar_topic (bridge sensors and LiDAR enabled)")
@@ -774,6 +786,10 @@ class ExperimentConfig:
             not math.isfinite(n) or n < 0 for n in (*s.control_noise, s.state_noise)
         ):
             raise ValueError("noise values must be nonnegative and finite")
+        if p.safety_speed_cap is not None and not p.safety_speed_cap > 0:
+            raise ValueError("planner.safety_speed_cap must be null or > 0")
+        if p.safety_speed_weight < 0 or p.safety_slip_weight < 0 or not p.safety_slip_limit > 0:
+            raise ValueError("planner.safety_speed_weight and safety_slip_weight must be >= 0, safety_slip_limit > 0")
         if p.lambda_max <= 0 or p.safe_set_relaxation < 0 or p.action_rate_penalty < 0:
             raise ValueError("invalid planner penalty or lambda range")
         return self

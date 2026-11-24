@@ -34,6 +34,7 @@ class RSSMConfig:
     decoded_sensors: int = 4
     head: int = 128
     decoder: int = 256
+    heads: int = 0
 
     @property
     def latent(self):
@@ -69,6 +70,8 @@ class RSSM(nn.Module):
         self.lidar_decoder = mlp(c.decoder, 2 * c.beams, "lidar_decoder")
         self.sensor_decoder = mlp(c.head, 2 * c.decoded_sensors, "sensor_decoder")
         self.condition_head = mlp(64, 2, "condition_head")
+        if c.heads:
+            self.ensemble_heads = [mlp(c.head, 7, f"ensemble_{k}") for k in range(c.heads)]
 
     def gaussian(self, out):
         mean, log_std = jnp.split(out, 2, axis=-1)
@@ -86,6 +89,12 @@ class RSSM(nn.Module):
 
     def residual(self, x, u, h, s):
         return self.residual_head(jnp.concatenate([body(x), u / CONTROL_SCALE, h, s], -1)) * 0.1
+
+    def ensemble_residual(self, x, u, h, s):
+        """Residuals of the ensemble transition heads; x (..., heads, 7), one state per head, shared h and s."""
+        shared = jnp.concatenate([u / CONTROL_SCALE, h, s], -1)
+        return jnp.stack([head(jnp.concatenate([body(x[..., k, :]), shared], -1)) * 0.1
+                          for k, head in enumerate(self.ensemble_heads)], -2)
 
     def advance(self, h, s, u, x_next):
         h_next, _ = self.cell(h, jnp.concatenate([s, u / CONTROL_SCALE, body(x_next)], -1))
@@ -115,6 +124,8 @@ class RSSM(nn.Module):
         self.decode_lidar(h_next, mean)
         self.decode_sensors(h_next, mean, u)
         self.condition_readout(mean)
+        if self.config.heads:
+            self.ensemble_residual(jnp.repeat(x[..., None, :], self.config.heads, -2), u, h, s)
         return h_next, mean
 
 
@@ -152,6 +163,19 @@ def latent_rollout(model, params, st_params, action_scale, dt, integrator, h, s,
     keys = jax.random.split(key, len(actions))
     _, (xs, hs, ss) = jax.lax.scan(step, (h, s, x), (actions, keys))
     return xs, hs, ss
+
+
+def ensemble_rollout(model, params, st_params, action_scale, dt, integrator, hs, ss, x, actions):
+    """Each ensemble head's state rollout (horizon, heads, 7) along a given memory/latent path: hs[t], ss[t] are the
+    h and s used at step t (the main rollout's inputs), so the heads differ only in their transition."""
+    def step(xk, inputs):
+        a, h, s = inputs
+        u = a * action_scale
+        nominal = jax.lax.stop_gradient(jax.vmap(lambda y: bicycle(st_params, y, u, dt, integrator))(xk))
+        xk = clamp(nominal + model.apply(params, xk, u, h, s, method=RSSM.ensemble_residual)).astype(st_params.dtype)
+        return xk, xk
+    x = x.astype(st_params.dtype)
+    return jax.lax.scan(step, jnp.repeat(x[None], model.config.heads, 0), (actions, hs, ss))[1]
 
 
 def cheap_rollout(model, params, st_params, action_scale, dt, integrator, h, s, x, actions):

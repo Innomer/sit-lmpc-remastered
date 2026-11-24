@@ -1,0 +1,17 @@
+# rssm-v8 with its 5 ensemble transition heads (runs/rssm-v8-ensemble), the varied warm-up (capped at 9 m/s) and all
+# safety terms: LiDAR clearance, speed cap 10 m/s (training data tops out at 10.3), predicted-slip cost above 0.35 rad,
+# physics check (bicycle rollout at the grip estimate) and ensemble disagreement. Ensemble scales = p95 head spread on
+# on-track validation (best checkpoint, step 500).
+extends: rssm-latent-v8-varied.yaml
+output:
+  exp_name: rssm-latent-v8-guarded
+planner:
+  safety_speed_cap: 10.0
+  safety_slip_limit: 0.35
+  safety_slip_weight: 1.0
+  dynamics:
+    rssm: runs/rssm-v8-ensemble
+    rssm_physics_weight: 1.0
+    rssm_ensemble_weight: 1.0
+    rssm_ensemble_slip_scale: 0.02
+    rssm_ensemble_position_scale: 0.25

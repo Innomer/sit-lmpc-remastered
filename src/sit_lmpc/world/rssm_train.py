@@ -135,7 +135,7 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
     true_state_prediction = jax.vmap(predict_from_truth)(starts)
     free = settings["free_nats"]
     kl = jnp.maximum(terms["kl_d"].mean(), free) + terms["kl_c"].mean() + kl0 / length
-    aux = {"filtered": filtered, "x_filtered": xs, "rollout_x": prediction["x"],
+    aux = {"filtered": filtered, "x_filtered": xs, "hs": hs, "ss": ss, "rollout_x": prediction["x"],
            "rollout_lidar": prediction["lidar_mean"], "starts": starts}
     return {
         "anchor": terms["anchor"].mean(),

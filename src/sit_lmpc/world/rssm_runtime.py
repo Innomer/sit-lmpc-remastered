@@ -14,7 +14,8 @@ import jax.numpy as jnp
 import yaml
 from flax import serialization, struct
 
-from sit_lmpc.world.rssm import BODY_INDEX, RSSM, RSSMConfig, bicycle, cheap_rollout, clamp, init_params, latent_rollout
+from sit_lmpc.world.rssm import (BODY_INDEX, RSSM, RSSMConfig, bicycle, cheap_rollout, clamp, ensemble_rollout,
+                                 init_params, latent_rollout)
 from sit_lmpc.world.rssm_data import downsample, log_range
 
 LR = 0.17145
@@ -46,6 +47,11 @@ class RSSMPredictor:
     integrator_timestep: float = struct.field(pytree_node=False, default=0.02)
     clearance_margin: float = struct.field(pytree_node=False, default=0.35)
     clearance_weight: float = struct.field(pytree_node=False, default=0.0)
+    grip: jax.Array = 1.0
+    physics_weight: float = struct.field(pytree_node=False, default=0.0)
+    ensemble_weight: float = struct.field(pytree_node=False, default=0.0)
+    ensemble_slip_scale: float = struct.field(pytree_node=False, default=0.1)
+    ensemble_position_scale: float = struct.field(pytree_node=False, default=0.3)
 
     @property
     def params(self):
@@ -79,6 +85,45 @@ class RSSMPredictor:
         nearest = jax.vmap(one)(actions)
         return self.clearance_weight * jnp.clip((self.clearance_margin - nearest) / self.clearance_margin, 0.0, 1.0)
 
+    @jax.jit
+    def physics_rollout(self, state, actions):
+        """Bicycle-model rollouts (candidates, horizon, 7) of the same candidates from the same state, with the
+        friction set to the world model's current grip estimate: the physics safety check."""
+        params = self.st_params.at[0].set(jnp.clip(jnp.asarray(self.grip, self.st_params.dtype), 0.3, 1.5))
+        state = jnp.asarray(state, self.st_params.dtype)
+
+        def one(sequence):
+            def advance(x, a):
+                y = bicycle(params, x, a * self.action_scale, self.timestep, self.integrator_timestep)
+                return y, y
+            return jax.lax.scan(advance, state, jnp.asarray(sequence, self.st_params.dtype))[1]
+
+        return jax.vmap(one)(actions)
+
+    @jax.jit
+    def ensemble_cost(self, state, actions):
+        """Per-step penalty (candidates, horizon) from the ensemble heads' disagreement along each candidate: the
+        heads roll out along the main rollout's memory/latent path; spread in slip (std) and position (rms distance
+        from the heads' mean) above its scale starts the penalty, twice the scale gives the full weight."""
+        state = jnp.asarray(state, self.st_params.dtype)
+
+        def one(sequence):
+            sequence = jnp.asarray(sequence, self.st_params.dtype)
+            _, hs, ss = latent_rollout(self.model, self.network, self.st_params, self.action_scale, self.timestep,
+                                       self.integrator_timestep, self.h, self.s, state, sequence, jax.random.key(0),
+                                       sample=False)
+            h_in = jnp.concatenate([self.h[None], hs[:-1]])
+            s_in = jnp.concatenate([self.s[None], ss[:-1]])
+            xs = ensemble_rollout(self.model, self.network, self.st_params, self.action_scale, self.timestep,
+                                  self.integrator_timestep, h_in, s_in, state, sequence)
+            slip = xs[..., 6].std(axis=-1)
+            centre = xs[..., :2].mean(axis=-2, keepdims=True)
+            position = jnp.sqrt(jnp.sum((xs[..., :2] - centre) ** 2, -1).mean(-1))
+            return jnp.maximum(jnp.clip(slip / self.ensemble_slip_scale - 1.0, 0.0, 1.0),
+                               jnp.clip(position / self.ensemble_position_scale - 1.0, 0.0, 1.0))
+
+        return self.ensemble_weight * jax.vmap(one)(actions)
+
     def step_members(self, state, action):
         state = jnp.asarray(state, self.st_params.dtype)
         action = jnp.asarray(action, self.st_params.dtype)
@@ -94,7 +139,8 @@ class RSSMPredictor:
 
 class RSSMFilter:
     def __init__(self, run, st_params, action_scale, variant="latent", model_timestep=0.1, integrator=0.02,
-                 clearance_margin=0.35, clearance_weight=0.0):
+                 clearance_margin=0.35, clearance_weight=0.0, physics_weight=0.0, ensemble_weight=0.0,
+                 ensemble_slip_scale=0.1, ensemble_position_scale=0.3):
         run = Path(run)
         config = yaml.safe_load((run / "config.yaml").read_text())
         self.config = RSSMConfig(**config["model"])
@@ -112,6 +158,11 @@ class RSSMFilter:
         self.planner_integrator = integrator
         self.clearance_margin = clearance_margin
         self.clearance_weight = clearance_weight if variant == "latent" else 0.0
+        self.physics_weight = physics_weight
+        if ensemble_weight > 0 and not self.config.heads:
+            raise ValueError(f"rssm_ensemble_weight > 0 needs an RSSM with ensemble heads; {run} has none")
+        self.ensemble = (ensemble_weight, ensemble_slip_scale, ensemble_position_scale)
+        self.grip = 1.0
         model, network, st = self.model, self.network, self.st_params
 
         def embed(lidar, sensors):
@@ -179,9 +230,10 @@ class RSSMFilter:
                                                                    pose)
         from sit_lmpc.world.rssm_train import CONDITION_MEAN, CONDITION_SCALE
         grip = float(np.asarray(condition)[0] * CONDITION_SCALE[0] + CONDITION_MEAN[0])
+        self.grip = grip
         return np.asarray(anchor), np.asarray(self.x), grip
 
     def predictor(self):
         return RSSMPredictor(self.network, self.st_params, self.action_scale, self.h, self.s, self.model,
                              self.variant, self.model_timestep, self.planner_integrator, self.clearance_margin,
-                             self.clearance_weight)
+                             self.clearance_weight, jnp.float32(self.grip), self.physics_weight, *self.ensemble)
