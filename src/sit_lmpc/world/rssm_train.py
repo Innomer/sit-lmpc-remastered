@@ -97,6 +97,24 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
 
     horizon = settings["prediction_steps"]
     starts = jnp.arange(0, length - horizon + 1, settings["prediction_stride"])
+    active = batch["horizon"] if "horizon" in batch else horizon
+    step_mask = (jnp.arange(horizon) < active).astype(states.dtype)
+    delta = settings.get("huber_delta")
+
+    def rollout_error(x, target):
+        error = state_error(x, target)
+        if delta is None:
+            return jnp.mean(error ** 2)
+        return jnp.mean(optax.huber_loss(error, delta=delta))
+
+    def masked(values):
+        return jnp.sum(values * step_mask) / (values.shape[0] * jnp.sum(step_mask))
+
+    def capped(value):
+        cap = settings.get("window_loss_cap")
+        if cap is None:
+            return value
+        return jnp.where(value > cap, cap * (1.0 + jnp.log(jnp.maximum(value, cap) / cap)), value)
 
     def predict(start):
         def roll(carry, i):
@@ -109,7 +127,7 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
             l_mean, l_log_std = apply(RSSM.decode_lidar, h_next, s_next)
             target = start + i + 1
             return (h_next, s_next, x_next), {
-                "state": jnp.mean(state_error(x_next, states[target]) ** 2),
+                "state": rollout_error(x_next, states[target]),
                 "lidar": jnp.mean(gaussian_nll(lidar[target], l_mean, l_log_std)),
                 "consistency": jnp.mean(((apply(RSSM.anchor, h_next, s_next) - x_next[BODY_INDEX]) / BODY_SCALE) ** 2),
                 "position": jnp.hypot(x_next[0] - states[target, 0], x_next[1] - states[target, 1]),
@@ -128,7 +146,7 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
             h_next = apply(RSSM.advance, h, s, u, x_next)
             p_mean, _ = apply(RSSM.prior, h_next)
             s_next = jnp.concatenate([s[:c], p_mean])
-            return (h_next, s_next, x_next), jnp.mean(state_error(x_next, states[start + i + 1]) ** 2)
+            return (h_next, s_next, x_next), rollout_error(x_next, states[start + i + 1])
         _, out = jax.lax.scan(roll, (hs[start], ss[start], states[start].astype(xs.dtype)), jnp.arange(horizon))
         return out
 
@@ -146,10 +164,10 @@ def run_sequence(params, model, st_params, dt, integrator, batch, key, settings,
         "kl_c": terms["kl_c"].mean(),
         "kl_d": terms["kl_d"].mean(),
         "condition": terms["condition"].mean(),
-        "prediction": prediction["state"].mean(),
-        "true_state_prediction": true_state_prediction.mean(),
-        "prediction_lidar": prediction["lidar"].mean(),
-        "consistency": prediction["consistency"].mean(),
+        "prediction": capped(masked(prediction["state"])),
+        "true_state_prediction": capped(masked(true_state_prediction)),
+        "prediction_lidar": masked(prediction["lidar"]),
+        "consistency": masked(prediction["consistency"]),
         "position_1s": prediction["position"][:, -1].mean(),
         "anchor_rmse": jnp.sqrt(jnp.mean(terms["anchor_error"] ** 2, axis=0)),
     }, aux
@@ -334,7 +352,12 @@ def main():
     for step in range(1, steps + 1):
         key, sub = jax.random.split(key)
         free_count = int(round(config["batch"] * map_free_fraction)) if map_free is not None else 0
-        open_count = int(round(config["batch"] * coverage_fraction)) if coverage is not None else 0
+        progress = step / steps
+        share = coverage_fraction
+        if coverage is not None and config.get("coverage_ramp"):
+            start_share = config.get("coverage_fraction_start", coverage_fraction)
+            share = start_share + (coverage_fraction - start_share) * min(1.0, progress / config["coverage_ramp"])
+        open_count = int(round(config["batch"] * share)) if coverage is not None else 0
         batch = train.sample(rng, config["batch"] - free_count - open_count, config["window"], high_slip=high_slip,
                              high_slip_fraction=high_slip_fraction, balance=balance)
         if free_count:
@@ -346,6 +369,11 @@ def main():
                 extra = coverage.sample(rng, open_count, config["window"], noise=False)
                 extra["lidar_weight"] = np.zeros(open_count, np.float32)
                 batch = {k: np.concatenate([batch[k], extra[k]]) for k in batch}
+        if config.get("horizon_ramp"):
+            full = settings["prediction_steps"]
+            first = config.get("horizon_start", 2)
+            current = int(round(first + (full - first) * min(1.0, progress / config["horizon_ramp"])))
+            batch["horizon"] = np.full(len(batch["states"]), current, np.int32)
         kl_scale = min(1.0, step / config["kl_warmup"])
         new_params, new_opt_state, value, terms = update(params, opt_state, batch, sub, kl_scale)
         value_f = float(value)
@@ -363,6 +391,9 @@ def main():
             scalars(writer, "train", terms, step)
             writer.add_scalar("train/total", float(value), step)
             writer.add_scalar("train/kl_scale", kl_scale, step)
+            if "horizon" in batch:
+                writer.add_scalar("train/rollout_horizon", int(batch["horizon"][0]), step)
+            writer.add_scalar("train/coverage_windows", int(np.sum(batch["lidar_weight"] == 0)) if "lidar_weight" in batch else 0, step)
             writer.add_scalar("train/learning_rate", float(schedule(step)), step)
         if step % config["eval_every"] == 0 or step == steps:
             val_terms = [evaluate(params, b, jax.random.key(i)) for i, b in enumerate(val_batches)]
@@ -388,7 +419,7 @@ def main():
                     log_comparisons(comparison, label, b, aux)
                     comparison.close()
             writer.flush()
-            worse = worse + 1 if selection > config["stop_factor"] * best else 0
+            worse = worse + 1 if selection > config["stop_factor"] * best and step >= config.get("stop_from_step", 0) else 0
             if selection < best:
                 best = selection
                 (output / "best.msgpack").write_bytes(serialization.to_bytes(params))

@@ -46,7 +46,8 @@ Common setup unless stated otherwise:
 | 25 | World-model track-limit margin | `4402c6b` | failure |
 | 26 | Rollout variants (diagnosis, no retraining) | `dc4ee44` | done: no cheaper fix; estimation error is about half |
 | 27 | Starting-state error by component; v8 planning from the true state | `dae8971` | failure: still crashes |
-| 28 | Open-space coverage data, rebalanced sampling, rssm-v10 fine-tune | `88f5fd2` + next commit | failure: training diverged |
+| 28 | Open-space coverage data, rebalanced sampling, rssm-v10 fine-tune | `88f5fd2`, `86fb05c` | failure: training diverged |
+| 29 | rssm-v11: from scratch on the full mix with a horizon curriculum and robust rollout losses | next commit | partial: best rollouts so far, just short of the gate |
 
 Main conclusions so far:
 
@@ -423,3 +424,30 @@ Verdict: the varied warm-up is a success for the planner (configs `configs/fast-
 |---|---|
 | v7 replay (from the true state, now ending before the sim contact at step 80 of 82) | median 1.5 s position error: v10 0.64 m, v8 0.35 m, v3 0.23 m; last 10 starts: v10 2.11 m, v8 0.69 m, v3 0.24 m. The large slips quoted before (−0.75 actual, −0.84 bicycle) fall in the last 2–3 steps at the contact and are outside the cleaned window; at the last clean start (1.5 s ahead, true slip −0.13 rad) v10 predicts −0.10, v8 −0.15, v3 −0.09 |
 | Verdict | failure: v10 is worse than v8 almost everywhere (only the high-slip bin is marginally better at 1.5 s) and far from 1.3× v3; no sim run. The coverage data itself looks right; fine-tuning v8 on it at 50% is unstable. Options: train on it gradually (small share first, then more), a robust per-window loss as for the ensemble heads, or train the next model (step 3) on the mix from the start |
+
+## 29. rssm-v11: trained from scratch on the full mix
+
+| | |
+|---|---|
+| What changed | same architecture (Gaussian latent, GRU 128, c 8 + d 24) with the car-frame position residual, trained from scratch (`configs/train-rssm-v11.yaml`, `results/rssm-v11/`). Data: cleaned on-track data with rebalanced track windows (as v10) plus the open-space coverage data, its share ramped 20% → 50% over the first 30% of training, no LiDAR losses on it. Rollout losses (`prediction`, `true_state_prediction`): Huber (delta 1 on the scaled state error) and a per-window cap (log growth above 10). Horizon curriculum: rollout-loss length ramped 2 → 15 steps over the first half; validation always at 15. 30,000 steps, lr 1e-4, early stop allowed only after step 15,000 |
+| Why | v10 diverged when fine-tuning v8 with 50% coverage windows from the first step; the correction to the replay showed the main gap is rollout position accuracy |
+| Training | stable on validation throughout: 1.5 s position (filtered start) 2.47 m at step 2,000 → 1.30 m at 14,000 → 1.21 m at 28,000 (best; v8 0.95 m on its own validation). Anchor RMSE steering 0.018, speed 0.28, yaw rate 0.11, slip 0.021 (v8: 0.022 / 0.31 / 0.11 / 0.023). The batch training loss spiked above 100 at 7 of 60 evaluations (steps 13,000–16,000 and 28,500–30,000, up to ~11,000) without moving validation; nothing skipped |
+
+| Lateral error, median / p95 (same 1,771 starts) | 0.5 s | 1.0 s | 1.5 s |
+|---|---|---|---|
+| v11, true state | 0.03 / 0.10 m | 0.10 / 0.49 m | **0.26 / 1.36 m** |
+| v8, true state | 0.04 / 0.19 m | 0.15 / 0.78 m | 0.36 / 1.73 m |
+| v3, true state | 0.02 / 0.14 m | 0.08 / 0.67 m | 0.18 / 1.63 m |
+| v11, planner start (own estimate) | 0.05 / 0.20 m | 0.19 / 0.79 m | 0.42 / 1.84 m |
+| v8, planner start | 0.09 / 0.24 m | 0.33 / 1.08 m | 0.62 / 2.29 m |
+
+| 1.5 s, true state, median / p95 | v11 | v8 | v3 |
+|---|---|---|---|
+| speed > 9 m/s (766 starts) | 0.41 / 1.49 m | 0.52 / 1.89 m | 0.21 / 1.94 m |
+| \|slip\| > 0.3 rad in the window (210 starts) | 0.55 / 1.97 m | 0.69 / 2.08 m | 0.45 / 1.93 m |
+
+| | |
+|---|---|
+| v7 replay (cleaned, from the true state) | median 1.5 s position error v11 0.36 m (v8 0.35, v3 0.23); last 10 starts v11 0.32 m (v8 0.69, v3 0.24). Predicted slip tracks the truth up to t = 63 but has the wrong sign at the last clean start (true −0.13, v11 +0.13, v3 −0.09) |
+| Gate | 1.5 s median from the true state 0.26 m against ~0.23 m (1.3 × v3's 0.18 m): missed by 0.03 m, so no sim run |
+| Verdict | partial: the best world model so far. It beats v8 everywhere (true-state 1.5 s median −28%, p95 −21%; from its own estimate −32%) and has a smaller 95th percentile than v3 (1.36 vs 1.63 m), but the median is still 1.44× v3's and the gap is largest above 9 m/s (0.41 vs 0.21 m) |

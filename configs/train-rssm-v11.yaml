@@ -1,0 +1,61 @@
+# rssm-v11: RSSM trained from scratch (Gaussian latent, same architecture, car-frame position residual) on the full
+# mix: cleaned on-track data (track windows rebalanced by 1/sqrt(density), capped 5x) plus the open-space coverage data
+# (share ramped 20% -> 50% over the first 30% of training; no LiDAR losses on it). Rollout losses: Huber (delta 1 on
+# the scaled state error), per-window cap (log growth above 10), horizon curriculum (rollout loss length ramped
+# 2 -> 15 steps over the first half; validation always uses 15). Early stop only after the curriculum.
+dataset: data/f1tenth-track
+vehicle_config: configs/world/world-nochance.yaml
+timestep: 0.1
+integrator_timestep: 0.02
+seed: 20261127
+model:
+  hidden: 128
+  condition: 8
+  fast: 24
+  beams: 64
+  sensors: 9
+  body_frame_residual: true
+steps: 30000
+batch: 32
+window: 40
+learning_rate: 0.0001
+clip: 1.0
+skip_factor: 1.0e+12
+stop_factor: 3.0
+stop_patience: 3
+stop_from_step: 15000
+kl_warmup: 3000
+eval_every: 500
+val_batches: 8
+diagnostic_window: 80
+comparison_every: 5000
+settings:
+  condition_walk_std: 0.05
+  free_nats: 1.0
+  prediction_steps: 15
+  prediction_stride: 2
+  anchor_weights: [1.0, 3.0, 1.0, 1.0]
+  huber_delta: 1.0
+  window_loss_cap: 10.0
+weights:
+  anchor: 1.0
+  residual: 1.0
+  lidar: 1.0
+  sensors: 1.0
+  kl: 1.0
+  condition: 3.0
+  prediction: 1.0
+  true_state_prediction: 1.0
+  prediction_lidar: 0.5
+  consistency: 0.5
+selection: [anchor, residual, prediction, true_state_prediction, lidar]
+data_cut: [1.2, 10.0]
+high_slip_fraction: 0.0
+balance_track: true
+balance_cap: 5.0
+coverage_dataset: data/f1tenth-coverage
+coverage_fraction: 0.5
+coverage_fraction_start: 0.2
+coverage_ramp: 0.3
+horizon_start: 2
+horizon_ramp: 0.5
