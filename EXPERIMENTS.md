@@ -45,7 +45,8 @@ Common setup unless stated otherwise:
 | 24 | v8 lateral error near the edges (diagnosis) | `4402c6b` | done: no consistent bias, large spread |
 | 25 | World-model track-limit margin | `4402c6b` | failure |
 | 26 | Rollout variants (diagnosis, no retraining) | `dc4ee44` | done: no cheaper fix; estimation error is about half |
-| 27 | Starting-state error by component; v8 planning from the true state | next commit | failure: still crashes |
+| 27 | Starting-state error by component; v8 planning from the true state | `dae8971` | failure: still crashes |
+| 28 | Open-space coverage data, rebalanced sampling, rssm-v10 fine-tune | `88f5fd2` + next commit | failure: training diverged |
 
 Main conclusions so far:
 
@@ -395,3 +396,30 @@ Verdict: the varied warm-up is a success for the planner (configs `configs/fast-
 | Sim `rssm-latent-v8-truestate` (`planner.dynamics.rssm_state: false`: plans from the true sim state, filter still runs for h and s; v8 + clearance, slip cost off, no margin, no risk head, varied warm-up) | warm-up 38.2–38.4 s; crashed 26.1 s into lap 6 at s ≈ 243 m. At 10.5 m/s the car turned in (yaw rate +3.7 rad/s), slid (slip −0.37 rad) and crossed from 0.37 m right to 0.75 m left of centre into the wall: a slide into the wall. Learned max speed 11.4 m/s, max \|slip\| 0.82 rad, max \|e_y\| 0.82 m before contact. Planning 54 / 73 ms |
 | Compared with the bicycle baseline (entry 23) | baseline 15/15 laps, 37.9 → 36.0 s, max \|e_y\| 0.81 m, planning 31 / 47 ms |
 | Verdict | failure: with a perfect starting state v8 still crashes on its first learned lap, so state estimation alone is not the fix. The transition (rollout) is the remaining problem. Next: step 3 |
+
+## 28. Open-space coverage data, rebalanced sampling, rssm-v10
+
+| | |
+|---|---|
+| Why | almost all on-track data is gentle driving: every motion variable is sharply peaked at zero (`docs/DATA_DISTRIBUTIONS.md`), so the model learns slides and fast cornering poorly |
+| Frame check (before fine-tuning) | the transition's inputs are frame-invariant (steering, speed, yaw rate, slip, commands, h, s; pose integrated by the bicycle model outside the network), but the residual's position correction was added in the world frame without the network knowing the heading. In v8 it is small (≈ 5 mm per step, ≤ 0.08 m over 1.5 s). New option `model.body_frame_residual`: predict it in the car frame and rotate by the heading (used in v10) |
+| Coverage collector | `scripts/collect_coverage.py`, `data/f1tenth-coverage`: open space, random vehicles (grip 0.4–1.2, stiffness ±15%, mass 0.8–1.3, 30% with a step change), chains of 0.3–2 s segments (speed/steering targets, or full-throttle/brake bursts with a steering target that stop at a random speed). Before every segment 8 candidates are simulated and the one landing in the least-filled cells of a speed × steering × slip (±0.6 rad) × yaw rate (±8 rad/s) histogram is driven; candidates that lose control score ×0.25. Episodes end at \|slip\| > 1.2 rad or \|yaw rate\| > 10 rad/s. 1,994 episodes, 273k steps (84% end in loss of control). First version piled up at the 15 m/s cap and below 1 m/s (bursts stopped at the limits); fixed, though 7.5% of steps are still above 14.5 m/s |
+| Coverage achieved | coverage data: speed and steering close to uniform, slip SD 0.41 rad (current data 0.11). Of 5,245 joint cells reached by either dataset, cells with ≥ 10 steps: current data 25%, coverage data 52%, together 56%. Figures: `docs/figures/data_coverage_compare.png`, `data_merged_before_after.png`, `data_merged_heatmaps.png` |
+| Rebalanced track sampling | each track window weighted ∝ 1/√(windows in its (speed, slip, yaw rate) cell at the window midpoint), mean 1, capped at 5× (3.9% of windows at the cap); replaces the 15% high-slip oversampling; validation unweighted. Track share natural → rebalanced: speed > 9 m/s 9.5% → 20.4%, \|slip\| > 0.3 rad 1.8% → 9.1%, > 0.5 rad 0.3% → 1.7%, \|yaw rate\| > 3 rad/s 1.7% → 8.2%. Training mix (50% rebalanced track + 50% coverage): 33.2%, 26.5%, 12.0%, 18.4% |
+| rssm-v10 | fine-tune of v8 (`configs/train-rssm-v10.yaml`): 50/50 track/coverage, LiDAR losses only on track windows, car-frame position residual, lr 5e-5 |
+| Training | diverged. Best checkpoint step 500 (1.5 s position 1.16 m on track validation, v8 0.95 m); from step 1,000 every loss rose together, the training loss too (466 → 3,155 by step 2,500), early stop at 2,500. At the v8 starting point the coverage windows have ~20× larger losses than track windows (rollout prediction median 282 vs 15, from-true-state 240 vs 6; 17% of them dip below 1 m/s), so half of every batch is far outside what v8 knows and the 15-step rollout losses run away |
+
+| Lateral error, median / p95 (same 1,771 starts) | 0.5 s | 1.0 s | 1.5 s |
+|---|---|---|---|
+| v8, true state | 0.04 / 0.19 m | 0.15 / 0.78 m | 0.36 / 1.73 m |
+| v10 (step 500), true state | 0.05 / 0.25 m | 0.20 / 0.98 m | 0.57 / 2.13 m |
+| v3, true state | 0.02 / 0.14 m | 0.08 / 0.67 m | 0.18 / 1.63 m |
+| v8, planner start | 0.09 / 0.24 m | 0.33 / 1.08 m | 0.62 / 2.29 m |
+| v10, planner start | 0.10 / 0.27 m | 0.40 / 1.07 m | 0.76 / 2.21 m |
+| speed > 9 m/s (766), true state, 1.5 s: v8 / v10 / v3 | | | 0.52 / 0.77 / 0.21 m |
+| \|slip\| > 0.3 rad in the window (210), true state, 1.5 s: v8 / v10 / v3 | | | 0.69 / 0.64 / 0.45 m |
+
+| | |
+|---|---|
+| v7 replay (from the true state, now ending before the sim contact at step 80 of 82) | median 1.5 s position error: v10 0.64 m, v8 0.35 m, v3 0.23 m; last 10 starts: v10 2.11 m, v8 0.69 m, v3 0.24 m. The large slips quoted before (−0.75 actual, −0.84 bicycle) fall in the last 2–3 steps at the contact and are outside the cleaned window; at the last clean start (1.5 s ahead, true slip −0.13 rad) v10 predicts −0.10, v8 −0.15, v3 −0.09 |
+| Verdict | failure: v10 is worse than v8 almost everywhere (only the high-slip bin is marginally better at 1.5 s) and far from 1.3× v3; no sim run. The coverage data itself looks right; fine-tuning v8 on it at 50% is unstable. Options: train on it gradually (small share first, then more), a robust per-window loss as for the ensemble heads, or train the next model (step 3) on the mix from the start |

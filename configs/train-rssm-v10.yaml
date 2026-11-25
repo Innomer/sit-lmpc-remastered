@@ -1,6 +1,8 @@
 # rssm-v10: fine-tune of rssm-v8 on the open-space coverage data (scripts/collect_coverage.py) mixed 50/50 with the
 # cleaned on-track data (post-contact frames removed, spin onsets included). LiDAR losses only on the track windows.
-# Position residual in the car frame (body_frame_residual). No map-free data, no bad-batch skip.
+# Position residual in the car frame (body_frame_residual). No map-free data, no bad-batch skip. Track windows are
+# sampled with weight 1 / sqrt(density) in (speed, slip, yaw rate) at the window midpoint, capped at 5x (replaces the
+# 15% high-slip oversampling); validation stays unweighted.
 dataset: data/f1tenth-track
 vehicle_config: configs/world/world-nochance.yaml
 timestep: 0.1
@@ -45,8 +47,9 @@ weights:
   consistency: 0.5
 selection: [anchor, residual, prediction, true_state_prediction, lidar]
 data_cut: [1.2, 10.0]
-high_slip_fraction: 0.15
-high_slip_threshold: 0.4
+high_slip_fraction: 0.0
+balance_track: true
+balance_cap: 5.0
 init_from: runs/rssm-v8
 coverage_dataset: data/f1tenth-coverage
 coverage_fraction: 0.5

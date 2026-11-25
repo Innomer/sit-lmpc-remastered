@@ -1,0 +1,9 @@
+initialised from runs/rssm-v8
+track windows rebalanced (396635 windows, weight cap 5.0x): speed > 9 m/s 9.5% -> 20.4%, |slip| > 0.3 rad 1.8% -> 9.1%, |slip| > 0.5 rad 0.3% -> 1.7%, |yaw rate| > 3 rad/s 1.7% -> 8.2%
+coverage data: 1597 episodes; 50% of each batch, no LiDAR losses on these windows
+step    500  total   465.953  val anchor 0.505 (steer 0.037 v 0.35 r 0.14 slip 0.027)  pred 31.43  1s pos 1.16 m  lidar -1.114  kl_c 0.39 kl_d 1.15  cond 0.629  1.3 min  skipped 0  trained windows |slip|>0.3 10576 >0.5 8463 of 16000
+step   1000  total   448.104  val anchor 1.310 (steer 0.056 v 0.54 r 0.26 slip 0.042)  pred 41.13  1s pos 1.37 m  lidar -0.985  kl_c 0.43 kl_d 1.61  cond 0.688  2.0 min  skipped 0  trained windows |slip|>0.3 21295 >0.5 16958 of 32000
+step   1500  total  1371.320  val anchor 15.995 (steer 0.091 v 0.87 r 1.29 slip 0.178)  pred 98.76  1s pos 2.19 m  lidar -0.029  kl_c 1.24 kl_d 12.00  cond 0.830  2.6 min  skipped 0  trained windows |slip|>0.3 31944 >0.5 25384 of 48000
+step   2000  total  2027.321  val anchor 23.823 (steer 0.397 v 1.87 r 0.51 slip 0.137)  pred 351.41  1s pos 3.42 m  lidar 0.212  kl_c 1.32 kl_d 37.26  cond 0.875  3.2 min  skipped 0  trained windows |slip|>0.3 42510 >0.5 33885 of 64000
+step   2500  total  3154.547  val anchor 36.279 (steer 0.142 v 2.31 r 1.67 slip 0.299)  pred 1047.73  1s pos 6.52 m  lidar 0.198  kl_c 1.24 kl_d 28.50  cond 0.934  3.8 min  skipped 0  trained windows |slip|>0.3 53075 >0.5 42331 of 80000
+early stop at step 2500: validation 3.0x worse than best for 3 evaluations

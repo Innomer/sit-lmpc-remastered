@@ -85,3 +85,25 @@ Same on a log scale, which shows the tails:
 Where the on-track data sits in speed vs slip and speed vs yaw rate (colour: log of the step count):
 
 ![Speed vs slip and yaw rate](figures/data_speed_vs_slip.png)
+
+## Open-space coverage data (added later)
+
+`scripts/collect_coverage.py` drives random vehicles in open space with target-driven segments and coverage feedback
+over speed × steering × slip × yaw rate (`data/f1tenth-coverage`, 1,994 episodes, 273k steps). Its speed and steering
+are close to uniform and its slip spread is about four times the on-track data's (SD 0.41 rad vs 0.11 rad). Of the
+5,245 joint cells either dataset reaches, the share with at least 10 steps goes from 25% (current data) to 56% (both).
+
+Current data vs coverage data:
+
+![Current vs coverage](figures/data_coverage_compare.png)
+
+All sources merged, before vs after (training mix: 50% track, 50% coverage):
+
+![Merged before and after](figures/data_merged_before_after.png)
+
+![Merged heatmaps](figures/data_merged_heatmaps.png)
+
+In the merged mix the share of steps with steering beyond 0.2 rad goes from 5.9% to 25.4%, yaw rate beyond 3 rad/s
+from 2.8% to 16.1%, slip beyond 0.3 rad from 4.2% to 23.9%. The mix is flatter but still peaked at zero, because half
+of it is track data; sampling the track windows by inverse density (weight ∝ 1/√density, capped at 5×) raises the
+slip-beyond-0.3 share of the training mix to 26.5% by window.

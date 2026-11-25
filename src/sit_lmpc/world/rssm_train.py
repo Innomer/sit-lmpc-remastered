@@ -263,6 +263,18 @@ def main():
         from sit_lmpc.world.rssm_data import MapFreeData
         map_free = MapFreeData(config["map_free_dataset"], "train", rssm_config.beams, **cut)
         print(f"map-free data: {len(map_free.episodes)} episodes; {map_free_fraction:.0%} of each batch", flush=True)
+    balance = None
+    if config.get("balance_track"):
+        balance = train.balanced_windows(config["window"], cap=config.get("balance_cap", 5.0))
+        middle, w = balance["middle"], balance["weights"]
+        natural = np.full(len(w), 1.0 / len(w))
+        shares = {name: (float(np.sum(natural * m)), float(np.sum(w * m))) for name, m in (
+            ("speed > 9 m/s", middle[:, 0] > 9), ("|slip| > 0.3 rad", np.abs(middle[:, 1]) > 0.3),
+            ("|slip| > 0.5 rad", np.abs(middle[:, 1]) > 0.5), ("|yaw rate| > 3 rad/s", np.abs(middle[:, 2]) > 3))}
+        (output / "balance.json").write_text(json.dumps({"windows": int(len(w)), "cap": config.get("balance_cap", 5.0),
+                                                         "share_natural_vs_balanced": shares}, indent=1) + "\n")
+        print(f"track windows rebalanced ({len(w)} windows, weight cap {config.get('balance_cap', 5.0)}x): " +
+              ", ".join(f"{k} {a:.1%} -> {b:.1%}" for k, (a, b) in shares.items()), flush=True)
     coverage = None
     coverage_fraction = config.get("coverage_fraction", 0.0)
     if coverage_fraction:
@@ -324,7 +336,7 @@ def main():
         free_count = int(round(config["batch"] * map_free_fraction)) if map_free is not None else 0
         open_count = int(round(config["batch"] * coverage_fraction)) if coverage is not None else 0
         batch = train.sample(rng, config["batch"] - free_count - open_count, config["window"], high_slip=high_slip,
-                             high_slip_fraction=high_slip_fraction)
+                             high_slip_fraction=high_slip_fraction, balance=balance)
         if free_count:
             extra = map_free.sample(rng, free_count, config["window"])
             batch = {k: np.concatenate([batch[k], extra[k]]) for k in batch}

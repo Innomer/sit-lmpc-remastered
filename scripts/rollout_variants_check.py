@@ -53,6 +53,7 @@ def main():
     parser.add_argument("--runs", nargs="+", required=True)
     parser.add_argument("--runs-root", default="results/Spielberg")
     parser.add_argument("--encoder", default="runs/world-encoder-v3")
+    parser.add_argument("--extra", nargs="*", default=[], help="more RSSM runs: their planner and true-state rollouts")
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
     filt = LatentFilter(args.rssm)
@@ -84,7 +85,16 @@ def main():
             return jax.lax.scan(advance, state, seq)[1]
         return jax.vmap(one)(x, u)
 
-    names = ("v8 planner", "v8 sampled prior", "v8 true state", "v3", "bicycle") + tuple(f"v8 true {p}" for p in PARTS)
+    extras = {}
+    for run_dir in args.extra:
+        other = LatentFilter(run_dir)
+        rollout = jax.jit(lambda h, s, x, u, f=other: jax.vmap(
+            lambda h_, s_, x_, u_: latent_rollout(f.model, f.network, f.st_params, ones, f.dt, f.integrator, h_, s_, x_, u_,
+                                                  jax.random.key(0), sample=False)[0])(h, s, x, u))
+        extras[Path(run_dir).name] = (other, rollout)
+    names = ("v8 planner", "v8 sampled prior", "v8 true state", "v3", "bicycle") + tuple(f"v8 true {p}" for p in PARTS) \
+        + tuple(f"{n} {kind}" for n in extras for kind in ("planner", "true state"))
+    bins = {"speed": [], "max_slip": []}
     errors = {name: {k: [] for k in STEPS} for name in names}
     estimate_error = {part: [] for part in PARTS}
     for name in args.runs:
@@ -115,6 +125,16 @@ def main():
             "v3": np.asarray(v3_rollout(jnp.asarray(x_true), jnp.asarray(u), jnp.asarray(z[starts], jnp.float32))),
             "bicycle": np.asarray(bike(jnp.asarray(x_true), jnp.asarray(u))),
         }
+        for label, (other, rollout) in extras.items():
+            f2 = other.features([episode])[0]
+            h2, s2 = jnp.asarray(f2[starts, :other.config.hidden]), jnp.asarray(f2[starts, other.config.hidden:])
+            a2 = np.asarray(other.model.apply(other.network, h2, s2, method=RSSM.anchor))
+            x2 = np.column_stack((true[starts, 0], true[starts, 1], a2[:, 0], a2[:, 1], true[starts, 4], a2[:, 2],
+                                  a2[:, 3])).astype(np.float32)
+            predictions[f"{label} planner"] = np.asarray(rollout(h2, s2, jnp.asarray(x2), jnp.asarray(u)))
+            predictions[f"{label} true state"] = np.asarray(rollout(h2, s2, jnp.asarray(x_true), jnp.asarray(u)))
+        bins["speed"].append(true[starts, 3])
+        bins["max_slip"].append(np.stack([np.abs(true[t:t + 1 + HORIZON, 6]).max() for t in starts]))
         for part, index in PARTS.items():
             x_part = x_plan.copy()
             x_part[:, index] = x_true[:, index]
@@ -128,10 +148,16 @@ def main():
                 errors[variant][label].append(np.abs(actual[:, k - 1] - p[:, k - 1]))
         print(f"{name}: {len(starts)} starts", flush=True)
     report = {}
+    speed, max_slip = np.concatenate(bins["speed"]), np.concatenate(bins["max_slip"])
+    masks = {"all": np.ones(len(speed), bool), "speed > 9 m/s": speed > 9.0, "|slip| > 0.3 rad in the window": max_slip > 0.3}
     for variant, by_step in errors.items():
         report[variant] = {label: {"median_m": float(np.median(np.concatenate(v))),
                                    "p95_m": float(np.percentile(np.concatenate(v), 95)),
                                    "n": int(sum(map(len, v)))} for label, v in by_step.items()}
+        report[variant]["bins"] = {name: {label: {"median_m": float(np.median(np.concatenate(v)[m])),
+                                                  "p95_m": float(np.percentile(np.concatenate(v)[m], 95)),
+                                                  "n": int(m.sum())} for label, v in by_step.items()}
+                                   for name, m in masks.items() if m.sum() >= 10}
     report["start_estimate_error"] = {}
     for part, values in estimate_error.items():
         v = np.concatenate(values)
@@ -143,7 +169,15 @@ def main():
     for variant, r in report.items():
         if variant == "start_estimate_error":
             continue
-        print(f"{variant:20s} " + "   ".join(f"{r[l]['median_m']:5.2f} / {r[l]['p95_m']:5.2f} m   " for l in STEPS))
+        print(f"{variant:24s} " + "   ".join(f"{r[l]['median_m']:5.2f} / {r[l]['p95_m']:5.2f} m   " for l in STEPS))
+    for name in masks:
+        print(f"\n[{name}]")
+        for variant, r in report.items():
+            if variant == "start_estimate_error" or name not in r.get("bins", {}):
+                continue
+            b = r["bins"][name]
+            print(f"{variant:24s} n {b['1.5 s']['n']:5d}  " + "   ".join(
+                f"{b[l]['median_m']:5.2f} / {b[l]['p95_m']:5.2f} m   " for l in STEPS))
     if args.out:
         Path(args.out).write_text(json.dumps(report, indent=1) + "\n")
 

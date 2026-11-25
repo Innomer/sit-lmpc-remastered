@@ -92,7 +92,31 @@ class TrackData:
             items.extend((i, int(t)) for t in np.flatnonzero(hits > 0))
         return items
 
-    def sample(self, rng, size, window, noise=True, high_slip=None, high_slip_fraction=0.0):
+    def balanced_windows(self, window, cap=5.0, edges=None):
+        """Every window (episode, start) with a sampling weight proportional to 1 / sqrt(number of windows in its
+        (speed, slip, yaw rate) cell at the window's midpoint), normalised to mean 1 and clipped at `cap`."""
+        edges = edges or (np.linspace(0.0, 16.0, 17), np.linspace(-1.2, 1.2, 25), np.linspace(-10.0, 10.0, 21))
+        items, middle = [], []
+        for i, e in enumerate(self.episodes):
+            count = len(e["controls"]) - window + 1
+            if count <= 0:
+                continue
+            starts = np.arange(count)
+            items.append(np.column_stack((np.full(count, i), starts)))
+            middle.append(e["states"][starts + window // 2][:, [3, 6, 5]])
+        items, middle = np.concatenate(items), np.concatenate(middle)
+        index = tuple(np.clip(np.digitize(middle[:, k], edges[k]) - 1, 0, len(edges[k]) - 2) for k in range(3))
+        counts = np.zeros([len(e) - 1 for e in edges])
+        np.add.at(counts, index, 1.0)
+        weights = 1.0 / np.sqrt(counts[index])
+        weights = np.minimum(weights / weights.mean(), cap)
+        weights = np.minimum(weights / weights.mean(), cap)
+        return {"items": items, "weights": weights / weights.sum(), "middle": middle}
+
+    def sample(self, rng, size, window, noise=True, high_slip=None, high_slip_fraction=0.0, balance=None):
+        if balance is not None:
+            chosen = rng.choice(len(balance["items"]), size, p=balance["weights"])
+            return self.gather([tuple(map(int, balance["items"][k])) for k in chosen], window, rng if noise else None)
         pool = [i for i, e in enumerate(self.episodes) if len(e["controls"]) >= window]
         special = int(round(size * high_slip_fraction)) if high_slip else 0
         chosen = rng.choice(pool, size - special)
