@@ -16,7 +16,7 @@ from flax import serialization
 from sit_lmpc.config import load_config
 from sit_lmpc.experiments.runner import build_vehicle_dynamics
 from sit_lmpc.world.rssm import RSSMConfig, init_params
-from sit_lmpc.world.rssm_data import MapFreeData, TrackData
+from sit_lmpc.world.rssm_data import MapFreeData, TrackData, attempt_contact
 from sit_lmpc.world.rssm_runtime import RSSMFilter
 from sit_lmpc.world.rssm_train import run_sequence
 
@@ -79,6 +79,7 @@ def crash(run_model, crash_run, top=8):
     controls = attempt["controls"]
     n = len(attempt["cartesian"])
     offset = len(true) - n
+    contact = attempt_contact(attempt)
     yaw = true[:, 4]
     rear = np.column_stack((true[:, 0] - 0.17145 * np.cos(yaw), true[:, 1] - 0.17145 * np.sin(yaw), yaw))
     rssm.reset()
@@ -87,9 +88,11 @@ def crash(run_model, crash_run, top=8):
         est.append(rssm.step_features(observations[offset + k], lidar[offset + k], rear[offset + k],
                                       controls[k - 1] if k else np.zeros(2))[3])
     est = np.asarray(est)
-    t = true[offset:offset + n, 6]
-    print(f"  crash {crash_run.name}, last {top} steps before contact (true -> estimated slip):")
-    print("    " + "  ".join(f"{a:+.2f}->{b:+.2f}" for a, b in zip(t[-top - 1:-1], est[-top - 1:-1])))
+    end = n if contact is None else contact
+    t = true[offset:offset + end, 6]
+    est = est[:end]
+    print(f"  crash {crash_run.name}, last {top} steps before contact (step {contact}) (true -> estimated slip):")
+    print("    " + "  ".join(f"{a:+.2f}->{b:+.2f}" for a, b in zip(t[-top:], est[-top:])))
 
 
 def main():

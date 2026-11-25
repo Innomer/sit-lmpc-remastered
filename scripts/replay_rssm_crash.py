@@ -18,6 +18,7 @@ import yaml
 
 from sit_lmpc.config import load_config
 from sit_lmpc.experiments.runner import build_vehicle_dynamics
+from sit_lmpc.world.rssm_data import attempt_contact
 from sit_lmpc.world.rssm_runtime import RSSMFilter
 from sit_lmpc.world.rssm import bicycle, BODY_INDEX
 
@@ -42,12 +43,15 @@ def main():
     controls = attempt["controls"]
     n = len(planned)
     offset = len(true) - n
+    contact = attempt_contact(attempt)
+    valid = n if contact is None else contact
     scale = np.asarray(st.action_scale)
     st_params = jnp.asarray(st.params, jnp.float32)
-    print(f"attempt with {n} steps; trace offset {offset}; horizon {args.horizon * 0.1:.1f} s")
+    print(f"attempt with {n} steps; first sim contact at step {contact}; trace offset {offset}; "
+          f"horizon {args.horizon * 0.1:.1f} s (predictions end before the contact)")
     print(" t     s    true v   1.5 s position error [m]: rssm(own) rssm(true) bicycle(true) | slip at end: true rssm(own)")
     rows = []
-    for t in range(0, n - args.horizon):
+    for t in range(0, valid - args.horizon):
         u = controls[t:t + args.horizon] / scale
         future = true[offset + t + 1:offset + t + 1 + args.horizon]
         predictor = filt.predictor().replace(h=jnp.asarray(memory[offset + t]), s=jnp.asarray(latent[offset + t]))
@@ -62,7 +66,7 @@ def main():
         bike = np.asarray(bike)
         errors = [float(np.hypot(*(p[-1, :2] - future[-1, :2]))) for p in (own, from_true, bike)]
         rows.append(errors)
-        if t % 5 == 0 or t >= n - args.horizon - 6:
+        if t % 5 == 0 or t >= valid - args.horizon - 6:
             print(f"{t:3d} {attempt['frenet'][t, 0]:6.1f}  {true[offset + t, 3]:5.2f}       {errors[0]:6.2f}     {errors[1]:6.2f}      "
                   f"{errors[2]:6.2f}        |  {future[-1, 6]:+.2f}  {own[-1, 6]:+.2f}")
     rows = np.asarray(rows)

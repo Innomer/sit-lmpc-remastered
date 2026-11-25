@@ -159,3 +159,23 @@ def test_safety_costs_speed_cap_and_slip():
     assert np.isclose(float(terms["slip"][2, 1]), 1.0) and float(terms["slip"][:2].max()) == 0.0
     off = SimpleNamespace(safety_speed_cap=None, safety_speed_weight=1.0, safety_slip_limit=0.35, safety_slip_weight=0.0)
     assert float(jnp.abs(total_safety(states, off)).max()) == 0.0
+
+
+def test_track_data_ends_episodes_before_the_first_contact(tmp_path):
+    import json
+    from sit_lmpc.world.rssm_data import TrackData, attempt_contact
+    length = 30
+    states = np.zeros((length + 1, 7), np.float32)
+    states[:, 3] = 5.0
+    (tmp_path / "train").mkdir()
+    np.savez(tmp_path / "train" / "a.npz", states=states, controls=np.zeros((length, 2), np.float32),
+             sensors=np.zeros((length + 1, 7), np.float32), lidar=np.full((length + 1, 1080), 5.0, np.float16),
+             conditions=np.ones((length + 1, 4), np.float32))
+    record = {"file": "train/a.npz", "map": "Spielberg", "split": "train", "change": {"kind": "none"}}
+    (tmp_path / "manifest.json").write_text(json.dumps({"episodes": [record]}))
+    assert len(TrackData(tmp_path, "train", 16).episodes[0]["states"]) == length + 1
+    (tmp_path / "contacts.json").write_text(json.dumps({"episodes": {"train/a.npz": {"contact": 12, "crash_step": 12}}}))
+    episode = TrackData(tmp_path, "train", 16).episodes[0]
+    assert len(episode["states"]) == 12 and len(episode["controls"]) == 11 and episode["crash_step"] == 12
+    np.savez(tmp_path / "attempt.npz", contacts=np.array([False, False, True, True]))
+    assert attempt_contact(np.load(tmp_path / "attempt.npz")) == 2

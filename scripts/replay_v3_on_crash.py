@@ -22,6 +22,7 @@ from dyna_dist.models.features import prior_moments_and_variance
 from sit_lmpc.config import load_config
 from sit_lmpc.experiments.runner import build_vehicle_dynamics
 from sit_lmpc.world.evaluate import load_encoder, make_bicycle, make_rollout
+from sit_lmpc.world.rssm_data import attempt_contact
 from sit_lmpc.world.rssm_runtime import RSSMFilter
 
 
@@ -56,6 +57,8 @@ def main():
     controls = attempt["controls"]
     n = len(attempt["cartesian"])
     offset = len(true) - n
+    contact = attempt_contact(attempt)
+    valid = n if contact is None else contact
     if args.rssm:
         yaw = true[:, 4]
         rear = np.column_stack((true[:, 0] - 0.17145 * np.cos(yaw), true[:, 1] - 0.17145 * np.sin(yaw), yaw))
@@ -71,7 +74,7 @@ def main():
     scale = np.asarray(st.action_scale)
 
     rows = []
-    starts = list(range(0, n - args.horizon))
+    starts = list(range(0, valid - args.horizon))
     for t in starts:
         state = true[offset + t]
         future = true[offset + t + 1:offset + t + 1 + args.horizon]
@@ -88,8 +91,8 @@ def main():
         rows.append({k: (float(np.hypot(*(p[-1, :2] - future[-1, :2]))), float(p[-1, 6])) for k, p in preds.items()}
                     | {"true_slip": float(future[-1, 6]), "t": t})
     names = ["v3 (encoder z)", "v3 (prior z)", "rssm", "bicycle"]
-    print(f"{run.name} (RSSM: {args.rssm or config['planner']['dynamics']['rssm']}): {n} steps, all rollouts from the "
-          f"TRUE state, horizon {args.horizon * 0.1:.1f} s")
+    print(f"{run.name} (RSSM: {args.rssm or config['planner']['dynamics']['rssm']}): {n} steps, first sim contact at "
+          f"step {contact} (predictions end before it), all rollouts from the TRUE state, horizon {args.horizon * 0.1:.1f} s")
     print(" t   true slip   " + "   ".join(f"{k:>14s}" for k in names) + "    (predicted slip at 1.5 s)")
     for r in rows[-8:]:
         print(f"{r['t']:3d}   {r['true_slip']:+.2f}      " + "   ".join(f"{r[k][1]:+14.2f}" for k in names))

@@ -18,6 +18,20 @@ def downsample(lidar, beams):
     return np.stack([lidar[..., g].min(axis=-1) for g in groups], axis=-1)
 
 
+def contacts(root):
+    """First wall-contact step per episode file (scripts/mark_contacts.py), or {} if the dataset has not been marked."""
+    path = Path(root) / "contacts.json"
+    return json.loads(path.read_text())["episodes"] if path.exists() else {}
+
+
+def attempt_contact(attempt):
+    """First step the sim flagged a collision in a saved attempt (trajectories/*/attempt-*.npz), or None."""
+    if "contacts" not in attempt.files:
+        return None
+    hit = np.flatnonzero(np.asarray(attempt["contacts"], bool))
+    return int(hit[0]) if len(hit) else None
+
+
 def log_range(ranges):
     return np.log(np.clip(ranges, MIN_RANGE, MAX_RANGE))
 
@@ -26,6 +40,7 @@ class TrackData:
     def __init__(self, root, split, beams=64, maps=None, max_slip=MAX_SLIP, max_yaw_rate=MAX_YAW_RATE):
         self.root = Path(root)
         manifest = json.loads((self.root / "manifest.json").read_text())
+        marked = contacts(self.root)
         self.episodes = []
         for record in manifest["episodes"]:
             if record["split"] != split or (maps is not None and record["map"] not in maps):
@@ -34,6 +49,9 @@ class TrackData:
             states = data["states"].astype(np.float32)
             outside = np.flatnonzero((np.abs(states[:, 6]) > max_slip) | (np.abs(states[:, 5]) > max_yaw_rate))
             count = int(outside[0]) if len(outside) else len(states)
+            contact = marked.get(record["file"], {}).get("contact")
+            if contact is not None:
+                count = min(count, contact)
             if count < 2:
                 continue
             states = states[:count]
@@ -48,6 +66,8 @@ class TrackData:
                 "conditions": data["conditions"][:count, [0, 3]].astype(np.float32),
                 "map": record["map"],
                 "change": record["change"]["kind"],
+                "file": record["file"],
+                "crash_step": marked.get(record["file"], {}).get("crash_step"),
             })
 
     def observation_scale(self):
