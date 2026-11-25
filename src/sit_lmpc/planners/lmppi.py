@@ -87,6 +87,9 @@ def sample_validity(previous, da, states, values, hull_distances):
             & jnp.all(jnp.isfinite(previous)))
 
 
+SOFT_TERMS = ("risk",)
+
+
 def safety_step_costs(states, config):
     """Per-step speed-cap and slip penalties on predicted Frenet states (..., H, 7)."""
     terms = {}
@@ -649,11 +652,10 @@ class LMPPI:
         )
 
     def model_safety_costs(self, state, actions):
-        """Model-side safety checks (RSSM): LiDAR clearance."""
-        terms = {}
-        if getattr(self.model, "clearance_weight", 0.0) > 0:
-            terms["clearance"] = self.model.clearance_cost(state, actions)
-        return terms
+        """Model-side safety checks (RSSM): LiDAR clearance and the crash-risk head, from one latent rollout."""
+        if getattr(self.model, "clearance_weight", 0.0) > 0 or getattr(self.model, "risk_weight", 0.0) > 0:
+            return dict(self.model.latent_costs(state, actions))
+        return {}
 
     def unavailable(self, reason, **metrics):
         if self.config.probabilistic_safety.fallback == "stop":
@@ -940,8 +942,8 @@ class LMPPI:
         trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
         candidate_frenet = to_frenet(self.track, trajectories, indices, frenet_state[0])
         candidate_extra = self.model_safety_costs(state, candidates[:, : self.config.horizon])
-        candidate_safety = total_safety(
-            candidate_frenet, self.config, sum(candidate_extra.values()) if candidate_extra else None).sum(axis=1)
+        ranked = [value for name, value in candidate_extra.items() if name not in SOFT_TERMS]
+        candidate_safety = total_safety(candidate_frenet, self.config, sum(ranked) if ranked else None).sum(axis=1)
         candidate_distances = self.evaluate_safe_set_check(candidate_frenet[:, -1, :5], hull)
         candidate_scenarios = scenario_frenet = candidate_chance = verified_scenarios = None
         if chance_active or risk_active and risk_distribution:

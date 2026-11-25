@@ -179,3 +179,22 @@ def test_track_data_ends_episodes_before_the_first_contact(tmp_path):
     assert len(episode["states"]) == 12 and len(episode["controls"]) == 11 and episode["crash_step"] == 12
     np.savez(tmp_path / "attempt.npz", contacts=np.array([False, False, True, True]))
     assert attempt_contact(np.load(tmp_path / "attempt.npz")) == 2
+
+
+def test_latent_costs_clearance_and_risk_head():
+    from sit_lmpc.training.risk import RiskNetwork
+    from sit_lmpc.world.rssm_runtime import RSSMPredictor
+    config, model, params = small()
+    st, scale = st_params()
+    network = RiskNetwork(8, 1)
+    risk_params = network.init(jax.random.key(1), jnp.zeros((1, config.hidden + config.latent)))
+    base = RSSMPredictor(params, st, scale, jnp.zeros(config.hidden, jnp.float32), jnp.zeros(config.latent, jnp.float32),
+                         model, "latent", 0.1, 0.02, 0.35, 2.0, risk_params,
+                         jnp.zeros(config.hidden + config.latent, jnp.float32),
+                         jnp.ones(config.hidden + config.latent, jnp.float32), network, 3.0)
+    state = jnp.asarray([0.0, 0.0, 0.0, 5.0, 0.0, 0.0, 0.0], jnp.float32)
+    actions = jax.random.uniform(jax.random.key(7), (6, 5, 2), jnp.float32, minval=-1, maxval=1)
+    costs = base.latent_costs(state, actions)
+    assert costs["risk"].shape == (6, 5) and bool(jnp.all((costs["risk"] >= 0) & (costs["risk"] <= 3.0)))
+    assert np.allclose(costs["clearance"], base.clearance_cost(state, actions), atol=1e-6)
+    assert "risk" not in base.replace(risk_weight=0.0).latent_costs(state, actions)

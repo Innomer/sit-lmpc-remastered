@@ -50,6 +50,7 @@ class TrackData:
             outside = np.flatnonzero((np.abs(states[:, 6]) > max_slip) | (np.abs(states[:, 5]) > max_yaw_rate))
             count = int(outside[0]) if len(outside) else len(states)
             contact = marked.get(record["file"], {}).get("contact")
+            spun = bool(len(outside)) and (contact is None or count < contact)
             if contact is not None:
                 count = min(count, contact)
             if count < 2:
@@ -68,6 +69,7 @@ class TrackData:
                 "change": record["change"]["kind"],
                 "file": record["file"],
                 "crash_step": marked.get(record["file"], {}).get("crash_step"),
+                "spin_step": count if spun else None,
             })
 
     def observation_scale(self):

@@ -116,6 +116,8 @@ class DynamicsConfig:
     rssm_state: bool = True
     rssm_clearance_margin: float = 0.35
     rssm_clearance_weight: float = 0.0
+    rssm_risk: str | None = None
+    rssm_risk_weight: float = 0.0
     likelihood_power: float = 1.0
     update_batch_size: int = 512
     validation_fraction: float = 0.2
@@ -378,6 +380,10 @@ class ExperimentConfig:
                 raise ValueError("planner.dynamics.rssm_model_timestep must be > 0")
             if not dynamics.rssm_clearance_margin > 0 or dynamics.rssm_clearance_weight < 0:
                 raise ValueError("planner.dynamics.rssm_clearance_margin must be > 0 and rssm_clearance_weight >= 0")
+            if dynamics.rssm_risk_weight < 0 or (dynamics.rssm_risk_weight > 0 and not (
+                    isinstance(dynamics.rssm_risk, str) and (Path(dynamics.rssm_risk) / "risk_head.msgpack").is_file())):
+                raise ValueError("planner.dynamics.rssm_risk_weight > 0 needs planner.dynamics.rssm_risk, a trained "
+                                 "crash-risk head folder (sit_lmpc.world.rssm_risk)")
             if s.backend != "ros" or not (s.ros.imu_topic and s.ros.wheel_topic and s.ros.pose_topic and s.ros.lidar_topic):
                 raise ValueError("planner.dynamics.backend rssm needs backend ros with simulation.ros imu_topic, "
                                  "wheel_topic, pose_topic and lidar_topic (bridge sensors and LiDAR enabled)")

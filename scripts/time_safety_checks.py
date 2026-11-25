@@ -4,6 +4,7 @@
 
   latent     world-model rollout of all sampled candidates (the planner's prediction, for reference)
   clearance  LiDAR clearance check on the samples (second latent rollout + LiDAR decode)
+  clearance + risk  one latent rollout + LiDAR decode + crash-risk head, as the planner runs them
   candidate  the same checks again on the final candidates (one per lambda pair) for the final ranking
 """
 
@@ -39,7 +40,8 @@ def main():
     _, st = build_vehicle_dynamics(config)
     track = Track.from_track_path(map_path(config.simulation.map))
     rssm = RSSMFilter(dynamics.rssm, st.params, st.action_scale, dynamics.rssm_variant, dynamics.rssm_model_timestep,
-                      st.integrator_timestep, dynamics.rssm_clearance_margin, max(dynamics.rssm_clearance_weight, 1.0))
+                      st.integrator_timestep, dynamics.rssm_clearance_margin, max(dynamics.rssm_clearance_weight, 1.0),
+                      dynamics.rssm_risk, dynamics.rssm_risk_weight)
     model = rssm.predictor()
     start = np.asarray(track.waypoints[10]) if hasattr(track, "waypoints") else np.zeros(2)
     state = jnp.asarray([start[0], start[1], 0.0, 8.0, 0.0, 0.0, 0.0], jnp.float32)
@@ -51,6 +53,8 @@ def main():
         rollout = jax.jit(jax.vmap(lambda a: model.rollout_members(state, a)[0]))
         results[f"latent ({name})"] = timed(lambda: rollout(actions), args.repeats)
         results[f"clearance ({name})"] = timed(lambda: model.clearance_cost(state, actions), args.repeats)
+        if model.risk_weight > 0:
+            results[f"clearance + risk ({name})"] = timed(lambda: model.latent_costs(state, actions), args.repeats)
     print(f"{jax.devices()[0].device_kind}: {planner.samples} samples, {candidates} candidates, horizon {planner.horizon}")
     for name, (p50, p95) in results.items():
         print(f"  {name:24s} p50 {p50:6.1f} ms   p95 {p95:6.1f} ms")

@@ -318,7 +318,8 @@ def _run(config, tracking_only, keyboard_cleanup):
 
         rssm_filter = RSSMFilter(planner.dynamics.rssm, model.params, model.action_scale, planner.dynamics.rssm_variant,
                                  planner.dynamics.rssm_model_timestep, model.integrator_timestep,
-                                 planner.dynamics.rssm_clearance_margin, planner.dynamics.rssm_clearance_weight)
+                                 planner.dynamics.rssm_clearance_margin, planner.dynamics.rssm_clearance_weight,
+                                 planner.dynamics.rssm_risk, planner.dynamics.rssm_risk_weight)
         model = rssm_filter.predictor()
     encoder_belief = None
     if planner.dynamics.belief_update == "encoder":

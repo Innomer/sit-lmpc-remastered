@@ -46,6 +46,11 @@ class RSSMPredictor:
     integrator_timestep: float = struct.field(pytree_node=False, default=0.02)
     clearance_margin: float = struct.field(pytree_node=False, default=0.35)
     clearance_weight: float = struct.field(pytree_node=False, default=0.0)
+    risk_params: dict | None = None
+    risk_mean: jax.Array | None = None
+    risk_std: jax.Array | None = None
+    risk_network: object = struct.field(pytree_node=False, default=None)
+    risk_weight: float = struct.field(pytree_node=False, default=0.0)
 
     @property
     def params(self):
@@ -79,6 +84,30 @@ class RSSMPredictor:
         nearest = jax.vmap(one)(actions)
         return self.clearance_weight * jnp.clip((self.clearance_margin - nearest) / self.clearance_margin, 0.0, 1.0)
 
+    @jax.jit
+    def latent_costs(self, state, actions):
+        """Per-step costs (candidates, horizon) from one latent rollout of every candidate: LiDAR clearance (as
+        clearance_cost) and the crash-risk head's probability of a crash within 1.5 s at each predicted (h, s),
+        times its weight."""
+        state = jnp.asarray(state, self.st_params.dtype)
+
+        def one(sequence):
+            _, hs, ss = latent_rollout(self.model, self.network, self.st_params, self.action_scale, self.timestep,
+                                       self.integrator_timestep, self.h, self.s, state,
+                                       jnp.asarray(sequence, self.st_params.dtype), jax.random.key(0), sample=False)
+            out = {}
+            if self.clearance_weight > 0:
+                mean, _ = self.model.apply(self.network, hs, ss, method=RSSM.decode_lidar)
+                nearest = jnp.exp(mean).min(axis=-1)
+                out["clearance"] = self.clearance_weight * jnp.clip(
+                    (self.clearance_margin - nearest) / self.clearance_margin, 0.0, 1.0)
+            if self.risk_weight > 0:
+                features = (jnp.concatenate([hs, ss], -1) - self.risk_mean) / self.risk_std
+                out["risk"] = self.risk_weight * jax.nn.sigmoid(self.risk_network.apply(self.risk_params, features))
+            return out
+
+        return jax.vmap(one)(actions)
+
     def step_members(self, state, action):
         state = jnp.asarray(state, self.st_params.dtype)
         action = jnp.asarray(action, self.st_params.dtype)
@@ -94,7 +123,7 @@ class RSSMPredictor:
 
 class RSSMFilter:
     def __init__(self, run, st_params, action_scale, variant="latent", model_timestep=0.1, integrator=0.02,
-                 clearance_margin=0.35, clearance_weight=0.0):
+                 clearance_margin=0.35, clearance_weight=0.0, risk=None, risk_weight=0.0):
         run = Path(run)
         config = yaml.safe_load((run / "config.yaml").read_text())
         self.config = RSSMConfig(**config["model"])
@@ -112,6 +141,17 @@ class RSSMFilter:
         self.planner_integrator = integrator
         self.clearance_margin = clearance_margin
         self.clearance_weight = clearance_weight if variant == "latent" else 0.0
+        self.risk = {"risk_weight": 0.0}
+        if risk is not None and risk_weight > 0:
+            from sit_lmpc.training.risk import RiskNetwork
+            risk_config = yaml.safe_load((Path(risk) / "config.yaml").read_text())
+            normalization = np.load(Path(risk) / "normalization.npz")
+            network = RiskNetwork(risk_config["width"], risk_config["layers"])
+            template = network.init(jax.random.key(0), jnp.zeros((1, self.config.hidden + self.config.latent)))
+            self.risk = {"risk_params": serialization.from_bytes(template, (Path(risk) / "risk_head.msgpack").read_bytes()),
+                         "risk_mean": jnp.asarray(normalization["mean"], jnp.float32),
+                         "risk_std": jnp.asarray(normalization["std"], jnp.float32),
+                         "risk_network": network, "risk_weight": float(risk_weight)}
         model, network, st = self.model, self.network, self.st_params
 
         def embed(lidar, sensors):
@@ -184,4 +224,4 @@ class RSSMFilter:
     def predictor(self):
         return RSSMPredictor(self.network, self.st_params, self.action_scale, self.h, self.s, self.model,
                              self.variant, self.model_timestep, self.planner_integrator, self.clearance_margin,
-                             self.clearance_weight)
+                             self.clearance_weight, **self.risk)
