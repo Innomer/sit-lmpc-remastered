@@ -44,7 +44,8 @@ Common setup unless stated otherwise:
 | 23 | Slip cost off by default; bicycle baseline rerun | `4402c6b` | success |
 | 24 | v8 lateral error near the edges (diagnosis) | `4402c6b` | done: no consistent bias, large spread |
 | 25 | World-model track-limit margin | `4402c6b` | failure |
-| 26 | Rollout variants (diagnosis, no retraining) | next commit | done: no cheaper fix; estimation error is about half |
+| 26 | Rollout variants (diagnosis, no retraining) | `dc4ee44` | done: no cheaper fix; estimation error is about half |
+| 27 | Starting-state error by component; v8 planning from the true state | next commit | failure: still crashes |
 
 Main conclusions so far:
 
@@ -371,3 +372,26 @@ Verdict: the varied warm-up is a success for the planner (configs `configs/fast-
 |---|---|
 | Findings | (1) No cheaper rollout variant exists: the current one already uses the prior mean with c held; sampling makes it worse. (2) About half of v8's error comes from its starting body state (steering, speed, yaw rate, slip from the anchor): the same rollout from the true state has half the median error. (3) From the true state v8 is still about twice v3's median error, and both have heavy tails at 1.5 s (p95 1.6–1.7 m). (4) The nominal bicycle model is exact in this sim (same parameters, no grip change), so it is a floor, not a fair competitor |
 | Verdict | no planner change, no sim run. Next: step 3 (distributional latent) |
+
+## 27. Starting-state error by component; v8 planning from the true state
+
+| | |
+|---|---|
+| Starting state of the other controllers | Bicycle baseline: the sim's true state. The ROS adapter takes pose, speed, yaw rate and slip from the bridge's ground-truth odometry (body twist) and steering from integrating the commanded steering rate, which is exact in lockstep. v3 closed-loop runs (`belief_update: encoder`, `encoder_state: true`): steering, speed, yaw rate and slip replaced by the v3 encoder's estimate, like v8's runs with the RSSM anchor; pose from odometry in both |
+| Estimate error at the 1,771 starts (anchor − truth) | steering RMSE 0.024 rad (mean −0.017, p95 0.043); speed RMSE 0.235 m/s (mean +0.209, p95 0.39); yaw rate RMSE 0.088 rad/s (mean −0.023, p95 0.17); slip RMSE 0.013 rad (p95 0.027) |
+
+| Starting state, v8 planner rollout | 0.5 s median / p95 | 1.0 s median / p95 | 1.5 s median / p95 |
+|---|---|---|---|
+| all from the anchor (current) | 0.09 / 0.24 m | 0.33 / 1.08 m | 0.62 / 2.29 m |
+| true steering only | 0.05 / 0.22 m | 0.18 / 0.85 m | 0.43 / 1.86 m |
+| true speed only | 0.07 / 0.23 m | 0.30 / 1.05 m | 0.61 / 2.27 m |
+| true yaw rate only | 0.08 / 0.24 m | 0.32 / 1.08 m | 0.62 / 2.30 m |
+| true slip only | 0.08 / 0.23 m | 0.33 / 1.05 m | 0.64 / 2.26 m |
+| all true | 0.04 / 0.19 m | 0.15 / 0.78 m | 0.36 / 1.73 m |
+
+| | |
+|---|---|
+| Finding | the steering estimate drives the doubled error: a 0.017 rad bias bends the predicted path over 1.5 s. True steering alone gives most of the gain of the full true state; speed (biased +0.21 m/s), yaw rate and slip barely matter for e_y. In the sim and on the car the commanded steering is known, so it should not be replaced by an estimate |
+| Sim `rssm-latent-v8-truestate` (`planner.dynamics.rssm_state: false`: plans from the true sim state, filter still runs for h and s; v8 + clearance, slip cost off, no margin, no risk head, varied warm-up) | warm-up 38.2–38.4 s; crashed 26.1 s into lap 6 at s ≈ 243 m. At 10.5 m/s the car turned in (yaw rate +3.7 rad/s), slid (slip −0.37 rad) and crossed from 0.37 m right to 0.75 m left of centre into the wall: a slide into the wall. Learned max speed 11.4 m/s, max \|slip\| 0.82 rad, max \|e_y\| 0.82 m before contact. Planning 54 / 73 ms |
+| Compared with the bicycle baseline (entry 23) | baseline 15/15 laps, 37.9 → 36.0 s, max \|e_y\| 0.81 m, planning 31 / 47 ms |
+| Verdict | failure: with a perfect starting state v8 still crashes on its first learned lap, so state estimation alone is not the fix. The transition (rollout) is the remaining problem. Next: step 3 |

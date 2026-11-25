@@ -10,7 +10,11 @@ controls ahead, stopping before the sim contact). Variants:
   v8 true state     the planner's rollout started from the full true state
   v3                v3 residual transition with z from the v3 encoder on the run's sensor features, from the true state
   bicycle           single-track model with the sim's own parameters (= nominal here), from the true state
+  v8 true <part>    the planner's rollout with one part of the starting state (steering, speed, yaw rate or slip)
+                    replaced by its true value
+Also prints the starting-state estimate error (anchor vs truth) per part.
 """
+PARTS = {"steering": 2, "speed": 3, "yaw rate": 5, "slip": 6}
 
 import argparse
 import glob
@@ -80,7 +84,9 @@ def main():
             return jax.lax.scan(advance, state, seq)[1]
         return jax.vmap(one)(x, u)
 
-    errors = {name: {k: [] for k in STEPS} for name in ("v8 planner", "v8 sampled prior", "v8 true state", "v3", "bicycle")}
+    names = ("v8 planner", "v8 sampled prior", "v8 true state", "v3", "bicycle") + tuple(f"v8 true {p}" for p in PARTS)
+    errors = {name: {k: [] for k in STEPS} for name in names}
+    estimate_error = {part: [] for part in PARTS}
     for name in args.runs:
         run = Path(args.runs_root) / name
         episode, _, meta = run_episode(run, HORIZON)
@@ -109,6 +115,11 @@ def main():
             "v3": np.asarray(v3_rollout(jnp.asarray(x_true), jnp.asarray(u), jnp.asarray(z[starts], jnp.float32))),
             "bicycle": np.asarray(bike(jnp.asarray(x_true), jnp.asarray(u))),
         }
+        for part, index in PARTS.items():
+            x_part = x_plan.copy()
+            x_part[:, index] = x_true[:, index]
+            predictions[f"v8 true {part}"] = np.asarray(v8_mean(h, s, jnp.asarray(x_part), jnp.asarray(u), keys))
+            estimate_error[part].append(x_plan[:, index] - x_true[:, index])
         hint = frenet_of(track, true[starts][:, None], np.zeros(len(starts)))[:, 0, 0]
         actual = frenet_of(track, np.stack([true[t + 1:t + 1 + HORIZON] for t in starts]), hint)[..., 1]
         for variant, predicted in predictions.items():
@@ -121,8 +132,17 @@ def main():
         report[variant] = {label: {"median_m": float(np.median(np.concatenate(v))),
                                    "p95_m": float(np.percentile(np.concatenate(v), 95)),
                                    "n": int(sum(map(len, v)))} for label, v in by_step.items()}
+    report["start_estimate_error"] = {}
+    for part, values in estimate_error.items():
+        v = np.concatenate(values)
+        report["start_estimate_error"][part] = {"rmse": float(np.sqrt(np.mean(v ** 2))), "mean": float(v.mean()),
+                                                "p95_abs": float(np.percentile(np.abs(v), 95))}
+        print(f"start estimate {part:9s} rmse {report['start_estimate_error'][part]['rmse']:.3f}  mean "
+              f"{v.mean():+.3f}  p95 |err| {report['start_estimate_error'][part]['p95_abs']:.3f}")
     print("variant              " + "   ".join(f"{label}: median / p95" for label in STEPS))
     for variant, r in report.items():
+        if variant == "start_estimate_error":
+            continue
         print(f"{variant:20s} " + "   ".join(f"{r[l]['median_m']:5.2f} / {r[l]['p95_m']:5.2f} m   " for l in STEPS))
     if args.out:
         Path(args.out).write_text(json.dumps(report, indent=1) + "\n")
