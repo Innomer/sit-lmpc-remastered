@@ -20,9 +20,11 @@ import matplotlib.pyplot as plt
 
 from sit_lmpc.world.rssm_data import MapFreeData, contacts
 
-SOURCES = ["collector", "closed-loop laps", "spin onsets", "map-free"]
-COLORS = {"collector": "#2a78d6", "closed-loop laps": "#eb6834", "spin onsets": "#1baf7a", "map-free": "#eda100"}
-STYLES = {"collector": "-", "closed-loop laps": "--", "spin onsets": "-.", "map-free": ":"}
+SOURCES = ["collector", "closed-loop laps", "spin onsets", "map-free", "coverage (open space)"]
+COLORS = {"collector": "#2a78d6", "closed-loop laps": "#eb6834", "spin onsets": "#1baf7a", "map-free": "#eda100",
+          "coverage (open space)": "#e87ba4"}
+STYLES = {"collector": "-", "closed-loop laps": "--", "spin onsets": "-.", "map-free": ":",
+          "coverage (open space)": (0, (5, 1, 1, 1))}
 VARIABLES = [
     ("speed", "Speed", "m/s"), ("steering", "Steering angle", "rad"), ("yaw_rate", "Yaw rate", "rad/s"),
     ("slip", "Slip angle", "rad"), ("heading", "Heading (absolute yaw)", "rad"),
@@ -151,6 +153,64 @@ def figure(datasets, path, log):
     plt.close(fig)
 
 
+def coverage(root, max_slip=1.2, max_yaw_rate=10.0):
+    """The open-space coverage dataset (scripts/collect_coverage.py), train split."""
+    manifest = json.loads((Path(root) / "manifest.json").read_text())
+    d = {k: [] for k, _, _ in VARIABLES}
+    count = 0
+    for record in manifest["episodes"]:
+        if record["split"] != "train":
+            continue
+        data = np.load(Path(root) / record["file"])
+        s = data["states"].astype(np.float64)
+        bad = np.flatnonzero((np.abs(s[:, 6]) > max_slip) | (np.abs(s[:, 5]) > max_yaw_rate))
+        n = int(bad[0]) if len(bad) else len(s)
+        if n < 2:
+            continue
+        s, u, c = s[:n], data["controls"][:n - 1], data["conditions"][:n]
+        d["speed"].append(s[:, 3]); d["steering"].append(s[:, 2]); d["yaw_rate"].append(s[:, 5])
+        d["slip"].append(s[:, 6]); d["heading"].append((s[:, 4] + np.pi) % (2 * np.pi) - np.pi)
+        d["steering_rate"].append(u[:, 0]); d["acceleration"].append(u[:, 1])
+        d["grip"].append(c[:, 0]); d["mass"].append(c[:, 3])
+        count += 1
+    return {k: np.concatenate(v) for k, v in d.items() if v}, {"episodes": count}
+
+
+def joint_cells(d, minimum=10):
+    """Share of the joint (speed x steering x slip x yaw rate) cells with at least `minimum` steps, on the coverage
+    collector's grid (speed 0-15 in 10, steering in 7, slip +-0.6 rad in 12, yaw rate +-8 rad/s in 10 bins)."""
+    edges = [np.linspace(0.0, 15.0, 11), np.linspace(-0.42, 0.42, 8), np.linspace(-0.6, 0.6, 13), np.linspace(-8, 8, 11)]
+    columns = [d["speed"], d["steering"], d["slip"], d["yaw_rate"]]
+    index = tuple(np.clip(np.digitize(c, e) - 1, 0, len(e) - 2) for c, e in zip(columns, edges))
+    histogram = np.zeros([len(e) - 1 for e in edges])
+    np.add.at(histogram, index, 1.0)
+    return histogram, float(np.mean(histogram >= minimum))
+
+
+def compare_heatmaps(current, new, path):
+    """Speed vs slip and speed vs yaw rate: all current training data (on-track + map-free) next to the new
+    coverage data, on the same axes and colour scale."""
+    fig, axes = plt.subplots(2, 2, figsize=(12.5, 9), facecolor=SURFACE)
+    for col, (key, unit, lim) in enumerate((("slip", "slip angle (rad)", 1.2), ("yaw_rate", "yaw rate (rad/s)", 10.0))):
+        histograms = []
+        for d in (current, new):
+            h, xe, ye = np.histogram2d(d["speed"], d[key], bins=(60, 60), range=((0, 16), (-lim, lim)))
+            histograms.append((h / h.sum(), xe, ye))
+        vmax = max(np.log10(h.max() * 1e4 + 1) for h, _, _ in histograms)
+        for row, (title, (h, xe, ye)) in enumerate(zip(("current training data (on-track + map-free)",
+                                                        "new coverage data (open space)"), histograms)):
+            ax = axes[row, col]
+            mesh = ax.pcolormesh(xe, ye, np.log10(h.T * 1e4 + 1), cmap="Blues", shading="auto", vmin=0, vmax=vmax)
+            style(ax, f"Speed vs {key.replace('_', ' ')}: {title}", "speed (m/s)")
+            ax.set_ylabel(unit, color=MUTED, fontsize=8)
+            cbar = fig.colorbar(mesh, ax=ax, pad=0.01)
+            cbar.set_label("log10(share of steps x 10^4 + 1)", color=MUTED, fontsize=8)
+            cbar.ax.tick_params(colors=MUTED, labelsize=7)
+    fig.tight_layout()
+    fig.savefig(path, dpi=110, facecolor=SURFACE)
+    plt.close(fig)
+
+
 def joint(datasets, path):
     """Speed vs slip and speed vs yaw rate, all on-track data together: where the data actually is."""
     s = {k: np.concatenate([datasets[x][k] for x in SOURCES[:3]]) for k in ("speed", "slip", "yaw_rate")}
@@ -174,17 +234,35 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--track", default="data/f1tenth-track")
     parser.add_argument("--world", default="data/f1tenth-world")
+    parser.add_argument("--coverage", default="data/f1tenth-coverage")
     parser.add_argument("--out", default="docs/figures")
     parser.add_argument("--table", default="results/data-distributions.json")
     args = parser.parse_args()
     datasets, meta = on_track(args.track)
     datasets["map-free"], meta["map-free"] = map_free(args.world)
+    if Path(args.coverage, "manifest.json").exists():
+        datasets["coverage (open space)"], meta["coverage (open space)"] = coverage(args.coverage)
+    else:
+        datasets["coverage (open space)"] = {}
     datasets["all on-track"] = {k: np.concatenate([datasets[s][k] for s in SOURCES[:3]]) for k in datasets["collector"]}
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     figure(datasets, out / "data_distributions.png", log=False)
     figure(datasets, out / "data_distributions_log.png", log=True)
     joint(datasets, out / "data_speed_vs_slip.png")
+    current = {k: np.concatenate([datasets[s][k] for s in SOURCES[:4]]) for k in ("speed", "steering", "slip", "yaw_rate")}
+    if datasets["coverage (open space)"]:
+        compare_heatmaps(current, datasets["coverage (open space)"], out / "data_coverage_heatmaps.png")
+        cov_hist, cov_share = joint_cells(datasets["coverage (open space)"])
+        cur_hist, cur_share = joint_cells(current)
+        reachable = (cov_hist > 0) | (cur_hist > 0)
+        meta["joint_cells"] = {
+            "cells": int(cov_hist.size), "reached_by_either": int(reachable.sum()),
+            "current_share_of_reached_cells_with_10_steps": float(np.mean(cur_hist[reachable] >= 10)),
+            "coverage_share_of_reached_cells_with_10_steps": float(np.mean(cov_hist[reachable] >= 10)),
+            "combined_share_of_reached_cells_with_10_steps": float(np.mean((cur_hist + cov_hist)[reachable] >= 10)),
+            "current_steps": int(cur_hist.sum()), "coverage_steps": int(cov_hist.sum())}
+        print("joint cells:", json.dumps(meta["joint_cells"]))
     table = {"meta": meta, "stats": {s: {k: describe(v) for k, v in d.items()} for s, d in datasets.items()}}
     Path(args.table).parent.mkdir(parents=True, exist_ok=True)
     Path(args.table).write_text(json.dumps(table, indent=1) + "\n")

@@ -211,3 +211,19 @@ def test_boundary_margin_widens_lateral_offset_per_step():
     assert np.allclose(widened[0, :, 1], [0.5, 0.6, 0.9]) and np.allclose(widened[1, :, 1], [-0.5, -0.6, -0.9])
     assert with_margin(frenet, None) is frenet
     assert boundary_margins(SimpleNamespace(boundary_margin=None, horizon=3)) is None
+
+
+def test_body_frame_residual_rotates_position_correction_with_heading():
+    config = RSSMConfig(hidden=16, condition=2, fast=4, beams=16, head=16, decoder=16, body_frame_residual=True)
+    model, params = init_params(config, jax.random.key(0))
+    plain = RSSMConfig(hidden=16, condition=2, fast=4, beams=16, head=16, decoder=16)
+    plain_model = RSSM(plain)
+    h, s = jnp.zeros(16, jnp.float32), jnp.zeros(6, jnp.float32)
+    u = jnp.asarray([0.5, 1.0], jnp.float32)
+    x0 = jnp.asarray([0.0, 0.0, 0.1, 5.0, 0.0, 0.2, 0.05], jnp.float32)
+    raw = plain_model.apply(params, x0, u, h, s, method=RSSM.residual)
+    for yaw in (0.0, 0.7, -2.0):
+        r = model.apply(params, x0.at[4].set(yaw), u, h, s, method=RSSM.residual)
+        assert np.allclose(r[0], np.cos(yaw) * raw[0] - np.sin(yaw) * raw[1], atol=1e-6)
+        assert np.allclose(r[1], np.sin(yaw) * raw[0] + np.cos(yaw) * raw[1], atol=1e-6)
+        assert np.allclose(r[2:], raw[2:], atol=1e-6)

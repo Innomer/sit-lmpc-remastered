@@ -34,6 +34,7 @@ class RSSMConfig:
     decoded_sensors: int = 4
     head: int = 128
     decoder: int = 256
+    body_frame_residual: bool = False
 
     @property
     def latent(self):
@@ -85,7 +86,13 @@ class RSSM(nn.Module):
         return self.obs_encoder(jnp.concatenate([features, sensors], -1))
 
     def residual(self, x, u, h, s):
-        return self.residual_head(jnp.concatenate([body(x), u / CONTROL_SCALE, h, s], -1)) * 0.1
+        out = self.residual_head(jnp.concatenate([body(x), u / CONTROL_SCALE, h, s], -1)) * 0.1
+        if not self.config.body_frame_residual:
+            return out
+        # The network sees no heading, so its position correction is in the car frame; rotate it to the world frame.
+        c, s_ = jnp.cos(x[..., 4]), jnp.sin(x[..., 4])
+        forward, left = out[..., 0], out[..., 1]
+        return out.at[..., 0].set(c * forward - s_ * left).at[..., 1].set(s_ * forward + c * left)
 
     def advance(self, h, s, u, x_next):
         h_next, _ = self.cell(h, jnp.concatenate([s, u / CONTROL_SCALE, body(x_next)], -1))

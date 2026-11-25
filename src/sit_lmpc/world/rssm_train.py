@@ -263,6 +263,12 @@ def main():
         from sit_lmpc.world.rssm_data import MapFreeData
         map_free = MapFreeData(config["map_free_dataset"], "train", rssm_config.beams, **cut)
         print(f"map-free data: {len(map_free.episodes)} episodes; {map_free_fraction:.0%} of each batch", flush=True)
+    coverage = None
+    coverage_fraction = config.get("coverage_fraction", 0.0)
+    if coverage_fraction:
+        coverage = TrackData(config["coverage_dataset"], "train", rssm_config.beams, **cut)
+        print(f"coverage data: {len(coverage.episodes)} episodes; {coverage_fraction:.0%} of each batch, "
+              f"no LiDAR losses on these windows", flush=True)
     np.savez(output / "observation_scale.npz", mean=obs_mean, std=obs_std)
     obs_mean, obs_std = jnp.asarray(obs_mean), jnp.asarray(obs_std)
     rng = np.random.default_rng(config["seed"])
@@ -280,7 +286,13 @@ def main():
         keys = jax.random.split(key, len(batch["controls"]))
         terms = jax.vmap(lambda b, k: sequence_loss(params, model, st_params, dt, integrator, b, k, settings,
                                                     obs_mean, obs_std))(batch, keys)
-        return jax.tree_util.tree_map(lambda v: v.mean(axis=0), terms)
+        if "lidar_weight" not in batch:
+            return jax.tree_util.tree_map(lambda v: v.mean(axis=0), terms)
+        weight = batch["lidar_weight"]
+        mean = {k: v.mean(axis=0) for k, v in terms.items()}
+        for name in ("lidar", "prediction_lidar"):
+            mean[name] = jnp.sum(terms[name] * weight) / jnp.maximum(jnp.sum(weight), 1.0)
+        return mean
 
     @jax.jit
     def update(params, opt_state, batch, key, kl_scale):
@@ -310,11 +322,18 @@ def main():
     for step in range(1, steps + 1):
         key, sub = jax.random.split(key)
         free_count = int(round(config["batch"] * map_free_fraction)) if map_free is not None else 0
-        batch = train.sample(rng, config["batch"] - free_count, config["window"], high_slip=high_slip,
+        open_count = int(round(config["batch"] * coverage_fraction)) if coverage is not None else 0
+        batch = train.sample(rng, config["batch"] - free_count - open_count, config["window"], high_slip=high_slip,
                              high_slip_fraction=high_slip_fraction)
         if free_count:
             extra = map_free.sample(rng, free_count, config["window"])
             batch = {k: np.concatenate([batch[k], extra[k]]) for k in batch}
+        if coverage is not None:
+            batch["lidar_weight"] = np.ones(len(batch["states"]), np.float32)
+            if open_count:
+                extra = coverage.sample(rng, open_count, config["window"], noise=False)
+                extra["lidar_weight"] = np.zeros(open_count, np.float32)
+                batch = {k: np.concatenate([batch[k], extra[k]]) for k in batch}
         kl_scale = min(1.0, step / config["kl_warmup"])
         new_params, new_opt_state, value, terms = update(params, opt_state, batch, sub, kl_scale)
         value_f = float(value)
