@@ -41,9 +41,10 @@ Common setup unless stated otherwise:
 | 20 | Post-contact frames removed from training and evaluation | `357ac06` | success |
 | 21 | Spin-onset data collection | `357ac06` | success |
 | 22 | Crash-risk head (soft planner cost) | `1b2224d` | failure in closed loop |
-| 23 | Slip cost off by default; bicycle baseline rerun | step 3 commit | success |
-| 24 | v8 lateral error near the edges (diagnosis) | step 3 commit | done: no consistent bias, large spread |
-| 25 | World-model track-limit margin | step 3 commit | failure |
+| 23 | Slip cost off by default; bicycle baseline rerun | `4402c6b` | success |
+| 24 | v8 lateral error near the edges (diagnosis) | `4402c6b` | done: no consistent bias, large spread |
+| 25 | World-model track-limit margin | `4402c6b` | failure |
+| 26 | Rollout variants (diagnosis, no retraining) | next commit | done: no cheaper fix; estimation error is about half |
 
 Main conclusions so far:
 
@@ -350,3 +351,23 @@ Verdict: the varied warm-up is a success for the planner (configs `configs/fast-
 | Crash type | neither a clean spin nor a wall drift: stall, then reversing into the wall. At a standstill v8 is outside its data (episodes are trimmed below 1.2 m/s) |
 | Compared with the bicycle baseline (entry 23) | baseline 15/15 laps, 36.0–39.2 s, max \|e_y\| 0.81 m; v8 + margin 1 learned lap (41.2 s), then the stall crash |
 | Verdict | failure: a margin as large as the model's error leaves too little room, and the planner stops |
+
+## 26. Rollout variants
+
+| | |
+|---|---|
+| What | `scripts/rollout_variants_check.py`: the same 1,771 learned-lap starting points as entry 24 (v5 slow-logged 81, v6 764, v8 clearance-long 552, varied-long 228, guarded 59, risk 87), same applied controls, lateral error on the planner's track frame. Results in `results/lateral-error/v8-rollout-variants.json` |
+| What the planner does now | `latent_rollout(..., sample=False)`: the fast part d is the prior mean at every step (no sampling) and the slow part c is carried unchanged at its filtered value. So "prior mean for s" and "c fixed, d from the prior mean" are the same rollout as the current one |
+
+| Variant | 0.5 s median / p95 | 1.0 s median / p95 | 1.5 s median / p95 |
+|---|---|---|---|
+| v8 planner rollout (= prior mean = c fixed + d prior mean), from the planner's start state | 0.09 / 0.24 m | 0.33 / 1.08 m | 0.62 / 2.29 m |
+| v8 with d sampled from the prior each step | 0.09 / 0.26 m | 0.37 / 1.52 m | 0.93 / 3.86 m |
+| v8 planner rollout from the full true state | 0.04 / 0.19 m | 0.15 / 0.78 m | 0.36 / 1.73 m |
+| v3 (encoder z), from the true state | 0.02 / 0.14 m | 0.08 / 0.67 m | 0.18 / 1.63 m |
+| Bicycle, sim parameters (= nominal here), from the true state | 0.00 / 0.00 m | 0.00 / 0.00 m | 0.00 / 0.00 m |
+
+| | |
+|---|---|
+| Findings | (1) No cheaper rollout variant exists: the current one already uses the prior mean with c held; sampling makes it worse. (2) About half of v8's error comes from its starting body state (steering, speed, yaw rate, slip from the anchor): the same rollout from the true state has half the median error. (3) From the true state v8 is still about twice v3's median error, and both have heavy tails at 1.5 s (p95 1.6–1.7 m). (4) The nominal bicycle model is exact in this sim (same parameters, no grip change), so it is a floor, not a fair competitor |
+| Verdict | no planner change, no sim run. Next: step 3 (distributional latent) |
