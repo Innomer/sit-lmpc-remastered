@@ -38,8 +38,12 @@ Common setup unless stated otherwise:
 | 17 | Physics check | `world-model-guarded-attempt` `5f953fd` | failure, removed |
 | 18 | Ensemble transition heads | `world-model-guarded-attempt` `5f953fd` | failure, removed |
 | 19 | Guarded v8 sim run (14, 15, 17, 18 together) | `5f953fd` | failure |
-| 20 | Post-contact frames removed from training and evaluation | step 1 commit | success |
-| 21 | Spin-onset data collection | step 1 commit | success |
+| 20 | Post-contact frames removed from training and evaluation | `357ac06` | success |
+| 21 | Spin-onset data collection | `357ac06` | success |
+| 22 | Crash-risk head (soft planner cost) | `1b2224d` | failure in closed loop |
+| 23 | Slip cost off by default; bicycle baseline rerun | step 3 commit | success |
+| 24 | v8 lateral error near the edges (diagnosis) | step 3 commit | done: no consistent bias, large spread |
+| 25 | World-model track-limit margin | step 3 commit | failure |
 
 Main conclusions so far:
 
@@ -303,3 +307,46 @@ Verdict: the varied warm-up is a success for the planner (configs `configs/fast-
 | Slip distribution (share of steps) | onset data: \|slip\| > 0.1 rad 48.1%, > 0.3 rad 16.4%, > 0.5 rad 3.0%, > 0.8 rad 0.4%. Existing data (cleaned): 14.0%, 2.0%, 0.5%, 0.1% |
 | Speeds | max per rollout: median 9.8 m/s, 90th percentile 14.8 m/s |
 | Verdict | success |
+
+## 22. Crash-risk head
+
+| | |
+|---|---|
+| What | Small network (SIT-LMPC's `RiskNetwork`, 2 × 64, class-balanced cross-entropy) on the frozen v8 filter's (h, s): probability of a crash within 1.5 s (wall contact or spin past slip 1.2 rad / yaw rate 10 rad/s). `sit_lmpc.world.rssm_risk`, `configs/train-rssm-risk.yaml`. Training: the cleaned dataset with the onset rollouts plus five v8 closed-loop runs (clearance, clearance-long, slow-long, varied-long, guarded), 522k steps, 4.7% labelled 1. Held out: the v5, v6 and v7 crash runs. Planner: `planner.dynamics.rssm_risk` / `rssm_risk_weight`, weight × probability at every predicted step, one latent rollout shared with the clearance check (+0.4 ms), not used in the final ranking |
+| Why | learn from failures without retraining the world model |
+| Commit | `1b2224d`; report in `results/risk-head/report.json` |
+| Offline | AUC 0.93 validation, 0.92 test (onset groups 0.80 / 0.85). Alarm threshold 0.78 (5% of safe validation steps above it) |
+| Held-out warning time | v7 spin (~14 m/s): first alarm 1.6 s before contact, continuously above for the last 0.4 s, run AUC 0.96. v6 wall hit (~8 m/s): no alarm (peak 0.62), AUC 0.77. v5 slow wall drift (~3 m/s): no alarm (peak 0.58), AUC 0.50 |
+| Sim `rssm-latent-v8-risk` (v8 + clearance + risk, weight 1; slip cost still on by default then) | warm-up 38.2–38.4 s; wall hit 10.2 s into lap 6 after riding 0.8–0.9 m off centre for ~5 s with slip near zero. Learned max speed 10.1 m/s, max \|slip\| 1.04 rad (one slide early in the lap). Re-filtered along the driven path the risk was 0.5–0.84 for the last 3 s and above the alarm threshold on 6.9% of learned-lap steps (warm-up 0.5%). Planning 53 / 71 ms |
+| Verdict | failure in closed loop. It saw the danger, but near the edge almost every candidate had similar risk, so a soft cost did not change the choice. It also does not recognise low-slip wall drifts. (The per-lap `safety_summary` counts any cost > 0, so for a probability it always reads 100%) |
+
+## 23. Slip cost off by default; bicycle baseline rerun
+
+| | |
+|---|---|
+| What changed | `planner.safety_slip_weight` default 1.0 → 0.0 (kept as an option) |
+| Why | the bicycle baseline on the code with the slip cost on (`known-varied-current`): learned laps 38.8, 38.9, 38.2, 39.0, 39.9 s and a wall hit 12.4 s into lap 11; max \|slip\| on learned laps ~0.3 rad, top speed 10.5 m/s. The old code (`known-varied-long`) gave 38.3 → 36.6 s with no crash |
+| Check `known-varied-slipoff` | warm-up 38.2–38.4 s; learned laps 37.9, 39.2, 36.6, 37.4, 36.2, 37.3, 36.7, 36.7, 36.0, 36.1 s; 15/15 laps, no crash. Learned max speed 12.8 m/s, max \|slip\| 0.75 rad, max \|e_y\| 0.81 m. Planning 31 / 47 ms |
+| Verdict | success: back to (slightly better than) the old result, so the slip cost alone caused the regression; the safety-cost plumbing with every term at zero leaves the planner unchanged |
+
+## 24. v8 lateral error near the edges
+
+| | |
+|---|---|
+| What | `scripts/lateral_error_check.py`: on the learned laps of the crash runs (v5 slow-logged, v6, v8 clearance-long, varied-long, guarded, risk), re-filter with v8 and roll out from the planner's start state (true pose, anchor body state) with the applied controls; compare predicted and actual e_y on the planner's track frame at 0.5 / 1.0 / 1.5 s (1,771 starts). Results in `results/lateral-error/` |
+| Spread | p95 \|e_y error\| 0.24 m at 0.5 s, 1.08 m at 1.0 s, 2.29 m at 1.5 s. Slow v5 run (~3 m/s): 0.04 / 0.15 / 0.33 m |
+| Bias | none consistent. Signed towards the outside of the bend (curvature > 0.05): 0.00 m at 0.5 s (55% outward), −0.02 m at 1.0 s (55%), −0.17 m at 1.5 s (47%). Signed towards the nearer wall it looks outward (+0.12 / +0.40 / +0.53 m) when binned by the actual e_y and inward (down to −1.24 m) when binned by the predicted e_y: both are selection effects of a large, symmetric error, not a bias |
+| By edge and speed | by distance from the centre line at the start there is no clear trend (bend subset, 1.5 s: p95 1.33 m for \|e_y\| 0.0–0.3 m, 1.42 m for 0.3–0.5 m, 1.12 m for 0.5–0.7 m; small samples). Speed matters: p95 at 1.0 s is 0.17 m below 4 m/s, 0.61 m at 4–7, 0.95 m at 7–9, 1.14 m at 9–11 and 1.38 m above 11 m/s |
+| Validation, near the edge (\|e_y\| ≥ 0.5 m, 10k starts) | p95 per step 0.04, 0.08, 0.12, 0.18, 0.25, 0.32, 0.41, 0.52, 0.64, 0.81, 1.07, 1.22, 1.41, 1.63, 1.80 m (all starts: 0.03 → 1.36 m). A first measurement from the noisy PF pose gave 0.31–0.42 m already at step 1 and was discarded |
+| Verdict | the problem is spread, not bias: by 1.0–1.5 s the 95% band is wider than Spielberg's 0.85 m allowed offset |
+
+## 25. World-model track-limit margin
+
+| | |
+|---|---|
+| What | `planner.boundary_margin`: per-step margin added to \|e_y\| in the track-limit check (plan reward and final ranking). Set to the validation near-edge p95 per step, capped at 0.65 m: 0.04, 0.08, 0.12, 0.18, 0.25, 0.32, 0.41, 0.52, 0.64, then 0.65 m (`configs/world/rssm-latent-v8-margin.yaml`) |
+| Why the cap | uncapped, the margin passes the 0.85 m allowed offset at step 10–11 and reaches 1.80 m, so every candidate would be off the track from 1.0 s on |
+| Sim `rssm-latent-v8-margin` (v8 + clearance + margin; slip cost and risk head off) | warm-up 38.2–38.4 s; lap 6 41.2 s with a near-spin at s ≈ 217 m (yaw rate 10.5 rad/s, slip −0.64 rad, recovered); lap 7: braked hard (−7.1 m/s²) at s ≈ 103 m from 8 m/s to a standstill, stood still ~4 s, then rolled backwards into the wall at ~2 m/s (contact 18.2 s into the lap). Learned max speed 11.2 m/s, max \|slip\| 0.80 rad before the stall, max \|e_y\| 0.80 m. Planning 52 / 64 ms |
+| Crash type | neither a clean spin nor a wall drift: stall, then reversing into the wall. At a standstill v8 is outside its data (episodes are trimmed below 1.2 m/s) |
+| Compared with the bicycle baseline (entry 23) | baseline 15/15 laps, 36.0–39.2 s, max \|e_y\| 0.81 m; v8 + margin 1 learned lap (41.2 s), then the stall crash |
+| Verdict | failure: a margin as large as the model's error leaves too little room, and the planner stops |

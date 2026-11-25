@@ -228,7 +228,8 @@ class PlannerConfig:
     safety_speed_cap: float | None = None
     safety_speed_weight: float = 1.0
     safety_slip_limit: float = 0.35
-    safety_slip_weight: float = 1.0
+    safety_slip_weight: float = 0.0
+    boundary_margin: float | tuple[float, ...] | None = None
     mean_value: bool = True
     scan_rollout: bool = True
     safe_set_selection: str = "exact"
@@ -788,6 +789,11 @@ class ExperimentConfig:
             raise ValueError("planner.safety_speed_cap must be null or > 0")
         if p.safety_speed_weight < 0 or p.safety_slip_weight < 0 or not p.safety_slip_limit > 0:
             raise ValueError("planner.safety_speed_weight and safety_slip_weight must be >= 0, safety_slip_limit > 0")
+        if p.boundary_margin is not None:
+            margins = (p.boundary_margin,) if isinstance(p.boundary_margin, (int, float)) else tuple(p.boundary_margin)
+            if any(not (isinstance(m, (int, float)) and math.isfinite(m) and m >= 0) for m in margins) or (
+                    len(margins) not in (1, p.horizon)):
+                raise ValueError("planner.boundary_margin must be null, one value >= 0, or horizon values >= 0")
         if p.lambda_max <= 0 or p.safe_set_relaxation < 0 or p.action_rate_penalty < 0:
             raise ValueError("invalid planner penalty or lambda range")
         return self

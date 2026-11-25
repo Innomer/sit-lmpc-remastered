@@ -72,6 +72,7 @@ class LatentFilter:
         st_params = jnp.asarray(st.params, jnp.float32)
         dt, integrator = float(config["timestep"]), float(config["integrator_timestep"])
         model, network = self.model, self.network
+        self.st_params, self.dt, self.integrator = st_params, dt, integrator
 
         def apply(method, *args):
             return model.apply(network, *args, method=method)

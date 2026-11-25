@@ -198,3 +198,16 @@ def test_latent_costs_clearance_and_risk_head():
     assert costs["risk"].shape == (6, 5) and bool(jnp.all((costs["risk"] >= 0) & (costs["risk"] <= 3.0)))
     assert np.allclose(costs["clearance"], base.clearance_cost(state, actions), atol=1e-6)
     assert "risk" not in base.replace(risk_weight=0.0).latent_costs(state, actions)
+
+
+def test_boundary_margin_widens_lateral_offset_per_step():
+    from types import SimpleNamespace
+    from sit_lmpc.planners.lmppi import boundary_margins, with_margin
+    ramp = boundary_margins(SimpleNamespace(boundary_margin=0.3, horizon=3))
+    assert np.allclose(ramp, [0.1, 0.2, 0.3])
+    listed = boundary_margins(SimpleNamespace(boundary_margin=(0.0, 0.1, 0.4), horizon=3))
+    frenet = jnp.zeros((2, 3, 7)).at[0, :, 1].set(0.5).at[1, :, 1].set(-0.5)
+    widened = with_margin(frenet, listed)
+    assert np.allclose(widened[0, :, 1], [0.5, 0.6, 0.9]) and np.allclose(widened[1, :, 1], [-0.5, -0.6, -0.9])
+    assert with_margin(frenet, None) is frenet
+    assert boundary_margins(SimpleNamespace(boundary_margin=None, horizon=3)) is None

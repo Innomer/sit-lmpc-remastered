@@ -90,6 +90,25 @@ def sample_validity(previous, da, states, values, hull_distances):
 SOFT_TERMS = ("risk",)
 
 
+def boundary_margins(config):
+    """Per-step track-limit margin (horizon,): planner.boundary_margin as one value ramped linearly over the
+    horizon (value / H at step 1 up to value at step H), or one value per step."""
+    margin = config.boundary_margin
+    if margin is None:
+        return None
+    if isinstance(margin, (int, float)):
+        return np.linspace(margin / config.horizon, margin, config.horizon)
+    return np.asarray(margin, dtype=float)
+
+
+def with_margin(frenet, margins):
+    """Frenet states with |e_y| widened by the per-step margin, for the track-limit checks only."""
+    if margins is None:
+        return frenet
+    widen = jnp.asarray(margins[: frenet.shape[-2]], frenet.dtype)
+    return frenet.at[..., 1].add(jnp.sign(frenet[..., 1]) * widen)
+
+
 def safety_step_costs(states, config):
     """Per-step speed-cap and slip penalties on predicted Frenet states (..., H, 7)."""
     terms = {}
@@ -436,6 +455,7 @@ class LMPPI:
         lambdas = np.stack(np.meshgrid(grid, grid), axis=-1).reshape(-1, 2)
         lambdas = lambdas[np.argsort(np.linalg.norm(lambdas, axis=1))]
         self.lambdas = jnp.asarray(lambdas, dtype=model.params.dtype)
+        self.margins = boundary_margins(config)
         self.risk_lambdas = None
         self._lambda_tables = {(False, False): self.lambdas}
         self._warmed_terms = set()
@@ -804,6 +824,7 @@ class LMPPI:
             self.track.get_s_search_range(frenet_state[0], self.config.search_points)
         )
         states = to_frenet(self.track, cartesian, indices, frenet_state[0])
+        boundary_states = with_margin(states, self.margins)
         extra_cost = sum(sample_extra.values()) if sample_extra else None
         scenario_key = jax.random.fold_in(sample_key, 17) if distribution_needed else None
         sample_scenarios = sample_frenet = sample_chance = None
@@ -924,20 +945,21 @@ class LMPPI:
             proposal_options["extra_cost"] = extra_cost
         if chance_active:
             candidates = propose_with_constraints(
-                previous, da, states, values, sample_distances,
+                previous, da, boundary_states, values, sample_distances,
                 {name: sample_chance[name] for name in ("boundary", "terminal_hull")},
                 sample_risk, active_lambdas, self.config, self.config.risk_constraint.mode,
                 **proposal_options,
             )
         elif risk_active:
             candidates = propose_with_risk(
-                previous, da, states, values, sample_distances, sample_risk,
+                previous, da, boundary_states, values, sample_distances, sample_risk,
                 active_lambdas, self.config, self.config.risk_constraint.mode,
                 **proposal_options,
             )
         else:
             candidates = propose(
-                previous, da, states, values, sample_distances, active_lambdas, self.config, **proposal_options
+                previous, da, boundary_states, values, sample_distances, active_lambdas, self.config,
+                **proposal_options
             )
         trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
         candidate_frenet = to_frenet(self.track, trajectories, indices, frenet_state[0])
@@ -1005,7 +1027,7 @@ class LMPPI:
             if not bool(jnp.all(jnp.isfinite(candidate_risk))):
                 raise FloatingPointError("nonfinite candidate risk probabilities")
         packet = finish_candidates(
-            candidate_frenet, candidate_distances, candidate_chance if chance_active else None,
+            with_margin(candidate_frenet, self.margins), candidate_distances, candidate_chance if chance_active else None,
             candidate_risk if risk_active else None, cutoff if risk_active else None,
             terminal_values, candidates, trajectories,
             member_trajectories if hasattr(self.model, "weights") else None,

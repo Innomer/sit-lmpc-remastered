@@ -193,7 +193,8 @@ planner:
   safety_speed_cap: null  # Planner speed cap in m/s: predicted steps above it are penalised (full penalty 0.5 m/s over). null disables.
   safety_speed_weight: 1.0  # Weight of the speed-cap penalty per step.
   safety_slip_limit: 0.35  # Predicted |slip| (rad) above this is penalised (full penalty 0.1 rad over).
-  safety_slip_weight: 1.0  # Weight of the slip penalty per step; 0 disables. Safety penalties are not scaled by the lambda grid and also rank the final candidates.
+  safety_slip_weight: 0.0  # Weight of the slip penalty per step; 0 disables (off by default: at 0.35 rad it held the bicycle baseline back). Safety penalties are not scaled by the lambda grid and also rank the final candidates.
+  boundary_margin: null  # Track-limit margin in metres per predicted step: one value (ramped linearly from value/H at step 1 to value at step H) or one value per step. Tightens the boundary check in the plan reward and the final ranking (model error near the edges). null disables.
   mean_value: true  # [true, false] true: average V(x_1..x_H) or Q(x_0,u_0)..Q(x_H-1,u_H-1); false: terminal V(x_H) or Q(x_H,u_H) with a sampled extra action.
   scan_rollout: true  # [true, false] true: use jax.lax.scan for ST rollouts; false: use the unrolled baseline. --no-scan overrides this to false. Both paths use the same dynamics.
 
