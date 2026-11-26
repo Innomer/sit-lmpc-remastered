@@ -48,8 +48,9 @@ Common setup unless stated otherwise:
 | 27 | Starting-state error by component; v8 planning from the true state | `dae8971` | failure: still crashes |
 | 28 | Open-space coverage data, rebalanced sampling, rssm-v10 fine-tune | `88f5fd2`, `86fb05c` | failure: training diverged |
 | 29 | rssm-v11: from scratch on the full mix with a horizon curriculum and robust rollout losses | `fff687c` | partial: best rollouts so far, just short of the gate |
-| 30 | v11 + clearance in closed loop | next commit | success: first world-model run with all 10 learned laps |
-| 31 | Condition changes mid-session: v11 vs the bicycle model | next commit | partial: v11 survives the grip drop, the bicycle model does not; neither handles the patch |
+| 30 | v11 + clearance in closed loop | `1bb6a94` | success: first world-model run with all 10 learned laps |
+| 31 | Condition changes mid-session: v11 vs the bicycle model | `1bb6a94` | partial: v11 survives the grip drop, the bicycle model does not; neither handles the patch. Mass scenario uninformative (entry 32) |
+| 32 | Does mass matter in this sim; oracle-c test | next commit | done: mass barely matters; a "correct" c does not improve predictions |
 
 Main conclusions so far:
 
@@ -476,8 +477,8 @@ Verdict: the varied warm-up is a success for the planner (configs `configs/fast-
 |---|---|---|---|---|---|
 | grip drop (μ 0.7) | v11 | 39.0, 39.0, 40.0 | 39.8, 39.4, 38.6, 38.2, 38.4, 38.2, 37.8 | none | 4 |
 | grip drop (μ 0.7) | bicycle | 38.1, 38.6, 37.6 | crash in lap 9 (20.7 s in) | 1 | – |
-| mass +30% | v11 | 38.2, 38.9, 39.6 | 39.8, 39.5, 39.2, 38.7, 38.9, 38.1, 38.4 | none | 4 |
-| mass +30% | bicycle | 38.1, 39.2, 37.5 | 38.0, 36.8, 36.3, 36.8, 36.4, 35.8, 35.5 | none | 6 |
+| mass +30% (uninformative, entry 32) | v11 | 38.2, 38.9, 39.6 | 39.8, 39.5, 39.2, 38.7, 38.9, 38.1, 38.4 | none | 4 |
+| mass +30% (uninformative, entry 32) | bicycle | 38.1, 39.2, 37.5 | 38.0, 36.8, 36.3, 36.8, 36.4, 35.8, 35.5 | none | 6 |
 | patch (μ 0.6, one corner) | v11 | 39.9, 40.5, 40.4 | 39.3, 40.1, 39.0, crash in lap 12 (12.4 s in) | 1 | – |
 | patch (μ 0.6, one corner) | bicycle | 38.3, 38.8, 37.3 | crash in lap 9 (13.2 s in) | 1 | – |
 
@@ -486,3 +487,25 @@ Verdict: the varied warm-up is a success for the planner (configs `configs/fast-
 | Crash types | all three are spins into the wall at 7–8 m/s: yaw rate swinging to −3.5 to −4.7 rad/s, slip 0.5–0.9 rad, the car sliding across the track. Bicycle grip drop at s ≈ 178 m; both patch crashes on the patch (s ≈ 113–114 m) |
 | v11 grip estimate (condition head on c) | no change: 1.01–1.06 per lap (true 1.05). Grip drop: falls within a second of the change but only to 0.96–0.99 per lap (true 0.70). Patch: 0.94 inside the patch vs 1.04 outside after the change (true 0.6 / 1.05; 1.00 on the same stretch before). Mass +30%: the mass read-out stays at 1.02–1.03 (true 1.30) and grip at 1.05–1.06 |
 | Verdict | partial. Under a track-wide grip drop the world model keeps the car on the track and recovers in about 4 laps, where the nominal bicycle model spins out on the first lap after the change. With +30% mass the bicycle model is unaffected and faster. A sharp local patch defeats both (v11 survives three passes, then spins). The grip read-out moves in the right direction but far too little, and mass is not detected at all |
+
+## 32. Does mass matter in this sim; oracle-c test
+
+| | |
+|---|---|
+| Mass in the sim | the bridge applies `mass_ratio` to the mass m only; the yaw inertia I stays fixed. In the single-track model the tyre forces scale with the load, so mass cancels from the slip equation and the commands are accelerations; only the yaw equation keeps an m/I factor |
+| Mass check | exact physics, same start states and applied controls (1,280 starts from v11's learned laps), mass ratio 1.0 vs 1.3: position difference median / p95 0.01 / 0.05 m at 0.5 s, 0.03 / 0.17 m at 1.0 s, 0.06 / 0.29 m at 1.5 s; yaw rate differs by up to 0.17 rad/s (p95), slip by 0.015 rad. For scale, grip 1.05 vs 0.70: 0.33 / 2.28 m at 1.5 s; v11's own 1.5 s error 0.26 / 1.36 m |
+| Verdict on the mass scenario | uninformative: in this sim +30% mass changes the dynamics far less than the model's own error, so it cannot show adaptation (and v11's mass read-out staying at 1.02 is not evidence of a failure) |
+| Oracle-c test | `scripts/oracle_condition_check.py`, results in `results/change-scenarios/oracle-c-*.json`. Oracle c for a grip value = mean filtered c over training steps (track + coverage) whose true grip is within ±0.05 of it, after a 2 s burn-in: for 0.70 from 61,812 steps (grip read-out 0.67), for 1.05 from 181,432 steps (read-out 1.05). On the grip-drop run (`change-grip-drop-v11`), 1.5 s rollouts from the true state with the applied controls, with v11's own filtered c vs c forced |
+
+| Starts | c used | 1.5 s position median / p95 | 1.5 s e_y median / p95 |
+|---|---|---|---|
+| after the drop (1,335; true grip 0.70; own c reads 0.98) | own c | 0.37 / 1.29 m | 0.26 / 1.43 m |
+| | oracle c for 0.70 (reads 0.67) | 0.55 / 1.66 m | 0.52 / 2.06 m |
+| | c for 1.05 (wrong grip) | 0.42 / 1.46 m | 0.30 / 1.68 m |
+| before the drop (583; true 1.05; own c reads 1.04) | own c | 0.38 / 1.39 m | 0.29 / 1.63 m |
+| | oracle c for 1.05 | 0.31 / 1.29 m | 0.24 / 1.40 m |
+
+| | |
+|---|---|
+| Findings | (1) v11's own predictions after the drop are as accurate as before it (e_y median 0.26 vs 0.29 m), although its grip read-out barely moves: the adaptation happens in the memory h and the fast latent d, not in c. (2) Forcing c to the value that reads the true grip makes predictions worse (0.26 → 0.52 m); the wrong-grip c is closer to the model's own (0.30 m). So the transition does not use c as a physical grip variable in the way the read-out suggests, and an average "grip 0.7" c is not consistent with the run's h |
+| Verdict | a better grip estimate in c would not improve predictions, so the condition-estimate fix (looser prior on c, higher read-out weight, grip-change episodes, v12) was not done. Open question for the condition-aware safe set: tag laps with something the model actually uses (h, d, or predicted-vs-actual dynamics), not the c read-out |
