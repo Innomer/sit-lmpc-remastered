@@ -47,7 +47,9 @@ Common setup unless stated otherwise:
 | 26 | Rollout variants (diagnosis, no retraining) | `dc4ee44` | done: no cheaper fix; estimation error is about half |
 | 27 | Starting-state error by component; v8 planning from the true state | `dae8971` | failure: still crashes |
 | 28 | Open-space coverage data, rebalanced sampling, rssm-v10 fine-tune | `88f5fd2`, `86fb05c` | failure: training diverged |
-| 29 | rssm-v11: from scratch on the full mix with a horizon curriculum and robust rollout losses | next commit | partial: best rollouts so far, just short of the gate |
+| 29 | rssm-v11: from scratch on the full mix with a horizon curriculum and robust rollout losses | `fff687c` | partial: best rollouts so far, just short of the gate |
+| 30 | v11 + clearance in closed loop | next commit | success: first world-model run with all 10 learned laps |
+| 31 | Condition changes mid-session: v11 vs the bicycle model | next commit | partial: v11 survives the grip drop, the bicycle model does not; neither handles the patch |
 
 Main conclusions so far:
 
@@ -451,3 +453,36 @@ Verdict: the varied warm-up is a success for the planner (configs `configs/fast-
 | v7 replay (cleaned, from the true state) | median 1.5 s position error v11 0.36 m (v8 0.35, v3 0.23); last 10 starts v11 0.32 m (v8 0.69, v3 0.24). Predicted slip tracks the truth up to t = 63 but has the wrong sign at the last clean start (true −0.13, v11 +0.13, v3 −0.09) |
 | Gate | 1.5 s median from the true state 0.26 m against ~0.23 m (1.3 × v3's 0.18 m): missed by 0.03 m, so no sim run |
 | Verdict | partial: the best world model so far. It beats v8 everywhere (true-state 1.5 s median −28%, p95 −21%; from its own estimate −32%) and has a smaller 95th percentile than v3 (1.36 vs 1.63 m), but the median is still 1.44× v3's and the gap is largest above 9 m/s (0.41 vs 0.21 m) |
+
+## 30. v11 + clearance in closed loop
+
+| | |
+|---|---|
+| Setup | `configs/world/rssm-latent-v11.yaml`: rssm-v11, LiDAR clearance (weight 1), varied warm-up (capped at 9 m/s), slip cost off, no margin, no risk head; same planner settings as the bicycle baseline. Spielberg, no change, 15 laps, nothing else on the GPU. Run `rssm-latent-v11` |
+| Laps | warm-up 38.4, 38.3, 38.3, 38.2, 38.3 s; learned 38.9, 39.7, 39.8, 38.7, 39.2, 38.7, 38.0, 38.1, 37.5, 36.9 s |
+| Crashes | none: 15/15 laps |
+| Learned laps | max \|e_y\| 0.88 m, max speed 11.1 m/s, max \|slip\| 0.63 rad |
+| Planning | 54 / 68 ms (bicycle baseline 31 / 47 ms) |
+| Compared with the bicycle baseline (entry 23) | baseline learned laps 37.9 → 36.0 s (best 36.0), max speed 12.8 m/s; v11 starts slower (38.9–39.8 s for the first three learned laps) and improves to 36.9 s by lap 15 |
+| Verdict | success: the first world-model run to complete all 10 learned laps, still improving at the end. The speed-capped rerun was not needed |
+
+## 31. Condition changes mid-session: v11 vs the bicycle model
+
+| | |
+|---|---|
+| Setup | 15 laps (5 warm-up + 10 learned), change after 8 finished laps (laps 9–15 under the new condition), same seed and warm-up. v11 as entry 30; bicycle baseline with nominal parameters, not told about the change (`configs/fast-diag/known-varied-warmup.yaml`). Scenarios: `configs/scenarios/spielberg-grip-drop-lap8.yaml` (μ 1.05 → 0.7 everywhere), `spielberg-mass-lap8.yaml` (mass +30%), `spielberg-patch-lap8.yaml` (μ 0.6 on the corner at s = 85–115 m). `scripts/change_report.py`; results and condition plots in `results/change-scenarios/`. Recovery = first lap after the change within 1% of the median of the last three laps |
+
+| Scenario | Controller | Laps 6–8 (before) | Laps 9–15 (after the change) | Crashes | Laps to recover |
+|---|---|---|---|---|---|
+| grip drop (μ 0.7) | v11 | 39.0, 39.0, 40.0 | 39.8, 39.4, 38.6, 38.2, 38.4, 38.2, 37.8 | none | 4 |
+| grip drop (μ 0.7) | bicycle | 38.1, 38.6, 37.6 | crash in lap 9 (20.7 s in) | 1 | – |
+| mass +30% | v11 | 38.2, 38.9, 39.6 | 39.8, 39.5, 39.2, 38.7, 38.9, 38.1, 38.4 | none | 4 |
+| mass +30% | bicycle | 38.1, 39.2, 37.5 | 38.0, 36.8, 36.3, 36.8, 36.4, 35.8, 35.5 | none | 6 |
+| patch (μ 0.6, one corner) | v11 | 39.9, 40.5, 40.4 | 39.3, 40.1, 39.0, crash in lap 12 (12.4 s in) | 1 | – |
+| patch (μ 0.6, one corner) | bicycle | 38.3, 38.8, 37.3 | crash in lap 9 (13.2 s in) | 1 | – |
+
+| | |
+|---|---|
+| Crash types | all three are spins into the wall at 7–8 m/s: yaw rate swinging to −3.5 to −4.7 rad/s, slip 0.5–0.9 rad, the car sliding across the track. Bicycle grip drop at s ≈ 178 m; both patch crashes on the patch (s ≈ 113–114 m) |
+| v11 grip estimate (condition head on c) | no change: 1.01–1.06 per lap (true 1.05). Grip drop: falls within a second of the change but only to 0.96–0.99 per lap (true 0.70). Patch: 0.94 inside the patch vs 1.04 outside after the change (true 0.6 / 1.05; 1.00 on the same stretch before). Mass +30%: the mass read-out stays at 1.02–1.03 (true 1.30) and grip at 1.05–1.06 |
+| Verdict | partial. Under a track-wide grip drop the world model keeps the car on the track and recovers in about 4 laps, where the nominal bicycle model spins out on the first lap after the change. With +30% mass the bicycle model is unaffected and faster. A sharp local patch defeats both (v11 survives three passes, then spins). The grip read-out moves in the right direction but far too little, and mass is not detected at all |

@@ -1,0 +1,5 @@
+# Grip drop mid-session: mu 1.05 -> 0.7 on the whole track after 8 finished laps.
+map: Spielberg
+events:
+  - lap: 8
+    condition: {mu: 0.7}

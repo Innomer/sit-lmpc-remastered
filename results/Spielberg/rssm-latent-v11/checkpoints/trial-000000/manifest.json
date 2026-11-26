@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rssm-latent-v11",
+  "files": {
+    "state.json": "06b658e54d27b196f28510e4d0592e875a03dc0ddfb2d276424f7c5bf9a9a52b",
+    "events.jsonl": "5255bfa0f74d9ab0ff637f9c789b82543f13b57dcbbf544b5200e304efefa8ca",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "6fe574439668535410b0566f8f854e7e03acaf41ed0de791ff695f360a6cb277",
+    "config.yaml": "c36a593796e3c9b17bf95d2f8e24533df5aec049579255670def699d900dc24b",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "f1e4f678e5053f823db5d7936a156379597856ea357ed490d429c7aa6a88c47b"
+  }
+}
