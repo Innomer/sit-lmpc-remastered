@@ -53,7 +53,8 @@ Common setup unless stated otherwise:
 | 32 | Does mass matter in this sim; oracle-c test | `995b70e` | done: mass barely matters; a "correct" c does not improve predictions |
 | 33 | Grip probe on (h, d), bicycle-error tag, condition-aware safe set | `c03ad4d` | failure: probe misses its target; the safe set did not prevent crashes |
 | 34 | Safe set v2 (live change detection) + change-aware value, 3 seeds | `d44c313` | failure: detection works (≈1 s, no false alarms), the reaction does not slow the car |
-| 35 | Baseline robustness, run divergence, v11's repeat crash spots, risk head vs speed cap | next commit | failure: neither option removes the no-change crashes; the speed reaction is built but not run |
+| 35 | Baseline robustness, run divergence, v11's repeat crash spots, risk head vs speed cap | `7b5a865` | failure: neither option removes the no-change crashes; the speed reaction is built but not run |
+| 36 | Root cause: regression or luck? Old code reproduced in worktrees | next commit | done: not a regression; the old clean runs were partly luck and partly crashes that did not end the run |
 
 Main conclusions so far:
 
@@ -76,7 +77,7 @@ Main conclusions so far:
 | Branch / commit | `ros-sim`, `402708e` (encoder, EKF baseline, offline eval), `60ca05b` (closed-loop results, encoder v3 evaluation) |
 | Offline (on-track test split, 1 s ahead, from its own estimate) | median 0.25 m, 90% under 0.59 m (rssm-v5 era eval); 0.22 m median in the later 4,688-prediction eval |
 | Replay of the RSSM crashes (1.5 s, from the true state, median) | v5 crash 0.02 m, v6 crash 0.13 m, v7 crash 0.21 m; v7 spin slip −0.49 rad (exact −0.84) |
-| Closed loop (`ros-sim`) | completes laps; spins about once per run at 0.72–0.80 rad slip, where the known model does not |
+| Closed loop (`ros-sim`) | reported as "14–15/15 laps", but those runs used `sit_lmpc_mode: false`, which retries after a crash: 3 of the 4 runs had a crash (`world-nochange` attempt 15, `patch-world` attempt 9, `change-friction-world-condition` attempt 12; only `change-friction-world` had none) and carried on. With the newer `sit_lmpc_mode: true` each would have ended at the crash. Spins at 0.72–0.80 rad slip, where the known model does not (corrected in entry 36) |
 | Verdict | reference. Better rollouts than any RSSM so far, despite never seeing these tracks. |
 
 ## 1. Planner hull recompile fix
@@ -591,3 +592,68 @@ So the tag for the safe set is taken from (h, d), or from something model-agnost
 |---|---|
 | Findings | (a) makes things worse: the risk cost was active on 100% of the chosen plans, the planner crawled (lap mean speed 5.3–5.7 m/s, laps of 46–55 s) and crashed in the first learned lap in all three runs. (b) costs about 2 s per lap (40–41 s) and still crashed in all three, twice at the same s ≈ 35 m kink: the snap happens at 8–9 m/s there, so speed is not the trigger |
 | Verdict | failure: neither gets the no-change crashes to 0/3, so step 3 (the speed reaction on a detected change) was not run. The speed reaction is built (`planner.change_speed`, `change_speed_factor`, `change_speed_step`; per-stretch caps in `ChangeMonitor`, unit-tested) but untested in closed loop. Likely next fixes for the base crashes: a cost on predicted slip / yaw-rate overshoot near walls, or a track-limit check on the car body's corners instead of its reference point |
+
+## 36. Root cause: regression or luck?
+
+### Which code produced the old results
+
+| Old result | Run | Code | Config |
+|---|---|---|---|
+| v3 "14–15/15 laps" (3 of 4 runs had a crash, see below) | `world-nochange` (00:40 EST 11-17), `change-friction-world`, `patch-world`, `change-friction-world-condition` (11-17) | `ros-sim` at `d47d98b` / `b93d4d7` (identical `src/` and configs apart from one scenario file) | `results/Spielberg/world-nochange/config.yaml` on `ros-sim`: `belief_update: encoder` (v3), `sit_lmpc_mode: false`, warm-up `speed_scale` 0.6, `max_speed` 25 |
+| bicycle 38.3 → 36.6 s | `known-varied-long` (11-23) | `world-model` at `9e9707a` | `configs/fast-diag/known-varied-warmup.yaml` (saved as `configs/rootcause/bicycle-known-varied-long.yaml`) |
+
+**The v3 runs were not clean.** `sit_lmpc_mode: false` means "allow learning and retry": a crash is one failed attempt and the run goes on. `world-nochange` crashed in attempt 15, `patch-world` in attempt 9 (then 6 more laps), `change-friction-world-condition` in attempt 12; only `change-friction-world` had no crash. Every newer run uses `sit_lmpc_mode: true`, which ends the run at the first crash, so the same behaviour now looks like "crashed in lap N".
+
+### Changes since those commits (planner, runner, safe set, config)
+
+| Change | Commit | On by default? | Affects the bicycle baseline? |
+|---|---|---|---|
+| Hull copied with `device_put` and chunked on the host (no recompiles while driving) | `0a26c2b` (also `ros-sim` `99dff48`) | yes | numerically the same; only speed |
+| World model in the planner (RSSM backend, variants, `apply_rssm`) | `fa13e62` | only with `backend: rssm` | no |
+| Per-state condition tags, state-mode condition filter | `3fd7e56` / `9e9707a` | no (`condition_threshold` 0) | no |
+| LiDAR clearance check | `9e9707a` | no (weight 0; RSSM only) | no |
+| Safety costs outside the lambda grid, counted in the final pick; speed cap and slip cost | `898cd56` | slip cost on from `898cd56` to `4402c6b`, off since; speed cap off | only while the slip cost was on (`known-varied-current`); at HEAD all safety costs are zero, so the reward and the final ranking are unchanged |
+| Crash-risk head (soft or ranked) | `1b2224d`, `7b5a865` | no | no |
+| Track-limit margin | `4402c6b` | no (`boundary_margin` null) | no |
+| Grip probe, bicycle-error tag, newest-lap fallback | `c03ad4d` | no | no |
+| Change monitor, conservative safe set, value option B, per-stretch speed caps | `d44c313`, `7b5a865` | no (`change_detection` false, `change_speed` null) | no |
+| `SEED` option in the launcher | `d44c313` | – | no |
+| Warm-up: `speed_scale` 1.0, `max_speed` 9 (varied warm-up) | config, from `0eb1261` | used by all newer runs | config, not code; v3's old runs used scale 0.6 / cap 25 |
+| Steering source, action-rate penalty, horizon | none: the saved run configs agree on every other planner setting (horizon 15, 1024 samples, action-rate penalty, lambda grid, safe-set size, etc.) | – | – |
+
+### Reproduction (no change, 15 laps, Spielberg)
+
+Old code in detached git worktrees (`~/sim_ws/wt-old-v3` at `b93d4d7`, `~/sim_ws/wt-old-bicycle` at `9e9707a`), each run with that checkout's `src/` and scripts and the original saved run config (`scripts/run_with_code.sh`); the sim bridge (`f1tenth_gym_ros`) is unchanged since 11-16. The old v3 run's first lap reproduces the original exactly (38.4 s, 8.894 m/s). Results in `results/Spielberg/rootcause/` (`*-r`; the first attempt failed to start because of a launcher bug and is left there) and `results/rootcause/report.json` (`scripts/rootcause_report.py`).
+
+| Code | Model | Seed | Crashes (attempt, s, bridge hit point) | Learned laps (s) |
+|---|---|---|---|---|
+| old `b93d4d7` | v3 | 1 | attempt 6, s 34.3, (−33.86, −8.24) | 37.6, 36.8, 37.6, 37.5, 36.8, 36.6, 36.2, 36.3, 36.0 |
+| old `b93d4d7` | v3 | 2 | attempt 10, s 34.9, (−33.96, −8.28) | 38.3, 36.9, 37.4, 37.8, 37.8, 37.0, 36.5, 36.5, 35.7 |
+| old `b93d4d7` | v3 | 3 | attempt 7, s 109.1, (−75.06, 51.84) | 37.2, 37.2, 37.6, 38.3, 37.0, 37.8, 37.5, 35.6, 36.4 |
+| HEAD | v3 | 1 | attempt 6, s 14.5, (−14.88, −3.07) | 37.5, 37.6, 37.0, 37.5, 36.2, 36.9, 36.0, 35.3, 35.9 |
+| HEAD | v3 | 2 | attempts 11 and 12, s 34.1, (−33.77, −8.25) twice; ended "speed too low" | 36.5, 38.8, 36.9, 37.0, 36.7 |
+| HEAD | v3 | 3 | attempt 6, s 34.9, (−33.96, −8.27) | 38.1, 38.5, 37.1, 36.9, 37.2, 36.5, 36.4, 36.7, 35.8 |
+| old `9e9707a` | bicycle | 1 | none | 37.7, 39.1, 37.3, 39.4, 38.4, 37.3, 37.3, 37.3, 37.3, 37.4 |
+| old `9e9707a` | bicycle | 2 | none | 37.7, 38.2, 37.5, 38.9, 38.3, 38.7, 38.0, 37.7, 38.1, 38.4 |
+| old `9e9707a` | bicycle | 3 | none | 38.1, 38.0, 37.8, 39.8, 38.6, 38.7, 38.3, 38.6, 38.1, 38.3 |
+| old `9e9707a` | bicycle | original (`known-varied-long`) | none | 37.9 → 36.6 |
+| HEAD | bicycle | 1 (`change-none-bicycle-s1`) | none | 38.0, 39.8, 37.2, 37.3, 37.2, 37.0, 37.3, 37.1, 37.1, 37.5 |
+| HEAD | bicycle | 2 | none | 38.7, 39.2, 38.3, 39.4, 38.6, 38.6, 38.6, 38.7, 38.1, 38.8 |
+| HEAD | bicycle | 3 | attempt 8, s 109.5, (−75.11, 52.00) | 38.4, 38.4 |
+| `4402c6b` (= HEAD for the bicycle) | bicycle | 1 (`known-varied-slipoff`) | none | 37.9 → 36.0 |
+
+| Crash rate | Runs | Runs with a crash | Crashes per learned attempt |
+|---|---|---|---|
+| v3, old code | 3 | 3 | 3 / 30 (10%) |
+| v3, HEAD | 3 | 3 | 5 / 28 (18%) |
+| bicycle, old code | 4 | 0 | 0 / 40 |
+| bicycle, HEAD-equivalent | 4 | 1 | 1 / 33 (3%) |
+
+### Interpretation
+
+| | |
+|---|---|
+| v3 | **not a regression.** The old code crashes in every run too, at the same two spots as v11 and the bicycle model: the inside corner at s ≈ 34 m (−34.0, −8.3) and the corner at s ≈ 109 m (−75.1, 52.0). HEAD shows a few more crashes (5 vs 3 in three runs each), which with these numbers is within run-to-run variation; with `sit_lmpc_mode: false` the old runs' "14/15 laps" simply hid them |
+| bicycle | **no evidence of a regression.** 0 crashes in 4 old-code runs and 1 in 4 HEAD-equivalent runs, at the s ≈ 109 m corner. At HEAD every added feature is off or zero for the bicycle baseline, so the code path is the same as the old one up to floating-point order; one crash in four runs cannot be separated from chance (and same-seed runs diverge right after the warm-up, entry 35) |
+| What it means | the earlier "clean" results were partly luck (single runs, not reproducible after the warm-up) and, for v3, partly crashes that did not end the run. The two crash spots are a property of this track and this planner (SIT-LMPC sampling, the value function and the warm-up line), shared by the bicycle model, v3 and v11; the world-model crashes there are not caused by the world model |
+| Not done | no bisect (no regression found); no fix. More seeds of the bicycle baseline (old vs HEAD) would tighten the bicycle comparison |
