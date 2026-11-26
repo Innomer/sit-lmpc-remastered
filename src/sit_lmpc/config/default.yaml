@@ -70,6 +70,7 @@ planner:
     rssm_state: true  # Replace steering, speed, yaw rate and slip in the planner state with the RSSM estimate.
     rssm_clearance_margin: 0.35  # LiDAR clearance check (latent variant): candidates whose predicted nearest LiDAR range drops below this many metres are penalised.
     rssm_clearance_weight: 0.0  # Weight of that penalty, added to the safety cost at every step; 0 disables.
+    rssm_grip_probe: null  # Grip probe folder (sit_lmpc.world.rssm_grip) on this RSSM's (h, d), for planner.condition_tag probe.
     rssm_risk: null  # Crash-risk head folder (sit_lmpc.world.rssm_risk) trained on this RSSM's latent.
     rssm_risk_weight: 0.0  # Soft cost: weight x predicted probability of a crash within 1.5 s at every predicted step. Not used in the final candidate ranking. 0 disables.
     likelihood_power: 1.0  # BNN posterior only: maximum calibrated evidence power; with legacy standard, 1 is ordinary Bayes and (0,1) manually tempers it.
@@ -151,6 +152,8 @@ planner:
   condition_min_laps: 4  # Condition-aware safe set: if fewer laps lie within condition_threshold, use this many closest laps.
   condition_mode: lap  # [lap, state] lap: tag each lap with its mean estimated friction. state: tag every stored state (centered 2 s average of the per-step grip read-out, grip_readout.npz); per hull window, each lap's grip there is the median of its tags, and laps within condition_threshold of the newest lap's value (or of the current filtered estimate when that is lower by more than condition_threshold) are kept, at least condition_min_laps.
   condition_tau: 1.0  # State mode: forgetting time constant (s) of the confidence-weighted current grip estimate.
+  condition_tag: readout  # [readout, probe, bicycle_error] what tags stored states (backend rssm, state mode): readout = the RSSM's grip read-out from c; probe = a grip probe on (h, d) (planner.dynamics.rssm_grip_probe); bicycle_error = the nominal bicycle model's 1.0 s position error ending at that step (model-agnostic; larger = worse). The current value is the median of the last 2 s.
+  condition_fallback: closest  # [closest, newest] when fewer than condition_min_laps laps match on a stretch: take the closest-tagged laps, or the newest laps.
   safe_set_min_states: 0  # Nonnegative integer; 0 disables the state-count minimum. Shared by controller safe-set retention and fixed-step NF training history. Keep at least safe_set_size laps and add older successful laps to reach this many unique states; NF uses all retained states and repeats passes to reach steps.
   safe_set_max_points: 2000000  # Positive cap on combined safe-set candidate points before local selection. Excess points are randomly subsampled; full saved lap data is not discarded.
   hull_selection_points: 1000  # Maximum local points used to construct the five-dimensional hull; integer >= 6. Higher values can increase hull construction and evaluation cost.

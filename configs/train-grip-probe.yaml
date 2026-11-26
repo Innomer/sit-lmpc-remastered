@@ -1,0 +1,9 @@
+# Grip probe on frozen rssm-v11: true friction from (h, d), c left out (python -m sit_lmpc.world.rssm_grip).
+base: runs/rssm-v11
+burn_in: 20
+seed: 20261126
+width: 64
+layers: 2
+learning_rate: 1.0e-3
+batch: 2048
+epochs: 10

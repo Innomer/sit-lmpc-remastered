@@ -1,0 +1,14 @@
+# rssm-v11 + LiDAR clearance + condition-aware safe set. Every stored state is tagged with the nominal bicycle model's
+# 1.0 s position error ending at it (model-agnostic; the grip probe on (h, d) missed its target, entry 33). Per hull
+# window each lap's tag is the median of its states there; keep laps within 0.08 m of the newest lap's value on that
+# stretch (or of the current value, median of the last 2 s, when that is worse); if fewer than 2 laps match, use the
+# 2 newest.
+extends: rssm-latent-v11.yaml
+output:
+  exp_name: rssm-latent-v11-condition
+planner:
+  condition_mode: state
+  condition_tag: bicycle_error
+  condition_threshold: 0.08
+  condition_min_laps: 2
+  condition_fallback: newest

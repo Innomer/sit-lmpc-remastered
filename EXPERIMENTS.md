@@ -50,7 +50,8 @@ Common setup unless stated otherwise:
 | 29 | rssm-v11: from scratch on the full mix with a horizon curriculum and robust rollout losses | `fff687c` | partial: best rollouts so far, just short of the gate |
 | 30 | v11 + clearance in closed loop | `1bb6a94` | success: first world-model run with all 10 learned laps |
 | 31 | Condition changes mid-session: v11 vs the bicycle model | `1bb6a94` | partial: v11 survives the grip drop, the bicycle model does not; neither handles the patch. Mass scenario uninformative (entry 32) |
-| 32 | Does mass matter in this sim; oracle-c test | next commit | done: mass barely matters; a "correct" c does not improve predictions |
+| 32 | Does mass matter in this sim; oracle-c test | `995b70e` | done: mass barely matters; a "correct" c does not improve predictions |
+| 33 | Grip probe on (h, d), bicycle-error tag, condition-aware safe set | next commit | failure: probe misses its target; the safe set did not prevent crashes |
 
 Main conclusions so far:
 
@@ -509,3 +510,27 @@ Verdict: the varied warm-up is a success for the planner (configs `configs/fast-
 |---|---|
 | Findings | (1) v11's own predictions after the drop are as accurate as before it (e_y median 0.26 vs 0.29 m), although its grip read-out barely moves: the adaptation happens in the memory h and the fast latent d, not in c. (2) Forcing c to the value that reads the true grip makes predictions worse (0.26 → 0.52 m); the wrong-grip c is closer to the model's own (0.30 m). So the transition does not use c as a physical grip variable in the way the read-out suggests, and an average "grip 0.7" c is not consistent with the run's h |
 | Verdict | a better grip estimate in c would not improve predictions, so the condition-estimate fix (looser prior on c, higher read-out weight, grip-change episodes, v12) was not done. Open question for the condition-aware safe set: tag laps with something the model actually uses (h, d, or predicted-vs-actual dynamics), not the c read-out |
+
+## 33. Grip probe, fallback tag and the condition-aware safe set
+
+Note from entry 32: c did not become a grip variable; v11's adaptation lives in the memory h and the fast latent d.
+So the tag for the safe set is taken from (h, d), or from something model-agnostic, not from the c read-out.
+
+| | |
+|---|---|
+| Grip probe | `sit_lmpc.world.rssm_grip` (`configs/train-grip-probe.yaml`, report in `results/condition-tags/`): SIT-LMPC's MLP (2 × 64) on frozen v11's (h, d), c left out, regressing the true friction; trained on the track + coverage train splits (625k steps), 10 epochs. Validation (88k steps): MAE 0.076, RMSE 0.117, R² 0.77, 74% of steps within 0.1 (track 71%, coverage 84%) |
+| Probe on the replays (`scripts/condition_tag_check.py`, filtered with a 0.5 s time constant; plots in `results/condition-tags/`) | before the changes: 1.03 against 1.05, within 0.1 98% of the time. Grip drop (true 0.70): mean 0.92 after the drop, within 0.1 only 5% of the time and never for 2 s in a row. Patch (true 0.60): mean 0.91 inside the patch, lowest 0.70–0.74 per pass, never within 0.1. Better than the c read-out (0.98) but far from the target (within 0.1 within ~2 s), so the safe set uses the fallback tag |
+| Fallback tag | the nominal bicycle model's 1.0 s position error ending at each step (from the true state 10 steps earlier with the applied controls; model-agnostic). Before the changes median 0.003 m (p95 0.18 m, the warm-up's 100 Hz pure-pursuit controls); after the grip drop median 0.20 m (p95 1.37 m); after the patch appears 0.24 m inside it vs 0.00004 m outside. In this sim the nominal model is exact at nominal grip, so this tag is close to an ideal detector here; on the car it would include the model's normal error |
+| Condition-aware safe set | `planner.condition_tag: bicycle_error` (also `probe`, `readout`), `condition_mode: state`, `condition_threshold: 0.08` m, `condition_min_laps: 2`, `condition_fallback: newest` (`configs/world/rssm-latent-v11-condition.yaml`; off by default). Every stored state carries the tag (2 s centred average); per hull window each lap's tag is the median of its states there; keep laps within the threshold of the newest lap's value on that stretch, or of the current value (median of the last 2 s) when that is worse; if fewer than 2 laps match, the 2 newest. Per-step selection logged to `safe_set_trace.npy`, tags to `condition_tag.npy`; `scripts/safe_set_report.py`, plots in `results/condition-safe-set/` |
+
+| Run (v11 + clearance, change after lap 8) | Laps 6–8 | After the change | Crash | Safe set on learned laps (laps kept / in window, fallback share) |
+|---|---|---|---|---|
+| patch, safe set off (entry 31) | 39.9, 40.5, 40.4 | 39.3, 40.1, 39.0, crash in lap 12 | spin on the patch | – |
+| patch, safe set on | 38.2, 39.3, 39.3 | 40.1, crash in lap 10 (13.7 s in, s = 114 m) | spin on the patch: yaw rate −4.4 rad/s, slip 0.58 rad | 3.8/4 → 6.4/8; fallback 0–13% per lap |
+| grip drop, safe set off (entry 31) | 39.0, 39.0, 40.0 | 39.8, 39.4, 38.6, 38.2, 38.4, 38.2, 37.8 | none | – |
+| grip drop, safe set on | 39.6, 39.8, 39.2 | crash in lap 9 (3.6 s in, s = 32 m) | drift into the outer wall at low slip (0.11 rad), e_y 0.83 m | 3.8/4 → 6.2/7; fallback 0–12% per lap, none in lap 9 |
+
+| | |
+|---|---|
+| What the filter did | patch: it recognised the patch stretch (reference tag 0.25–0.30 m) and kept only the 2–4 laps that had driven it, as designed, but the car still spun there. Grip drop: the live tag stayed at 0.07–0.09 m, just inside the threshold of the pre-change laps' value, so it kept 4–7 of 7 laps (all from before the drop) and changed little; the crash is a first-lap drift of the kind the model makes without the filter. Before the changes it already dropped some laps on some stretches (fallback 7–13% on laps 6 and 8), so the runs diverge from the "off" runs from lap 6 on |
+| Verdict | failure: in one run per scenario the condition-aware safe set did not prevent the patch spin and the grip-drop run crashed where the "off" run did not. The filter itself behaved as designed on the patch; with one run each, the grip-drop crash cannot be blamed on it (it barely changed the selection). The safe set changes which terminal states are allowed; it does not fix the model's first-lap errors on a new surface |

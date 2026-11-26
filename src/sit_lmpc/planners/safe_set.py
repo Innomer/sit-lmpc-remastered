@@ -339,18 +339,27 @@ class SafeSet:
         than condition_threshold; at least condition_min_laps records."""
         known = indices[np.isfinite(tags[indices])]
         if not len(known):
+            self.last_filter = {"laps": 0, "kept": 0, "fallback": False, "reference": np.nan}
             return indices
         ids = np.unique(records[known])
         values = np.array([np.median(tags[known[records[known] == i]]) for i in ids])
         expected = float(values[ids == ids.max()][0])
         threshold = self.config.condition_threshold
-        if self.condition is not None and np.isfinite(self.condition[0]) and self.condition[0] < expected - threshold:
-            expected = float(self.condition[0])
+        higher_is_worse = getattr(self.config, "condition_tag", "readout") == "bicycle_error"
+        current = self.condition[0] if self.condition is not None and np.isfinite(self.condition[0]) else None
+        if current is not None and (current > expected + threshold if higher_is_worse else current < expected - threshold):
+            expected = float(current)
         distance = np.abs(values - expected)
         chosen = ids[distance <= threshold]
         minimum = min(getattr(self.config, "condition_min_laps", 4), len(ids))
-        if len(chosen) < minimum:
-            chosen = ids[np.argsort(distance, kind="stable")[:minimum]]
+        fallback = len(chosen) < minimum
+        if fallback:
+            if getattr(self.config, "condition_fallback", "closest") == "newest":
+                chosen = ids[-minimum:]
+            else:
+                chosen = ids[np.argsort(distance, kind="stable")[:minimum]]
+        self.last_filter = {"laps": int(len(ids)), "kept": int(len(chosen)), "fallback": bool(fallback),
+                            "reference": float(expected)}
         return indices[np.isin(records[indices], chosen)]
 
     def window(self, bounds, speed):
@@ -370,6 +379,7 @@ class SafeSet:
         indices = np.flatnonzero((arr_f[:, 0] > lo) & (arr_f[:, 0] < hi))
         if self.state_mode():
             indices = self.condition_filter(indices, tags, records)
+            self.last_filter = dict(getattr(self, "last_filter", {}), points=int(len(indices)))
         if len(indices) > self.config.hull_selection_points:
             indices = rng.choice(indices, self.config.hull_selection_points, replace=False)
         if len(indices) < 6:

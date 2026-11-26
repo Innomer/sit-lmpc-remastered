@@ -117,6 +117,7 @@ class DynamicsConfig:
     rssm_clearance_margin: float = 0.35
     rssm_clearance_weight: float = 0.0
     rssm_risk: str | None = None
+    rssm_grip_probe: str | None = None
     rssm_risk_weight: float = 0.0
     likelihood_power: float = 1.0
     update_batch_size: int = 512
@@ -207,6 +208,8 @@ class PlannerConfig:
     condition_min_laps: int = 4
     condition_mode: str = "lap"
     condition_tau: float = 1.0
+    condition_tag: str = "readout"
+    condition_fallback: str = "closest"
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000
@@ -418,6 +421,15 @@ class ExperimentConfig:
                              "(python scripts/grip_estimate_eval.py --encoder <run>)")
         if not p.condition_tau > 0:
             raise ValueError("planner.condition_tau must be > 0")
+        if p.condition_tag not in ("readout", "probe", "bicycle_error"):
+            raise ValueError("planner.condition_tag must be readout, probe or bicycle_error")
+        if p.condition_tag != "readout" and (dynamics.backend != "rssm" or p.condition_mode != "state"):
+            raise ValueError("planner.condition_tag probe / bicycle_error needs backend rssm and condition_mode state")
+        if p.condition_tag == "probe" and not (isinstance(dynamics.rssm_grip_probe, str) and
+                                               (Path(dynamics.rssm_grip_probe) / "probe.msgpack").is_file()):
+            raise ValueError("planner.condition_tag probe needs planner.dynamics.rssm_grip_probe (sit_lmpc.world.rssm_grip)")
+        if p.condition_fallback not in ("closest", "newest"):
+            raise ValueError("planner.condition_fallback must be closest or newest")
         if dynamics.belief_update == "encoder":
             if not isinstance(dynamics.encoder, str) or not (Path(dynamics.encoder).expanduser() / "best.msgpack").is_file():
                 raise ValueError("belief_update encoder needs planner.dynamics.encoder, a trained world-encoder run folder")

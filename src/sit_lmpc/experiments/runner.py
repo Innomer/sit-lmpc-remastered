@@ -313,6 +313,17 @@ def _run(config, tracking_only, keyboard_cleanup):
             source=source, destination=directory / "dynamics_model",
         )
     rssm_filter = None
+    grip_probe = nominal_rollout = None
+    tag_trace, tag_controls, tag_states, safe_set_trace = [], [], [], []
+    if planner.dynamics.backend == "rssm" and planner.condition_tag == "probe":
+        from sit_lmpc.world.rssm_grip import GripProbe
+        grip_probe = GripProbe(planner.dynamics.rssm_grip_probe)
+    if planner.dynamics.backend == "rssm" and planner.condition_tag == "bicycle_error":
+        from sit_lmpc.world.rssm import bicycle as nominal_step
+        nominal_params = jnp.asarray(model.params, jnp.float32)
+        nominal_rollout = jax.jit(lambda x, u: jax.lax.scan(
+            lambda y, a: (nominal_step(nominal_params, y, a, simulation.timestep, model.integrator_timestep), None),
+            x, u)[0])
     if planner.dynamics.backend == "rssm":
         from sit_lmpc.world.rssm_runtime import RSSMFilter
 
@@ -359,11 +370,26 @@ def _run(config, tracking_only, keyboard_cleanup):
         anchor, _, grip = rssm_filter.step(observation, scan, pose, simulator.applied_control)
         lidar_trace.append(np.asarray(rssm_filter.lidar_features(scan), np.float32))
         memory_trace.append(np.asarray(rssm_filter.h, np.float32))
-        lap_condition.append([grip])
+        tag = grip
+        if planner.condition_tag == "probe":
+            tag = float(grip_probe(rssm_filter.h, rssm_filter.s))
+        elif planner.condition_tag == "bicycle_error":
+            if len(true_state_trace) > 1 and np.hypot(*(true_state_trace[-1][:2] - true_state_trace[-2][:2])) > 3.0:
+                tag_controls.clear()
+                tag_states.clear()
+            tag_controls.append(np.asarray(simulator.applied_control, np.float32))
+            tag_states.append(np.asarray(cartesian, np.float32))
+            tag = 0.0
+            if len(tag_states) > 10:
+                end = np.asarray(nominal_rollout(jnp.asarray(tag_states[-11]), jnp.asarray(np.stack(tag_controls[-10:]))))
+                tag = float(np.hypot(*(end[:2] - tag_states[-1][:2])))
+        tag_trace.append(tag)
+        lap_condition.append([tag])
         grip_trace.append(grip)
         friction_trace.append(grip)
         if planner.condition_threshold > 0:
-            safe_set.condition = np.array([grip])
+            current = float(np.median(tag_trace[-20:])) if planner.condition_tag != "readout" else grip
+            safe_set.condition = np.array([current])
         model = rssm_filter.predictor()
         nominal.model = learned.model = model
         encoder_trace.append(np.asarray(rssm_filter.s))
@@ -1307,6 +1333,11 @@ def _run(config, tracking_only, keyboard_cleanup):
                 )
                 mode = "lmppi"
                 learned_steps += 1
+                if safe_set.state_mode() and getattr(safe_set, "last_filter", None):
+                    f = safe_set.last_filter
+                    safe_set_trace.append([index, f.get("laps", 0), f.get("kept", 0), float(f.get("fallback", False)),
+                                           f.get("points", 0), f.get("reference", np.nan),
+                                           float(safe_set.condition[0]) if safe_set.condition is not None else np.nan])
                 if config.diagnostics.print_lambdas:
                     events.emit(
                         "selected_lambdas",
@@ -1862,6 +1893,10 @@ def _run(config, tracking_only, keyboard_cleanup):
                 if lidar_trace:
                     np.save(directory / "rssm_lidar.npy", np.asarray(lidar_trace))
                     np.save(directory / "rssm_memory.npy", np.asarray(memory_trace))
+                if tag_trace:
+                    np.save(directory / "condition_tag.npy", np.asarray(tag_trace, np.float32))
+                if safe_set_trace:
+                    np.save(directory / "safe_set_trace.npy", np.asarray(safe_set_trace, np.float64))
     return RunResult(
         directory,
         status,
