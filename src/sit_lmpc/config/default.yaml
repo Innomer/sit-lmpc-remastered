@@ -153,6 +153,14 @@ planner:
   condition_mode: lap  # [lap, state] lap: tag each lap with its mean estimated friction. state: tag every stored state (centered 2 s average of the per-step grip read-out, grip_readout.npz); per hull window, each lap's grip there is the median of its tags, and laps within condition_threshold of the newest lap's value (or of the current filtered estimate when that is lower by more than condition_threshold) are kept, at least condition_min_laps.
   condition_tau: 1.0  # State mode: forgetting time constant (s) of the confidence-weighted current grip estimate.
   condition_tag: readout  # [readout, probe, bicycle_error] what tags stored states (backend rssm, state mode): readout = the RSSM's grip read-out from c; probe = a grip probe on (h, d) (planner.dynamics.rssm_grip_probe); bicycle_error = the nominal bicycle model's 1.0 s position error ending at that step (model-agnostic; larger = worse). The current value is the median of the last 2 s.
+  change_detection: false  # Safe set v2 (backend rssm): detect a condition change live from the nominal bicycle model's 1.0 s position error and react within the lap (sit_lmpc.planners.change_monitor).
+  change_stretch: 10.0  # Track stretch length (m) for per-stretch history and modes.
+  change_window: 10  # Steps in the live median that is compared with the stretch's history.
+  change_ratio: 3.0  # A change is flagged when the live median exceeds change_ratio x the stretch's history median ...
+  change_floor: 0.05  # ... and this floor (m). The same test decides, when a stretch is driven after a change, whether it still looks changed.
+  change_new_laps: 2  # Laps driven fully after the change needed before changed stretches use them instead of the conservative laps.
+  change_conservative_laps: 2  # Conservative set: this many of the slowest laps from before the change, warm-up laps first.
+  change_value: true  # Option B: in conservative / new-condition windows, score candidates with the time-to-go of the same laps (by track position) instead of the learned value function.
   condition_fallback: closest  # [closest, newest] when fewer than condition_min_laps laps match on a stretch: take the closest-tagged laps, or the newest laps.
   safe_set_min_states: 0  # Nonnegative integer; 0 disables the state-count minimum. Shared by controller safe-set retention and fixed-step NF training history. Keep at least safe_set_size laps and add older successful laps to reach this many unique states; NF uses all retained states and repeats passes to reach steps.
   safe_set_max_points: 2000000  # Positive cap on combined safe-set candidate points before local selection. Excess points are randomly subsampled; full saved lap data is not discarded.

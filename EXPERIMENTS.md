@@ -51,7 +51,8 @@ Common setup unless stated otherwise:
 | 30 | v11 + clearance in closed loop | `1bb6a94` | success: first world-model run with all 10 learned laps |
 | 31 | Condition changes mid-session: v11 vs the bicycle model | `1bb6a94` | partial: v11 survives the grip drop, the bicycle model does not; neither handles the patch. Mass scenario uninformative (entry 32) |
 | 32 | Does mass matter in this sim; oracle-c test | `995b70e` | done: mass barely matters; a "correct" c does not improve predictions |
-| 33 | Grip probe on (h, d), bicycle-error tag, condition-aware safe set | next commit | failure: probe misses its target; the safe set did not prevent crashes |
+| 33 | Grip probe on (h, d), bicycle-error tag, condition-aware safe set | `c03ad4d` | failure: probe misses its target; the safe set did not prevent crashes |
+| 34 | Safe set v2 (live change detection) + change-aware value, 3 seeds | next commit | failure: detection works (≈1 s, no false alarms), the reaction does not slow the car |
 
 Main conclusions so far:
 
@@ -534,3 +535,37 @@ So the tag for the safe set is taken from (h, d), or from something model-agnost
 |---|---|
 | What the filter did | patch: it recognised the patch stretch (reference tag 0.25–0.30 m) and kept only the 2–4 laps that had driven it, as designed, but the car still spun there. Grip drop: the live tag stayed at 0.07–0.09 m, just inside the threshold of the pre-change laps' value, so it kept 4–7 of 7 laps (all from before the drop) and changed little; the crash is a first-lap drift of the kind the model makes without the filter. Before the changes it already dropped some laps on some stretches (fallback 7–13% on laps 6 and 8), so the runs diverge from the "off" runs from lap 6 on |
 | Verdict | failure: in one run per scenario the condition-aware safe set did not prevent the patch spin and the grip-drop run crashed where the "off" run did not. The filter itself behaved as designed on the patch; with one run each, the grip-drop crash cannot be blamed on it (it barely changed the selection). The safe set changes which terminal states are allowed; it does not fix the model's first-lap errors on a new surface |
+
+## 34. Safe set v2 (live change detection) and change-aware value, 3 seeds
+
+| | |
+|---|---|
+| What changed | `sit_lmpc.planners.change_monitor.ChangeMonitor` (`planner.change_detection`, off by default; `configs/world/rssm-latent-v11-change.yaml`). Every step the tag is the nominal bicycle model's 1.0 s position error. The track is split into 10 m stretches; each finished lap stores, per stretch, the median tag there. A change is flagged when the median of the last 1 s exceeds 0.05 m and 3× the current stretch's history. On detection every stretch turns conservative at once: the safe set uses the 2 slowest pre-change laps, warm-up first. When the car leaves a stretch it is relaxed if its tag matches its history, otherwise marked changed and kept conservative until 2 laps driven fully after the change exist, then uses those. Value option B (`planner.change_value`): in conservative / new windows the planner's value is the time-to-go of the same laps, interpolated by track position, instead of the learned value function. Per step logged to `change_trace.npy`, events to `change_events.json`; `scripts/change_v2_report.py`, results in `results/change-v2/` |
+| Runs | Spielberg, 15 laps (5 warm-up + 10 learned), change after lap 8, seeds 1–3 (`SEED` in `scripts/run_change_experiment.sh`). Bicycle (nominal parameters) and v11 with the safe set off: seed 1 from entry 31, seeds 2–3 new. v11 + safe set v2 + value B: all new. No-change runs with v2 on |
+
+| Scenario | Controller | Seed 1 | Seed 2 | Seed 3 |
+|---|---|---|---|---|
+| grip drop (μ 0.7) | bicycle | spin, lap 9 (s 178) | spin, lap 9 (s 179) | 40.5, 40.1, 39.2, 39.3, wall lap 13 (s 321) |
+| grip drop (μ 0.7) | v11, safe set off | 39.8 → 37.8, no crash, recovered in 4 laps | wall, lap 7 (before the change, s 35) | 39.0, 39.0, spin lap 11 (s 181) |
+| grip drop (μ 0.7) | v11, v2 + value B | spin, lap 7 (before the change, s 110) | spin lap 9 (s 40), 3.1 s after detection | spin lap 9 (s 117), 11.5 s after detection |
+| patch (μ 0.6) | bicycle | spin, lap 9 (s 114) | 40.4, 41.0, 39.7, spin lap 12 (s 112) | 40.3, 39.5, spin lap 11 (s 113) |
+| patch (μ 0.6) | v11, safe set off | 39.3, 40.1, 39.0, spin lap 12 (s 113) | wall, lap 7 (before the change, s 35) | 38.7, spin lap 10 (s 113) |
+| patch (μ 0.6) | v11, v2 + value B | spin lap 9 (s 117), 2.9 s after detection | wall lap 9 (s 35, before reaching the patch, not detected) | spin, lap 8 (before the change, s 110) |
+| no change | v11, v2 + value B | 40.3, 38.7, 38.3, 37.1, 38.1, 38.0, wall lap 15 (s 34) | 41.5, 40.9, 39.8, 38.9, 38.1, 36.9, 37.1, no crash | spin, lap 8 (s 109) |
+
+| Summary across seeds | Crashed / 3 | Crash types | Crashes before the change | Detection delay | False detections |
+|---|---|---|---|---|---|
+| grip drop, bicycle | 3 | spin, spin, wall | 0 | – | – |
+| grip drop, v11 off | 2 | wall, spin | 1 | – | – |
+| grip drop, v11 v2 | 3 | spin ×3 | 1 | 1.1 s, 1.1 s (seed 1 crashed before) | 0 |
+| patch, bicycle | 3 | spin ×3 | 0 | – | – |
+| patch, v11 off | 3 | spin, wall, spin | 1 | – | – |
+| patch, v11 v2 | 3 | spin, wall, spin | 1 | 9.9 s after the change = about 1 s after entering the patch (seed 1); not reached (2, 3) | 0 |
+| no change, v11 v2 | 2 | wall, spin | – | – | 0 in all 3 seeds (v2 never activated) |
+
+| | |
+|---|---|
+| Detection | works: 1.1 s after the grip drop (both seeds that reached it), about 1 s after entering the patch, no false detections in any of the 9 v2 runs (36 completed learned laps, every one before a change or in a no-change run). On a detection every stretch went conservative and the changed stretches were marked within one pass (grip drop: stretches 1–11 changed in seed 3, stretch 2 relaxed; patch: stretches 9–10 changed) |
+| Reaction | did not slow the car. After detection the window was conservative and value B was in use on 100% of steps, yet speed stayed the same or rose (seed 2 grip drop 9.3 → 9.7 → 10.3 m/s at the crash; seed 3 8.9 → 9.4 → 9.0; patch seed 1 8.9 → 8.6 → 9.1) and the car spun 2.9–11.5 s after detection. The "slowest stored laps" are the warm-up laps, which drove at the 9 m/s cap (average 9.2 m/s), i.e. no slower than the learned laps, so the conservative terminal set and its time-to-go did not ask for less speed |
+| Baseline variance | v11 is less robust than its single seed-1 run suggested: on normal track it crashed before the change in 1 of 3 seeds of each scenario with the safe set off, and in 1–2 of 3 v2 runs (v2 was inactive there, so not caused by it). Crashes cluster at s ≈ 34 m (wall) and s ≈ 109–117 m (spin, the corner the patch sits on). Same-seed runs are not exactly repeatable (the three v2 seed-1 runs share the first 8 laps in principle, but one crashed in lap 7) |
+| Verdict | failure. Detection is fast and clean, but reacting by switching to "slower" stored laps cannot work when no stored lap is slower than the current driving at the new grip. A reaction that actually reduces speed is needed: e.g. a speed cap scaled by the detected change, scaling the conservative laps' speeds down, or a conservative warm-up lap kept for this purpose. Option A (value on (state, tag)) was not tried |

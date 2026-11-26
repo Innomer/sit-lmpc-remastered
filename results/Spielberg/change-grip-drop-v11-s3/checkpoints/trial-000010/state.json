@@ -1,0 +1,401 @@
+{
+  "schema": 2,
+  "trials": 10,
+  "attempts": 10,
+  "counts": {
+    "success": 10,
+    "failure": 0,
+    "incomplete": 0
+  },
+  "applied_steps": 3889,
+  "next_step": 3889,
+  "learned_steps": 1974,
+  "elapsed": 267.6309100789995,
+  "lap_metrics": [
+    {
+      "lap": 1,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 384,
+      "duration": 38.400000000000276,
+      "lap_time": 38.400000000000276,
+      "mean_speed": 9.210992813110352,
+      "safe_set_max": 0.0,
+      "safe_set_mean": 0.0,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.6373459100723267,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 1,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 0,
+        "terms": {}
+      }
+    },
+    {
+      "lap": 2,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 383,
+      "duration": 38.300000000000274,
+      "lap_time": 38.300000000000274,
+      "mean_speed": 9.23070240020752,
+      "safe_set_max": 0.0,
+      "safe_set_mean": 0.0,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.6461623907089233,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 2,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 0,
+        "terms": {}
+      }
+    },
+    {
+      "lap": 3,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 383,
+      "duration": 38.300000000000274,
+      "lap_time": 38.300000000000274,
+      "mean_speed": 9.229157447814941,
+      "safe_set_max": 0.0,
+      "safe_set_mean": 0.0,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.6472619771957397,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 3,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 0,
+        "terms": {}
+      }
+    },
+    {
+      "lap": 4,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 382,
+      "duration": 38.20000000000027,
+      "lap_time": 38.20000000000027,
+      "mean_speed": 9.232995986938477,
+      "safe_set_max": 0.0,
+      "safe_set_mean": 0.0,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.641085684299469,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 4,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 0,
+        "terms": {}
+      }
+    },
+    {
+      "lap": 5,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 383,
+      "duration": 38.300000000000274,
+      "lap_time": 38.300000000000274,
+      "mean_speed": 9.228919982910156,
+      "safe_set_max": 0.0,
+      "safe_set_mean": 0.0,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.6441606879234314,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 5,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 0,
+        "terms": {}
+      }
+    },
+    {
+      "lap": 6,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 393,
+      "duration": 39.30000000000029,
+      "lap_time": 39.30000000000029,
+      "mean_speed": 8.991493225097656,
+      "safe_set_max": 0.2829773426055908,
+      "safe_set_mean": 0.02042270821469431,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.7593890428543091,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 6,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 393,
+        "terms": {
+          "hull": {
+            "mean": 3.616412213740458,
+            "max": 18.75,
+            "steps": 393
+          },
+          "boundary": {
+            "mean": 4.176208651399491,
+            "max": 18.75,
+            "steps": 393
+          }
+        }
+      },
+      "safety_summary": {
+        "steps": 393,
+        "clearance": {
+          "steps_any_candidate": 0.07888040712468193,
+          "mean_share_of_candidates": 0.0019307609732824428,
+          "steps_chosen_plan": 0.0
+        }
+      }
+    },
+    {
+      "lap": 7,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 404,
+      "duration": 40.400000000000304,
+      "lap_time": 40.400000000000304,
+      "mean_speed": 8.718097686767578,
+      "safe_set_max": 0.4992527961730957,
+      "safe_set_mean": 0.02171876679847736,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.8111708760261536,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 7,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 404,
+        "terms": {
+          "hull": {
+            "mean": 3.4653465346534653,
+            "max": 18.75,
+            "steps": 404
+          },
+          "boundary": {
+            "mean": 4.282178217821782,
+            "max": 18.75,
+            "steps": 404
+          }
+        }
+      },
+      "safety_summary": {
+        "steps": 404,
+        "clearance": {
+          "steps_any_candidate": 0.09158415841584158,
+          "mean_share_of_candidates": 0.0021803449876237626,
+          "steps_chosen_plan": 0.0
+        }
+      }
+    },
+    {
+      "lap": 8,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 397,
+      "duration": 39.700000000000294,
+      "lap_time": 39.700000000000294,
+      "mean_speed": 8.872810363769531,
+      "safe_set_max": 0.05948829650878906,
+      "safe_set_mean": 0.0010007416045935988,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.7665588855743408,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 8,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 397,
+        "terms": {
+          "hull": {
+            "mean": 1.3003778337531486,
+            "max": 18.75,
+            "steps": 397
+          },
+          "boundary": {
+            "mean": 1.5081863979848866,
+            "max": 18.75,
+            "steps": 397
+          }
+        }
+      },
+      "safety_summary": {
+        "steps": 397,
+        "clearance": {
+          "steps_any_candidate": 0.04534005037783375,
+          "mean_share_of_candidates": 0.00013775188916876575,
+          "steps_chosen_plan": 0.0
+        }
+      }
+    },
+    {
+      "lap": 9,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 390,
+      "duration": 39.000000000000284,
+      "lap_time": 39.000000000000284,
+      "mean_speed": 9.090315818786621,
+      "safe_set_max": 0.2534458637237549,
+      "safe_set_mean": 0.0013126330497937324,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.8551284074783325,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 9,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 390,
+        "terms": {
+          "hull": {
+            "mean": 0.8525641025641025,
+            "max": 17.5,
+            "steps": 390
+          },
+          "boundary": {
+            "mean": 1.0576923076923077,
+            "max": 16.25,
+            "steps": 390
+          }
+        }
+      },
+      "safety_summary": {
+        "steps": 390,
+        "clearance": {
+          "steps_any_candidate": 0.06923076923076923,
+          "mean_share_of_candidates": 0.0017628205128205128,
+          "steps_chosen_plan": 0.0
+        }
+      }
+    },
+    {
+      "lap": 10,
+      "completed": true,
+      "termination_reason": "lap_completed",
+      "steps": 390,
+      "duration": 39.000000000000284,
+      "lap_time": 39.000000000000284,
+      "mean_speed": 9.08870792388916,
+      "safe_set_max": 0.1542060375213623,
+      "safe_set_mean": 0.00039540009620862127,
+      "boundary_max": 0.0,
+      "boundary_mean": 0.0,
+      "actual_boundary_max": 0.0,
+      "actual_boundary_mean": 0.0,
+      "out_of_bounds_steps": 0,
+      "max_abs_lateral_offset": 0.8121140599250793,
+      "nonfinite_lateral_steps": 0,
+      "attempt_id": 10,
+      "outcome": "success",
+      "lambda_summary": {
+        "steps": 390,
+        "terms": {
+          "hull": {
+            "mean": 0.8621794871794872,
+            "max": 18.75,
+            "steps": 390
+          },
+          "boundary": {
+            "mean": 0.8589743589743589,
+            "max": 6.25,
+            "steps": 390
+          }
+        }
+      },
+      "safety_summary": {
+        "steps": 390,
+        "clearance": {
+          "steps_any_candidate": 0.06666666666666667,
+          "mean_share_of_candidates": 0.0014197716346153846,
+          "steps_chosen_plan": 0.0
+        }
+      }
+    }
+  ],
+  "success_controller_versions": [
+    [
+      "lmppi",
+      3
+    ],
+    [
+      "lmppi",
+      4
+    ],
+    [
+      "lmppi",
+      5
+    ],
+    [
+      "lmppi",
+      6
+    ],
+    [
+      "lmppi",
+      7
+    ],
+    [
+      "lmppi",
+      8
+    ],
+    [
+      "mppi",
+      0
+    ]
+  ],
+  "safe_count": 9,
+  "safe_control_count": 9,
+  "safe_previous_attempt_id": 10,
+  "init_saved": true,
+  "value_generation": 9,
+  "risk_generation": 0,
+  "belief_generation": null,
+  "belief_backend": null,
+  "risk_constraint_generation": null,
+  "risk_evaluation": null,
+  "risk_replay": [],
+  "trace": [],
+  "comparison_steps": 0,
+  "simulator": null,
+  "reset_from_failure": false,
+  "tracking_only": false,
+  "sit_terminal_failure": false,
+  "events_bytes": 32353,
+  "risk_sample_metadata": null,
+  "map_prefix": "map/Spielberg"
+}

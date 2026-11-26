@@ -909,6 +909,11 @@ class LMPPI:
             values = predict_value(
                 value_snapshot, states.reshape(-1, 7), value_key, self.value_samples
             )
+            if getattr(safe_set, "value_records", None):
+                progress = states.reshape(-1, 7)[:, 0]
+                values = jnp.mean(jnp.stack([jnp.interp(progress, jnp.asarray(s, progress.dtype),
+                                                        jnp.asarray(t, progress.dtype))
+                                             for s, t in safe_set.value_records]), axis=0).astype(values.dtype)
         density_normalization = None
         if (isinstance(hull, DensitySnapshot) and hull.fixed_penalty
                 and self.config.safe_set_density.penalty_normalization == "sample_max"):

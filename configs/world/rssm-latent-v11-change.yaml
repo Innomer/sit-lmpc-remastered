@@ -1,0 +1,17 @@
+# rssm-v11 + LiDAR clearance + safe set v2 (live change detection, sit_lmpc.planners.change_monitor) + change-aware
+# value (option B). The tag is the nominal bicycle model's 1.0 s position error. A change is flagged when the median
+# of the last 1 s exceeds 0.05 m and 3x the current 10 m stretch's history; then every stretch goes conservative (the
+# 2 slowest pre-change laps, warm-up first) and is relaxed as it is driven, or kept conservative until 2 laps under the
+# new condition exist. In conservative / new windows the value is the time-to-go of the same laps.
+extends: rssm-latent-v11.yaml
+output:
+  exp_name: rssm-latent-v11-change
+planner:
+  change_detection: true
+  change_stretch: 10.0
+  change_window: 10
+  change_ratio: 3.0
+  change_floor: 0.05
+  change_new_laps: 2
+  change_conservative_laps: 2
+  change_value: true

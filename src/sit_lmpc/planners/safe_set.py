@@ -209,6 +209,12 @@ class SafeSet:
         self.previous_state_tag = None
         self.condition = None
         self._array_cache = None
+        self.change_monitor = None
+        self.record_info = []
+        self.pending_info = None
+        self.previous_info = None
+        self.value_records = None
+        self.last_change = None
 
     @staticmethod
     def _state_ids(trajectory, count):
@@ -304,7 +310,9 @@ class SafeSet:
         if minimum:
             while count < len(self.frenet) and self._state_count(count) < minimum:
                 count += 1
-        for field in ("frenet", "cartesian", "controls", "control_masks", "state_ids", "tags", "state_tags"):
+        while len(self.record_info) < len(self.frenet):
+            self.record_info.insert(0, None)
+        for field in ("frenet", "cartesian", "controls", "control_masks", "state_ids", "tags", "state_tags", "record_info"):
             values = getattr(self, field)
             setattr(self, field, values[-count:] if count else [])
         return count
@@ -362,6 +370,41 @@ class SafeSet:
                             "reference": float(expected)}
         return indices[np.isin(records[indices], chosen)]
 
+    def change_records(self, mode):
+        """Record indices for a change-monitor mode: conservative = the slowest laps from before the change (warm-up
+        laps first); new = laps driven fully after the change (conservative if too few); normal = every record."""
+        from sit_lmpc.planners.change_monitor import CONSERVATIVE, NEW
+        monitor = self.change_monitor
+        info = self.record_info + [None] * (len(self.frenet) - len(self.record_info))
+        known = [(i, r) for i, r in enumerate(info) if r is not None]
+        if mode == NEW:
+            new = [i for i, r in known if r["lap"] > monitor.detection_lap]
+            if len(new) >= monitor.new_laps:
+                return new, NEW
+            mode = CONSERVATIVE
+        if mode == CONSERVATIVE:
+            old = [(i, r) for i, r in known if r["lap"] < monitor.detection_lap]
+            old.sort(key=lambda item: (not item[1]["warmup"], -item[1]["laptime"]))
+            chosen = [i for i, _ in old[:getattr(self.config, "change_conservative_laps", 2)]]
+            if chosen:
+                return chosen, CONSERVATIVE
+        return list(range(len(self.frenet))), 0
+
+    def change_filter(self, indices, records, lo, hi):
+        mode = self.change_monitor.window_mode(lo, hi)
+        if mode == 0:
+            self.last_change = {"mode": 0, "records": -1}
+            return indices
+        chosen, used = self.change_records(mode)
+        kept = indices[np.isin(records[indices], chosen)]
+        if len(kept) < 6:
+            self.last_change = {"mode": 0, "records": -1, "too_few_points": True}
+            return indices
+        self.last_change = {"mode": int(used), "records": len(chosen)}
+        if getattr(self.config, "change_value", True) and used != 0:
+            self.value_records = [(np.asarray(self.frenet[i][:, 0]), np.asarray(self.frenet[i][:, -1])) for i in chosen]
+        return kept
+
     def window(self, bounds, speed):
         return (bounds[0] - speed * (self.config.reference_interval - 1) * self.timestep,
                 bounds[1] + speed * (self.config.reference_interval + 1) * self.timestep)
@@ -377,6 +420,9 @@ class SafeSet:
             inds = rng.choice(len(arr_f), self.config.safe_set_max_points, replace=False)
             arr_f, arr_c, tags, records = arr_f[inds], arr_c[inds], tags[inds], records[inds]
         indices = np.flatnonzero((arr_f[:, 0] > lo) & (arr_f[:, 0] < hi))
+        self.value_records = None
+        if self.change_monitor is not None and self.change_monitor.active:
+            indices = self.change_filter(indices, records, lo, hi)
         if self.state_mode():
             indices = self.condition_filter(indices, tags, records)
             self.last_filter = dict(getattr(self, "last_filter", {}), points=int(len(indices)))
@@ -428,8 +474,11 @@ class SafeSet:
                 self.tags.insert(0, None)
             while len(self.state_tags) < len(self.frenet):
                 self.state_tags.insert(0, None)
+            while len(self.record_info) < len(self.frenet):
+                self.record_info.insert(0, None)
             self.frenet.append(combined_f)
             self.cartesian.append(combined_c)
+            self.record_info.append(self.previous_info)
             self.tags.append(self.previous_tag)
             current_state_tag = self._state_tag(tag, len(lap.frenet))
             if self.previous_state_tag is None or current_state_tag is None:
@@ -478,6 +527,8 @@ class SafeSet:
             new = True
         self.previous = lap
         self.previous_trajectory = trajectory
+        self.previous_info = self.pending_info
+        self.pending_info = None
         self.previous_tag = None if tag is None or np.ndim(tag) and len(np.ravel(tag)) > 1 else np.asarray(tag, dtype=float)
         self.previous_state_tag = self._state_tag(tag, len(lap.frenet))
         return new

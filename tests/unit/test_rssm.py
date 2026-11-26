@@ -227,3 +227,41 @@ def test_body_frame_residual_rotates_position_correction_with_heading():
         assert np.allclose(r[0], np.cos(yaw) * raw[0] - np.sin(yaw) * raw[1], atol=1e-6)
         assert np.allclose(r[1], np.sin(yaw) * raw[0] + np.cos(yaw) * raw[1], atol=1e-6)
         assert np.allclose(r[2:], raw[2:], atol=1e-6)
+
+
+def test_change_monitor_detects_relaxes_and_switches_to_new_laps():
+    from sit_lmpc.planners.change_monitor import CONSERVATIVE, NEW, NORMAL, ChangeMonitor
+    m = ChangeMonitor(100.0, stretch=10.0, window=5, ratio=3.0, floor=0.05, new_laps=2)
+    rng = np.random.default_rng(0)
+    step = 0
+
+    def lap(tag_of_s, learned=True):
+        nonlocal step
+        for s in np.arange(0.0, 100.0, 1.0):
+            m.observe(step, s, tag_of_s(s), learned)
+            step += 1
+
+    for _ in range(3):
+        lap(lambda s: 0.003 + 0.001 * rng.random())
+        m.finish_lap(step, 0)
+    assert not m.active
+    patch = lambda s: 0.3 if 40 <= s < 60 else 0.003
+    lap(patch)
+    assert m.active and m.detection_lap == 3
+    assert m.mode[m.index(5.0)] == CONSERVATIVE or m.mode[m.index(5.0)] == NORMAL
+    assert m.changed[m.index(45.0)] and m.mode[m.index(45.0)] == CONSERVATIVE
+    assert m.mode[m.index(75.0)] == NORMAL
+    m.finish_lap(step, 0)
+    lap(patch)
+    m.finish_lap(step, 1)
+    assert m.mode[m.index(45.0)] == CONSERVATIVE
+    lap(patch)
+    m.finish_lap(step, 2)
+    assert m.mode[m.index(45.0)] == NEW and m.window_mode(40.0, 55.0) == NEW
+    assert m.window_mode(70.0, 80.0) == NORMAL
+    quiet = ChangeMonitor(100.0, window=5)
+    for _ in range(4):
+        for s in np.arange(0.0, 100.0, 1.0):
+            quiet.observe(0, s, 0.003 + 0.01 * rng.random(), True)
+        quiet.finish_lap(0, 0)
+    assert not quiet.active

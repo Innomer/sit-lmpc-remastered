@@ -318,7 +318,7 @@ def _run(config, tracking_only, keyboard_cleanup):
     if planner.dynamics.backend == "rssm" and planner.condition_tag == "probe":
         from sit_lmpc.world.rssm_grip import GripProbe
         grip_probe = GripProbe(planner.dynamics.rssm_grip_probe)
-    if planner.dynamics.backend == "rssm" and planner.condition_tag == "bicycle_error":
+    if planner.dynamics.backend == "rssm" and (planner.condition_tag == "bicycle_error" or planner.change_detection):
         from sit_lmpc.world.rssm import bicycle as nominal_step
         nominal_params = jnp.asarray(model.params, jnp.float32)
         nominal_rollout = jax.jit(lambda x, u: jax.lax.scan(
@@ -373,7 +373,7 @@ def _run(config, tracking_only, keyboard_cleanup):
         tag = grip
         if planner.condition_tag == "probe":
             tag = float(grip_probe(rssm_filter.h, rssm_filter.s))
-        elif planner.condition_tag == "bicycle_error":
+        if planner.condition_tag == "bicycle_error" or planner.change_detection:
             if len(true_state_trace) > 1 and np.hypot(*(true_state_trace[-1][:2] - true_state_trace[-2][:2])) > 3.0:
                 tag_controls.clear()
                 tag_states.clear()
@@ -383,8 +383,15 @@ def _run(config, tracking_only, keyboard_cleanup):
             if len(tag_states) > 10:
                 end = np.asarray(nominal_rollout(jnp.asarray(tag_states[-11]), jnp.asarray(np.stack(tag_controls[-10:]))))
                 tag = float(np.hypot(*(end[:2] - tag_states[-1][:2])))
+        error_tag = tag if planner.condition_tag == "bicycle_error" or planner.change_detection else None
+        if planner.condition_tag == "probe":
+            tag = float(grip_probe(rssm_filter.h, rssm_filter.s))
+        if planner.condition_tag == "readout":
+            tag = grip if not planner.change_detection else tag
+        if change_monitor is not None:
+            change_monitor.observe(len(tag_trace), frenet[0], error_tag, learned_steps > 0)
         tag_trace.append(tag)
-        lap_condition.append([tag])
+        lap_condition.append([tag if planner.condition_tag != "readout" else grip])
         grip_trace.append(grip)
         friction_trace.append(grip)
         if planner.condition_threshold > 0:
@@ -516,6 +523,13 @@ def _run(config, tracking_only, keyboard_cleanup):
         simulation.seed,
         randomness=randomness,
     )
+    change_monitor = None
+    change_trace = []
+    if planner.change_detection:
+        from sit_lmpc.planners.change_monitor import ChangeMonitor
+        change_monitor = ChangeMonitor(float(track.s_frame_max), planner.change_stretch, planner.change_window,
+                                       planner.change_ratio, planner.change_floor, new_laps=planner.change_new_laps)
+        safe_set.change_monitor = change_monitor
     density_trainer = (
         SafeSetDensityTrainer(planner.safe_set_density, planner.dynamics, simulation,
             track.s_frame_max, planner.safe_set_size, directory,
@@ -1333,6 +1347,12 @@ def _run(config, tracking_only, keyboard_cleanup):
                 )
                 mode = "lmppi"
                 learned_steps += 1
+                if change_monitor is not None:
+                    snap = change_monitor.snapshot()
+                    last = safe_set.last_change or {}
+                    change_trace.append([index, float(snap["active"]), snap["conservative"], snap["new"], snap["changed"],
+                                         last.get("mode", 0), last.get("records", -1),
+                                         float(safe_set.value_records is not None)])
                 if safe_set.state_mode() and getattr(safe_set, "last_filter", None):
                     f = safe_set.last_filter
                     safe_set_trace.append([index, f.get("laps", 0), f.get("kept", 0), float(f.get("fallback", False)),
@@ -1695,7 +1715,16 @@ def _run(config, tracking_only, keyboard_cleanup):
                         lap_tag = None
                 else:
                     lap_tag = np.mean(lap_condition, axis=0) if lap_condition else None
+                if change_monitor is not None:
+                    controllers = finished[0].controllers
+                    safe_set.pending_info = {"lap": change_monitor.lap, "laptime": float(lap.laptime),
+                                             "warmup": bool(len(controllers) and str(controllers[0]) == "mppi")}
                 safe_set_added = safe_set.add_lap(lap, finished[0], tag=lap_tag)
+                if change_monitor is not None:
+                    detection = change_monitor.detection_lap
+                    new_laps = 0 if detection is None else sum(
+                        1 for r in safe_set.record_info if r is not None and r["lap"] > detection)
+                    change_monitor.finish_lap(len(tag_trace), new_laps)
                 if planner.safe_set_min_states and len(safe_set.frenet) != previous_safe_laps:
                     events.emit("safe_set_retention", laps=len(safe_set.frenet),
                                 states=safe_set.state_count, min_states=planner.safe_set_min_states)
@@ -1897,6 +1926,12 @@ def _run(config, tracking_only, keyboard_cleanup):
                     np.save(directory / "condition_tag.npy", np.asarray(tag_trace, np.float32))
                 if safe_set_trace:
                     np.save(directory / "safe_set_trace.npy", np.asarray(safe_set_trace, np.float64))
+                if change_monitor is not None:
+                    np.save(directory / "change_trace.npy", np.asarray(change_trace, np.float64))
+                    (directory / "change_events.json").write_text(json.dumps(
+                        {"events": change_monitor.events, "stretch_m": change_monitor.stretch,
+                         "stretches": change_monitor.count,
+                         "history": [[float(v) for v in h] for h in change_monitor.history]}, indent=1) + "\n")
     return RunResult(
         directory,
         status,

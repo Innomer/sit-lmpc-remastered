@@ -210,6 +210,14 @@ class PlannerConfig:
     condition_tau: float = 1.0
     condition_tag: str = "readout"
     condition_fallback: str = "closest"
+    change_detection: bool = False
+    change_stretch: float = 10.0
+    change_window: int = 10
+    change_ratio: float = 3.0
+    change_floor: float = 0.05
+    change_new_laps: int = 2
+    change_conservative_laps: int = 2
+    change_value: bool = True
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000
@@ -428,6 +436,11 @@ class ExperimentConfig:
         if p.condition_tag == "probe" and not (isinstance(dynamics.rssm_grip_probe, str) and
                                                (Path(dynamics.rssm_grip_probe) / "probe.msgpack").is_file()):
             raise ValueError("planner.condition_tag probe needs planner.dynamics.rssm_grip_probe (sit_lmpc.world.rssm_grip)")
+        if p.change_detection and dynamics.backend != "rssm":
+            raise ValueError("planner.change_detection needs planner.dynamics.backend rssm")
+        if p.change_detection and not (p.change_stretch > 0 and p.change_window > 0 and p.change_ratio > 0
+                                       and p.change_floor >= 0 and p.change_new_laps > 0 and p.change_conservative_laps > 0):
+            raise ValueError("planner.change_* settings must be positive")
         if p.condition_fallback not in ("closest", "newest"):
             raise ValueError("planner.condition_fallback must be closest or newest")
         if dynamics.belief_update == "encoder":
