@@ -72,7 +72,8 @@ planner:
     rssm_clearance_weight: 0.0  # Weight of that penalty, added to the safety cost at every step; 0 disables.
     rssm_grip_probe: null  # Grip probe folder (sit_lmpc.world.rssm_grip) on this RSSM's (h, d), for planner.condition_tag probe.
     rssm_risk: null  # Crash-risk head folder (sit_lmpc.world.rssm_risk) trained on this RSSM's latent.
-    rssm_risk_weight: 0.0  # Soft cost: weight x predicted probability of a crash within 1.5 s at every predicted step. Not used in the final candidate ranking. 0 disables.
+    rssm_risk_weight: 0.0  # Weight x predicted probability of a crash within 1.5 s at every predicted step. 0 disables.
+    rssm_risk_rank: false  # true: the risk cost also counts in the final candidate ranking (like the other safety costs); false: soft cost only.
     likelihood_power: 1.0  # BNN posterior only: maximum calibrated evidence power; with legacy standard, 1 is ordinary Bayes and (0,1) manually tempers it.
     posterior_method: tempered  # [standard, tempered, noise, noise_tempered] standard uses uncalibrated Bayes; tempered calibrates evidence power; noise calibrates observation noise; noise_tempered calibrates both. Used for BNN posterior updates.
     calibration_fraction: 0.2  # Dynamics hold-out fraction; NF safe-set density uses all retained states for both training and calibration.
@@ -161,6 +162,9 @@ planner:
   change_new_laps: 2  # Laps driven fully after the change needed before changed stretches use them instead of the conservative laps.
   change_conservative_laps: 2  # Conservative set: this many of the slowest laps from before the change, warm-up laps first.
   change_value: true  # Option B: in conservative / new-condition windows, score candidates with the time-to-go of the same laps (by track position) instead of the learned value function.
+  change_speed: null  # [null, fixed, probe] safe set v2 speed reaction: on a detected change, cap every stretch at factor x its pre-change speed at once; fixed uses change_speed_factor, probe uses sqrt(grip probe / nominal grip) clipped to [0.6, 1.0]. A relaxed stretch loses its cap; a changed stretch's factor rises by change_speed_step per lap driven after the change until 1.0.
+  change_speed_factor: 0.8  # Speed-cap factor for change_speed fixed.
+  change_speed_step: 0.05  # Factor added per lap after the change on changed stretches.
   condition_fallback: closest  # [closest, newest] when fewer than condition_min_laps laps match on a stretch: take the closest-tagged laps, or the newest laps.
   safe_set_min_states: 0  # Nonnegative integer; 0 disables the state-count minimum. Shared by controller safe-set retention and fixed-step NF training history. Keep at least safe_set_size laps and add older successful laps to reach this many unique states; NF uses all retained states and repeats passes to reach steps.
   safe_set_max_points: 2000000  # Positive cap on combined safe-set candidate points before local selection. Excess points are randomly subsampled; full saved lap data is not discarded.

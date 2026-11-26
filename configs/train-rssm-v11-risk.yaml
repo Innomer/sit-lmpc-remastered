@@ -1,0 +1,37 @@
+# Crash-risk head on the frozen rssm-v11 latent (python -m sit_lmpc.world.rssm_risk). Training adds the v11 closed-loop
+# runs (seeds 2 and 3, crashes at s ~ 34 m and ~ 110 m and on the patch); the seed-1 runs with a crash at each spot
+# and the v5-v7 runs are held out for the warning check.
+base: runs/rssm-v11
+horizon: 15
+seed: 20261127
+width: 64
+layers: 2
+learning_rate: 1.0e-3
+batch: 1024
+epochs: 12
+false_alarm_rate: 0.05
+runs_root: results/Spielberg
+train_runs:
+  - rssm-latent-v8-clearance
+  - rssm-latent-v8-clearance-long
+  - rssm-latent-v8-slow-long
+  - rssm-latent-v8-varied-long
+  - rssm-latent-v8-guarded
+  - rssm-latent-v8-risk
+  - rssm-latent-v11
+  - change-grip-drop-v11-s2
+  - change-patch-v11-s2
+  - change-grip-drop-v11-s3
+  - change-patch-v11-s3
+  - change-none-v11-v2-s2
+  - change-none-v11-v2-s3
+  - change-grip-drop-v11-v2-s2
+  - change-patch-v11-v2-s2
+  - change-patch-v11-v2-s3
+heldout_runs:
+  - change-none-v11-v2-s1
+  - change-grip-drop-v11-v2-s1
+  - change-patch-v11
+  - rssm-latent-slow-logged
+  - rssm-latent-v6-smoke
+  - rssm-latent-v7-smoke

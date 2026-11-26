@@ -119,6 +119,7 @@ class DynamicsConfig:
     rssm_risk: str | None = None
     rssm_grip_probe: str | None = None
     rssm_risk_weight: float = 0.0
+    rssm_risk_rank: bool = False
     likelihood_power: float = 1.0
     update_batch_size: int = 512
     validation_fraction: float = 0.2
@@ -218,6 +219,9 @@ class PlannerConfig:
     change_new_laps: int = 2
     change_conservative_laps: int = 2
     change_value: bool = True
+    change_speed: str | None = None
+    change_speed_factor: float = 0.8
+    change_speed_step: float = 0.05
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000
@@ -441,6 +445,13 @@ class ExperimentConfig:
         if p.change_detection and not (p.change_stretch > 0 and p.change_window > 0 and p.change_ratio > 0
                                        and p.change_floor >= 0 and p.change_new_laps > 0 and p.change_conservative_laps > 0):
             raise ValueError("planner.change_* settings must be positive")
+        if p.change_speed not in (None, "fixed", "probe"):
+            raise ValueError("planner.change_speed must be null, fixed or probe")
+        if p.change_speed and not (0 < p.change_speed_factor <= 1 and p.change_speed_step >= 0):
+            raise ValueError("planner.change_speed_factor must be in (0, 1] and change_speed_step >= 0")
+        if p.change_speed == "probe" and not (isinstance(dynamics.rssm_grip_probe, str) and
+                                              (Path(dynamics.rssm_grip_probe) / "probe.msgpack").is_file()):
+            raise ValueError("planner.change_speed probe needs planner.dynamics.rssm_grip_probe")
         if p.condition_fallback not in ("closest", "newest"):
             raise ValueError("planner.condition_fallback must be closest or newest")
         if dynamics.belief_update == "encoder":

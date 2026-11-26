@@ -314,8 +314,8 @@ def _run(config, tracking_only, keyboard_cleanup):
         )
     rssm_filter = None
     grip_probe = nominal_rollout = None
-    tag_trace, tag_controls, tag_states, safe_set_trace = [], [], [], []
-    if planner.dynamics.backend == "rssm" and planner.condition_tag == "probe":
+    tag_trace, tag_controls, tag_states, safe_set_trace, probe_trace = [], [], [], [], []
+    if planner.dynamics.backend == "rssm" and (planner.condition_tag == "probe" or planner.change_speed == "probe"):
         from sit_lmpc.world.rssm_grip import GripProbe
         grip_probe = GripProbe(planner.dynamics.rssm_grip_probe)
     if planner.dynamics.backend == "rssm" and (planner.condition_tag == "bicycle_error" or planner.change_detection):
@@ -389,7 +389,12 @@ def _run(config, tracking_only, keyboard_cleanup):
         if planner.condition_tag == "readout":
             tag = grip if not planner.change_detection else tag
         if change_monitor is not None:
-            change_monitor.observe(len(tag_trace), frenet[0], error_tag, learned_steps > 0)
+            factor = None
+            if planner.change_speed == "probe":
+                probe_trace.append(float(grip_probe(rssm_filter.h, rssm_filter.s)))
+                factor = float(np.clip(np.sqrt(np.mean(probe_trace[-10:]) / 1.0489), 0.6, 1.0))
+            change_monitor.observe(len(tag_trace), frenet[0], error_tag, learned_steps > 0, speed=float(cartesian[3]),
+                                   factor=factor)
         tag_trace.append(tag)
         lap_condition.append([tag if planner.condition_tag != "readout" else grip])
         grip_trace.append(grip)
@@ -528,7 +533,9 @@ def _run(config, tracking_only, keyboard_cleanup):
     if planner.change_detection:
         from sit_lmpc.planners.change_monitor import ChangeMonitor
         change_monitor = ChangeMonitor(float(track.s_frame_max), planner.change_stretch, planner.change_window,
-                                       planner.change_ratio, planner.change_floor, new_laps=planner.change_new_laps)
+                                       planner.change_ratio, planner.change_floor, new_laps=planner.change_new_laps,
+                                       speed_factor=planner.change_speed_factor if planner.change_speed else None,
+                                       speed_step=planner.change_speed_step)
         safe_set.change_monitor = change_monitor
     density_trainer = (
         SafeSetDensityTrainer(planner.safe_set_density, planner.dynamics, simulation,
@@ -1352,7 +1359,8 @@ def _run(config, tracking_only, keyboard_cleanup):
                     last = safe_set.last_change or {}
                     change_trace.append([index, float(snap["active"]), snap["conservative"], snap["new"], snap["changed"],
                                          last.get("mode", 0), last.get("records", -1),
-                                         float(safe_set.value_records is not None)])
+                                         float(safe_set.value_records is not None), snap["capped"],
+                                         float(change_monitor.cap_at(frenet[0])), float(cartesian[3])])
                 if safe_set.state_mode() and getattr(safe_set, "last_filter", None):
                     f = safe_set.last_filter
                     safe_set_trace.append([index, f.get("laps", 0), f.get("kept", 0), float(f.get("fallback", False)),

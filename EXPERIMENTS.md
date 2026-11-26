@@ -52,7 +52,8 @@ Common setup unless stated otherwise:
 | 31 | Condition changes mid-session: v11 vs the bicycle model | `1bb6a94` | partial: v11 survives the grip drop, the bicycle model does not; neither handles the patch. Mass scenario uninformative (entry 32) |
 | 32 | Does mass matter in this sim; oracle-c test | `995b70e` | done: mass barely matters; a "correct" c does not improve predictions |
 | 33 | Grip probe on (h, d), bicycle-error tag, condition-aware safe set | `c03ad4d` | failure: probe misses its target; the safe set did not prevent crashes |
-| 34 | Safe set v2 (live change detection) + change-aware value, 3 seeds | next commit | failure: detection works (≈1 s, no false alarms), the reaction does not slow the car |
+| 34 | Safe set v2 (live change detection) + change-aware value, 3 seeds | `d44c313` | failure: detection works (≈1 s, no false alarms), the reaction does not slow the car |
+| 35 | Baseline robustness, run divergence, v11's repeat crash spots, risk head vs speed cap | next commit | failure: neither option removes the no-change crashes; the speed reaction is built but not run |
 
 Main conclusions so far:
 
@@ -569,3 +570,24 @@ So the tag for the safe set is taken from (h, d), or from something model-agnost
 | Reaction | did not slow the car. After detection the window was conservative and value B was in use on 100% of steps, yet speed stayed the same or rose (seed 2 grip drop 9.3 → 9.7 → 10.3 m/s at the crash; seed 3 8.9 → 9.4 → 9.0; patch seed 1 8.9 → 8.6 → 9.1) and the car spun 2.9–11.5 s after detection. The "slowest stored laps" are the warm-up laps, which drove at the 9 m/s cap (average 9.2 m/s), i.e. no slower than the learned laps, so the conservative terminal set and its time-to-go did not ask for less speed |
 | Baseline variance | v11 is less robust than its single seed-1 run suggested: on normal track it crashed before the change in 1 of 3 seeds of each scenario with the safe set off, and in 1–2 of 3 v2 runs (v2 was inactive there, so not caused by it). Crashes cluster at s ≈ 34 m (wall) and s ≈ 109–117 m (spin, the corner the patch sits on). Same-seed runs are not exactly repeatable (the three v2 seed-1 runs share the first 8 laps in principle, but one crashed in lap 7) |
 | Verdict | failure. Detection is fast and clean, but reacting by switching to "slower" stored laps cannot work when no stored lap is slower than the current driving at the new grip. A reaction that actually reduces speed is needed: e.g. a speed cap scaled by the detected change, scaling the conservative laps' speeds down, or a conservative warm-up lap kept for this purpose. Option A (value on (state, tag)) was not tried |
+
+## 35. Baseline robustness, run divergence and v11's repeat crash spots
+
+| | |
+|---|---|
+| Bicycle baseline, no change, 3 seeds (`change-none-bicycle-s1..3`) | seed 1: 38.0, 39.8, 37.2, 37.3, 37.2, 37.0, 37.3, 37.1, 37.1, 37.5 s, no crash. Seed 2: 38.7, 39.2, 38.3, 39.4, 38.6, 38.6, 38.6, 38.7, 38.1, 38.8 s, no crash. Seed 3: 38.4, 38.4, then a spin in lap 8 at s ≈ 110 m, hit point (−75.11, 52.00), slip 0.40 rad at 7.3 m/s. The exact-physics planner crashes at the same corner as v11 |
+| Run divergence (same seed) | runs with the same seed are identical through the 5 warm-up laps and separate right after the first learned step: v11 runs more than 1 cm apart 0.3–0.5 s into the first learned lap (0.2–7.6 m apart 10 s later, 16 same-seed pairs); bicycle runs 1.4 s in (1.0–2.6 m 10 s later, 3 pairs). Most likely GPU non-determinism in the value-function training right after the warm-up. Each run from the first learned lap on is effectively an independent sample; "seed" only fixes the warm-up |
+| v11's repeat crash spots | from the bridge's collision log: four crashes at exactly (−34.0, −8.3) (s ≈ 35 m, the inside corner of a right-hand kink) and three at (−75.1, 52.0) (s ≈ 110 m), within 5 cm. `scripts/crash_spot_check.py`, `results/crash-spots/` |
+| What happens there | at s ≈ 35 m the car is near the centre line (e_y ≤ 0.3 m) at 9–11 m/s, the planner steers in (up to −0.2 rad, after accelerating hard to 11 m/s in one case), the rear steps out (yaw rate to −3.2…−5.8 rad/s, slip 0.3–0.6 rad) and the car rotates into the inside wall within ~0.5 s (heading error up to −1.2 rad) |
+| Model error, speed or line? | not model error: rolled out from the true state with the applied controls, v11 predicts the slide almost exactly (slip 0.24–0.38 vs actual 0.27–0.41 rad, yaw rate −3.0…−5.6 vs −3.2…−5.8 rad/s, position error 0.04–0.25 m up to 1.1 s ahead). The crash approaches are somewhat faster than clean passes over the same stretch (9.3–10.6 vs 9.0 m/s mean). The planner chooses a sharp turn-in that it correctly predicts will slide: nothing penalises the slide (slip cost off) and the track-limit check only looks at the reference point, not the rotated car body |
+| v11 risk head | `configs/train-rssm-v11-risk.yaml`, report in `results/risk-head-v11/`: retrained on v11's latent, adding 10 v11 closed-loop runs; AUC 0.94 validation, 0.92 test; held-out crash runs AUC 0.95 (s ≈ 110 m spin, patch spin), 0.72 (s ≈ 34 m wall) |
+
+| No-change runs, 3 seeds | Seed 1 | Seed 2 | Seed 3 |
+|---|---|---|---|
+| (a) risk head, weight 5, counted in the final ranking (`rssm_risk_rank`) | crash in lap 6, 46 s into the lap, stalled and rolled backwards (slip −3 rad) | crash in lap 6 | crash in lap 6, 55 s into the lap, at 9.7 m/s |
+| (b) speed cap 10 m/s | 40.2, 40.8, 40.7, 40.9, 40.3 s, crash in lap 11 at s ≈ 35 m | 40.0, 40.4, 40.5, 40.2 s, crash in lap 10 at s ≈ 174 m (yaw rate −2.8 rad/s, slip 0.33 rad at 8.2 m/s) | 40.5, 41.1, 41.4, 40.8, 39.7 s, crash in lap 11 at s ≈ 35 m |
+
+| | |
+|---|---|
+| Findings | (a) makes things worse: the risk cost was active on 100% of the chosen plans, the planner crawled (lap mean speed 5.3–5.7 m/s, laps of 46–55 s) and crashed in the first learned lap in all three runs. (b) costs about 2 s per lap (40–41 s) and still crashed in all three, twice at the same s ≈ 35 m kink: the snap happens at 8–9 m/s there, so speed is not the trigger |
+| Verdict | failure: neither gets the no-change crashes to 0/3, so step 3 (the speed reaction on a detected change) was not run. The speed reaction is built (`planner.change_speed`, `change_speed_factor`, `change_speed_step`; per-stretch caps in `ChangeMonitor`, unit-tested) but untested in closed loop. Likely next fixes for the base crashes: a cost on predicted slip / yaw-rate overshoot near walls, or a track-limit check on the car body's corners instead of its reference point |

@@ -265,3 +265,29 @@ def test_change_monitor_detects_relaxes_and_switches_to_new_laps():
             quiet.observe(0, s, 0.003 + 0.01 * rng.random(), True)
         quiet.finish_lap(0, 0)
     assert not quiet.active
+
+
+def test_change_monitor_speed_caps():
+    from sit_lmpc.planners.change_monitor import ChangeMonitor
+    m = ChangeMonitor(100.0, stretch=10.0, window=5, ratio=3.0, floor=0.05, new_laps=2, speed_factor=0.8,
+                      speed_step=0.1)
+    step = 0
+
+    def lap(tag_of_s, speed=8.0):
+        nonlocal step
+        for s in np.arange(0.0, 100.0, 1.0):
+            m.observe(step, s, tag_of_s(s), True, speed=speed)
+            step += 1
+
+    for _ in range(3):
+        lap(lambda s: 0.003)
+        m.finish_lap(step, 0)
+    assert not np.isfinite(m.caps).any()
+    lap(lambda s: 0.3 if 40 <= s < 60 else 0.003, speed=8.0)
+    assert np.isclose(m.caps[m.index(45.0)], 6.4)
+    assert not np.isfinite(m.caps[m.index(75.0)])
+    assert np.isclose(float(m.cap_at(45.0)), 6.4) and not np.isfinite(float(m.cap_at(125.0 - 50.0)))
+    m.finish_lap(step, 0)
+    lap(lambda s: 0.3 if 40 <= s < 60 else 0.003, speed=6.0)
+    m.finish_lap(step, 1)
+    assert np.isclose(m.caps[m.index(45.0)], 0.9 * 8.0)

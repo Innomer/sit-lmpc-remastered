@@ -671,6 +671,15 @@ class LMPPI:
             self.config.boundary_limit, self.config.safe_set_threshold,
         )
 
+    def change_cap_cost(self, frenet, safe_set):
+        """Per-step cost above the change monitor's per-stretch speed caps (safe set v2 speed reaction)."""
+        monitor = getattr(safe_set, "change_monitor", None)
+        if monitor is None or not np.isfinite(monitor.caps).any():
+            return None
+        caps = jnp.asarray(np.where(np.isfinite(monitor.caps), monitor.caps, 1e3), frenet.dtype)
+        idx = jnp.floor(frenet[..., 0] / monitor.stretch).astype(jnp.int32) % monitor.count
+        return self.config.safety_speed_weight * jnp.clip((frenet[..., 3] - caps[idx]) / 0.5, 0.0, 1.0)
+
     def model_safety_costs(self, state, actions):
         """Model-side safety checks (RSSM): LiDAR clearance and the crash-risk head, from one latent rollout."""
         if getattr(self.model, "clearance_weight", 0.0) > 0 or getattr(self.model, "risk_weight", 0.0) > 0:
@@ -825,6 +834,9 @@ class LMPPI:
         )
         states = to_frenet(self.track, cartesian, indices, frenet_state[0])
         boundary_states = with_margin(states, self.margins)
+        stretch_cap = self.change_cap_cost(states, safe_set)
+        if stretch_cap is not None:
+            sample_extra = dict(sample_extra, stretch_cap=stretch_cap)
         extra_cost = sum(sample_extra.values()) if sample_extra else None
         scenario_key = jax.random.fold_in(sample_key, 17) if distribution_needed else None
         sample_scenarios = sample_frenet = sample_chance = None
@@ -969,7 +981,11 @@ class LMPPI:
         trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
         candidate_frenet = to_frenet(self.track, trajectories, indices, frenet_state[0])
         candidate_extra = self.model_safety_costs(state, candidates[:, : self.config.horizon])
-        ranked = [value for name, value in candidate_extra.items() if name not in SOFT_TERMS]
+        candidate_cap = self.change_cap_cost(candidate_frenet, safe_set)
+        if candidate_cap is not None:
+            candidate_extra = dict(candidate_extra, stretch_cap=candidate_cap)
+        soft = () if getattr(self.config.dynamics, "rssm_risk_rank", False) else SOFT_TERMS
+        ranked = [value for name, value in candidate_extra.items() if name not in soft]
         candidate_safety = total_safety(candidate_frenet, self.config, sum(ranked) if ranked else None).sum(axis=1)
         candidate_distances = self.evaluate_safe_set_check(candidate_frenet[:, -1, :5], hull)
         candidate_scenarios = scenario_frenet = candidate_chance = verified_scenarios = None

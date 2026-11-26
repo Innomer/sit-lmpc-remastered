@@ -17,7 +17,8 @@ NORMAL, CONSERVATIVE, NEW = 0, 1, 2
 
 
 class ChangeMonitor:
-    def __init__(self, track_length, stretch=10.0, window=10, ratio=3.0, floor=0.05, history_laps=5, new_laps=2):
+    def __init__(self, track_length, stretch=10.0, window=10, ratio=3.0, floor=0.05, history_laps=5, new_laps=2,
+                 speed_factor=None, speed_step=0.05):
         self.length = float(track_length)
         self.count = int(np.ceil(self.length / stretch))
         self.stretch = self.length / self.count
@@ -35,6 +36,13 @@ class ChangeMonitor:
         self.pass_stretch = None
         self.events = []
         self.restarted = set()
+        self.speed_factor, self.speed_step = speed_factor, float(speed_step)
+        self.speed_history = [[] for _ in range(self.count)]
+        self.lap_speeds = [[] for _ in range(self.count)]
+        self.caps = np.full(self.count, np.inf)
+        self.cap_factor = np.ones(self.count)
+        self.clean_new_laps = 0
+        self.detection_factor = None
 
     def index(self, s):
         return int((float(s) % self.length) // self.stretch) % self.count
@@ -47,9 +55,12 @@ class ChangeMonitor:
         ref = self.reference(k)
         return self.floor if ref is None else max(self.floor, self.ratio * ref)
 
-    def observe(self, step, s, tag, learned):
-        """One control step: s along the track, the tag ending at this step, whether the planner is driving."""
+    def observe(self, step, s, tag, learned, speed=None, factor=None):
+        """One control step: s along the track, the tag ending at this step, whether the planner is driving, the
+        car's speed, and (optional) the speed factor to use if a change is detected now."""
         k = self.index(s)
+        if speed is not None and np.isfinite(speed):
+            self.lap_speeds[k].append(float(speed))
         tag = float(tag) if np.isfinite(tag) else 0.0
         self.lap_values[k].append(tag)
         self.recent = (self.recent + [tag])[-self.window:]
@@ -67,6 +78,13 @@ class ChangeMonitor:
             self.detection_lap = self.lap if first else self.detection_lap
             relaxed = self.mode == NORMAL
             self.mode[relaxed & ~self.changed] = CONSERVATIVE
+            if self.speed_factor is not None:
+                chosen = float(factor) if factor is not None else float(self.speed_factor)
+                self.detection_factor = chosen
+                for j in np.flatnonzero(self.mode == CONSERVATIVE):
+                    if self.speed_history[j]:
+                        self.cap_factor[j] = chosen
+                        self.caps[j] = chosen * float(np.median(self.speed_history[j][-self.history_laps:]))
             self.events.append({"step": int(step), "event": "detected" if first else "detected again", "stretch": k,
                                 "lap": self.lap, "short_m": short, "limit_m": self.limit(k)})
 
@@ -76,6 +94,8 @@ class ChangeMonitor:
         value = float(np.median(self.pass_values))
         if value <= self.limit(k):
             self.mode[k] = NORMAL
+            self.caps[k] = np.inf
+            self.cap_factor[k] = 1.0
             self.events.append({"step": int(step), "event": "relaxed", "stretch": k, "lap": self.lap, "tag_m": value})
         else:
             self.changed[k] = True
@@ -97,6 +117,19 @@ class ChangeMonitor:
                 else:
                     self.history[k].append(value)
             self.lap_values[k] = []
+            if self.lap_speeds[k] and not (self.active and self.lap >= (self.detection_lap or 0)):
+                self.speed_history[k].append(float(np.mean(self.lap_speeds[k])))
+            self.lap_speeds[k] = []
+        if self.active and self.speed_factor is not None and self.lap > self.detection_lap:
+            self.clean_new_laps += 1
+            capped = np.isfinite(self.caps) & self.changed
+            for j in np.flatnonzero(capped):
+                base = self.caps[j] / self.cap_factor[j]
+                self.cap_factor[j] = min(1.0, self.cap_factor[j] + self.speed_step)
+                self.caps[j] = np.inf if self.cap_factor[j] >= 1.0 else self.cap_factor[j] * base
+            if capped.any():
+                self.events.append({"step": int(step), "event": "caps raised", "lap": self.lap,
+                                    "factor_mean": float(self.cap_factor[capped].mean())})
         if self.active and new_condition_laps >= self.new_laps:
             switch = self.changed & (self.mode == CONSERVATIVE)
             if switch.any():
@@ -120,4 +153,10 @@ class ChangeMonitor:
 
     def snapshot(self):
         return {"active": self.active, "conservative": int(np.sum(self.mode == CONSERVATIVE)),
-                "new": int(np.sum(self.mode == NEW)), "changed": int(np.sum(self.changed))}
+                "new": int(np.sum(self.mode == NEW)), "changed": int(np.sum(self.changed)),
+                "capped": int(np.sum(np.isfinite(self.caps)))}
+
+    def cap_at(self, s):
+        """Speed cap (m/s, inf when none) at each track position s (any shape)."""
+        idx = (np.floor(np.asarray(s) / self.stretch).astype(int)) % self.count
+        return self.caps[idx]

@@ -1,0 +1,10 @@
+# rssm-v11 + LiDAR clearance + crash-risk head trained on v11 (runs/rssm-v11-risk), weight 5, counted in the final
+# candidate ranking (option a for v11's repeat crashes at s ~ 34 m and ~ 110 m).
+extends: rssm-latent-v11.yaml
+output:
+  exp_name: rssm-latent-v11-risk
+planner:
+  dynamics:
+    rssm_risk: runs/rssm-v11-risk
+    rssm_risk_weight: 5.0
+    rssm_risk_rank: true
