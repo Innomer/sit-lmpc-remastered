@@ -24,6 +24,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from harsh_change_report import wall_distance_field, outline, clearance
 
 
+def nearest_hit(hits, xy):
+    if not hits:
+        return None
+    points = np.asarray(hits, float)
+    j = int(np.argmin(np.hypot(points[:, 0] - xy[0], points[:, 1] - xy[1])))
+    return [float(v) for v in points[j]] if np.hypot(*(points[j] - xy)) < 5.0 else None
+
+
 def attempts(run):
     rows = []
     for path in glob.glob(str(run / "trajectories" / "*" / "attempt-*.npz")):
@@ -51,8 +59,7 @@ def analyse(run, change_lap, field, resolution, origin, height, body):
             row["crash"] = {"type": "spin" if heading > 0.6 else "wall", "max_heading_error_last_2s": round(heading, 2),
                             "reason": reason,
                             "s": round(float(fr[k, 0]) % 318.0, 1),
-                            "hit": [float(v) for v in hits[hit_index]] if hit_index < len(hits) else None}
-            hit_index += 1
+                            "hit": nearest_hit(hits, c[k, :2])}
         else:
             completed += 1
         out.append(row)
