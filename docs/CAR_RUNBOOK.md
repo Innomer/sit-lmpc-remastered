@@ -8,6 +8,14 @@ Track: Levine (`tracks/levine_self_again`). All car configs cap every command at
 (`simulation.car.max_speed`), compensate the 0.2 s actuation delay, and use retry mode: after any stop the car waits
 for the operator's go at the start line.
 
+**The car stops after every lap.** After crossing the line it slows down along the centreline (3 m/s², about 2.5 s
+from 7 m/s), trains the value function and saves the checkpoint while standing (a few seconds), then prints
+`car_waiting`. Carry it back 0.3–3 m behind the line, facing forward, and press go: it drives to the line at 1.5 m/s
+and starts the next lap. Training while driving paused the control loop for up to 0.6 s in the dry runs, which at
+7 m/s ended in the wall; standing still makes that harmless. After an off-track or obstacle stop it is the same:
+carry it back, press go (the failed attempt is counted). At startup the run compiles the planner and the value
+training (about 20–30 s on the laptop, more on the Jetson) before the first `car_waiting`.
+
 | Config | Planner model | Learned parts | Hand-written rules |
 |---|---|---|---|
 | `configs/car/levine-bicycle-slow.yaml` | bicycle, 2 m/s cap (first floor laps) | value function | – |
@@ -114,8 +122,10 @@ python -m sit_lmpc.cli.racecar --config configs/car/levine-bicycle-slow.yaml
 python -m sit_lmpc.cli.racecar --config configs/car/levine-bicycle-slow.yaml
 ```
 
-Car behind the start line, deadman held, go. It drives to the line, then pure-pursuit warm-up laps, then LMPPI laps.
-Check in the log: `control_step_timing` (planning p95 under ~90 ms, overruns and watchdog stops near 0) and lap times.
+Car behind the start line, deadman held, go. It drives to the line, then pure-pursuit warm-up laps, then LMPPI laps,
+stopping after every lap (carry it back, go).
+Check in the log: `control_step_timing` (planning p95 under ~90 ms, overruns and watchdog stops near 0), `car_lap_stop`
+after each lap, and lap times.
 If it leaves the track or sees an obstacle it stops and waits; put it back behind the line and press go.
 
 ## 7. Bicycle baseline: 5 warm-up + 10 learned laps, with bags
@@ -146,7 +156,7 @@ python scripts/bag_check.py --bag results/levine_self_again/car-levine-bicycle-<
 
 It runs v11 along the recorded drive with the commands that were actually sent, and prints v11's and the bicycle
 model's prediction error at 0.5, 1.0 and 1.5 s on what was measured (position against the PF, yaw rate against the
-IMU, speed against the wheel speed). Use it to decide whether v11 is ready to drive: its position error should be
+IMU, speed against the wheel speed). Stops and the carries back to the line are skipped. Use it to decide whether v11 is ready to drive: its position error should be
 no worse than the bicycle model's. If it is far worse, rerun step 2 (input signs/units) before driving v11.
 
 ## 9. v11 run
@@ -168,7 +178,8 @@ With no change it must behave like v11 (no detections: `detected` events in `eve
 Use `configs/car/levine-v11-learned.yaml` (and the bicycle config for comparison).
 
 1. Drive 8 laps (5 warm-up + 3 learned).
-2. After lap 8, stop with Ctrl-C (checkpoint saved after every lap).
+2. After lap 8, when the car has stopped and prints `car_waiting`, press Ctrl-C (the checkpoint is saved during the
+   stop).
 3. Make the change: either tape 0.5–1 kg to the chassis over the rear axle, or lay a slippery sheet (plastic or
    cardboard, taped down flat) on one corner.
 4. Resume from the lap-8 checkpoint so the safe set and value function carry over:
@@ -188,8 +199,15 @@ The same car code path against the ROS sim, on the Levine sim map, with simulate
 ```bash
 ros2 run f1tenth_gym_ros gym_bridge --ros-args -r __node:=bridge --params-file configs/car/ros-bridge-dryrun-levine.yaml
 python -m sit_lmpc.cli.racecar --config configs/car/dryrun-levine-v11.yaml
+# at every car_waiting: put the sim car behind the line, then go
+ros2 topic pub --once /initialpose geometry_msgs/msg/PoseWithCovarianceStamped \
+  "{header: {frame_id: map}, pose: {pose: {position: {x: -2.0, y: -0.07}, orientation: {z: 0.0037, w: 1.0}}}}"
 ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty
 ```
+
+The dry-run configs turn the delay compensation off (the sim has no actuation delay) and use the sim car's steering
+limit. In the sim, `bag_check.py` always favours the bicycle model (it is the simulator's own model); results of the
+dry runs are in `results/dryrun/README.md`.
 
 ## If something goes wrong
 
@@ -197,6 +215,8 @@ ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty
 |---|---|---|
 | `stale_odometry` stop | PF dropped out | check the particle filter, CPU/GPU memory (`XLA_PYTHON_CLIENT_MEM_FRACTION`) |
 | many watchdog stops | planning too slow | step 4 cuts; check `control_step_timing` |
+| `stop_out_of_bounds` / `stop_obstacle` | left the track or saw something while slowing down after a lap | carry it back, go; if it repeats at the same spot, lower `stop_decel` |
+| long wait before the first `car_waiting` | startup compile of the planner and value training | normal; wait for `planner_precompile` in the log |
 | v11 drives badly from the start | input units/signs wrong | step 2 again; step 8 on a bag |
 | `car_start_rejected` | car not 0.3–3 m behind the line, off the track, or facing the wrong way | reposition |
 | stops in narrow spots | track half-width too large/small for that spot | step 3 values; report the spot |
