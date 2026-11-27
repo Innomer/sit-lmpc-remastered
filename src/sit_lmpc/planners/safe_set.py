@@ -620,7 +620,8 @@ class SafeSet:
         return len(self.frenet) >= self.config.safe_set_size
 
     def stretch_geometry(self):
-        stretch = float(getattr(self.config, "change_stretch", 10.0))
+        from sit_lmpc.planners.change_monitor import stretch_length
+        stretch = stretch_length(self.config, self.track_length)
         count = max(1, int(np.ceil(float(self.track_length) / stretch)))
         return float(self.track_length) / count, count
 

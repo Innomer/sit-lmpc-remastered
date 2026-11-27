@@ -12,7 +12,6 @@ output:
   exp_name: rssm-latent-v11-change
 planner:
   change_detection: true
-  change_stretch: 10.0
   change_window: 10
   change_ratio: 3.0
   change_floor: 0.05

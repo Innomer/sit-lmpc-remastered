@@ -1,0 +1,16 @@
+# Levine sim map (61.8 m), retry mode with restarts from standstill, 7 m/s speed cap: configs/retry/v11-learned.yaml with
+# config changes only. half_width is the 5th-percentile distance from the centreline to the wall (narrowest 0.40 m);
+# the body-corner track limit is half_width - footprint_buffer. Stretch length and tag window come from the track
+# length (61.8 / 15 = 4.1 m stretches, 0.5 s tag window).
+extends: ../retry/v11-learned.yaml
+output:
+  exp_name: levine-v11-learned
+simulation:
+  map: tracks/levine_sim/levine_sim
+  retry_speed: 0.0
+planner:
+  half_width: 0.57
+  safety_speed_cap: 7.0
+  warmup:
+    path: tracks/levine_sim/levine_sim_centerline.csv
+    max_speed: 7.0

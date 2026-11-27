@@ -6,7 +6,6 @@ output:
 planner:
   sit_lmpc_mode: false
   change_detection: true
-  change_stretch: 10.0
   change_window: 10
   change_ratio: 3.0
   change_floor: 0.05

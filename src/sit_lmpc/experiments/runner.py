@@ -44,7 +44,7 @@ from sit_lmpc.planners.lmppi import (
     sampled_risk_diagnostic,
 )
 from sit_lmpc.planners.safe_set import SafeSet
-from sit_lmpc.planners.change_monitor import wall_distance_field, body_clearance
+from sit_lmpc.planners.change_monitor import wall_distance_field, body_clearance, stretch_length, tag_seconds
 from sit_lmpc.planners.probabilistic import SafetyStop, configured_candidate_counts
 from sit_lmpc.training.value import ValueTrainer
 from sit_lmpc.training.risk import RiskTrainer
@@ -317,6 +317,7 @@ def _run(config, tracking_only, keyboard_cleanup):
     grip_probe = nominal_rollout = None
     tag_trace, tag_controls, tag_states, safe_set_trace, probe_trace = [], [], [], [], []
     model_tag_predictors, model_tag_states, model_error_trace = [], [], []
+    tag_steps = max(1, int(round(tag_seconds(planner, track.s_frame_max) / simulation.timestep)))
     model_error_needed = planner.change_detection and planner.change_cap_scope == "evidence" and bool(planner.change_speed)
     model_error_buffer = []
     model_error_batch = jax.jit(lambda m, h, s, x, u: jax.vmap(
@@ -417,14 +418,15 @@ def _run(config, tracking_only, keyboard_cleanup):
             tag_controls.append(np.asarray(simulator.applied_control, np.float32))
             tag_states.append(np.asarray(cartesian, np.float32))
             tag = 0.0
-            if len(tag_states) > 10:
-                end = np.asarray(nominal_rollout(jnp.asarray(tag_states[-11]), jnp.asarray(np.stack(tag_controls[-10:]))))
+            if len(tag_states) > tag_steps:
+                end = np.asarray(nominal_rollout(jnp.asarray(tag_states[-tag_steps - 1]),
+                                                 jnp.asarray(np.stack(tag_controls[-tag_steps:]))))
                 tag = float(np.hypot(*(end[:2] - tag_states[-1][:2])))
         model_error = None
-        if model_error_needed and len(model_tag_predictors) >= 10 and len(tag_controls) >= 10:
-            predictor = model_tag_predictors[-10]
+        if model_error_needed and len(model_tag_predictors) >= tag_steps and len(tag_controls) >= tag_steps:
+            predictor = model_tag_predictors[-tag_steps]
             model_error_buffer.append((len(tag_trace), float(frenet[0]), float(cartesian[3]), predictor.h, predictor.s,
-                                       model_tag_states[-10], np.stack(tag_controls[-10:]),
+                                       model_tag_states[-tag_steps], np.stack(tag_controls[-tag_steps:]),
                                        np.asarray(cartesian[:2], np.float32)))
         error_tag = tag if planner.condition_tag == "bicycle_error" or planner.change_detection else None
         if planner.condition_tag == "probe":
@@ -454,7 +456,7 @@ def _run(config, tracking_only, keyboard_cleanup):
             if model_error_needed:
                 model_tag_predictors.append(model)
                 model_tag_states.append(np.asarray(cartesian, np.float32))
-                del model_tag_predictors[:-11], model_tag_states[:-11]
+                del model_tag_predictors[:-tag_steps - 1], model_tag_states[:-tag_steps - 1]
             return cartesian, frenet
         cartesian, frenet = np.array(cartesian, copy=True), np.array(frenet, copy=True)
         cartesian[[2, 3, 5, 6]] = anchor
@@ -462,7 +464,7 @@ def _run(config, tracking_only, keyboard_cleanup):
         if model_error_needed:
             model_tag_predictors.append(model)
             model_tag_states.append(np.asarray(cartesian, np.float32))
-            del model_tag_predictors[:-11], model_tag_states[:-11]
+            del model_tag_predictors[:-tag_steps - 1], model_tag_states[:-tag_steps - 1]
         return cartesian, frenet
 
     def apply_tag(cartesian, frenet):
@@ -472,8 +474,9 @@ def _run(config, tracking_only, keyboard_cleanup):
         tag_controls.append(np.asarray(simulator.applied_control, np.float32))
         tag_states.append(np.asarray(cartesian, np.float32))
         tag = 0.0
-        if len(tag_states) > 10:
-            end = np.asarray(nominal_rollout(jnp.asarray(tag_states[-11]), jnp.asarray(np.stack(tag_controls[-10:]))))
+        if len(tag_states) > tag_steps:
+            end = np.asarray(nominal_rollout(jnp.asarray(tag_states[-tag_steps - 1]),
+                                             jnp.asarray(np.stack(tag_controls[-tag_steps:]))))
             tag = float(np.hypot(*(end[:2] - tag_states[-1][:2])))
         clearance = body_clearance(wall_field, track.spec, cartesian) if wall_field is not None else None
         change_monitor.observe(len(tag_trace), frenet[0], tag, learned_steps > 0, speed=float(cartesian[3]),
@@ -606,7 +609,8 @@ def _run(config, tracking_only, keyboard_cleanup):
     change_trace = []
     if planner.change_detection:
         from sit_lmpc.planners.change_monitor import ChangeMonitor
-        change_monitor = ChangeMonitor(float(track.s_frame_max), planner.change_stretch, planner.change_window,
+        change_monitor = ChangeMonitor(float(track.s_frame_max), stretch_length(planner, track.s_frame_max),
+                                       planner.change_window,
                                        planner.change_ratio, planner.change_floor, new_laps=planner.change_new_laps,
                                        speed_factor=planner.change_speed_factor if planner.change_speed else None,
                                        speed_step=planner.change_speed_step, scope=planner.change_cap_scope,
@@ -1766,7 +1770,11 @@ def _run(config, tracking_only, keyboard_cleanup):
                 if risk_trainer is not None:
                     risk_trainer.wait()
                     show_validation()
-                (cartesian, frenet), _ = simulator.reset(failed.cartesian[0].copy())
+                restart = failed.cartesian[0].copy()
+                if simulation.retry_speed is not None:
+                    restart[3] = float(simulation.retry_speed)
+                    restart[[2, 5, 6]] = 0.0
+                (cartesian, frenet), _ = simulator.reset(restart)
                 if encoder_belief is not None:
                     encoder_belief.reset()
                     cartesian, frenet = apply_encoder(cartesian, frenet)

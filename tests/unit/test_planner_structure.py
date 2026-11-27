@@ -181,3 +181,14 @@ def test_reduced_speed_plans_device_matches_host():
     host = reduced_speed_plans(previous, 7.5, (0.9, 0.75, 0.6), 0.1, 9.51, 15)
     device = reduced_speed_plans_device(jnp.asarray(previous, jnp.float32), jnp.float32(7.5), (0.9, 0.75, 0.6), 0.1, 9.51)
     assert np.allclose(host, np.asarray(device), atol=1e-5)
+
+
+def test_stretch_length_and_tag_window_scale_with_the_track():
+    from sit_lmpc.planners.change_monitor import stretch_length, tag_seconds
+
+    planner = load_config().planner
+    assert np.isclose(stretch_length(planner, 343.3), 10.0) and tag_seconds(planner, 343.3) == 1.0
+    assert np.isclose(stretch_length(planner, 61.8), 61.8 / 15) and tag_seconds(planner, 61.8) == 0.5
+    assert np.isclose(stretch_length(planner, 20.0), 2.0) and tag_seconds(planner, 20.0) == 0.5
+    fixed = replace(planner, change_stretch=6.0, change_tag_seconds=0.8)
+    assert stretch_length(fixed, 20.0) == 6.0 and tag_seconds(fixed, 20.0) == 0.8

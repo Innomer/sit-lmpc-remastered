@@ -16,6 +16,24 @@ import numpy as np
 NORMAL, CONSERVATIVE, NEW = 0, 1, 2
 
 
+def stretch_length(config, track_length):
+    """Stretch length for change detection and the safe-set cap: planner.change_stretch if set, else track length / 15
+    clipped to [2, 10] m (10 m on Spielberg, about 4 m on a 60 m track, 2 m on a 30 m one)."""
+    value = getattr(config, "change_stretch", None)
+    if value:
+        return float(value)
+    return float(np.clip(float(track_length) / 15.0, 2.0, 10.0))
+
+
+def tag_seconds(config, track_length):
+    """Change-detection tag window: planner.change_tag_seconds if set, else 1.0 s, or 0.5 s when stretches are
+    under 5 m (on a short track a 1 s prediction spans several stretches)."""
+    value = getattr(config, "change_tag_seconds", None)
+    if value:
+        return float(value)
+    return 0.5 if stretch_length(config, track_length) < 5.0 else 1.0
+
+
 class ChangeMonitor:
     def __init__(self, track_length, stretch=10.0, window=10, ratio=3.0, floor=0.05, history_laps=5, new_laps=2,
                  speed_factor=None, speed_step=0.05, scope="track", global_share=0.5, global_min=8,

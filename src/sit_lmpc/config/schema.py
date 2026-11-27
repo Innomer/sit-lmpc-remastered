@@ -42,6 +42,7 @@ class SimulationConfig:
     mass_ratio: float = 1.0
     initial_speed: float = 7.0
     max_laps: int = 8
+    retry_speed: float | None = None
     max_steps: int = 100000
     seed_mode: str = "auto"
     seed: int | None = None
@@ -212,7 +213,8 @@ class PlannerConfig:
     condition_tag: str = "readout"
     condition_fallback: str = "closest"
     change_detection: bool = False
-    change_stretch: float = 10.0
+    change_stretch: float | None = None
+    change_tag_seconds: float | None = None
     change_window: int = 10
     change_ratio: float = 3.0
     change_floor: float = 0.05
@@ -472,7 +474,7 @@ class ExperimentConfig:
             raise ValueError("planner.change_detection needs planner.dynamics.backend rssm or st")
         if p.change_safe_set not in ("laps", "tag"):
             raise ValueError("planner.change_safe_set must be laps or tag")
-        if p.change_detection and not (p.change_stretch > 0 and p.change_window > 0 and p.change_ratio > 0
+        if p.change_detection and not ((p.change_stretch is None or p.change_stretch > 0) and p.change_window > 0 and p.change_ratio > 0
                                        and p.change_floor >= 0 and p.change_new_laps > 0 and p.change_conservative_laps > 0):
             raise ValueError("planner.change_* settings must be positive")
         if p.change_speed not in (None, "fixed", "probe"):

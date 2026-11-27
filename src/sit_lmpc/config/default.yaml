@@ -44,6 +44,7 @@ simulation:
   friction: 0.5  # Actual Gym friction mu; positive and independent of the predictor/bank; never given to the belief learner.
   mass_ratio: 1.0  # Actual Gym mass divided by nominal 1225.88785 kg; positive, simulator-only, with yaw inertia unchanged as in the v2 training data.
   initial_speed: 10.0  # Starting speed and MPPI tracking target in m/s; > 0. Resume keeps the saved vehicle velocity but uses this new tracking target.
+  retry_speed: null  # Retry mode (planner.sit_lmpc_mode false): after a crash the car restarts at the start line; null keeps the speed the crashed attempt started with, a number restarts at that speed (0 = from standstill, steering, yaw rate and slip zeroed).
   max_laps: 100  # Total successful + physically failed trials, including restored trials; must exceed checkpoint progress on resume, but may be below the old limit.
   max_steps: 100000  # Total control-step cap, including restored steps; must exceed checkpoint progress on resume, but may be below the old limit.
   seed_mode: auto  # [auto, fixed] auto generates a fresh master seed; fixed reuses simulation.seed.
@@ -155,7 +156,7 @@ planner:
   condition_tau: 1.0  # State mode: forgetting time constant (s) of the confidence-weighted current grip estimate.
   condition_tag: readout  # [readout, probe, bicycle_error] what tags stored states (backend rssm, state mode): readout = the RSSM's grip read-out from c; probe = a grip probe on (h, d) (planner.dynamics.rssm_grip_probe); bicycle_error = the nominal bicycle model's 1.0 s position error ending at that step (model-agnostic; larger = worse). The current value is the median of the last 2 s.
   change_detection: false  # Safe set v2 (backend rssm): detect a condition change live from the nominal bicycle model's 1.0 s position error and react within the lap (sit_lmpc.planners.change_monitor).
-  change_stretch: 10.0  # Track stretch length (m) for per-stretch history and modes.
+  change_stretch: null  # Track stretch length (m) for per-stretch history, modes and the safe-set cap. null: track length / 15 clipped to [2, 10] m (10 m on Spielberg, 4.1 m on the Levine sim map).
   change_window: 10  # Steps in the live median that is compared with the stretch's history.
   change_ratio: 3.0  # A change is flagged when the live median exceeds change_ratio x the stretch's history median ...
   change_floor: 0.05  # ... and this floor (m). The same test decides, when a stretch is driven after a change, whether it still looks changed.
@@ -182,6 +183,7 @@ planner:
   change_scale_safe_set: true  # After a detection, stored pre-change states on stretches not yet judged or judged changed enter the hull with their speed scaled by that stretch's cap factor (change_speed_factor where there is no cap), so the safe set and the caps agree; laps driven after the change are not scaled. Nothing changes before a detection.
   speed_diverse_factors: [0.9, 0.75, 0.6]  # Every step, final-pick candidates that are last step's shifted plan with its speed profile scaled by these factors (steering kept, acceleration recomputed within limits); scored like any other candidate. [] disables.
   safe_set_cap_laps: 4  # Safe-set cap: per stretch (change_stretch), only the newest this-many stored laps plus the lap with the lowest mean speed on that stretch enter the hull and the value training data; after a detected change also every lap driven after it and the conservative fallback laps. 0 keeps everything. Bounds planning time and value training as laps accumulate.
+  change_tag_seconds: null  # Change-detection tag window (s): the bicycle model's position error over this prediction time. null: 1.0 s, or 0.5 s when stretches are under 5 m.
   change_breakdown: false  # Log the final-pick cost breakdown of every candidate each learned step (candidate_breakdown.npz).
   condition_fallback: closest  # [closest, newest] when fewer than condition_min_laps laps match on a stretch: take the closest-tagged laps, or the newest laps.
   safe_set_min_states: 0  # Nonnegative integer; 0 disables the state-count minimum. Shared by controller safe-set retention and fixed-step NF training history. Keep at least safe_set_size laps and add older successful laps to reach this many unique states; NF uses all retained states and repeats passes to reach steps.

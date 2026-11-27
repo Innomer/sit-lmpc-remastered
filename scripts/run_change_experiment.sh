@@ -13,7 +13,7 @@ source /opt/ros/jazzy/setup.bash
 source ~/sim_ws/install/setup.bash
 set -u
 export ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-77}
-out=results/Spielberg/$name
+out=results/${RESULTS_MAP:-Spielberg}/$name
 mkdir -p "$out"
 PYTHONPATH=~/sim_ws/src/f1tenth_gym_ros:${PYTHONPATH:-} ~/sim_ws/.venv/bin/python -m f1tenth_gym_ros.gym_bridge \
   --ros-args -r __node:=bridge --params-file ${BRIDGE_CONFIG:-configs/ros-bridge-lockstep-sensors.yaml} > "$out.bridge.log" 2>&1 &
