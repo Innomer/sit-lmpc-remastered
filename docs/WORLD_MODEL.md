@@ -1,6 +1,11 @@
-# Physics-grounded world model: architecture and data flow
+# Physics-grounded adaptive dynamics model (v3 encoder): architecture and data flow
 
-ESE 6150 Team 8. This is our method, as implemented on `ros-sim`. Code: `src/sit_lmpc/world/`
+> **Earlier model, kept as a baseline.** Since 2026-11-21 the method on `world-model` is the RSSM world model
+> (`docs/WORLD_MODEL_RSSM.md`; model in use rssm-v11). This document describes the v3 encoder model as built on
+> `ros-sim`. It is still used for comparisons (offline 1.5 s errors, crash replays). Learned parts: the residual
+> network, z prior, transition noise, encoder and observation decoder. Fixed: the bicycle model and the EKF.
+
+ESE 6150 Team 8. As implemented on `ros-sim`. Code: `src/sit_lmpc/world/`
 (`data.py`, `model.py`, `train.py`, `ekf.py`, `evaluate.py`, `runtime.py`, `readout.py`) and the residual transition in `vendor/dyna-dist`.
 Status 2026-11-17: transition trained; encoder v3 trained and evaluated (`results/world-eval-v3`); connected to the
 planner with a condition-aware safe set and tested in the sim (`results/world-closed-loop`). Car integration not yet run.
@@ -119,7 +124,7 @@ for the exact form.
 
 The planner samples $z^{(j)} \sim q(z_t)$ for $j = 1..N$ particles and rolls the candidate control sequences through
 $F(\cdot, \cdot, z^{(j)})$ from $\hat x_t$, after delay compensation. The SIT-LMPC cost (value function, safe-set hull,
-track bounds) and the chance constraints then work across the particles exactly as with the TAs' BNN.
+track bounds) and the chance constraints then work across the particles exactly as with the upstream Gaussian BNN.
 
 Code: `dyna_dist.inference.posterior._function_step(model, x, u, z)` is $F$; `sit_lmpc/world/model.py: world_loss` is
 $\mathcal{L}$.
@@ -240,7 +245,7 @@ the encoder and decoder offline, with the transition frozen and sim batches mixe
 | Check | Compared |
 |---|---|
 | State estimation RMSE (steering, speed, yaw rate, slip, lateral velocity) | encoder vs EKF vs kinematic slip |
-| 1 s prediction error (position, heading, speed, yaw rate) | bicycle, TAs' BNN prior, our transition with prior z, ours (encoder state + z), ours from the true state |
+| 1 s prediction error (position, heading, speed, yaw rate) | bicycle, upstream BNN prior, our transition with prior z, ours (encoder state + z), ours from the true state |
 | Adaptation | prediction error vs time since a friction/mass change or patch |
 | z separation | linear fit z → friction, mass on train cars; R² on test cars |
 
