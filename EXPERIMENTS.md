@@ -63,6 +63,8 @@ Common setup unless stated otherwise:
 | 42 | LMPC structure fixes (previous plan, safe set in the hard tier, body-corner limit, footprint filter); retry mode | `91209ca`–`9d53ae4` | success: boxed-in stop gone with no change |
 | 43 | Retry mode, harsh changes, all controllers; why v11 does not slow down; learned change handling | `36f35b0`–`0c3cb2d` | failure: every attempt after a change crashes; the candidates hold no slow plan and the model sees no danger |
 | 44 | Speed-scaled safe set after a detection; reduced-speed candidates | `7e73128` | partial: the hand-written reaction finishes laps again (9 after a grip drop), crashes return as caps rise; plain v11 and the learned version still crash on almost every attempt |
+| 45 | Safe-set cap, short-track settings, Levine sim check | `7834c82`–`ac8277f6` | partial: planning p95 78.6 ms with the cap; on Levine learned laps slow down every lap, v11 crashes after standstill restarts |
+| 46 | Car port (`irl-world-model`) and ROS-sim dry runs of the car configs | `9d9f5ad1`, `d1b8d583` (car branch) | success after fixes: five car-only bugs found and fixed; the final dry run drives clean with a stop after every lap |
 
 Main conclusions so far:
 
@@ -1450,3 +1452,38 @@ Report-script fixes in this entry: wall clearance is now measured on each run's 
 ### Videos
 
 Whole-run top-down videos (4× sim speed, with the grip estimate against the true grip): `results/videos-retry/` for the entry-44 runs (grip drop: v11, v11 + reaction, v11 + learned; patch: v11 + reaction) and the cap check. `scripts/render_run_video.py` now reads the track from the run's config.
+
+## 46. Car port and ROS-sim dry runs of the car configs
+
+Branch `irl-world-model` (from `irl`, which stays untouched; `world-model` merged in). Brought over: rssm-v11 and its
+config (`models/rssm-v11/`), every planner fix, change detection and the learned change handling (configurable),
+the hand-written reaction (off by default), retry mode with operator-gated restarts. The car's real sensors feed
+v11's encoder in the sim's format and units (`RosCar.encoder_observation`: IMU ax, ay, yaw rate, wheel speed, PF body
+velocities, last control; `lidar_scan`: 1080 beams over 270°). Car configs `configs/car/levine-{bicycle,v11,v11-learned}.yaml`
+(+ `-bicycle-slow` at 2 m/s): 7 m/s cap, Levine track, track-length stretches, 0.2 s delay compensation. Tools:
+`scripts/jetson_check.sh` (GPU + planning time per config, suggested cuts), `scripts/bag_check.py` (v11 vs bicycle on a
+recorded bag), `scripts/car_check.py` (sensor units/signs vs v11's training data), `scripts/make_track.py --plot`.
+Steps: `docs/CAR_RUNBOOK.md`.
+
+**Dry runs.** The car configs ran against the ROS sim bridge in real time on the Levine sim map
+(`configs/car/dryrun-levine-*.yaml`), the same code path as on the car. Every run found something the lockstep sim
+cannot show, because there the sim waits for the controller:
+
+| Found | Effect | Fix |
+|---|---|---|
+| a stop after moving ended the whole run (`speed_too_low`) | no retry on the car | in retry mode it is a failed attempt ("stopped"); the car waits for go |
+| the restart launched at the failed lap's line speed | 7 m/s from standstill within 2 m | `simulation.retry_speed: 1.5` in the car configs |
+| the lap checkpoint waited for value training | control loop frozen 2.8 s at 7 m/s, car into the wall | see the last row |
+| a stale obstacle flag | false `launch_obstacle` stop after a restart | cleared when a start is accepted |
+| the first learned step compiled the planner | 26 s without commands while driving | planner and value training compiled at startup (throwaway planner on centreline laps) |
+| training in the same process | control-loop pauses of 0.26–0.64 s; at 7 m/s the warm-up steering hit full lock, or the watchdog's hard stop spun the car | **the car stops after every lap** (`car.stop_each_lap`, 3 m/s² along the centreline), trains and saves while standing, then waits for go |
+
+Final dry run (`results/dryrun/dry-v11`): 5 warm-up laps and the first learned lap clean (15.2–15.6 s), 0 watchdog
+stops, planning max 62 ms, longest pause while moving 0.17 s (at 1.5–2.4 m/s), off-track stop → wait → restart works.
+`bag_check.py` runs on its bag (stops and carries back to the line skipped); in the sim the bicycle model is the
+simulator's own model, so v11 vs bicycle only means something on a real car bag. `car_check.py` and the Jetson check
+need the car. All dry runs: `results/dryrun/README.md`.
+
+**Verdict:** the car code path works end to end in the ROS sim. Open: everything on the real car (sensor units and
+signs, Jetson planning time, v11's accuracy on real data), and the general limits from entry 45.
+
