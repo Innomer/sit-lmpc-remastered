@@ -31,9 +31,10 @@ SCENARIOS = {"grip055": ("grip drop (μ 0.55)", None), "patch045": ("patch (μ 0
 MAP = Path(__file__).resolve().parent.parent / "src/sit_lmpc/track/maps/Spielberg/Spielberg_map.yaml"
 
 
-def wall_distance_field():
-    info = yaml.safe_load(MAP.read_text())
-    image = np.asarray(Image.open(MAP.parent / info["image"]).convert("L"), dtype=float) / 255.0
+def wall_distance_field(map_yaml=MAP):
+    map_yaml = Path(map_yaml)
+    info = yaml.safe_load(map_yaml.read_text())
+    image = np.asarray(Image.open(map_yaml.parent / info["image"]).convert("L"), dtype=float) / 255.0
     occupied = (1.0 - image) > info["occupied_thresh"]
     field = distance_transform_edt(~occupied) * info["resolution"]
     return field, info["resolution"], np.asarray(info["origin"][:2]), image.shape[0]

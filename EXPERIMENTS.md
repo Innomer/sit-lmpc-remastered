@@ -1395,3 +1395,58 @@ No crashes before the change in any run; lap times before the change as in entry
 4. **Braking plans are still never chosen** (0 in every reaction run). The cap is in the safety tier, below the hard tier; a hard braking plan leaves even the scaled safe set.
 5. **The learned version detects the change and trains its tag value** (grip drop: all 35 stretches marked changed; patch: 9–11 correct plus 5 false stretch flags at 4, 12, 18, 23, 32), but it finishes only 3 laps after the change in each scenario. It has no hand-written speed rule, so its slowdown comes only from the scaled safe set.
 6. **Planning time:** the 25-attempt change runs show p95 92–106 ms for v11 (the cap on the safe set comes next). The grip-drop v11 run's p95 of 176 ms comes from two laps before the change (attempts 7–8, p95 190–205 ms); every other attempt is 85–105 ms. That spike is not explained.
+
+## 45. Safe-set cap, short-track settings, Levine sim check
+
+### Planning time: what grows, and the safe-set cap
+
+Profile of plain v11 over 25 attempts with no change (`rt-none-v11-25`, before the cap):
+- **Value retraining at the lap line.** The value function is retrained for 300 epochs on every stored lap at the start of each lap, in a background thread on the GPU. The gradient steps per round grow with the data (600 after lap 1, about 10,000 after lap 24); each round takes 6–10 s, which covers the first ~100 control steps of the next lap. p95 over those steps rises from 72 to 132 ms as laps accumulate. Over the rest of the lap it stays at 72–80 ms.
+- **The hull.** Points per local window grow from 82 to 378 (5 → 24 stored laps); the build goes from 2.1 to 4.8 ms (median, host) and the facets the GPU checks every candidate against go from about 1,350 to 2,165. The median planning time creeps up about 8 ms.
+- **Not the cause:** the safe-set selection itself (under 0.1 ms).
+
+**Cap** (`planner.safe_set_cap_laps`, default 4): per stretch, only the newest 4 stored laps plus the laps with the highest and the lowest mean speed on that stretch enter the hull and the value training data. After a detected change, every lap driven since and the conservative fallback laps are kept as well. The reduced-speed candidates are now built on the device, with no host round trip.
+
+| Plain v11, no change, 25 attempts | Cap off | Cap: newest 4 + slowest | Cap: newest 4 + fastest + slowest (default) |
+|---|---|---|---|
+| Planning p50 / p95, learned steps | 69.6 / 94.5 ms | 57.2 / 75.3 ms | **63.1 / 78.6 ms** |
+| p95 in the first 100 steps of each lap | 119.3 ms | 84.5 ms | 81.4 ms |
+| p95 over laps 21–25 | 112.4 ms | 75.6 ms | 73.2 ms |
+| Learned laps, mean of the first 5 → last 5 | 38.64 → 39.40 s | 39.18 → **42.04 s** | 39.18 → 39.20 s |
+| Crashes | 0/25 | 0/25 | **2/25** (spins at s ≈ 109 m, attempts 16 and 19) |
+
+- **Fastest lap added:** the rule as first specified (newest 4 + slowest) made every learned lap slower, because it drops the fastest laps that LMPC learns from. Keeping the fastest lap per stretch holds lap times flat.
+- **Crashes:** the two spins are at the corner where the car used to get boxed in. No other no-change v11 run since entry 42 crashed there (0 of 105 attempts). One run cannot separate a cap effect from chance.
+
+### Short-track settings (general, track-length based)
+
+- `planner.change_stretch: null` (default): stretch length = track length / 15, clipped to [2, 10] m. Spielberg 35 × 9.81 m (unchanged), Levine sim map (61.8 m) 15 × 4.12 m, a 30 m track 15 × 2 m.
+- `planner.change_tag_seconds: null` (default): change-detection tag window 1.0 s, or 0.5 s when stretches are under 5 m.
+- `simulation.retry_speed`: retry restarts at a given speed (0 = from standstill); null keeps the old behaviour (the speed the attempt started with).
+
+### Levine sim check
+
+Retry mode, restarts from standstill, 7 m/s cap (warm-up `max_speed` 7 and `safety_speed_cap` 7), half-width 0.57 m (5th-percentile wall distance; narrowest 0.40 m), one run each, 20 attempts; patch μ 0.6 at s = 15.5–21.5 m (6 m, about 10% of the track) after 8 laps. Configs `configs/levine/` (config changes only), results `results/Levine/`, report `results/retry/levine.json`.
+
+| Run | Laps completed / attempts | Crashes | Lap times (s) | Min wall clearance per lap | Planning p50 / p95 |
+|---|---|---|---|---|---|
+| no change, bicycle | 7 / 8, then stopped (`speed_too_low`) | 0 | 9.8, 9.7, 9.6, 9.7, 9.7 (warm-up), 11.7, 12.3 | 0.11–0.20 m | 38.4 / 52.7 ms |
+| no change, v11 | 6 / 8, then the run ended with an error | 1 (wall, s = 39.4) | warm-up as above, 11.5 | 0.11–0.20 m | 49.5 / 69.6 ms |
+| no change, v11 + learned | 9 / 20 | 11 (wall at s ≈ 39.5 ×7, at 47; spin at s ≈ 60 ×3) | warm-up, 11.0, 13.6, 17.8, 17.7 | 0.0–0.40 m | 51.8 / 70.6 ms |
+| patch, bicycle | 8 / 9, then stopped (`speed_too_low`) | 0 | warm-up, 11.7, 12.2, 16.3 (after the patch) | 0.07–0.20 m | 38.3 / 51.4 ms |
+| patch, v11 *(patch never applied)* | 7 / 20 | 13 (wall at s ≈ 39.5 ×7, 58–60 ×6) | warm-up, 11.2, 13.3 | 0.05–0.45 m | 47.9 / 60.1 ms |
+| patch, v11 + learned *(patch never applied)* | 10 / 20 | 10 (wall at s ≈ 39.6 ×6, spin at s ≈ 59–60 ×4) | warm-up, 11.1, 12.4, 18.3, 16.8, 17.1 | 0.0–0.35 m | 51.3 / 75.6 ms |
+
+What the runs show:
+1. **Learned laps get slower every lap, for every controller.** Warm-up 9.7 s at 6.4–6.6 m/s; learned laps 11–13 s, then 16–18 s. The bicycle runs slow down until the runner stops them (`speed_too_low`). This is the same stall as on Spielberg since entry 42, where learned laps stay flat instead of improving, only stronger on this short, narrow track. The likely cause is the safe set in the hard tier of the final pick (plans ending slightly outside the stored laps always lose); its test is pending, after the car runs.
+2. **v11 crashes after standstill restarts**, at the corner entry at s ≈ 39.5 m (wall) and near the lap line at s ≈ 60 m (spins). The first crash in each v11 run happened while flying; the later ones all start from rest.
+3. **The v11 no-change run ended with "not enough local safe-set points".** After a restart from rest the local window covers only the distance the car can travel in one plan at 0 m/s (a few cm). On a 62 m track the stored laps have about one state every 0.65 m, so the window held fewer than 6 points, and the planner raised an error instead of widening the window. This is a general weakness (any short track, any restart from rest); it is not fixed here.
+4. **The patch was never applied in either v11 run.** The bridge's lap counter goes back to 0 at every reset, and after the standstill restarts on this map it did not count the following laps, so the scheduler never reached lap 8. Only the bicycle patch run, with no crash before lap 8, got its patch (lap 8: 16.3 s). Both v11 patch runs are effectively no-change runs. Detection delay and recovery on the patch could therefore not be measured.
+5. **False detections:** in the no-change v11 + learned run, 2 detections (stretches 14 and 1, laps 8–9), at the lap line where the spins happen. They detect the crashes, not a grip change.
+6. **Planning time on Levine** is well inside the budget: p95 52–76 ms.
+
+Report-script fixes in this entry: wall clearance is now measured on each run's own map (the Levine numbers first came out against the Spielberg map).
+
+### Videos
+
+Whole-run top-down videos (4× sim speed, with the grip estimate against the true grip): `results/videos-retry/` for the entry-44 runs (grip drop: v11, v11 + reaction, v11 + learned; patch: v11 + reaction) and the cap check. `scripts/render_run_video.py` now reads the track from the run's config.

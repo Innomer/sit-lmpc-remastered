@@ -1,0 +1,17 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Levine/lv-none-v11-learned",
+  "files": {
+    "state.json": "508dd9695beb4b816566be6c18b2c49839848ee3bce8a93037402f87178436ec",
+    "events.jsonl": "c0f87673cc9e8feff92cec3ed5f1ec5a70d420812447946fadcda1fe5bb11c9a",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "1d1c90d04eb75043b09068769172ae6b63b0a56f26d22c46919c017053cc7f15",
+    "config.yaml": "a31c5195220e8d475273004cccf2317d9aa12397f49de2eca3443adeb9da9464",
+    "map/levine_sim_map.yaml": "44d7f788caed269757ded80dabc347f6c5cd1b4a6a19ac40b53daec742108abd",
+    "map/levine_sim_map.png": "f5983fdc8e1a2395f533502a582089d0c0b76835523f4d21a00982da4af2b29e",
+    "map/levine_sim_centerline.csv": "b162cd63c4e99a1bf16a45359614751918a2025d7b1a144cdb639532cce359f4",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "3513fc074ff05f52f0b98a318ae013ec96b001e239faad1e360c9e43c0c8746d"
+  }
+}

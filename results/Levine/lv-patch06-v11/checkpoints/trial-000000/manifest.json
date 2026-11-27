@@ -1,0 +1,17 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Levine/lv-patch06-v11",
+  "files": {
+    "state.json": "6e276f01e5a189de4b360a69b90d83e5a1ffcb91eef03e1c6392b83af49c405b",
+    "events.jsonl": "016af2f57bcd1ca240dc6c85fa500473dde2dfff09f1c25e19803e5c6c2850c4",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "10ef389314429a507806d2d812a65e9dffe4786974128d79c73ee0770ac1a87a",
+    "config.yaml": "38f63c65d90e0f43b465378205f06d9852da7865f22b347345a640f2b71b20a5",
+    "map/levine_sim_map.yaml": "44d7f788caed269757ded80dabc347f6c5cd1b4a6a19ac40b53daec742108abd",
+    "map/levine_sim_map.png": "f5983fdc8e1a2395f533502a582089d0c0b76835523f4d21a00982da4af2b29e",
+    "map/levine_sim_centerline.csv": "b162cd63c4e99a1bf16a45359614751918a2025d7b1a144cdb639532cce359f4",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "ddf9c3d32eac04350d2e90345b2ff95f6ff184a20b9c379f1d6b002f5cce6c0b"
+  }
+}

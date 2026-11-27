@@ -1,0 +1,17 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Levine/lv-none-bicycle",
+  "files": {
+    "state.json": "fc8859139bfe3ecc3d16791a7f466006d3a37ca282681d91537938ad3db9a465",
+    "events.jsonl": "bf671bf599086f2e3d8f6f5783b1fc612c7cfc29fcaf2a0054f2c02137e54808",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "751ea7c916528ec80941c78c646ea9e767938b5c830893633b4394839b1d1521",
+    "config.yaml": "1642b49097c553577cf23148aaa7fdf1b849d3fafef5d7ef689a8caa8b0976f4",
+    "map/levine_sim_map.yaml": "44d7f788caed269757ded80dabc347f6c5cd1b4a6a19ac40b53daec742108abd",
+    "map/levine_sim_map.png": "f5983fdc8e1a2395f533502a582089d0c0b76835523f4d21a00982da4af2b29e",
+    "map/levine_sim_centerline.csv": "b162cd63c4e99a1bf16a45359614751918a2025d7b1a144cdb639532cce359f4",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "bfd4b95dcdadcdc047065e6211c444d4eb192ded0b6a77843818e7a7205c5f7f"
+  }
+}

@@ -1,0 +1,22 @@
+[INFO] [1795814879.316855473] [bridge]: Loading map from path: /home/mann-bhanushali/sim_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/maps/levine.yaml
+[INFO] [1795814879.573384574] [bridge]: Start poses: ego_racecar=(0.03, -0.07, 0.01)
+[INFO] [1795814879.916864272] [bridge]: Running in synchronous mode. Simulation will step only on new /drive messages.
+[INFO] [1795814879.926107170] [bridge]: Using simulation time. Will publish /clock topic. Drive and odom will be as fast as possible.
+[INFO] [1795814879.932468160] [bridge]: simulated sensors on: {'imu_offset_x': 0.05, 'imu_offset_y': 0.01, 'imu_yaw_misalignment': 0.01, 'accel_bias_x': 0.2, 'accel_bias_y': -0.15, 'accel_noise': 0.3, 'gyro_bias': 0.01, 'gyro_noise': 0.01, 'gyro_scale': 1.01, 'wheel_scale': 1.03, 'wheel_noise': 0.05, 'pose_noise': 0.02, 'yaw_noise': 0.01, 'pose_lag': 0.05}
+[INFO] [1795814908.187989253] [bridge]: ego_racecar completed lap 1, last lap 9.75 s
+[INFO] [1795814910.884509888] [bridge]: ego_racecar completed lap 2, last lap 9.68 s
+[INFO] [1795814914.736857248] [bridge]: ego_racecar completed lap 3, last lap 9.68 s
+[INFO] [1795814918.941137688] [bridge]: ego_racecar completed lap 4, last lap 9.69 s
+[INFO] [1795814922.308688575] [bridge]: ego_racecar completed lap 5, last lap 9.68 s
+[INFO] [1795814936.318823928] [bridge]: ego_racecar completed lap 6, last lap 11.04 s
+[INFO] [1795814946.803431029] [bridge]: ego_racecar completed lap 7, last lap 12.43 s
+[WARN] [1795814954.961518468] [bridge]: ego_racecar hit something at (-12.68, 8.11)
+[WARN] [1795814956.393226287] [bridge]: ego_racecar hit something at (-3.32, -0.66)
+[WARN] [1795814957.605626152] [bridge]: ego_racecar hit something at (-3.27, 0.39)
+[WARN] [1795814983.992445021] [bridge]: ego_racecar hit something at (-12.70, 8.12)
+[WARN] [1795814984.851300644] [bridge]: ego_racecar hit something at (-1.49, -0.67)
+[WARN] [1795815006.822797424] [bridge]: ego_racecar hit something at (-12.74, 8.11)
+[WARN] [1795815007.580678177] [bridge]: ego_racecar hit something at (-1.95, 0.40)
+[WARN] [1795815033.105693152] [bridge]: ego_racecar hit something at (-12.64, 8.11)
+[WARN] [1795815042.979990414] [bridge]: ego_racecar hit something at (-12.70, 8.11)
+[WARN] [1795815044.313294444] [bridge]: ego_racecar hit something at (-1.38, 0.35)

@@ -1,0 +1,89 @@
+{
+  "status": "speed_too_low",
+  "laps": 8,
+  "successful_laps": 8,
+  "trials": 8,
+  "history_laps": 0,
+  "attempts": 9,
+  "failed_attempts": 0,
+  "incomplete_attempts": 1,
+  "applied_steps": 909,
+  "learned_steps": 424,
+  "training_generations": 7,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 0,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": null,
+  "predictor_friction": 1.0489000082015991,
+  "dynamics_predictor": {
+    "kind": "single",
+    "friction": 1.0489000082015991
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.05,
+    "lambda_count": 16,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 63.61220259498805,
+  "partial_lap": {
+    "file": "partial_lap.npz",
+    "lap": 9,
+    "completed": false,
+    "termination_reason": "speed_too_low",
+    "steps": 22,
+    "duration": 2.2000000000000006,
+    "lap_time": null,
+    "mean_speed": 2.9735002517700195,
+    "safe_set_max": 0.0,
+    "safe_set_mean": 0.0,
+    "boundary_max": 0.0,
+    "boundary_mean": 0.0,
+    "actual_boundary_max": 0.0,
+    "actual_boundary_mean": 0.0,
+    "out_of_bounds_steps": 0,
+    "max_abs_lateral_offset": 0.1652248650789261,
+    "nonfinite_lateral_steps": 0,
+    "attempt_id": 9,
+    "outcome": "incomplete",
+    "lambda_summary": {
+      "steps": 22,
+      "terms": {
+        "hull": {
+          "mean": 2.6136363636363638,
+          "max": 12.5,
+          "steps": 22
+        },
+        "boundary": {
+          "mean": 1.0795454545454546,
+          "max": 8.75,
+          "steps": 22
+        }
+      }
+    },
+    "safety_summary": {
+      "steps": 22,
+      "speed": {
+        "steps_any_candidate": 0.5,
+        "mean_share_of_candidates": 0.0015980113636363637,
+        "steps_chosen_plan": 0.0
+      }
+    }
+  },
+  "device_memory": {
+    "bytes_in_use": 2418688,
+    "peak_bytes_in_use": 334756352,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 6167724032
+  }
+}

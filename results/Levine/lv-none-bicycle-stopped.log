@@ -1,0 +1,53 @@
+[start] learning | seed=1 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0.031, -0.0691, 0, 5, 0.009685, 0, 0 | reached=0.1021, -0.06841, 0, 5, 0.009685, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[attempt] #1 success | 98 steps
+[lap] trial 1 | 9.8 s | avg speed 6.38 m/s | mppi
+[control_step_timing] steps=100
+[error] type=ExternalShutdownException | message=
+[attempt] #2 incomplete | 38 steps | error
+[partial_lap] attempt_id=2 | steps=38 | termination_reason=error
+[finish] status=error | trials=1 | successful_laps=1 | failed_attempts=0 | applied_steps=136 | training_generations=0 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Levine/lv-none-bicycle
+[control_timing_summary] steps=136 | control_period_seconds=0.1 | stepping=lockstep
+Traceback (most recent call last):
+  File "/home/mann-bhanushali/sim_ws/.venv/bin/sit-racecar", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/cli/racecar.py", line 124, in main
+    execute()
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/cli/racecar.py", line 116, in execute
+    result = run(config, tracking_only=tracking_only)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/experiments/runner.py", line 215, in run
+    return _run(config, tracking_only, keyboard_cleanup)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/experiments/runner.py", line 1631, in _run
+    (next_cartesian, next_frenet), control, terminated, truncated, info = simulator.step(
+                                                                          ^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/adapters/ros_f1tenth.py", line 418, in step
+    self._wait_for_advance(self.message_dt)
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/adapters/ros_f1tenth.py", line 211, in _wait_for_advance
+    self._wait_for_odom(
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/adapters/ros_f1tenth.py", line 205, in _wait_for_odom
+    self._spin(0.02)
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/adapters/ros_f1tenth.py", line 198, in _spin
+    self.rclpy.spin_once(self.node, timeout_sec=timeout)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/__init__.py", line 226, in spin_once
+    executor.spin_once(timeout_sec=timeout_sec)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 926, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 907, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 877, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 785, in _wait_for_ready_callbacks
+    raise ExternalShutdownException()
+rclpy.executors.ExternalShutdownException

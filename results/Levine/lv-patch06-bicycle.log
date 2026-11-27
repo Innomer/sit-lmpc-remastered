@@ -1,0 +1,55 @@
+[start] learning | seed=1 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0.031, -0.0691, 0, 5, 0.009685, 0, 0 | reached=0.1021, -0.06841, 0, 5, 0.009685, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[attempt] #1 success | 98 steps
+[lap] trial 1 | 9.8 s | avg speed 6.38 m/s | mppi
+[control_step_timing] steps=100
+[attempt] #2 success | 97 steps
+[lap] trial 2 | 9.7 s | avg speed 6.407 m/s | mppi
+[safe_set_retention] laps=1 | states=131 | min_states=1000000
+[control_step_timing] steps=200
+[attempt] #3 success | 96 steps
+[lap] trial 3 | 9.6 s | avg speed 6.401 m/s | mppi
+[safe_set_retention] laps=2 | states=228 | min_states=1000000
+[training] generation=1 | epochs=300 | loss=-1.16 | gradient_steps=300
+[control_step_timing] steps=300
+[attempt] #4 success | 97 steps
+[lap] trial 4 | 9.7 s | avg speed 6.406 m/s | mppi
+[safe_set_retention] laps=3 | states=325 | min_states=1000000
+[training] generation=2 | epochs=300 | loss=-0.1895 | gradient_steps=900
+[control_step_timing] steps=400
+[attempt] #5 success | 97 steps
+[lap] trial 5 | 9.7 s | avg speed 6.408 m/s | mppi
+[safe_set_retention] laps=4 | states=422 | min_states=1000000
+[training] generation=3 | epochs=300 | loss=-0.1677 | gradient_steps=1500
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Levine/lv-patch06-bicycle/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[training] generation=4 | epochs=300 | loss=-0.5077 | gradient_steps=2400
+[learned_controller_started] step=485 | value_generation=3 | hull_facets=2254
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[attempt] #6 success | 117 steps
+[lap] trial 6 | 11.7 s | avg speed 5.282 m/s | lmppi | lambda_ss mean=6.56 max=18.75 | lambda_boundary mean=3.141 max=18.75
+[safe_set_retention] laps=5 | states=525 | min_states=1000000
+[training] generation=5 | epochs=300 | loss=-1.22 | gradient_steps=3300
+[control_step_timing] steps=700
+[attempt] #7 success | 122 steps
+[lap] trial 7 | 12.2 s | avg speed 5.013 m/s | lmppi | lambda_ss mean=3.76 max=18.75 | lambda_boundary mean=2.121 max=18.75
+[safe_set_retention] laps=6 | states=633 | min_states=1000000
+[training] generation=6 | epochs=300 | loss=-2.067 | gradient_steps=4200
+[control_step_timing] steps=800
+[attempt] #8 success | 163 steps
+[lap] trial 8 | 16.3 s | avg speed 3.765 m/s | lmppi | lambda_ss mean=1.756 max=18.75 | lambda_boundary mean=0.5368 max=12.5
+[safe_set_retention] laps=7 | states=773 | min_states=1000000
+[control_step_timing] steps=900
+[training] generation=7 | epochs=300 | loss=-2.04 | gradient_steps=5100
+[attempt] #9 incomplete | 22 steps | speed_too_low | lambda_ss mean=2.614 max=12.5 | lambda_boundary mean=1.08 max=8.75
+[partial_lap] attempt_id=9 | steps=22 | termination_reason=speed_too_low
+[finish] status=speed_too_low | trials=8 | successful_laps=8 | failed_attempts=0 | applied_steps=909 | training_generations=7 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Levine/lv-patch06-bicycle
+[control_timing_summary] steps=909 | control_period_seconds=0.1 | stepping=lockstep
