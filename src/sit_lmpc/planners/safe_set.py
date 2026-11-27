@@ -192,6 +192,15 @@ class PrecompiledHullEvaluator:
         return result
 
 
+def within_footprint_limit(frenet, corners, limit):
+    """Stored states whose body corners all stay within the track limit (same corner model as the planner)."""
+    frenet = np.asarray(frenet)
+    corners = np.asarray(corners, dtype=float)
+    psi = frenet[:, 4:5]
+    ey = frenet[:, 1:2] + corners[:, 0] * np.sin(psi) + corners[:, 1] * np.cos(psi)
+    return np.abs(ey).max(axis=1) <= limit
+
+
 class SafeSet:
     def __init__(self, planner, timestep, track_length, seed=0, randomness=None):
         self.config = planner
@@ -210,6 +219,7 @@ class SafeSet:
         self.condition = None
         self._array_cache = None
         self.change_monitor = None
+        self.footprint = None
         self.record_info = []
         self.pending_info = None
         self.previous_info = None
@@ -420,6 +430,8 @@ class SafeSet:
             inds = rng.choice(len(arr_f), self.config.safe_set_max_points, replace=False)
             arr_f, arr_c, tags, records = arr_f[inds], arr_c[inds], tags[inds], records[inds]
         indices = np.flatnonzero((arr_f[:, 0] > lo) & (arr_f[:, 0] < hi))
+        if self.footprint is not None:
+            indices = indices[within_footprint_limit(arr_f[indices], *self.footprint)]
         self.value_records = None
         if self.change_monitor is not None and self.change_monitor.active:
             indices = self.change_filter(indices, records, lo, hi)

@@ -58,6 +58,7 @@ def sample_actions(previous, key, config):
             * std
         )
         da = jnp.concatenate((da, tail), axis=1)
+    da = da.at[0].set(0.0)
     actions = jnp.clip(previous[None] + da, -1, 1)
     return da, actions
 
@@ -88,6 +89,7 @@ def sample_validity(previous, da, states, values, hull_distances):
 
 
 SOFT_TERMS = ("risk",)
+HARD_TIER = 1e7
 
 
 def boundary_margins(config):
@@ -99,6 +101,11 @@ def boundary_margins(config):
     if isinstance(margin, (int, float)):
         return np.linspace(margin / config.horizon, margin, config.horizon)
     return np.asarray(margin, dtype=float)
+
+
+def with_previous_plan(candidates, previous):
+    """Last step's plan, shifted by one step (zero-padded), as the last final-pick candidate."""
+    return candidates.at[-1].set(jnp.asarray(previous, candidates.dtype)[: candidates.shape[1]])
 
 
 def footprint_corners(length, width, offset):
@@ -366,7 +373,7 @@ def candidate_scores(frenet, hull_distances, boundary_limit, relaxation, termina
     boundary = jnp.abs(frenet[:, :, 1])
     boundary_sum = jnp.where(boundary > boundary_limit, boundary, 0).sum(axis=1)
     violation = jnp.where(hull_distances > relaxation, hull_distances, 0)
-    score = boundary_sum * 1000 + violation
+    score = (boundary_sum + violation) * HARD_TIER
     if safety is not None:
         score = score + safety * 1000
     valid = (jnp.all(jnp.isfinite(frenet), axis=(1, 2))
@@ -497,7 +504,8 @@ class LMPPI:
                                              config.footprint_offset)
         self.boundary = None
         self.breakdown_log = []
-        self.brake_counts = {"steps": 0, "chosen": 0}
+        self.brake_counts = {"steps": 0, "chosen": 0, "previous_chosen": 0}
+        self.clearance_counts = {"steps": 0, "changed": 0}
         self.brake_active = False
         if self.corners is not None or self.margins is not None:
             dtype = np.asarray(model.params).dtype if np.asarray(model.params).dtype.kind == "f" else np.float32
@@ -741,6 +749,8 @@ class LMPPI:
         speed = float(state[3])
         if not monitor.strong_ahead(frenet_state[0], speed * self.config.horizon * self.model.timestep, speed):
             return candidates
+        if len(candidates) <= count + 1:
+            return candidates
         profiles = np.asarray([[-1.0, -1.0], [-0.7, -0.7], [-0.4, -0.4], [-1.0, 0.0]])[:count]
         length = candidates.shape[1]
         half = length // 2
@@ -750,7 +760,7 @@ class LMPPI:
         brake = jnp.stack([steer, jnp.asarray(accel, candidates.dtype)], axis=-1)
         self.brake_active = True
         self.brake_counts["steps"] += 1
-        return candidates.at[-len(profiles):].set(brake)
+        return candidates.at[-len(profiles) - 1:-1].set(brake)
 
     def change_cap_weights(self, safe_set, rank):
         monitor = getattr(safe_set, "change_monitor", None)
@@ -770,6 +780,9 @@ class LMPPI:
                "hull": jnp.where(distances > self.config.safe_set_threshold, distances, 0), "safety": safety}
         for name, value in dict(safety_step_costs(frenet, self.config), **extra).items():
             out["term_" + name] = jnp.reshape(value, (len(frenet), -1)).sum(axis=1)
+        out["max_abs_slip"] = jnp.abs(frenet[:, :, 6]).max(axis=1)
+        if "clearance" in extra:
+            out["max_clearance_cost"] = jnp.reshape(extra["clearance"], (len(frenet), -1)).max(axis=1)
         monitor = getattr(safe_set, "change_monitor", None)
         if monitor is not None:
             caps = jnp.asarray(np.where(np.isfinite(monitor.caps), monitor.caps, 1e3), frenet.dtype)
@@ -1088,6 +1101,7 @@ class LMPPI:
                 **proposal_options
             )
         candidates = self.with_brake_candidates(candidates, safe_set, frenet_state, state)
+        candidates = with_previous_plan(candidates, previous)
         trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
         candidate_frenet = to_frenet(self.track, trajectories, indices, frenet_state[0])
         candidate_extra = self.model_safety_costs(state, candidates[:, : self.config.horizon])
@@ -1167,6 +1181,15 @@ class LMPPI:
             self.model.weights if hasattr(self.model, "weights") else None,
             active_lambdas, self.config, candidate_safety, boundary=self.boundary,
         )
+        if "clearance" in candidate_extra and not chance_active and not risk_active:
+            unranked = [value for name, value in candidate_extra.items()
+                        if name not in soft and name not in ("stretch_cap", "clearance")]
+            safety_without = total_safety(candidate_frenet, self.config, sum(unranked) if unranked else None).sum(axis=1)
+            if candidate_cap is not None:
+                safety_without = safety_without + candidate_cap.sum(axis=1) * self.config.change_cap_rank_weight / 1000.0
+            packet["no_clearance_index"] = select_candidate(
+                boundary_view(candidate_frenet, self.boundary), candidate_distances, self.config.boundary_limit,
+                self.config.safe_set_threshold, terminal_values, safety_without)[0]
         if getattr(self.config, "change_breakdown", False):
             packet["breakdown"] = self.candidate_breakdown(
                 candidate_frenet, candidate_distances, candidate_extra, candidate_safety, terminal_values,
@@ -1186,7 +1209,12 @@ class LMPPI:
             if chance_active and not empirical_chance else None,
         ))
         index, ss_violation, boundary_violation = packet["index"], packet["hull"], packet["boundary"]
-        if self.brake_active and int(index) >= candidates.shape[0] - int(getattr(self.config, "change_brake_candidates", 0)):
+        if "no_clearance_index" in packet:
+            self.clearance_counts["steps"] += 1
+            self.clearance_counts["changed"] += int(int(packet["no_clearance_index"]) != int(index))
+        if int(index) == candidates.shape[0] - 1:
+            self.brake_counts["previous_chosen"] += 1
+        elif self.brake_active and int(index) >= candidates.shape[0] - 1 - int(getattr(self.config, "change_brake_candidates", 0)):
             self.brake_counts["chosen"] += 1
         if "breakdown" in packet:
             monitor = getattr(safe_set, "change_monitor", None)

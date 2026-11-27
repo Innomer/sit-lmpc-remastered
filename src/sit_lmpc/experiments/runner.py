@@ -574,6 +574,8 @@ def _run(config, tracking_only, keyboard_cleanup):
         simulation.seed,
         randomness=randomness,
     )
+    if planner.safe_set_footprint_filter and learned.corners is not None:
+        safe_set.footprint = (learned.corners, planner.boundary_limit)
     change_monitor = None
     change_trace = []
     if planner.change_detection:
@@ -1992,6 +1994,9 @@ def _run(config, tracking_only, keyboard_cleanup):
                     np.save(directory / "model_error_tag.npy", np.asarray(model_error_trace, np.float32))
                 if safe_set_trace:
                     np.save(directory / "safe_set_trace.npy", np.asarray(safe_set_trace, np.float64))
+                (directory / "planner_counts.json").write_text(json.dumps(
+                    {"candidates": dict(getattr(learned, "brake_counts", {})),
+                     "clearance_check": dict(getattr(learned, "clearance_counts", {}))}, indent=1) + "\n")
                 if getattr(learned, "breakdown_log", None):
                     shapes = {}
                     for row in learned.breakdown_log:

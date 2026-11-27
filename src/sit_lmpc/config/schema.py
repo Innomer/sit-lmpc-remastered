@@ -262,6 +262,8 @@ class PlannerConfig:
     footprint_length: float | None = None
     footprint_width: float | None = None
     footprint_offset: float = -0.0065
+    footprint_buffer: float = 0.10
+    safe_set_footprint_filter: bool = True
     safety_heading_limit: float | None = None
     safety_heading_weight: float = 1.0
     mean_value: bool = True
@@ -272,6 +274,8 @@ class PlannerConfig:
 
     @property
     def boundary_limit(self):
+        if self.footprint_limits:
+            return self.half_width - self.footprint_buffer
         return self.half_width - self.boundary_buffer
 
     @property
@@ -814,6 +818,8 @@ class ExperimentConfig:
         ratio = s.timestep / s.integrator_timestep
         if ratio < 1 or not math.isclose(ratio, round(ratio), abs_tol=1e-8):
             raise ValueError("timestep must be an integer multiple of integrator_timestep")
+        if not 0 <= p.footprint_buffer < p.half_width:
+            raise ValueError("footprint_buffer must be between zero and half_width")
         if not 0 <= p.boundary_buffer < p.half_width:
             raise ValueError("boundary_buffer must be between zero and half_width")
         for name, number in {
