@@ -3,6 +3,11 @@
 With --map (the car's particle-filter map yaml), the centerline is the midpoint between the walls along the
 raceline normals and the widths are the measured wall distances. Without it, the raceline itself is the
 centerline, with --half-width on both sides and a synthetic map drawn from that band.
+
+--plot (with --map) saves <out>/<name>_check.png: the map with the raceline, the measured centreline and the two
+measured walls. Orange circles mark spots that measure much narrower than their neighbourhood (often a blob of
+noise in the corridor), red circles spots where a wall was not found within --max-wall outside the outer side of a corner (often a gap in the wall:
+glass, an open door, missed scans). Fix those in the map image if the printed widths disagree with a tape measure.
 """
 
 import argparse
@@ -105,6 +110,54 @@ def synthetic_map(centerline, half_width, resolution, margin):
     return image, spec
 
 
+def save_check_plot(path, image, spec, raceline, centerline, max_wall):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    points, right, left = centerline[:, :2], centerline[:, 2], centerline[:, 3]
+    normals = tangents(points) @ np.array([[0.0, 1.0], [-1.0, 0.0]])
+    left_wall = points + normals * left[:, None]
+    right_wall = points - normals * right[:, None]
+    width = np.minimum(left, right)
+    window = 15
+    padded = np.concatenate([width[-window:], width, width[:window]])
+    local = np.array([np.median(padded[i:i + 2 * window + 1]) for i in range(len(width))])
+    narrow = width < 0.75 * local
+    heading = np.unwrap(np.arctan2(np.gradient(points[:, 1]), np.gradient(points[:, 0])))
+    step = np.maximum(np.hypot(np.gradient(points[:, 0]), np.gradient(points[:, 1])), 1e-6)
+    curvature = np.convolve(np.gradient(heading) / step, np.ones(9) / 9, mode="same")
+    outer_right = curvature > 0.3
+    outer_left = curvature < -0.3
+    gap = ((left >= max_wall - 1e-6) & ~outer_left) | ((right >= max_wall - 1e-6) & ~outer_right)
+    rows, columns = image.shape[:2]
+    resolution, origin = float(spec["resolution"]), spec["origin"]
+    extent = (origin[0], origin[0] + columns * resolution, origin[1], origin[1] + rows * resolution)
+    fig, ax = plt.subplots(figsize=(12, 10))
+    ax.imshow(image, cmap="gray", extent=extent, origin="upper")
+    ax.plot(raceline[:, 0], raceline[:, 1], color="tab:blue", lw=1, label="raceline")
+    ax.plot(points[:, 0], points[:, 1], color="tab:green", lw=1.2, label="measured centreline")
+    ax.plot(left_wall[:, 0], left_wall[:, 1], ".", color="tab:purple", ms=2, label="measured left wall")
+    ax.plot(right_wall[:, 0], right_wall[:, 1], ".", color="tab:cyan", ms=2, label="measured right wall")
+    if narrow.any():
+        ax.scatter(points[narrow, 0], points[narrow, 1], s=80, facecolors="none", edgecolors="tab:orange",
+                   linewidths=1.5, label=f"much narrower than nearby ({narrow.sum()})")
+    if gap.any():
+        ax.scatter(points[gap, 0], points[gap, 1], s=80, facecolors="none", edgecolors="tab:red",
+                   linewidths=1.5, label=f"no wall within {max_wall:.1f} m, not a corner ({gap.sum()})")
+    low, high = points.min(axis=0) - 1.5, points.max(axis=0) + 1.5
+    ax.set_xlim(low[0], high[0])
+    ax.set_ylim(low[1], high[1])
+    ax.set_aspect("equal")
+    ax.legend(loc="upper right", fontsize=8)
+    ax.set_title(f"wall distance from the centreline: min {width.min():.2f} m, 5th percentile "
+                 f"{np.percentile(width, 5):.2f} m, median {np.median(width):.2f} m")
+    fig.tight_layout()
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    return int(narrow.sum()), int(gap.sum())
+
+
 def write_raceline(path, points):
     closed = np.vstack((points, points[:1]))
     segment = np.diff(closed[:, :2], axis=0)
@@ -132,6 +185,7 @@ def main():
     parser.add_argument("--max-wall", type=float, default=1.0,
                         help="cap on each wall ray, so side openings and doorways barely shift the centerline")
     parser.add_argument("--car-half-width", type=float, default=0.155)
+    parser.add_argument("--plot", action="store_true", help="with --map: save <out>/<name>_check.png (map, walls, suspect spots)")
     args = parser.parse_args()
 
     out = Path(args.out or f"tracks/{args.name}")
@@ -174,6 +228,10 @@ def main():
     print(f"  narrowest wall distance {np.min(walls):.2f} m; old centre-point setting (footprint_limits off, "
           f"car half-width {args.car_half_width} m): {np.percentile(walls, 5) - args.car_half_width:.2f}")
     print(f"simulation.map: {out}/{args.name}")
+    if args.plot and args.map:
+        narrow, gap = save_check_plot(out / f"{args.name}_check.png", image, spec, raceline, centerline, args.max_wall)
+        print(f"check plot: {out}/{args.name}_check.png ({narrow} spots much narrower than nearby, {gap} with no wall "
+              f"within {args.max_wall:.1f} m)")
 
 
 if __name__ == "__main__":

@@ -61,16 +61,28 @@ python scripts/car_check.py --config configs/car/levine-v11.yaml --seconds 40
 All car configs inherit these settings from `configs/car/levine-bicycle.yaml`, so set them there once. Run the check
 again until it prints `OK`.
 
-## 3. Rebuild the track from the PF map
+## 3. Build the planner's track from your SLAM map
+
+No new mapping: this turns the SLAM map the particle filter already uses into the planner's track files
+(`tracks/levine_self_again/`: map image in the PF frame, centreline, wall distances). The copy in the repository was
+made without the map (walls assumed 0.4 m away).
 
 ```bash
 python scripts/make_track.py --raceline configs/racelines/levine_self_again_raceline.csv \
-  --map <particle_filter>/maps/levine_self_again.yaml --name levine_self_again
+  --map <your SLAM map>.yaml --name levine_self_again --plot
 ```
 
-It prints the wall distances and a suggested `planner.half_width` (body-corner limit; the planner subtracts
-`footprint_buffer` 0.10 m). Put that value into `configs/car/levine-bicycle.yaml` (`planner.half_width`). The track is
-narrow: also note the narrowest wall distance it prints. The planner uses one half-width for the whole track.
+| It prints / saves | Do |
+|---|---|
+| refuses: "only N% of the raceline lies in free space" | wrong map or frame; use the map the PF localizes on |
+| wall distance min / 5th percentile / median | measure the narrowest corridor spot with a tape; the printed minimum should agree within a few cm |
+| suggested `planner.half_width` | put it into `configs/car/levine-bicycle.yaml` (`planner.half_width`; the planner subtracts `footprint_buffer` 0.10 m) |
+| `tracks/levine_self_again/levine_self_again_check.png` | the map with the measured walls. Orange circles: much narrower than nearby (often a blob of SLAM noise in the corridor). Red circles: no wall within 1 m outside a corner (a gap: glass, a door, missed scans, or a real side corridor) |
+
+A noisy SLAM map is fine as it is: fuzzy or grey walls only make the measured width slightly smaller, and the planner
+uses one half-width (the 5th percentile) for the whole track. Only if the printed widths disagree with the tape, or
+the plot shows red circles where the wall is solid: paint those gaps black and corridor blobs white in the map image
+and rerun.
 
 ## 4. Jetson planning-time check
 
