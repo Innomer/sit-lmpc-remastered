@@ -816,6 +816,7 @@ def _run(config, tracking_only, keyboard_cleanup):
             for name in names}}
     init_saved = initial_snapshot is not None
     learned_steps, lap_time = 0, 0.0
+    attempt_peak_speed = 0.0
     status = "step_limit"
     started = time.perf_counter()
     events.emit(
@@ -1362,7 +1363,7 @@ def _run(config, tracking_only, keyboard_cleanup):
             if not np.isfinite(cartesian).all() or not np.isfinite(frenet).all():
                 status = "nonfinite_state"
                 break
-            if cartesian[3] < 0.1:
+            if cartesian[3] < 0.1 and planner.sit_lmpc_mode:
                 status = "speed_too_low"
                 break
             prediction_state = cartesian.copy()
@@ -1655,14 +1656,19 @@ def _run(config, tracking_only, keyboard_cleanup):
             if not np.isfinite(next_cartesian).all() or not np.isfinite(next_frenet).all():
                 status = "nonfinite_state"
                 break
+            attempt_peak_speed = max(attempt_peak_speed, float(next_cartesian[3]))
             failure = (
                 "out_of_bounds"
                 if abs(next_frenet[1]) > planner.half_width
                 else "collision"
                 if info.get("collision", False)
+                else "stopped"
+                if not planner.sit_lmpc_mode and attempt_peak_speed > 0.5 and next_cartesian[3] < 0.1
                 else None
             )
             outcome = "failure" if failure else "success" if collector.completed_lap else None
+            if outcome:
+                attempt_peak_speed = 0.0
             finished = finish_attempt(outcome, failure or "lap_completed") if outcome else None
             if outcome == "success":
                 laps.append(finished[1])
