@@ -65,6 +65,7 @@ every lap.
 | `world-model-guarded-attempt` | An earlier attempt with ensemble heads and a physics check (entries 17–19), kept for reference |
 | `ros-sim` | The ROS 2 sim backend, the v3 encoder model (earlier method) and the baselines |
 | `irl` | `ros-sim` + the real-car backend (`docs/CAR_DEPLOYMENT.md` there) and the Jetson setup |
+| `irl-world-model` | `irl` + this work for the real car: v11, car configs, Jetson/bag/sensor checks, `docs/CAR_RUNBOOK.md` there (entry 46) |
 | `main` | Upstream package |
 
 ## Setup
@@ -123,6 +124,20 @@ python scripts/render_run_video.py results/Spielberg/my-run --speedup 2
 
 Tests: `JAX_PLATFORMS=cpu python -m pytest -q tests/unit/test_planner_structure.py tests/unit/test_rssm.py`.
 
+### On the car
+
+Branch `irl-world-model`, step by step in `docs/CAR_RUNBOOK.md` there. In short:
+
+```bash
+python scripts/car_check.py --config configs/car/levine-v11.yaml --seconds 40   # sensors, units, signs
+bash scripts/jetson_check.sh                                                      # GPU, planning time per config
+python -m sit_lmpc.cli.racecar --config configs/car/levine-bicycle.yaml           # bicycle baseline, bag recorded
+python scripts/bag_check.py --bag results/levine_self_again/<run>/bag --config configs/car/levine-v11.yaml
+python -m sit_lmpc.cli.racecar --config configs/car/levine-v11.yaml               # then levine-v11-learned.yaml
+```
+
+The car stops after every lap (trains and saves while standing) and waits for the operator's go behind the line.
+
 ## Components
 
 "Structural" means part of the method's design (it follows from LMPC or from the model); "patch" means a hand-set
@@ -165,7 +180,7 @@ Distributions and coverage: [docs/DATA_DISTRIBUTIONS.md](docs/DATA_DISTRIBUTIONS
 
 ## Key results
 
-All on Spielberg in the ROS lockstep sim; every number and run is in [EXPERIMENTS.md](EXPERIMENTS.md).
+On Spielberg in the ROS lockstep sim unless noted; every number and run is in [EXPERIMENTS.md](EXPERIMENTS.md).
 
 | Result | Entry |
 |---|---|
@@ -180,21 +195,29 @@ All on Spielberg in the ROS lockstep sim; every number and run is in [EXPERIMENT
 | Boxed-in stops at s ≈ 107 m: the safe set was only a soft cost and last step's plan was not a candidate; fixed structurally | 41–42 |
 | Retry mode, 25 attempts: without a working way to slow down, every controller crashed on all 17 attempts after a harsh change; the candidate set held no slow plan | 43 |
 | Speed-scaled safe set after a detection and reduced-speed candidates: the cars slow down at the change (first attempt 6.7–8.0 m/s instead of 8.3–9.8); v11 + reaction finishes 9 laps after a μ 0.55 grip drop, but crashes return as caps rise; plain v11 and the learned version still crash on most attempts | 44 |
+| Safe-set cap (newest 4 + fastest + slowest lap per stretch): planning p95 94.5 → 78.6 ms; Levine sim map: learned laps get slower every lap, v11 crashes after restarts from rest | 45 |
+| Car code path in the ROS sim (real time): five car-only bugs (frozen control loop, 26 s compile while driving, fast restarts); fixed, the car now stops after every lap to train | 46 |
 
 ## Known limitations
 
 - **Rollout accuracy at speed.** v11's median 1.5 s error above 9 m/s is about twice the earlier v3 model's.
-- **The model does not foresee a spin after a grip drop.** Its predicted slip for fast and slower plans is about the
+- **No prediction of the danger at the grip limit.** The model does not foresee a spin after a grip drop. Its predicted slip for fast and slower plans is about the
   same just before crashes, so the planner keeps choosing fast plans (entry 43).
 - **Grip read-out.** The condition latent c tracks grip only weakly; change detection uses the bicycle-error tag
   instead.
 - **Hand-written parts.** Change detection thresholds and the speed reaction are rules with hand-set numbers.
 - **No learning from crashes.** Crash attempts are stored but no between-lap learner uses them.
-- **Retry restarts at speed.** After a crash the car restarts at the start line at about 9 m/s, so every retry meets
-  the new condition at race speed.
-- **Sim only.** The world model has not been run on the real car; Jetson timing and its Python 3.12 / CUDA setup are
-  open.
-- **One map in closed loop.** All closed-loop results are on Spielberg.
+- **Learned laps do not improve.** Since the safe set moved into the hard tier of the final pick (entry 42), learned
+  laps only repeat stored laps (flat on Spielberg, slower every lap on Levine). A softer test is planned after the car
+  runs.
+- **Restarts from rest.** The local safe-set window at 0 m/s holds too few points on short tracks (run-ending error,
+  entry 45); the condition scheduler's lap counter misses laps after such restarts.
+- **One half-width per track.** Narrow spots and wide corners share one track limit.
+- **Planning time vs the 100 ms budget.** Laptop p95 about 79 ms with the cap (Spielberg), 52–76 ms on Levine; the
+  Jetson is untimed.
+- **Real car untested.** The car branch has only run against the ROS sim (entry 46). On the car, training would pause
+  the control loop, so the car stops after every lap.
+- **Two maps in closed loop.** Spielberg and the Levine sim map.
 
 ## Documents
 
