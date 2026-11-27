@@ -144,3 +144,40 @@ def test_safe_set_speeds_scaled_after_detection_only():
     monitor.caps[2], monitor.cap_factor[2] = np.inf, 1.0
     monitor.changed[3] = True
     assert np.allclose(monitor.safe_set_factors()[[2, 3, 4]], [0.8, 0.8, 1.0])
+
+
+def test_safe_set_cap_keeps_newest_and_slowest_laps():
+    planner = replace(load_config().planner, safe_set_cap_laps=4, change_stretch=10.0)
+    safe = SafeSet(planner, 0.1, 40.0)
+    laps = []
+    for i, speed in enumerate([9.0, 5.0, 9.1, 9.2, 9.3, 9.4, 9.5]):
+        lap = np.zeros((80, 7))
+        lap[:, 0] = np.linspace(0.0, 39.5, 80)
+        lap[:, 3] = speed
+        if i == 2:
+            lap[lap[:, 0] < 10, 3] = 3.0
+        laps.append(lap)
+    safe.frenet = laps
+    safe.cartesian = [lap.copy() for lap in laps]
+    keep = safe.cap_mask()
+    assert keep.shape == (7, 4)
+    assert keep[3:].all()
+    assert keep[2, 0] and not keep[2, 1:].any()
+    assert keep[1, 1:].all() and not keep[1, 0]
+    assert not keep[0].any()
+    selected, _ = safe.select_window(12.0, 18.0)
+    assert set(np.unique(selected[:, 3])) == {5.0, 9.2, 9.3, 9.4, 9.5}
+    data = safe.training_data()
+    assert len(data) == 4 * 80 + 60 + 20
+    uncapped = SafeSet(replace(planner, safe_set_cap_laps=0), 0.1, 40.0)
+    uncapped.frenet, uncapped.cartesian = laps, [lap.copy() for lap in laps]
+    assert uncapped.cap_mask() is None and len(uncapped.training_data()) == 7 * 80
+
+
+def test_reduced_speed_plans_device_matches_host():
+    from sit_lmpc.planners.lmppi import reduced_speed_plans, reduced_speed_plans_device
+
+    previous = np.column_stack([np.linspace(-0.3, 0.3, 15), np.linspace(0.4, -0.2, 15)])
+    host = reduced_speed_plans(previous, 7.5, (0.9, 0.75, 0.6), 0.1, 9.51, 15)
+    device = reduced_speed_plans_device(jnp.asarray(previous, jnp.float32), jnp.float32(7.5), (0.9, 0.75, 0.6), 0.1, 9.51)
+    assert np.allclose(host, np.asarray(device), atol=1e-5)

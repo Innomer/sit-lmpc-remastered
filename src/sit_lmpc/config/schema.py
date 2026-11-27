@@ -238,6 +238,7 @@ class PlannerConfig:
     change_safe_set: str = "laps"
     change_scale_safe_set: bool = True
     speed_diverse_factors: tuple[float, ...] = (0.9, 0.75, 0.6)
+    safe_set_cap_laps: int = 4
     change_value_tag: bool = False
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000

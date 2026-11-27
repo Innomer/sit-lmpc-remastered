@@ -120,6 +120,23 @@ def reduced_speed_plans(previous, speed, factors, timestep, accel_scale, length)
     return np.asarray(out)
 
 
+@partial(jax.jit, static_argnames=("factors",))
+def reduced_speed_plans_device(previous, speed, factors, timestep, accel_scale):
+    """reduced_speed_plans on the device (no host round trip): same steering, acceleration recomputed step by step
+    to follow factor x the plan's own speed profile within the acceleration limits."""
+    nominal = speed + jnp.cumsum(previous[:, 1] * accel_scale * timestep)
+
+    def one(factor):
+        def step(current, target_speed):
+            target = jnp.maximum(0.0, factor * target_speed)
+            a = jnp.clip((target - current) / timestep, -accel_scale, accel_scale)
+            return jnp.maximum(0.0, current + a * timestep), a / accel_scale
+        _, accel = jax.lax.scan(step, speed, nominal)
+        return jnp.stack([previous[:, 0], accel], axis=-1)
+
+    return jnp.stack([one(factor) for factor in factors])
+
+
 def with_previous_plan(candidates, previous):
     """Last step's plan, shifted by one step (zero-padded), as the last final-pick candidate."""
     return candidates.at[-1].set(jnp.asarray(previous, candidates.dtype)[: candidates.shape[1]])
@@ -787,9 +804,9 @@ class LMPPI:
         count = len(self.speed_factors)
         if not count or len(candidates) <= count + 1:
             return candidates
-        plans = reduced_speed_plans(np.asarray(jax.device_get(previous)), float(state[3]), self.speed_factors,
-                                    float(self.model.timestep), float(np.asarray(self.model.action_scale)[1]),
-                                    candidates.shape[1])
+        plans = reduced_speed_plans_device(jnp.asarray(previous, candidates.dtype)[: candidates.shape[1]],
+                                           jnp.asarray(state[3], candidates.dtype), self.speed_factors,
+                                           float(self.model.timestep), float(np.asarray(self.model.action_scale)[1]))
         self.reduced_counts["steps"] += 1
         return candidates.at[-count - 1:-1].set(jnp.asarray(plans, candidates.dtype))
 

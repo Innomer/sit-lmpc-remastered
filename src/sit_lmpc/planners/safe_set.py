@@ -220,6 +220,8 @@ class SafeSet:
         self._array_cache = None
         self.change_monitor = None
         self.footprint = None
+        self._stretch_speed = {}
+        self._cap_cache = None
         self.record_info = []
         self.pending_info = None
         self.previous_info = None
@@ -466,6 +468,9 @@ class SafeSet:
             inds = rng.choice(len(arr_f), self.config.safe_set_max_points, replace=False)
             arr_f, arr_c, tags, records = arr_f[inds], arr_c[inds], tags[inds], records[inds]
         indices = np.flatnonzero((arr_f[:, 0] > lo) & (arr_f[:, 0] < hi))
+        keep = self.cap_mask()
+        if keep is not None:
+            indices = indices[keep[records[indices], self.stretch_index(arr_f[indices, 0])]]
         if self.footprint is not None:
             indices = indices[within_footprint_limit(arr_f[indices], *self.footprint)]
         self.value_records = None
@@ -614,6 +619,59 @@ class SafeSet:
     def ready(self):
         return len(self.frenet) >= self.config.safe_set_size
 
+    def stretch_geometry(self):
+        stretch = float(getattr(self.config, "change_stretch", 10.0))
+        count = max(1, int(np.ceil(float(self.track_length) / stretch)))
+        return float(self.track_length) / count, count
+
+    def stretch_index(self, s):
+        length, count = self.stretch_geometry()
+        return (np.floor((np.asarray(s) % float(self.track_length)) / length).astype(int)) % count
+
+    def cap_mask(self):
+        """Safe-set cap (safe_set_cap_laps = K > 0): per stretch, keep the newest K stored laps plus the one with the
+        lowest mean speed on that stretch; after a detected change also every lap driven after it and the slowest
+        pre-change laps the conservative fallback uses. Returns a (records, stretches) mask, or None without a cap."""
+        cap = int(getattr(self.config, "safe_set_cap_laps", 0) or 0)
+        if cap <= 0 or not self.frenet:
+            return None
+        monitor = self.change_monitor
+        key = (tuple(id(row) for row in self.frenet), cap,
+               None if monitor is None else (monitor.active, monitor.detection_lap))
+        if self._cap_cache is not None and self._cap_cache[0] == key:
+            return self._cap_cache[1]
+        _, count = self.stretch_geometry()
+        n = len(self.frenet)
+        speeds = np.full((n, count), np.inf)
+        for r, record in enumerate(self.frenet):
+            cached = self._stretch_speed.get(id(record))
+            if cached is None or cached[0] is not record:
+                k = self.stretch_index(record[:, 0])
+                total = np.bincount(k, weights=record[:, 3], minlength=count)
+                steps = np.bincount(k, minlength=count)
+                cached = (record, np.where(steps > 0, total / np.maximum(steps, 1), np.inf))
+                self._stretch_speed[id(record)] = cached
+            speeds[r] = cached[1]
+        keep = np.zeros((n, count), bool)
+        keep[max(0, n - cap):, :] = True
+        finite = np.isfinite(speeds).any(axis=0)
+        slowest = np.argmin(speeds, axis=0)
+        keep[slowest[finite], np.flatnonzero(finite)] = True
+        if monitor is not None and monitor.active:
+            from sit_lmpc.planners.change_monitor import CONSERVATIVE
+            info = self.record_info + [None] * (n - len(self.record_info))
+            after = [i for i, r in enumerate(info) if r is not None and r["lap"] > monitor.detection_lap]
+            fallback, _ = self.change_records(CONSERVATIVE)
+            keep[sorted(set(after) | set(fallback)), :] = True
+        self._cap_cache = (key, keep)
+        return keep
+
+    def capped_rows(self, r, record):
+        keep = self.cap_mask()
+        if keep is None:
+            return np.ones(len(record), bool)
+        return keep[r, self.stretch_index(record[:, 0])]
+
     def training_data(self, input_mode="state"):
         if not self.frenet:
             raise ValueError("safe set has no completed pairs of laps")
@@ -621,12 +679,13 @@ class SafeSet:
             monitor = self.change_monitor
             info = self.record_info + [None] * (len(self.frenet) - len(self.record_info))
             rows = []
-            for record, r in zip(self.frenet, info):
+            for i, (record, r) in enumerate(zip(self.frenet, info)):
                 if r is None or r.get("tags") is None:
                     continue
                 tags = np.nan_to_num(np.asarray(r["tags"], float), nan=0.0)
                 idx = (np.floor(record[:, 0] / monitor.stretch).astype(int)) % monitor.count
-                rows.append(np.column_stack([record[:, :5], tags[idx], record[:, -1]]))
+                keep = self.capped_rows(i, record)
+                rows.append(np.column_stack([record[:, :5], tags[idx], record[:, -1]])[keep])
             return np.concatenate(rows)
         if input_mode == "state_action":
             if len(self.controls) != len(self.frenet):
@@ -634,10 +693,10 @@ class SafeSet:
                     "state-action value training needs aligned controls; collect fresh warm-up laps"
                 )
             rows = [
-                np.column_stack((record[mask, :5], control[mask], record[mask, -1]))
-                for record, control, mask in zip(
+                np.column_stack((record[mask, :5], control[mask], record[mask, -1]))[self.capped_rows(i, record)[mask]]
+                for i, (record, control, mask) in enumerate(zip(
                     self.frenet, self.controls, self.control_masks, strict=True
-                )
+                ))
             ]
             data = np.concatenate(rows)
             if not len(data):
@@ -646,7 +705,8 @@ class SafeSet:
         if input_mode != "state":
             raise ValueError("input_mode must be state or state_action")
         return np.concatenate(
-            [np.column_stack([record[:, :5], record[:, -1]]) for record in self.frenet]
+            [np.column_stack([record[:, :5], record[:, -1]])[self.capped_rows(i, record)]
+             for i, record in enumerate(self.frenet)]
         )
 
     def select(self, terminals, speed):
