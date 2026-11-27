@@ -151,8 +151,15 @@ def total_safety(states, config, extra_cost=None):
     return jnp.where(jnp.isfinite(total), total, 0.)
 
 
+def boundary_view(frenet, boundary):
+    if boundary is None:
+        return frenet
+    return with_margin(with_footprint(frenet, boundary[0]), boundary[1])
+
+
 def _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost=False,
-                  extra_cost=None):
+                  extra_cost=None, boundary=None):
+    states = boundary_view(states, boundary)
     valid = sample_validity(previous, da, states, values, hull_distances)
     terminal = jnp.zeros(config.horizon).at[-1].set(1)
     boundary = jnp.abs(jnp.where(valid[:, None], states[:, :, 1], 0.))
@@ -191,9 +198,9 @@ debug_reward_terms = jax.jit(_reward_terms, static_argnames=("config", "fixed_de
 
 @partial(jax.jit, static_argnames=("config", "fixed_density_cost"))
 def propose(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost=False,
-            extra_cost=None):
+            extra_cost=None, boundary=None):
     terms = _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost,
-                          extra_cost)
+                          extra_cost, boundary)
     w = weights(returns(terms["reward"]), config.temperature, config.damping, valid=terms["valid"][None, :, None])
     if len(previous) == config.horizon + 1:
         # u_H uses the terminal weights from the SAME sampled sequences.
@@ -224,11 +231,11 @@ def normalized_risk_cost(risk_probabilities, mode):
 @partial(jax.jit, static_argnames=("config", "mode", "fixed_density_cost"))
 def propose_with_risk(
     previous, da, states, values, hull_distances, risk_probabilities, lambdas, config, mode,
-    fixed_density_cost=False, extra_cost=None,
+    fixed_density_cost=False, extra_cost=None, boundary=None,
 ):
     """Penalize each selected risk value; retain the separate cutoff gate."""
     terms = _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost,
-                          extra_cost)
+                          extra_cost, boundary)
     risk_cost = normalized_risk_cost(risk_probabilities, mode)
     reward = terms["reward"] - lambdas[:, 2, None, None] * risk_cost[None]
     w = weights(returns(reward), config.temperature, config.damping, valid=terms["valid"][None, :, None])
@@ -240,10 +247,11 @@ def propose_with_risk(
 
 @partial(jax.jit, static_argnames=("config", "mode", "fixed_density_cost"))
 def propose_with_constraints(previous, da, states, values, hull_distances,
-                             chance, risk, lambdas, config, mode, fixed_density_cost=False, extra_cost=None):
+                             chance, risk, lambdas, config, mode, fixed_density_cost=False, extra_cost=None,
+                             boundary=None):
     """Optional arguments are absent, not zero arrays or unused lambda columns."""
     terms = _reward_terms(previous, da, states, values, hull_distances, lambdas, config, fixed_density_cost,
-                          extra_cost)
+                          extra_cost, boundary)
     reward = terms["reward"]
     column = 2
     if chance is not None:
@@ -400,8 +408,9 @@ def select_risk_candidate(
 
 @partial(jax.jit, static_argnames=("config",))
 def finish_candidates(frenet, distances, chance, risk, cutoff, terminal_values,
-                      candidates, trajectories, members, probabilities, lambdas, config, safety=None):
+                      candidates, trajectories, members, probabilities, lambdas, config, safety=None, boundary=None):
     """Gate and gather on device; diagnostics do not trigger extra scalar fences."""
+    frenet = boundary_view(frenet, boundary)
     finite_controls = jnp.all(jnp.isfinite(candidates), axis=(1, 2))
     finite_trajectories = jnp.all(jnp.isfinite(trajectories), axis=(1, 2))
     distances = jnp.where(finite_controls & finite_trajectories, distances, jnp.inf)
@@ -486,6 +495,12 @@ class LMPPI:
             self.corners = footprint_corners(config.footprint_length or params.get("length", 0.58),
                                              config.footprint_width or params.get("width", 0.31),
                                              config.footprint_offset)
+        self.boundary = None
+        self.breakdown_log = []
+        if self.corners is not None or self.margins is not None:
+            dtype = np.asarray(model.params).dtype if np.asarray(model.params).dtype.kind == "f" else np.float32
+            self.boundary = (None if self.corners is None else jnp.asarray(self.corners, dtype),
+                             None if self.margins is None else jnp.asarray(self.margins, dtype))
         self.risk_lambdas = None
         self._lambda_tables = {(False, False): self.lambdas}
         self._warmed_terms = set()
@@ -537,6 +552,8 @@ class LMPPI:
         fixed_density_cost = (not force_hull and self.density_snapshot is not None
                               and self.density_snapshot.fixed_penalty)
         proposal_options = {"fixed_density_cost": True} if fixed_density_cost else {}
+        if self.boundary is not None:
+            proposal_options["boundary"] = self.boundary
         warm_key = (*key, len(self.actions), fixed_density_cost)
         if warm_key not in self._warmed_terms:
             dtype = self.model.params.dtype
@@ -605,7 +622,7 @@ class LMPPI:
                 jnp.zeros((candidate_count, len(self.model.weights), horizon, 7), dtype=dtype)
                 if hasattr(self.model, "weights") else None,
                 self.model.weights if hasattr(self.model, "weights") else None,
-                table, self.config,
+                table, self.config, boundary=self.boundary,
             ))
             self._warmed_terms.add(warm_key)
             self._risk_warmed |= risk_active
@@ -709,6 +726,34 @@ class LMPPI:
         caps = jnp.asarray(np.where(np.isfinite(monitor.caps), monitor.caps, 1e3), frenet.dtype)
         idx = jnp.floor(frenet[..., 0] / monitor.stretch).astype(jnp.int32) % monitor.count
         return self.config.safety_speed_weight * jnp.clip((frenet[..., 3] - caps[idx]) / 0.5, 0.0, 1.0)
+
+    def candidate_breakdown(self, frenet, distances, extra, safety, terminal_values, safe_set, value_snapshot,
+                            value_key):
+        view = boundary_view(frenet, self.boundary)
+        score = candidate_scores(view, distances, self.config.boundary_limit, self.config.safe_set_threshold,
+                                 terminal_values, safety)[0]
+        offset = jnp.abs(view[:, :, 1])
+        out = {"score": score, "mean_speed": frenet[:, :, 3].mean(axis=1), "max_speed": frenet[:, :, 3].max(axis=1),
+               "boundary": jnp.where(offset > self.config.boundary_limit, offset, 0).sum(axis=1),
+               "max_body_offset": offset.max(axis=1),
+               "hull": jnp.where(distances > self.config.safe_set_threshold, distances, 0), "safety": safety}
+        for name, value in dict(safety_step_costs(frenet, self.config), **extra).items():
+            out["term_" + name] = jnp.reshape(value, (len(frenet), -1)).sum(axis=1)
+        monitor = getattr(safe_set, "change_monitor", None)
+        if monitor is not None:
+            caps = jnp.asarray(np.where(np.isfinite(monitor.caps), monitor.caps, 1e3), frenet.dtype)
+            idx = jnp.floor(frenet[..., 0] / monitor.stretch).astype(jnp.int32) % monitor.count
+            out["max_over_cap"] = (frenet[..., 3] - caps[idx]).max(axis=1)
+        if terminal_values is not None:
+            out["value"] = terminal_values
+        elif getattr(safe_set, "value_records", None):
+            progress = frenet[:, -1, 0]
+            out["value"] = jnp.mean(jnp.stack([jnp.interp(progress, jnp.asarray(s, progress.dtype),
+                                                          jnp.asarray(t, progress.dtype))
+                                               for s, t in safe_set.value_records]), axis=0)
+        else:
+            out["value"] = predict_value(value_snapshot, frenet[:, -1], value_key, self.value_samples).reshape(len(frenet), -1).mean(axis=1)
+        return out
 
     def model_safety_costs(self, state, actions):
         """Model-side safety checks (RSSM): LiDAR clearance and the crash-risk head, from one latent rollout."""
@@ -863,7 +908,6 @@ class LMPPI:
             self.track.get_s_search_range(frenet_state[0], self.config.search_points)
         )
         states = to_frenet(self.track, cartesian, indices, frenet_state[0])
-        boundary_states = with_margin(with_footprint(states, self.corners), self.margins)
         stretch_cap = self.change_cap_cost(states, safe_set)
         if stretch_cap is not None:
             sample_extra = dict(sample_extra, stretch_cap=stretch_cap)
@@ -990,22 +1034,24 @@ class LMPPI:
         proposal_options = {"fixed_density_cost": True} if fixed_density_cost else {}
         if extra_cost is not None:
             proposal_options["extra_cost"] = extra_cost
+        if self.boundary is not None:
+            proposal_options["boundary"] = self.boundary
         if chance_active:
             candidates = propose_with_constraints(
-                previous, da, boundary_states, values, sample_distances,
+                previous, da, states, values, sample_distances,
                 {name: sample_chance[name] for name in ("boundary", "terminal_hull")},
                 sample_risk, active_lambdas, self.config, self.config.risk_constraint.mode,
                 **proposal_options,
             )
         elif risk_active:
             candidates = propose_with_risk(
-                previous, da, boundary_states, values, sample_distances, sample_risk,
+                previous, da, states, values, sample_distances, sample_risk,
                 active_lambdas, self.config, self.config.risk_constraint.mode,
                 **proposal_options,
             )
         else:
             candidates = propose(
-                previous, da, boundary_states, values, sample_distances, active_lambdas, self.config,
+                previous, da, states, values, sample_distances, active_lambdas, self.config,
                 **proposal_options
             )
         trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
@@ -1015,8 +1061,10 @@ class LMPPI:
         if candidate_cap is not None:
             candidate_extra = dict(candidate_extra, stretch_cap=candidate_cap)
         soft = () if getattr(self.config.dynamics, "rssm_risk_rank", False) else SOFT_TERMS
-        ranked = [value for name, value in candidate_extra.items() if name not in soft]
+        ranked = [value for name, value in candidate_extra.items() if name not in soft and name != "stretch_cap"]
         candidate_safety = total_safety(candidate_frenet, self.config, sum(ranked) if ranked else None).sum(axis=1)
+        if candidate_cap is not None:
+            candidate_safety = candidate_safety + candidate_cap.sum(axis=1) * self.config.change_cap_rank_weight / 1000.0
         candidate_distances = self.evaluate_safe_set_check(candidate_frenet[:, -1, :5], hull)
         candidate_scenarios = scenario_frenet = candidate_chance = verified_scenarios = None
         if chance_active or risk_active and risk_distribution:
@@ -1078,13 +1126,17 @@ class LMPPI:
             if not bool(jnp.all(jnp.isfinite(candidate_risk))):
                 raise FloatingPointError("nonfinite candidate risk probabilities")
         packet = finish_candidates(
-            with_margin(with_footprint(candidate_frenet, self.corners), self.margins), candidate_distances, candidate_chance if chance_active else None,
+            candidate_frenet, candidate_distances, candidate_chance if chance_active else None,
             candidate_risk if risk_active else None, cutoff if risk_active else None,
             terminal_values, candidates, trajectories,
             member_trajectories if hasattr(self.model, "weights") else None,
             self.model.weights if hasattr(self.model, "weights") else None,
-            active_lambdas, self.config, candidate_safety,
+            active_lambdas, self.config, candidate_safety, boundary=self.boundary,
         )
+        if getattr(self.config, "change_breakdown", False):
+            packet["breakdown"] = self.candidate_breakdown(
+                candidate_frenet, candidate_distances, candidate_extra, candidate_safety, terminal_values,
+                safe_set, value_snapshot, value_key)
         packet["safety_activity"] = safety_activity(
             states, sample_extra, candidate_frenet, candidate_extra, packet["index"], self.config)
         packet["valid_sample_count"] = jnp.sum(sample_validity(previous, da, states, values, sample_distances))
@@ -1100,6 +1152,12 @@ class LMPPI:
             if chance_active and not empirical_chance else None,
         ))
         index, ss_violation, boundary_violation = packet["index"], packet["hull"], packet["boundary"]
+        if "breakdown" in packet:
+            monitor = getattr(safe_set, "change_monitor", None)
+            self.breakdown_log.append(dict(
+                {name: np.asarray(value) for name, value in packet["breakdown"].items()},
+                index=int(index), s=float(frenet_state[0]), speed=float(state[3]),
+                cap_here=float(monitor.cap_at(frenet_state[0])) if monitor is not None else np.inf))
         actions, trajectory, lambdas = packet["actions"], packet["trajectory"], packet["lambdas"]
         terminal_value = packet["terminal_value"]
         valid_sample_count, finite_candidate_count = int(packet["valid_sample_count"]), int(packet["finite_candidate_count"])

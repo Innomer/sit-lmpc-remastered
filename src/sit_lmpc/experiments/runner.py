@@ -535,7 +535,9 @@ def _run(config, tracking_only, keyboard_cleanup):
         change_monitor = ChangeMonitor(float(track.s_frame_max), planner.change_stretch, planner.change_window,
                                        planner.change_ratio, planner.change_floor, new_laps=planner.change_new_laps,
                                        speed_factor=planner.change_speed_factor if planner.change_speed else None,
-                                       speed_step=planner.change_speed_step)
+                                       speed_step=planner.change_speed_step, scope=planner.change_cap_scope,
+                                       global_share=planner.change_global_share,
+                                       global_min=planner.change_global_min)
         safe_set.change_monitor = change_monitor
     density_trainer = (
         SafeSetDensityTrainer(planner.safe_set_density, planner.dynamics, simulation,
@@ -1934,6 +1936,14 @@ def _run(config, tracking_only, keyboard_cleanup):
                     np.save(directory / "condition_tag.npy", np.asarray(tag_trace, np.float32))
                 if safe_set_trace:
                     np.save(directory / "safe_set_trace.npy", np.asarray(safe_set_trace, np.float64))
+                if getattr(learned, "breakdown_log", None):
+                    shapes = {}
+                    for row in learned.breakdown_log:
+                        for key, value in row.items():
+                            shapes.setdefault(key, np.shape(value))
+                    np.savez_compressed(directory / "candidate_breakdown.npz", **{
+                        key: np.stack([np.broadcast_to(np.asarray(row.get(key, np.nan), np.float64), shape)
+                                       for row in learned.breakdown_log]) for key, shape in shapes.items()})
                 if change_monitor is not None:
                     np.save(directory / "change_trace.npy", np.asarray(change_trace, np.float64))
                     (directory / "change_events.json").write_text(json.dumps(

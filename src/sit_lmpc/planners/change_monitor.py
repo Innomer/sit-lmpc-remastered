@@ -18,7 +18,7 @@ NORMAL, CONSERVATIVE, NEW = 0, 1, 2
 
 class ChangeMonitor:
     def __init__(self, track_length, stretch=10.0, window=10, ratio=3.0, floor=0.05, history_laps=5, new_laps=2,
-                 speed_factor=None, speed_step=0.05):
+                 speed_factor=None, speed_step=0.05, scope="track", global_share=0.5, global_min=8):
         self.length = float(track_length)
         self.count = int(np.ceil(self.length / stretch))
         self.stretch = self.length / self.count
@@ -43,6 +43,10 @@ class ChangeMonitor:
         self.cap_factor = np.ones(self.count)
         self.clean_new_laps = 0
         self.detection_factor = None
+        self.scope, self.global_share, self.global_min = scope, float(global_share), int(global_min)
+        self.driven = set()
+        self.relaxed_since = set()
+        self.global_caps = False
 
     def index(self, s):
         return int((float(s) % self.length) // self.stretch) % self.count
@@ -76,19 +80,37 @@ class ChangeMonitor:
             first = not self.active
             self.active = True
             self.detection_lap = self.lap if first else self.detection_lap
-            relaxed = self.mode == NORMAL
-            self.mode[relaxed & ~self.changed] = CONSERVATIVE
+            if self.scope == "track" or first:
+                relaxed = self.mode == NORMAL
+                self.mode[relaxed & ~self.changed] = CONSERVATIVE
+            else:
+                self.mode[k] = CONSERVATIVE
+                self.relaxed_since.discard(k)
             if self.speed_factor is not None:
                 chosen = float(factor) if factor is not None else float(self.speed_factor)
                 self.detection_factor = chosen
-                for j in np.flatnonzero(self.mode == CONSERVATIVE):
-                    if self.speed_history[j]:
-                        self.cap_factor[j] = chosen
-                        self.caps[j] = chosen * float(np.median(self.speed_history[j][-self.history_laps:]))
+                if self.scope == "track":
+                    targets = np.flatnonzero(self.mode == CONSERVATIVE)
+                elif self.global_caps:
+                    targets = [j for j in range(self.count) if j not in self.relaxed_since]
+                else:
+                    targets = [k]
+                for j in targets:
+                    self._cap(j, chosen)
             self.events.append({"step": int(step), "event": "detected" if first else "detected again", "stretch": k,
                                 "lap": self.lap, "short_m": short, "limit_m": self.limit(k)})
 
+    def _cap(self, j, factor):
+        if self.speed_history[j] and not np.isfinite(self.caps[j]):
+            self.cap_factor[j] = factor
+            self.caps[j] = factor * float(np.median(self.speed_history[j][-self.history_laps:]))
+        elif self.scope == "track" and self.speed_history[j]:
+            self.cap_factor[j] = factor
+            self.caps[j] = factor * float(np.median(self.speed_history[j][-self.history_laps:]))
+
     def _leave(self, step, k):
+        if self.active:
+            self.driven.add(k)
         if not self.active or self.mode[k] != CONSERVATIVE or self.changed[k] or not self.pass_values:
             return
         value = float(np.median(self.pass_values))
@@ -96,10 +118,22 @@ class ChangeMonitor:
             self.mode[k] = NORMAL
             self.caps[k] = np.inf
             self.cap_factor[k] = 1.0
+            self.relaxed_since.add(k)
             self.events.append({"step": int(step), "event": "relaxed", "stretch": k, "lap": self.lap, "tag_m": value})
         else:
             self.changed[k] = True
             self.events.append({"step": int(step), "event": "changed", "stretch": k, "lap": self.lap, "tag_m": value})
+            if self.scope == "local" and self.speed_factor is not None:
+                self._cap(k, self.detection_factor)
+                driven = sorted(self.driven)
+                share = float(np.mean(self.changed[driven])) if driven else 0.0
+                if not self.global_caps and len(driven) >= self.global_min and share > self.global_share:
+                    self.global_caps = True
+                    for j in range(self.count):
+                        if j not in self.relaxed_since:
+                            self._cap(j, self.detection_factor)
+                    self.events.append({"step": int(step), "event": "track-wide caps", "lap": self.lap,
+                                        "share_changed": share, "driven": len(driven)})
 
     def finish_lap(self, step, new_condition_laps):
         """At the end of a lap: store this lap's per-stretch medians as history (a changed stretch skips the lap the

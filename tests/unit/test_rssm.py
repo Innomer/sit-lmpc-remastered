@@ -302,3 +302,26 @@ def test_footprint_uses_the_furthest_body_corner():
     assert np.isclose(float(body[0, 0, 1]), 0.5 + 0.155) and np.isclose(float(body[0, 1, 1]), -0.5 - 0.155)
     assert np.isclose(float(body[0, 2, 1]), 0.5 + 0.29, atol=1e-6)
     assert with_footprint(frenet, None) is frenet
+
+
+def test_change_monitor_local_caps():
+    from sit_lmpc.planners.change_monitor import ChangeMonitor
+
+    def drive(monitor, changed, laps, step=0):
+        for _ in range(laps):
+            for s in np.arange(0.0, 200.0, 0.5):
+                monitor.observe(step, s, 0.2 if int(s // 10) in changed else 0.01, True, speed=9.0)
+                step += 1
+            monitor.finish_lap(step, 0)
+        return step
+
+    patch = ChangeMonitor(200.0, stretch=10, speed_factor=0.8, scope="local")
+    step = drive(patch, set(), 5)
+    step = drive(patch, {9, 10, 11}, 1, step)
+    assert np.flatnonzero(np.isfinite(patch.caps)).tolist() == [9, 10, 11] and not patch.global_caps
+    drive(patch, {9, 10, 11, 15}, 1, step)
+    assert np.flatnonzero(np.isfinite(patch.caps)).tolist() == [9, 10, 11, 15]
+    grip = ChangeMonitor(200.0, stretch=10, speed_factor=0.8, scope="local")
+    step = drive(grip, set(), 5)
+    drive(grip, set(range(20)), 1, step)
+    assert grip.global_caps and np.isfinite(grip.caps).all()

@@ -752,3 +752,92 @@ Only run after v11 had no crashes in the no-change runs. Grip drop: μ 1.05 → 
 ### Not done
 
 Compile the footprint check into the rollout cost (planning time). Fix the reaction: limit re-detection to the stretch where it fires instead of the whole track, and test caps with the safety weight lowered to separate the two slowdown causes. The heading option was not run (not needed).
+
+## 38. Compiled footprint check; speed-reaction fix attempt; harsher change scenarios
+
+### 1. Footprint check inside the compiled planner functions
+
+Entry 37's footprint check ran as separate GPU calls before the sampling cost and the final pick. Now the corner offsets and the margin are passed in as one argument (`boundary`, built once in `LMPPI.__init__`) and applied inside the jitted `propose*` / `finish_candidates` (`boundary_view` in `planners/lmppi.py`); same maths, no extra pass. One 8-lap run each (5 warm-up + 3 learned), seed 1, no change (`fpjit-*`, `results/footprint/jit-timing.json`):
+
+| Controller | No footprint (entry 36) p50 / p95 ms | Footprint, separate pass (entry 37) | Footprint, compiled |
+|---|---|---|---|
+| bicycle | 33–34 / 47–57 | 41–42 / 56–60 | **33.3 / 55.1** |
+| v11 | 54–57 / 68–73 | 57 / 71–72 | **54.0 / 68.9** |
+| v3 | 133–138 / 173–177 | 138–145 / 178–184 | **123.1 / 159.6** |
+
+The check now costs no measurable planning time. The v3 timing run spun at s = 121.8 m in its first learned lap (1 crash in 3 learned attempts); a short run, so not counted against entry 37's 1/50.
+
+### 2. Speed reaction: one fix attempt
+
+**Cap scope** (`change_cap_scope: local`, the new default; `track` = the old behaviour). A cap is set only on a stretch whose live tag shows a change: the stretch where the detection fires, and each stretch marked "changed" when the car leaves it. A repeat detection caps only its own stretch and does not touch stretches that have relaxed. The whole track is capped (except stretches relaxed since the change) once more than `change_global_share` (0.5) of the stretches driven since the change look changed and at least `change_global_min` (8, i.e. 80 m) have been driven. With fewer, the patch looked track-wide: the first 3 stretches driven after a patch detection are the patch itself (3/3 changed); caught in a unit test before any run. `ChangeMonitor(scope=..., global_share=..., global_min=...)`; test `test_change_monitor_local_caps`.
+
+**Check runs** (v11 + reaction, local caps, μ 0.7 grip drop and μ 0.6 patch, seed 1, `rx-check-*`): **both spun in lap 9**, the first lap after the change, at s ≈ 113 m (the corner where entry 34's runs spun). Every footprint run of these scenarios survived in entry 37, including the old track-wide reaction (6/6) and v11 without reaction (6/6).
+- Grip drop: the track-wide cap fired after 80 m (s ≈ 100 m), 1.3 s before the corner, with the car at 10.5 m/s, faster than before the change: the conservative safe set and value B do not slow the car (as in entry 34). The old reaction capped every stretch at the detection itself, which is what slowed it down in time.
+- Patch: caps landed on stretches 9 and 10 as they were judged; stretch 11, where the car spun, was not capped yet.
+
+**Why the car drives about 2 m/s under the cap.** New option `change_breakdown` logs, every learned step, the final-pick cost terms of every candidate (`candidate_breakdown.npz`; `scripts/breakdown_report.py`). Diagnostic run with the old track-wide caps, μ 0.7, 12 laps (`rx-diag-track-grip-drop-s1`), 2730 capped steps:
+
+| | Mean |
+|---|---|
+| cap at the car's position | 7.10 m/s |
+| actual speed | 5.03 m/s |
+| chosen plan, mean planned speed | 5.73 m/s |
+| fastest candidate inside the track limits, mean planned speed | 6.66 m/s |
+| chosen plan, peak speed minus cap | −0.77 m/s |
+| fastest candidate, peak speed minus cap | +0.81 m/s |
+| chosen plan = fastest feasible candidate | 0.5% of steps |
+| the cap term alone makes the fastest candidate lose | 95% of the steps where they differ |
+| hull (safe-set) term: chosen / fastest | 1.43 / 0.30 (the fastest plan is better on the safe set) |
+| footprint, clearance terms | 0 for both |
+
+The 2.1 m/s gap splits into: about 0.8 m/s from the final pick (any cap overshoot counted ×1000, like a wall hit, so the chosen plan's peak stays 0.8 m/s under the cap), about 0.6 m/s from a plan's mean speed being below its peak, and about 0.7 m/s from the car not reaching the speed the model plans on the low-grip track. The first part is a weighting artifact. Fix: `change_cap_rank_weight` (default 1.0) counts the cap cost at weight 1 in the final pick, on the scale of the safe-set violation, instead of ×1000. **It did not help:** the same run with the fix (`rx-diag-track-rank1-grip-drop-s1`) drove 5.19 m/s under a 7.17 m/s cap (laps 67.6, 68.1, 66.4, 65.6 s vs 68.0, 69.9, 69.3, 68.2 s), chosen = fastest on 0.8% of steps. The fastest candidate's cap cost (≈ 4.4, summed over the 15 horizon steps) still outweighs its safe-set advantage (≈ 1.1). And even the fastest candidate averages 6.8 m/s, under the cap, so the per-step cap cost in the sampling (up to 1 per step against a value scaled to [0, 1]) already keeps every candidate slow. Both are weighting problems; not fixed further (one attempt).
+
+### 3. Harsher change scenarios, 3 seeds, change after lap 8, 15 laps, footprint on
+
+Grip drop μ 1.05 → 0.55 on the whole track (`spielberg-grip-drop055-lap8.yaml`); patch μ 0.45 on s = 85–115 m (`spielberg-patch045-lap8.yaml`). Controllers: bicycle; v11 without reaction; v11 + fixed reaction (local caps, cap rank weight 1, everything else as entry 37). Results `results/footprint/harsh-change.json` (`scripts/harsh_change_report.py`); run names `hc-*`.
+
+Near-miss measures, per lap: minimum body clearance to the wall = distance from the body outline (0.58 × 0.31 m about the centre of gravity) to the nearest occupied pixel of the sim's map (same file as the bridge; 5.8 cm pixels; states are 0.1 s apart, so at a logged contact it reads about 0.1–0.2 m), and max |slip angle|. Slip is already 0.4–0.9 rad on normal laps here, so it does not separate controllers well; clearance does (about 0.3 m on normal laps). Detection delay: from the start of lap 9 (grip drop) or from entering the patch.
+
+| Scenario | Controller | Seed | Crash (type, lap, s, hit point) | Lap times after the change (s) | Min clearance per lap after the change (m) | Max \|slip\| per lap (rad) | Detection delay | False det. | Speed 2 s before → after detection (m/s) |
+|---|---|---|---|---|---|---|---|---|---|
+| grip 0.55 | bicycle | 1 | spin, lap 9, s 178.1, (−12.20, 43.43) | – | 0.08 | 0.74 | – | – | – |
+| grip 0.55 | bicycle | 2 | spin, lap 9, s 112.1, (−75.02, 54.07) | – | 0.06 | 0.85 | – | – | – |
+| grip 0.55 | bicycle | 3 | spin, lap 9, s 176.9, (−11.46, 45.06) | – | 0.06 | 1.03 | – | – | – |
+| grip 0.55 | v11 | 1 | spin, lap 9, s 176.7, (−11.54, 45.00) | – | 0.00 | 0.89 | – | – | – |
+| grip 0.55 | v11 | 2 | spin, lap 11, s 179.4, (−12.84, 42.39) | 39.7, 40.0 | 0.08, 0.06, 0.06 | 0.68, 0.71, 0.54 | – | – | – |
+| grip 0.55 | v11 | 3 | spin, lap 11, s 179.7, (−12.88, 42.40) | 40.2, 40.0 | 0.21, 0.13, 0.12 | 0.92, 0.86, 0.94 | – | – | – |
+| grip 0.55 | v11 + reaction | 1 | spin, lap 14, s 117.4, (−69.51, 54.69) | 60.8, 68.1, 60.9, 54.4, 48.2 | 0.08, 0.29, 0.25, 0.29, 0.17, 0.06 | 0.64, 0.31, 0.39, 0.71, 0.38, 0.41 | 2.1 s | 0 | 7.56 → 8.90 |
+| grip 0.55 | v11 + reaction | 2 | spin, lap 9, s 37.9, (−36.80, −7.26) | – | 0.30 | 0.96 | 1.7 s | 0 | 9.07 → 8.48 |
+| grip 0.55 | v11 + reaction | 3 | spin, lap 15, s 38.6, (−37.25, −6.55) | 61.9, 69.8, 63.8, 56.2, 48.8, 44.2 | 0.08, 0.29, 0.29, 0.25, 0.12, 0.13, 0.37 | 0.68, 0.30, 0.51, 0.41, 0.35, 0.53, 0.54 | 0.8 s | 0 | 8.60 → 9.85 |
+| patch 0.45 | bicycle | 1 | spin, lap 9, s 110.9, (−76.18, 53.71) | – | 0.13 | 0.96 | – | – | – |
+| patch 0.45 | bicycle | 2 | spin, lap 9, s 113.0, (−74.17, 54.20) | – | 0.13 | 0.90 | – | – | – |
+| patch 0.45 | bicycle | 3 | spin, lap 9, s 111.7, (−75.06, 54.08) | – | 0.29 | 1.04 | – | – | – |
+| patch 0.45 | v11 | 1 | spin, lap 9, s 112.9, (−73.54, 54.28) | – | 0.12 | 0.78 | – | – | – |
+| patch 0.45 | v11 | 2 | spin, lap 9, s 112.0, (−74.82, 54.07) | – | 0.25 | 0.90 | – | – | – |
+| patch 0.45 | v11 | 3 | spin, lap 9, s 112.6, (−73.97, 54.19) | – | 0.33 | 0.81 | – | – | – |
+| patch 0.45 | v11 + reaction | 1 | spin, lap 9, s 112.7, (−74.01, 54.18) | – | 0.35 | 1.00 | 0.6 s | 0 | 8.63 → 7.23 |
+| patch 0.45 | v11 + reaction | 2 | **no** | 37.9, 43.3, 41.0, 39.9, 39.2, 38.0, 37.9 | 0.06, 0.31, 0.25, 0.25, 0.12, 0.06, 0.06 | 0.75, 0.60, 0.62, 0.59, 0.56, 0.62, 0.82 | 0.5 s | 0 | 8.71 → 8.35 |
+| patch 0.45 | v11 + reaction | 3 | spin, lap 15, s 112.1, (−74.62, 54.09) | 38.7, 43.1, 42.5, 40.5, 39.7, 38.3 | 0.06, 0.29, 0.29, 0.23, 0.06, 0.12, 0.42 | 0.63, 0.51, 0.45, 0.68, 0.45, 0.61, 0.69 | 0.6 s | 0 | 8.81 → 8.06 |
+
+Lap times before the change were 38–40 s in every run. Clearance lists include the lap that ended in the crash. "Laps to recover" is not given: no run without a crash got back to a steady lap time apart from patch reaction seed 2 (back to 37.9 s by the last laps).
+
+| Scenario | Controller | Crashed / 3 | Laps driven after the change, before a crash | Crashes per lap after the change | Laps under 0.2 m clearance | Lap-time cost after the change | Detection delay | False det. |
+|---|---|---|---|---|---|---|---|---|
+| grip 0.55 | bicycle | 3 | 0, 0, 0 | 3/3 | 3/3 | – | – | – |
+| grip 0.55 | v11 | 3 | 0, 2, 2 | 3/7 | 6/7 | – | – | – |
+| grip 0.55 | v11 + reaction | 3 | 5, 0, 6 | 3/14 | 6/14 | +6 to +32 s (60–70 s, falling to 44–48 s) | 0.8–2.1 s | 0 |
+| patch 0.45 | bicycle | 3 | 0, 0, 0 | 3/3 | 2/3 | – | – | – |
+| patch 0.45 | v11 | 3 | 0, 0, 0 | 3/3 | 1/3 | – | – | – |
+| patch 0.45 | v11 + reaction | 2 | 0, 7, 6 | 2/15 | 7/15 | +0 to +5 s (38–43 s) | 0.5–0.6 s | 0 |
+
+### What this shows
+
+- **The harsher changes are beyond every controller without a reaction.** All 12 bicycle and v11 runs spun, 10 of them in the first lap after the change, at the two fast corners (s ≈ 111–113 m and s ≈ 177–180 m).
+- **The reaction does not prevent crashes, but it delays them a lot.** With it, the car drove 5–7 laps after the change in 4 of 6 runs (one patch run finished all 15 laps) where no run without it got past 2. Crashes per lap driven after the change: 3/14 vs 3/7 (grip), 2/15 vs 3/3 (patch). Near-misses (laps under 0.2 m clearance) fall from 6/7 to 6/14 (grip); for the patch they cannot be compared, since the runs without reaction crashed in their first lap.
+- **The crashes that remain are in the first lap after the change, or once the caps have been raised again.** In the first lap the local caps arrive after the car has passed the stretch (the same weakness as the check runs; the grip-drop speed even rose after detection in seeds 1 and 3, 7.6 → 8.9 and 8.6 → 9.9 m/s). The late crashes (laps 14–15) came after the caps had risen by 0.05 per lap for 5–6 laps, so the car was back near its old speed on a track with 0.55 grip.
+- **The reaction costs too much on the grip drop and is about right on the patch.** Grip drop: 60–70 s laps at first, then 44–48 s, more than ~3 s/lap; part of that is the under-cap weighting above. Patch: 0–5 s per lap.
+- **Default:** the reaction stays off by default (`change_speed: null`, `change_detection: false`, as before). By the rule set for this test it would have been switched off: on the grip drop it costs more than 3 s/lap, and whether it reduces near-misses cannot be cleanly shown, since the runs without it crashed too early to have comparable laps. It does make the car survive longer on both harsh scenarios, so the code stays available. `change_cap_scope: local` and `change_cap_rank_weight: 1.0` are the defaults whenever it is switched on.
+
+### Not done
+
+The under-cap weighting is not fixed (one attempt; the cap cost would need a deadband in the final pick and a weight in the sampling that is comparable to the value term). Caps on stretches ahead of the car at the first detection (the first-lap crashes) and capping the cap rise below the pre-change speed when the grip stays low (the late crashes) were not tried. The track-wide (old) reaction was not run on the harsher scenarios.

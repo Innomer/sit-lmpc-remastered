@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/hc-patch045-bicycle-s3",
+  "files": {
+    "state.json": "ab06da50a8445eccb604a94eb1893aa53504b6d94353c0802de96d52a243ec58",
+    "events.jsonl": "11dd5be30b9f2d4d726840cf15d71d79fbf9538e29743503bc2c6f42cf005e7b",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "a413aaec477853d7f7d5019a4479807e36065c0065f29702450bca320b0b7740",
+    "config.yaml": "31139507bd7eb998def20d64714937ee3d6199591a1003040040d1c4724eb577",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "6e0276e2a7cc07f766778fb4e9b87486e44eb3c0050f6212533101c6f26a883b"
+  }
+}

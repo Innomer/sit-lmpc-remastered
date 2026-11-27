@@ -1,0 +1,8 @@
+# Diagnostic: the entry-37 reaction (every detection caps every stretch not marked changed) with the final-pick cost
+# breakdown logged, to see why the car drives under the cap.
+extends: rssm-latent-v11-react.yaml
+output:
+  exp_name: rssm-latent-v11-react-track
+planner:
+  change_cap_scope: track
+  change_breakdown: true
