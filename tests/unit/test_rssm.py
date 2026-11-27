@@ -325,3 +325,29 @@ def test_change_monitor_local_caps():
     step = drive(grip, set(), 5)
     drive(grip, set(range(20)), 1, step)
     assert grip.global_caps and np.isfinite(grip.caps).all()
+
+
+def test_change_monitor_evidence_caps():
+    from sit_lmpc.planners.change_monitor import ChangeMonitor
+
+    def drive(monitor, changed, model_bad, laps, step=0):
+        for _ in range(laps):
+            for s in np.arange(0.0, 200.0, 0.5):
+                k = int(s // 10)
+                monitor.observe(step, s, 0.2 if k in changed else 0.01, True, speed=9.0,
+                                model_error=0.3 if k in model_bad else 0.02)
+                step += 1
+            monitor.finish_lap(step, 0)
+        return step
+
+    m = ChangeMonitor(200.0, stretch=10, speed_factor=0.8, speed_step=0.05, scope="evidence")
+    step = drive(m, set(), set(), 5)
+    step = drive(m, {9, 10, 11}, {9, 10, 11}, 1, step)
+    assert not np.isfinite(m.caps[12:19]).any() and np.isfinite(m.caps[:12]).all()
+    step = drive(m, {9, 10, 11}, {9, 10, 11}, 1, step)
+    assert np.flatnonzero(np.isfinite(m.caps)).tolist() == [9, 10, 11]
+    assert np.allclose(m.cap_factor[[9, 10, 11]], 0.8)
+    step = drive(m, {9, 10, 11, 15}, {9, 10, 11}, 1, step)
+    assert np.flatnonzero(np.isfinite(m.caps)).tolist() == [9, 10, 11, 15]
+    drive(m, {9, 10, 11}, set(), 2, step)
+    assert np.allclose(m.cap_factor[[9, 10, 11]], 0.9)

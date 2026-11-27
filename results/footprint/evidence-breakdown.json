@@ -1,0 +1,314 @@
+{
+ "ev-grip055-v11-react-s1": {
+  "learned_steps": 1211,
+  "capped_steps": 33,
+  "chosen_is_fastest_feasible": 0.033,
+  "actual_speed": 9.28,
+  "cap_here": 6.99,
+  "chosen_mean_planned_speed": 9.47,
+  "fastest_mean_planned_speed": 10.0,
+  "fastest_candidate_any_speed": 10.48,
+  "terms": {
+   "hull": {
+    "chosen_mean": 0.0143,
+    "fastest_mean": 0.6947,
+    "fastest_worse_share": 1.0
+   },
+   "boundary": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "value": {
+    "chosen_mean": -34.2168,
+    "fastest_mean": -34.1356,
+    "fastest_worse_share": null
+   },
+   "term_clearance": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "term_stretch_cap": {
+    "chosen_mean": 15.0,
+    "fastest_mean": 15.0,
+    "fastest_worse_share": 0.0
+   }
+  },
+  "chosen_max_over_cap": 3.28,
+  "fastest_max_over_cap": 3.81
+ },
+ "ev-grip055-v11-react-s2": {
+  "learned_steps": 1215,
+  "capped_steps": 28,
+  "chosen_is_fastest_feasible": 0.0,
+  "actual_speed": 9.66,
+  "cap_here": 7.13,
+  "chosen_mean_planned_speed": 9.37,
+  "fastest_mean_planned_speed": 9.78,
+  "fastest_candidate_any_speed": 10.29,
+  "terms": {
+   "hull": {
+    "chosen_mean": 0.0243,
+    "fastest_mean": 0.5218,
+    "fastest_worse_share": 1.0
+   },
+   "boundary": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "value": {
+    "chosen_mean": -33.7231,
+    "fastest_mean": -33.6634,
+    "fastest_worse_share": null
+   },
+   "term_clearance": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "term_stretch_cap": {
+    "chosen_mean": 15.0,
+    "fastest_mean": 15.0,
+    "fastest_worse_share": 0.0
+   }
+  },
+  "chosen_max_over_cap": 2.85,
+  "fastest_max_over_cap": 3.21
+ },
+ "ev-grip055-v11-react-s3": {
+  "learned_steps": 1237,
+  "capped_steps": 36,
+  "chosen_is_fastest_feasible": 0.032,
+  "actual_speed": 9.13,
+  "cap_here": 6.78,
+  "chosen_mean_planned_speed": 9.21,
+  "fastest_mean_planned_speed": 9.78,
+  "fastest_candidate_any_speed": 10.36,
+  "terms": {
+   "hull": {
+    "chosen_mean": 0.056,
+    "fastest_mean": 0.7179,
+    "fastest_worse_share": 0.967
+   },
+   "boundary": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "value": {
+    "chosen_mean": -34.5949,
+    "fastest_mean": -34.5056,
+    "fastest_worse_share": null
+   },
+   "term_clearance": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "term_stretch_cap": {
+    "chosen_mean": 14.9023,
+    "fastest_mean": 15.0,
+    "fastest_worse_share": 0.033
+   }
+  },
+  "chosen_max_over_cap": 3.13,
+  "fastest_max_over_cap": 3.76
+ },
+ "ev-patch045-v11-react-s1": {
+  "learned_steps": 3401,
+  "capped_steps": 758,
+  "chosen_is_fastest_feasible": 0.022,
+  "actual_speed": 7.11,
+  "cap_here": 7.21,
+  "chosen_mean_planned_speed": 7.22,
+  "fastest_mean_planned_speed": 8.02,
+  "fastest_candidate_any_speed": 8.18,
+  "terms": {
+   "hull": {
+    "chosen_mean": 1.0149,
+    "fastest_mean": 0.2647,
+    "fastest_worse_share": 0.206
+   },
+   "boundary": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "value": {
+    "chosen_mean": -19.7751,
+    "fastest_mean": -19.6471,
+    "fastest_worse_share": null
+   },
+   "term_clearance": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "term_stretch_cap": {
+    "chosen_mean": 1.9843,
+    "fastest_mean": 8.417,
+    "fastest_worse_share": 0.838
+   }
+  },
+  "chosen_max_over_cap": -9.04,
+  "fastest_max_over_cap": -7.69
+ },
+ "ev-patch045-v11-react-s2": {
+  "learned_steps": 1275,
+  "capped_steps": 23,
+  "chosen_is_fastest_feasible": 0.136,
+  "actual_speed": 9.56,
+  "cap_here": 6.76,
+  "chosen_mean_planned_speed": 8.87,
+  "fastest_mean_planned_speed": 9.12,
+  "fastest_candidate_any_speed": 9.29,
+  "terms": {
+   "hull": {
+    "chosen_mean": 0.2134,
+    "fastest_mean": 0.2201,
+    "fastest_worse_share": 0.684
+   },
+   "boundary": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "value": {
+    "chosen_mean": -25.4141,
+    "fastest_mean": -25.3752,
+    "fastest_worse_share": null
+   },
+   "term_clearance": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "term_stretch_cap": {
+    "chosen_mean": 14.1521,
+    "fastest_mean": 14.9768,
+    "fastest_worse_share": 0.263
+   }
+  },
+  "chosen_max_over_cap": 3.22,
+  "fastest_max_over_cap": 3.37
+ },
+ "ev-patch045-v11-react-s3": {
+  "learned_steps": 4219,
+  "capped_steps": 845,
+  "chosen_is_fastest_feasible": 0.016,
+  "actual_speed": 6.62,
+  "cap_here": 6.91,
+  "chosen_mean_planned_speed": 6.77,
+  "fastest_mean_planned_speed": 7.68,
+  "fastest_candidate_any_speed": 7.81,
+  "terms": {
+   "hull": {
+    "chosen_mean": 1.2417,
+    "fastest_mean": 0.267,
+    "fastest_worse_share": 0.145
+   },
+   "boundary": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "value": {
+    "chosen_mean": -20.6759,
+    "fastest_mean": -20.5298,
+    "fastest_worse_share": null
+   },
+   "term_clearance": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "term_stretch_cap": {
+    "chosen_mean": 0.6512,
+    "fastest_mean": 8.505,
+    "fastest_worse_share": 0.913
+   }
+  },
+  "chosen_max_over_cap": -10.62,
+  "fastest_max_over_cap": -9.02
+ },
+ "ev-check-grip055-s1": {
+  "learned_steps": 4457,
+  "capped_steps": 2226,
+  "chosen_is_fastest_feasible": 0.01,
+  "actual_speed": 6.93,
+  "cap_here": 7.66,
+  "chosen_mean_planned_speed": 7.19,
+  "fastest_mean_planned_speed": 7.93,
+  "fastest_candidate_any_speed": 7.98,
+  "terms": {
+   "hull": {
+    "chosen_mean": 1.0201,
+    "fastest_mean": 0.1822,
+    "fastest_worse_share": 0.103
+   },
+   "boundary": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "value": {
+    "chosen_mean": -18.5629,
+    "fastest_mean": -18.447,
+    "fastest_worse_share": null
+   },
+   "term_clearance": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "term_stretch_cap": {
+    "chosen_mean": 0.128,
+    "fastest_mean": 6.369,
+    "fastest_worse_share": 0.926
+   }
+  },
+  "chosen_max_over_cap": -4.52,
+  "fastest_max_over_cap": -3.22
+ },
+ "ev-check-patch045-s1": {
+  "learned_steps": 3150,
+  "capped_steps": 783,
+  "chosen_is_fastest_feasible": 0.012,
+  "actual_speed": 6.21,
+  "cap_here": 7.11,
+  "chosen_mean_planned_speed": 6.53,
+  "fastest_mean_planned_speed": 7.44,
+  "fastest_candidate_any_speed": 7.49,
+  "terms": {
+   "hull": {
+    "chosen_mean": 1.3297,
+    "fastest_mean": 0.2147,
+    "fastest_worse_share": 0.07
+   },
+   "boundary": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "value": {
+    "chosen_mean": -20.1676,
+    "fastest_mean": -20.0249,
+    "fastest_worse_share": null
+   },
+   "term_clearance": {
+    "chosen_mean": 0.0,
+    "fastest_mean": 0.0,
+    "fastest_worse_share": 0.0
+   },
+   "term_stretch_cap": {
+    "chosen_mean": 0.1222,
+    "fastest_mean": 6.9065,
+    "fastest_worse_share": 0.955
+   }
+  },
+  "chosen_max_over_cap": -5.2,
+  "fastest_max_over_cap": -3.56
+ }
+}

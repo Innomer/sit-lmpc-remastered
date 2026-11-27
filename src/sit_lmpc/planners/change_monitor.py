@@ -47,6 +47,11 @@ class ChangeMonitor:
         self.driven = set()
         self.relaxed_since = set()
         self.global_caps = False
+        self.model_history = [[] for _ in range(self.count)]
+        self.model_lap_values = [[] for _ in range(self.count)]
+        self.model_pass = []
+        self.pass_start = 0
+        self.cap_step = np.full(self.count, -1)
 
     def index(self, s):
         return int((float(s) % self.length) // self.stretch) % self.count
@@ -59,7 +64,7 @@ class ChangeMonitor:
         ref = self.reference(k)
         return self.floor if ref is None else max(self.floor, self.ratio * ref)
 
-    def observe(self, step, s, tag, learned, speed=None, factor=None):
+    def observe(self, step, s, tag, learned, speed=None, factor=None, model_error=None):
         """One control step: s along the track, the tag ending at this step, whether the planner is driving, the
         car's speed, and (optional) the speed factor to use if a change is detected now."""
         k = self.index(s)
@@ -71,8 +76,13 @@ class ChangeMonitor:
         if self.pass_stretch is not None and k != self.pass_stretch:
             self._leave(step, self.pass_stretch)
             self.pass_values = []
+            self.model_pass = []
+            self.pass_start = int(step)
         self.pass_stretch = k
         self.pass_values.append(tag)
+        if model_error is not None and np.isfinite(model_error):
+            self.model_lap_values[k].append(float(model_error))
+            self.model_pass.append(float(model_error))
         if not learned or len(self.recent) < self.window:
             return
         short = float(np.median(self.recent))
@@ -91,12 +101,18 @@ class ChangeMonitor:
                 self.detection_factor = chosen
                 if self.scope == "track":
                     targets = np.flatnonzero(self.mode == CONSERVATIVE)
+                elif self.scope == "evidence":
+                    targets = np.flatnonzero(self.mode == CONSERVATIVE) if first else [k]
                 elif self.global_caps:
                     targets = [j for j in range(self.count) if j not in self.relaxed_since]
                 else:
                     targets = [k]
                 for j in targets:
                     self._cap(j, chosen)
+                    if self.scope == "evidence" and np.isfinite(self.caps[j]):
+                        self.cap_step[j] = int(step)
+                        self.events.append({"step": int(step), "event": "cap set", "stretch": int(j), "lap": self.lap,
+                                            "cap": float(self.caps[j])})
             self.events.append({"step": int(step), "event": "detected" if first else "detected again", "stretch": k,
                                 "lap": self.lap, "short_m": short, "limit_m": self.limit(k)})
 
@@ -108,9 +124,16 @@ class ChangeMonitor:
             self.cap_factor[j] = factor
             self.caps[j] = factor * float(np.median(self.speed_history[j][-self.history_laps:]))
 
+    def model_limit(self, k):
+        values = self.model_history[k][-self.history_laps:]
+        return max(values) if values else None
+
     def _leave(self, step, k):
         if self.active:
             self.driven.add(k)
+        if self.scope == "evidence":
+            self._leave_evidence(step, k)
+            return
         if not self.active or self.mode[k] != CONSERVATIVE or self.changed[k] or not self.pass_values:
             return
         value = float(np.median(self.pass_values))
@@ -135,6 +158,47 @@ class ChangeMonitor:
                     self.events.append({"step": int(step), "event": "track-wide caps", "lap": self.lap,
                                         "share_changed": share, "driven": len(driven)})
 
+    def _leave_evidence(self, step, k):
+        if not self.active or not self.pass_values:
+            return
+        capped = np.isfinite(self.caps[k])
+        if capped and self.pass_start < self.cap_step[k]:
+            return
+        if self.mode[k] == CONSERVATIVE and not self.changed[k]:
+            value = float(np.median(self.pass_values))
+            if value <= self.limit(k):
+                self.mode[k] = NORMAL
+                self.relaxed_since.add(k)
+                self.events.append({"step": int(step), "event": "relaxed", "stretch": k, "lap": self.lap,
+                                    "tag_m": value})
+                if capped:
+                    self.caps[k] = np.inf
+                    self.cap_factor[k] = 1.0
+                    self.events.append({"step": int(step), "event": "cap removed", "stretch": k, "lap": self.lap,
+                                        "reason": "tag matches history"})
+                return
+            self.changed[k] = True
+            self.events.append({"step": int(step), "event": "changed", "stretch": k, "lap": self.lap, "tag_m": value})
+        if not (self.changed[k] and capped and self.model_pass):
+            return
+        limit = self.model_limit(k)
+        error = float(np.median(self.model_pass))
+        if limit is None or error > limit:
+            return
+        base = self.caps[k] / self.cap_factor[k]
+        self.cap_factor[k] = min(1.0, self.cap_factor[k] + self.speed_step)
+        self.cap_step[k] = int(step)
+        if self.cap_factor[k] >= 1.0:
+            self.caps[k] = np.inf
+            self.events.append({"step": int(step), "event": "cap removed", "stretch": k, "lap": self.lap,
+                                "reason": "model error in pre-change range", "model_error_m": error,
+                                "model_limit_m": limit})
+        else:
+            self.caps[k] = self.cap_factor[k] * base
+            self.events.append({"step": int(step), "event": "cap raised", "stretch": k, "lap": self.lap,
+                                "cap": float(self.caps[k]), "factor": float(self.cap_factor[k]),
+                                "model_error_m": error, "model_limit_m": limit})
+
     def finish_lap(self, step, new_condition_laps):
         """At the end of a lap: store this lap's per-stretch medians as history (a changed stretch skips the lap the
         change happened in and then starts a fresh history), and switch changed stretches to the new-condition laps
@@ -154,7 +218,11 @@ class ChangeMonitor:
             if self.lap_speeds[k] and not (self.active and self.lap >= (self.detection_lap or 0)):
                 self.speed_history[k].append(float(np.mean(self.lap_speeds[k])))
             self.lap_speeds[k] = []
-        if self.active and self.speed_factor is not None and self.lap > self.detection_lap:
+            if self.model_lap_values[k] and not (self.active and self.lap >= (self.detection_lap or 0)):
+                self.model_history[k].append(float(np.median(self.model_lap_values[k])))
+            self.model_lap_values[k] = []
+        if (self.active and self.speed_factor is not None and self.lap > self.detection_lap
+                and self.scope != "evidence"):
             self.clean_new_laps += 1
             capped = np.isfinite(self.caps) & self.changed
             for j in np.flatnonzero(capped):

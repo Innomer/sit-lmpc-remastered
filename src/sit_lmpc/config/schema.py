@@ -227,6 +227,7 @@ class PlannerConfig:
     change_global_min: int = 8
     change_breakdown: bool = False
     change_cap_rank_weight: float = 1.0
+    change_cap_sample_weight: float = 1.0
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000
@@ -460,8 +461,8 @@ class ExperimentConfig:
             raise ValueError("planner.change_speed must be null, fixed or probe")
         if p.change_speed and not (0 < p.change_speed_factor <= 1 and p.change_speed_step >= 0):
             raise ValueError("planner.change_speed_factor must be in (0, 1] and change_speed_step >= 0")
-        if p.change_cap_scope not in ("local", "track") or not 0 <= p.change_global_share <= 1:
-            raise ValueError("planner.change_cap_scope must be local or track, change_global_share in [0, 1]")
+        if p.change_cap_scope not in ("local", "track", "evidence") or not 0 <= p.change_global_share <= 1:
+            raise ValueError("planner.change_cap_scope must be local, track or evidence, change_global_share in [0, 1]")
         if p.change_speed == "probe" and not (isinstance(dynamics.rssm_grip_probe, str) and
                                               (Path(dynamics.rssm_grip_probe) / "probe.msgpack").is_file()):
             raise ValueError("planner.change_speed probe needs planner.dynamics.rssm_grip_probe")

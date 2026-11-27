@@ -841,3 +841,100 @@ Lap times before the change were 38–40 s in every run. Clearance lists include
 ### Not done
 
 The under-cap weighting is not fixed (one attempt; the cap cost would need a deadband in the final pick and a weight in the sampling that is comparable to the value term). Caps on stretches ahead of the car at the first detection (the first-lap crashes) and capping the cap rise below the pre-change speed when the grip stays low (the late crashes) were not tried. The track-wide (old) reaction was not run on the harsher scenarios.
+
+## 39. Evidence-based speed reaction
+
+### What changed
+
+The speed reaction was rebuilt from what entry 38 showed (`planner.change_cap_scope: evidence`, now the default scope whenever `change_speed` is set; the reaction itself is still off by default).
+
+1. **On detection:** every stretch is capped at once, at 0.8 × that stretch's pre-change speed (the `probe` mode still works as before).
+2. **Relax per stretch:** a cap only changes after the car has driven that stretch with the cap in place (the pass must start after the cap was set). If the stretch's change tag (bicycle 1.0 s position error) matches its pre-change history, the cap is removed. If it still looks changed, the cap stays.
+3. **Raise on evidence:** on a stretch that still looks changed, the cap goes up by 0.05 × the pre-change speed only when v11's own 1.0 s prediction error on that stretch, over the latest pass, is within its pre-change range (the largest per-lap median of the last laps before detection). At 1.0 the cap is removed. The +0.05-per-lap timer is gone.
+4. **Repeat detections** cap only their own stretch. They never re-cap a stretch that has already relaxed.
+5. **Softer cap:** the cap term in the sampling cost has its own weight (`change_cap_sample_weight`). The final-pick weight stays at 1 (`change_cap_rank_weight`).
+
+v11's own error is computed in the runner: the RSSM state from 10 steps earlier is rolled forward with the controls actually applied, and the predicted position is compared with where the car actually is. Each run saves it as `model_error_tag.npy`. Unit test: `test_change_monitor_evidence_caps`.
+
+Report scripts: `scripts/ev_report.py` (output `results/footprint/evidence-reaction.json`) and `scripts/breakdown_report.py` (output `results/footprint/evidence-breakdown.json`).
+
+### Finding: v11's own error does not show the change
+
+On normal laps v11's 1.0 s error has a median of about 0.47 m; the bicycle error is near 0. After the change, at the lower capped speed, v11's error drops to 0.2–0.3 m. So it is always "within the pre-change range", and every capped stretch gets its cap raised on every pass. In practice rule 3 acts like a per-pass timer: about 4 passes from 0.8 to cap removed. Meanwhile the bicycle tag still shows the change (median 0.1–0.3 m vs about 0 before). The rule was kept as specified.
+
+### Check runs (sample weight 0.1)
+
+| Run | Result | Laps after the change (s) | Speed / cap on capped steps | Laps < 0.2 m clearance | Detection delay |
+|---|---|---|---|---|---|
+| grip drop μ 0.55 (`ev-check-grip055-s1`) | no crash, 15 laps | 56.5, 51.3, 49.8, 46.6, 43.6, 41.4, 38.8 | 6.93 / 7.66 (0.73 under) | 3/7 | 0.8 s |
+| patch μ 0.45 (`ev-check-patch045-s1`) | spin, lap 13, s = 113.6 | 52.5, 46.5, 42.1, 41.5 | 6.19 / 7.10 (0.90 under) | 3/5 | 0.5 s |
+
+Both missed the 0.5 m/s target. The cost log shows why: the chosen plan was the fastest feasible plan on only 1% of capped steps, and the cap term alone made the faster plan lose 93–96% of the time. The sample weight was therefore lowered once, to 0.03, for the seed runs (`configs/world/rssm-latent-v11-react.yaml`).
+
+### Seed runs (sample weight 0.03)
+
+The bicycle and v11-without-reaction runs are reused from entry 38 (`hc-*`): same configs, and their code path did not change.
+
+**Grip drop, μ 0.55, from lap 9**
+
+| Controller | Seed | Crash | Laps after change | Laps < 0.2 m | Speed / cap | Detection delay |
+|---|---|---|---|---|---|---|
+| bicycle | 1 | spin, lap 9, s = 178.1 | 0 | 1/1 | – | – |
+| bicycle | 2 | spin, lap 9, s = 112.1 | 0 | 1/1 | – | – |
+| bicycle | 3 | spin, lap 9, s = 176.9 | 0 | 1/1 | – | – |
+| v11 | 1 | spin, lap 9, s = 176.7 | 0 | 1/1 | – | – |
+| v11 | 2 | spin, lap 11, s = 179.4 | 2 (39.7, 40.0) | 3/3 | – | – |
+| v11 | 3 | spin, lap 11, s = 179.7 | 2 (40.2, 40.0) | 2/3 | – | – |
+| v11 + reaction | 1 | spin, lap 9, s = 39.0 | 0 | 0/1 | 9.28 / 6.98 | 1.1 s |
+| v11 + reaction | 2 | spin, lap 9, s = 41.0 | 0 | 1/1 | 9.62 / 7.13 | 1.6 s |
+| v11 + reaction | 3 | spin, lap 9, s = 37.4 | 0 | 0/1 | 9.19 / 6.76 | 0.7 s |
+
+**Patch, μ 0.45 at s = 85–115 m, from lap 9**
+
+| Controller | Seed | Crash | Laps after change | Laps < 0.2 m | Speed / cap | Detection delay |
+|---|---|---|---|---|---|---|
+| bicycle | 1–3 | spin, lap 9, s = 110.9 / 113.0 / 111.7 | 0 / 0 / 0 | 2/3 | – | – |
+| v11 | 1–3 | spin, lap 9, s = 112.9 / 112.0 / 112.6 | 0 / 0 / 0 | 1/3 | – | – |
+| v11 + reaction | 1 | spin, lap 14, s = 115.1 | 5 (49.0, 39.9, 40.9, 40.3, 39.8) | 3/6 | 7.08 / 7.19 | 0.8 s |
+| v11 + reaction | 2 | spin, lap 9, s = 111.6 | 0 | 0/1 | 9.47 / 6.73 | 0.7 s |
+| v11 + reaction | 3 | no crash, 15 laps | 7 (51.0, 44.1, 42.3, 42.2, 41.3, 39.8, 38.9) | 3/7 | 6.61 / 6.90 | 0.6 s |
+
+**No change, v11 + reaction:** 3/3 finished 15 laps, no false detections, no caps, 0/45 laps under 0.2 m. Mean of laps 6–15: 39.18 / 39.03 / 38.55 s, against 38.93 / 37.13 / 38.88 s for v11 without reaction (`fp-none-v11-s1..3`). That is +0.6 s on average, inside the seed spread. The reaction does not hurt normal laps.
+
+There were no false detections in any run.
+
+### When caps were raised or removed (surviving runs)
+
+- **Patch, seed 3:**
+  - lap 9: all stretches capped; 12–34 removed (tag matches history);
+  - lap 10: 0–8 removed;
+  - laps 10–12: 9, 10, 11 and 12 raised once per pass (12 was re-capped by a repeat detection in lap 10; 13's repeat detections were removed straight away);
+  - lap 13: 9, 10 and 12 removed (model error in range);
+  - lap 14: lowest clearance of the run (0.0 m, no contact logged).
+- **Patch, seed 1:** same pattern. 10 was removed in lap 12 and 12 in lap 13; the spin came in lap 14 at s = 115, with 9 still capped at 8.49 and two laps under 0.06 m just before.
+- **Patch, check run:** 10 removed in lap 12 and 9 in lap 13; spin in lap 13 at s = 113.6.
+- **Grip drop, check run:**
+  - lap 9: 6 stretches removed (tag matches history), the rest raised to 0.85;
+  - every pass after that: raised again;
+  - by laps 12–14: all removed.
+  - The near-misses came after removal: 0.058 / 0.082 / 0.058 m in laps 13–15, against 0.21–0.42 m while capped.
+
+Rule 4 held in every run: repeat detections capped only their own stretch.
+
+### What the runs show
+
+1. **0.03 is too soft.** In 4 of the 6 harsh runs the car never got under the cap. In the three grip-drop runs and patch seed 2 it was still 2.3–2.7 m/s over the cap 2–4 s after detection, and it spun at the next fast corner (s ≈ 37–41 m on the grip drop, inside the patch on seed 2). The cost log agrees: in those runs the chosen plan's peak speed was 2.9–3.3 m/s over the cap, and the cap term almost never decided the final pick (0–26% of steps). At 0.1 (the check runs) the car braked straight after detection (9.0 → 6.5 m/s on the grip drop) and survived. Where the car did get under the cap at 0.03 (patch seeds 1 and 3), it drove 0.11 and 0.29 m/s under it, so the 0.5 m/s target is met. But the target conflicts with braking hard at the moment of detection.
+2. **The raise rule removes the caps too soon.** v11's error falls when the car slows, so it reads "in range" on every pass. The patch crashes (lap 13–14 at s = 113–115) and the grip-drop near-misses all come after caps were removed on stretches whose bicycle tag still showed the change.
+3. **"Driven under the cap" only checks timing.** It checks that the pass started after the cap was set, not that the car was actually under it. In grip-drop seed 1 the caps on stretches 1–2 were raised within 1.2 s of detection while the car was still at 9.3 m/s against a 7.0 cap.
+4. **Relaxing unchanged stretches works.** On the patch, 32 of 35 caps were removed within 1–2 laps because the tag matched history. Normal laps are not affected.
+
+### Default
+
+The reaction stays off by default (`change_speed: null`). `change_cap_scope: evidence`, `change_cap_sample_weight: 1.0` and `change_cap_rank_weight: 1.0` are the defaults when it is switched on. `rssm-latent-v11-react.yaml` keeps the 0.03 used in these runs.
+
+### Not done
+
+These were not tried:
+- a strong sampling weight right after detection with a softer one later;
+- raising caps based on the bicycle tag, or on v11's error compared at the same speed;
+- requiring the pass speed to be under the cap before a pass counts.

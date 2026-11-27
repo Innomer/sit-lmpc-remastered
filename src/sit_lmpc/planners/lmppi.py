@@ -725,7 +725,7 @@ class LMPPI:
             return None
         caps = jnp.asarray(np.where(np.isfinite(monitor.caps), monitor.caps, 1e3), frenet.dtype)
         idx = jnp.floor(frenet[..., 0] / monitor.stretch).astype(jnp.int32) % monitor.count
-        return self.config.safety_speed_weight * jnp.clip((frenet[..., 3] - caps[idx]) / 0.5, 0.0, 1.0)
+        return jnp.clip((frenet[..., 3] - caps[idx]) / 0.5, 0.0, 1.0)
 
     def candidate_breakdown(self, frenet, distances, extra, safety, terminal_values, safe_set, value_snapshot,
                             value_key):
@@ -910,7 +910,7 @@ class LMPPI:
         states = to_frenet(self.track, cartesian, indices, frenet_state[0])
         stretch_cap = self.change_cap_cost(states, safe_set)
         if stretch_cap is not None:
-            sample_extra = dict(sample_extra, stretch_cap=stretch_cap)
+            sample_extra = dict(sample_extra, stretch_cap=self.config.change_cap_sample_weight * stretch_cap)
         extra_cost = sum(sample_extra.values()) if sample_extra else None
         scenario_key = jax.random.fold_in(sample_key, 17) if distribution_needed else None
         sample_scenarios = sample_frenet = sample_chance = None

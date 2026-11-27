@@ -315,6 +315,9 @@ def _run(config, tracking_only, keyboard_cleanup):
     rssm_filter = None
     grip_probe = nominal_rollout = None
     tag_trace, tag_controls, tag_states, safe_set_trace, probe_trace = [], [], [], [], []
+    model_tag_predictors, model_tag_states, model_error_trace = [], [], []
+    model_error_needed = planner.change_detection and planner.change_cap_scope == "evidence" and bool(planner.change_speed)
+    model_error_rollout = jax.jit(lambda m, x, u: m.rollout_members(x, u)[0][-1])
     if planner.dynamics.backend == "rssm" and (planner.condition_tag == "probe" or planner.change_speed == "probe"):
         from sit_lmpc.world.rssm_grip import GripProbe
         grip_probe = GripProbe(planner.dynamics.rssm_grip_probe)
@@ -377,12 +380,22 @@ def _run(config, tracking_only, keyboard_cleanup):
             if len(true_state_trace) > 1 and np.hypot(*(true_state_trace[-1][:2] - true_state_trace[-2][:2])) > 3.0:
                 tag_controls.clear()
                 tag_states.clear()
+                model_tag_predictors.clear()
+                model_tag_states.clear()
             tag_controls.append(np.asarray(simulator.applied_control, np.float32))
             tag_states.append(np.asarray(cartesian, np.float32))
             tag = 0.0
             if len(tag_states) > 10:
                 end = np.asarray(nominal_rollout(jnp.asarray(tag_states[-11]), jnp.asarray(np.stack(tag_controls[-10:]))))
                 tag = float(np.hypot(*(end[:2] - tag_states[-1][:2])))
+        model_error = None
+        if model_error_needed and len(model_tag_predictors) >= 10 and len(tag_controls) >= 10:
+            predictor = model_tag_predictors[-10]
+            controls = jnp.asarray(np.stack(tag_controls[-10:]), predictor.st_params.dtype) / predictor.action_scale
+            end = np.asarray(model_error_rollout(predictor, jnp.asarray(model_tag_states[-10]), controls))
+            model_error = float(np.hypot(*(end[:2] - np.asarray(cartesian)[:2])))
+        if model_error_needed:
+            model_error_trace.append(np.nan if model_error is None else model_error)
         error_tag = tag if planner.condition_tag == "bicycle_error" or planner.change_detection else None
         if planner.condition_tag == "probe":
             tag = float(grip_probe(rssm_filter.h, rssm_filter.s))
@@ -394,7 +407,7 @@ def _run(config, tracking_only, keyboard_cleanup):
                 probe_trace.append(float(grip_probe(rssm_filter.h, rssm_filter.s)))
                 factor = float(np.clip(np.sqrt(np.mean(probe_trace[-10:]) / 1.0489), 0.6, 1.0))
             change_monitor.observe(len(tag_trace), frenet[0], error_tag, learned_steps > 0, speed=float(cartesian[3]),
-                                   factor=factor)
+                                   factor=factor, model_error=model_error)
         tag_trace.append(tag)
         lap_condition.append([tag if planner.condition_tag != "readout" else grip])
         grip_trace.append(grip)
@@ -406,10 +419,18 @@ def _run(config, tracking_only, keyboard_cleanup):
         nominal.model = learned.model = model
         encoder_trace.append(np.asarray(rssm_filter.s))
         if not planner.dynamics.rssm_state:
+            if model_error_needed:
+                model_tag_predictors.append(model)
+                model_tag_states.append(np.asarray(cartesian, np.float32))
+                del model_tag_predictors[:-11], model_tag_states[:-11]
             return cartesian, frenet
         cartesian, frenet = np.array(cartesian, copy=True), np.array(frenet, copy=True)
         cartesian[[2, 3, 5, 6]] = anchor
         frenet[[2, 3, 5, 6]] = anchor
+        if model_error_needed:
+            model_tag_predictors.append(model)
+            model_tag_states.append(np.asarray(cartesian, np.float32))
+            del model_tag_predictors[:-11], model_tag_states[:-11]
         return cartesian, frenet
 
     def apply_encoder(cartesian, frenet):
@@ -1934,6 +1955,8 @@ def _run(config, tracking_only, keyboard_cleanup):
                     np.save(directory / "rssm_memory.npy", np.asarray(memory_trace))
                 if tag_trace:
                     np.save(directory / "condition_tag.npy", np.asarray(tag_trace, np.float32))
+                if model_error_trace:
+                    np.save(directory / "model_error_tag.npy", np.asarray(model_error_trace, np.float32))
                 if safe_set_trace:
                     np.save(directory / "safe_set_trace.npy", np.asarray(safe_set_trace, np.float64))
                 if getattr(learned, "breakdown_log", None):
