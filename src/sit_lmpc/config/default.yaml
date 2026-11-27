@@ -170,6 +170,12 @@ planner:
   change_global_min: 8  # ... and at least this many stretches (80 m) have been driven since the change; fewer would let a short patch, driven first after detection, look like a track-wide change.
   change_cap_rank_weight: 1.0  # Weight of the stretch speed-cap cost in the final pick, on the scale of the safe-set violation (track limits and the other safety terms count x1000). At x1000 a 0.1 m/s overshoot vetoed a plan like a wall hit and the car drove about 2 m/s under the cap (entry 38).
   change_cap_sample_weight: 1.0  # Weight of the stretch speed-cap cost per step in the sampling (cost ramps 0 -> 1 over 0.5 m/s above the cap).
+  change_cap_strong_weight: 0.1  # evidence scope: sampling weight of the cap cost on a capped stretch until the car is first at or under its cap there; the cap also counts in the final pick (change_cap_rank_weight) in this phase.
+  change_cap_soft_weight: 0.03  # evidence scope: sampling weight once the car is under the cap on the current pass of that stretch (every new pass starts strong again); the cap no longer counts in the final pick, so the car drives close to it.
+  change_raise_band: 0.5  # evidence scope: a still-changed stretch's cap is raised only if v11's 1.0 s error on the latest pass is within its pre-change error on the same stretch at a speed within this band (m/s) of the pass's mean speed ...
+  change_raise_step: 0.3  # ... the pass is clean (body clearance >= change_min_clearance, max |slip| within the stretch's pre-change max), and then by this many m/s, never above the pre-change speed (reaching it removes the cap).
+  change_min_clearance: 0.2  # Minimum body-to-wall clearance (m, sim map) for a clean pass.
+  change_pass_share: 0.9  # A pass on a capped stretch counts toward relaxing or raising only if the speed was at or under the cap on at least this share of its steps.
   change_breakdown: false  # Log the final-pick cost breakdown of every candidate each learned step (candidate_breakdown.npz).
   condition_fallback: closest  # [closest, newest] when fewer than condition_min_laps laps match on a stretch: take the closest-tagged laps, or the newest laps.
   safe_set_min_states: 0  # Nonnegative integer; 0 disables the state-count minimum. Shared by controller safe-set retention and fixed-step NF training history. Keep at least safe_set_size laps and add older successful laps to reach this many unique states; NF uses all retained states and repeats passes to reach steps.

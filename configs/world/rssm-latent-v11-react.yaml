@@ -1,16 +1,22 @@
 # rssm-v11 + LiDAR clearance + footprint track limits (default) + full change reaction: live change detection,
 # conservative safe set and change-aware value (option B) as rssm-latent-v11-change.yaml, plus speed caps: on
-# detection every stretch is capped at 0.8 x its pre-change speed; a stretch's cap is removed once a pass under it
-# shows a tag matching its history; on a stretch that still looks changed it is raised by 0.05 only after a pass on
-# which v11's own 1.0 s prediction error is back within its pre-change range. Light cap cost in the sampling.
+# detection every stretch is capped at 0.8 x its pre-change speed. Each cap starts with a strong sampling weight and
+# counts in the final pick; once the car is under it on that stretch it switches to a soft weight. A pass counts only
+# if the car was at or under the cap on 90% of its steps. A counted pass whose tag matches the stretch's history
+# removes the cap; on a stretch that still looks changed the cap is raised by 0.3 m/s only after a clean pass whose
+# v11 1.0 s error is within the pre-change error at a similar speed.
 extends: rssm-latent-v11-change.yaml
 output:
   exp_name: rssm-latent-v11-react
 planner:
   change_speed: fixed
   change_speed_factor: 0.8
-  change_speed_step: 0.05
   change_cap_scope: evidence
-  change_cap_sample_weight: 0.03
+  change_cap_strong_weight: 0.1
+  change_cap_soft_weight: 0.03
   change_cap_rank_weight: 1.0
+  change_raise_band: 0.5
+  change_raise_step: 0.3
+  change_min_clearance: 0.2
+  change_pass_share: 0.9
   change_breakdown: true

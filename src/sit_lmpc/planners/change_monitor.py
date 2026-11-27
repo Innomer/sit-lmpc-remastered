@@ -18,7 +18,9 @@ NORMAL, CONSERVATIVE, NEW = 0, 1, 2
 
 class ChangeMonitor:
     def __init__(self, track_length, stretch=10.0, window=10, ratio=3.0, floor=0.05, history_laps=5, new_laps=2,
-                 speed_factor=None, speed_step=0.05, scope="track", global_share=0.5, global_min=8):
+                 speed_factor=None, speed_step=0.05, scope="track", global_share=0.5, global_min=8,
+                 strong_weight=0.1, soft_weight=0.03, raise_band=0.5, raise_step=0.3, min_clearance=0.2,
+                 pass_share=0.9, min_matched=3):
         self.length = float(track_length)
         self.count = int(np.ceil(self.length / stretch))
         self.stretch = self.length / self.count
@@ -52,6 +54,18 @@ class ChangeMonitor:
         self.model_pass = []
         self.pass_start = 0
         self.cap_step = np.full(self.count, -1)
+        self.strong_weight, self.soft_weight = float(strong_weight), float(soft_weight)
+        self.raise_band, self.raise_step = float(raise_band), float(raise_step)
+        self.min_clearance, self.pass_share, self.min_matched = float(min_clearance), float(pass_share), int(min_matched)
+        self.soft = np.zeros(self.count, bool)
+        self.base = np.full(self.count, np.inf)
+        self.pass_speeds = []
+        self.pass_clearance = []
+        self.pass_slip = []
+        self.lap_pairs = [[] for _ in range(self.count)]
+        self.pair_history = [[] for _ in range(self.count)]
+        self.lap_slip = [[] for _ in range(self.count)]
+        self.slip_history = [[] for _ in range(self.count)]
 
     def index(self, s):
         return int((float(s) % self.length) // self.stretch) % self.count
@@ -64,7 +78,7 @@ class ChangeMonitor:
         ref = self.reference(k)
         return self.floor if ref is None else max(self.floor, self.ratio * ref)
 
-    def observe(self, step, s, tag, learned, speed=None, factor=None, model_error=None):
+    def observe(self, step, s, tag, learned, speed=None, factor=None, model_error=None, clearance=None, slip=None):
         """One control step: s along the track, the tag ending at this step, whether the planner is driving, the
         car's speed, and (optional) the speed factor to use if a change is detected now."""
         k = self.index(s)
@@ -75,14 +89,32 @@ class ChangeMonitor:
         self.recent = (self.recent + [tag])[-self.window:]
         if self.pass_stretch is not None and k != self.pass_stretch:
             self._leave(step, self.pass_stretch)
+            self.soft[self.pass_stretch] = False
             self.pass_values = []
             self.model_pass = []
+            self.pass_speeds = []
+            self.pass_clearance = []
+            self.pass_slip = []
             self.pass_start = int(step)
         self.pass_stretch = k
         self.pass_values.append(tag)
         if model_error is not None and np.isfinite(model_error):
             self.model_lap_values[k].append(float(model_error))
             self.model_pass.append(float(model_error))
+            if speed is not None and np.isfinite(speed):
+                self.lap_pairs[k].append((float(speed), float(model_error)))
+        if speed is not None and np.isfinite(speed):
+            self.pass_speeds.append(float(speed))
+        if clearance is not None and np.isfinite(clearance):
+            self.pass_clearance.append(float(clearance))
+        if slip is not None and np.isfinite(slip):
+            self.pass_slip.append(abs(float(slip)))
+            self.lap_slip[k].append(abs(float(slip)))
+        if (self.scope == "evidence" and np.isfinite(self.caps[k]) and not self.soft[k] and speed is not None
+                and float(speed) <= self.caps[k]):
+            self.soft[k] = True
+            self.events.append({"step": int(step), "event": "under cap", "stretch": k, "lap": self.lap,
+                                "cap": float(self.caps[k]), "speed": float(speed)})
         if not learned or len(self.recent) < self.window:
             return
         short = float(np.median(self.recent))
@@ -111,6 +143,7 @@ class ChangeMonitor:
                     self._cap(j, chosen)
                     if self.scope == "evidence" and np.isfinite(self.caps[j]):
                         self.cap_step[j] = int(step)
+                        self.soft[j] = False
                         self.events.append({"step": int(step), "event": "cap set", "stretch": int(j), "lap": self.lap,
                                             "cap": float(self.caps[j])})
             self.events.append({"step": int(step), "event": "detected" if first else "detected again", "stretch": k,
@@ -119,7 +152,8 @@ class ChangeMonitor:
     def _cap(self, j, factor):
         if self.speed_history[j] and not np.isfinite(self.caps[j]):
             self.cap_factor[j] = factor
-            self.caps[j] = factor * float(np.median(self.speed_history[j][-self.history_laps:]))
+            self.base[j] = float(np.median(self.speed_history[j][-self.history_laps:]))
+            self.caps[j] = factor * self.base[j]
         elif self.scope == "track" and self.speed_history[j]:
             self.cap_factor[j] = factor
             self.caps[j] = factor * float(np.median(self.speed_history[j][-self.history_laps:]))
@@ -127,6 +161,30 @@ class ChangeMonitor:
     def model_limit(self, k):
         values = self.model_history[k][-self.history_laps:]
         return max(values) if values else None
+
+    def matched_limit(self, k, speed):
+        medians = []
+        for pairs in self.pair_history[k][-self.history_laps:]:
+            near = pairs[np.abs(pairs[:, 0] - speed) <= self.raise_band, 1]
+            if len(near) >= self.min_matched:
+                medians.append(float(np.median(near)))
+        return max(medians) if medians else None
+
+    def slip_limit(self, k):
+        values = self.slip_history[k][-self.history_laps:]
+        return max(values) if values else None
+
+    def phase(self, s):
+        k = self.index(s)
+        if not np.isfinite(self.caps[k]):
+            return 0
+        return 2 if self.soft[k] else 1
+
+    def sample_weights(self):
+        return np.where(np.isfinite(self.caps), np.where(self.soft, self.soft_weight, self.strong_weight), 0.0)
+
+    def rank_mask(self):
+        return (np.isfinite(self.caps) & ~self.soft).astype(float)
 
     def _leave(self, step, k):
         if self.active:
@@ -164,6 +222,12 @@ class ChangeMonitor:
         capped = np.isfinite(self.caps[k])
         if capped and self.pass_start < self.cap_step[k]:
             return
+        if capped:
+            share = float(np.mean(np.asarray(self.pass_speeds) <= self.caps[k])) if self.pass_speeds else 0.0
+            if share < self.pass_share:
+                self.events.append({"step": int(step), "event": "pass not counted", "stretch": k, "lap": self.lap,
+                                    "cap": float(self.caps[k]), "share_under_cap": share})
+                return
         if self.mode[k] == CONSERVATIVE and not self.changed[k]:
             value = float(np.median(self.pass_values))
             if value <= self.limit(k):
@@ -181,23 +245,39 @@ class ChangeMonitor:
             self.events.append({"step": int(step), "event": "changed", "stretch": k, "lap": self.lap, "tag_m": value})
         if not (self.changed[k] and capped and self.model_pass):
             return
-        limit = self.model_limit(k)
+        speed = float(np.mean(self.pass_speeds))
         error = float(np.median(self.model_pass))
-        if limit is None or error > limit:
+        limit = self.matched_limit(k, speed)
+        clearance = min(self.pass_clearance) if self.pass_clearance else None
+        slip = max(self.pass_slip) if self.pass_slip else None
+        slip_limit = self.slip_limit(k)
+        why = []
+        if limit is None:
+            why.append("no pre-change data at this speed")
+        elif error > limit:
+            why.append("model error above pre-change range")
+        if clearance is None or clearance < self.min_clearance:
+            why.append("clearance under limit")
+        if slip is None or slip_limit is None or slip > slip_limit:
+            why.append("slip above pre-change range")
+        detail = {"stretch": k, "lap": self.lap, "pass_speed": speed, "model_error_m": error, "model_limit_m": limit,
+                  "min_clearance_m": clearance, "max_slip": slip, "slip_limit": slip_limit}
+        if why:
+            self.events.append(dict({"step": int(step), "event": "cap kept", "cap": float(self.caps[k]),
+                                     "reason": ", ".join(why)}, **detail))
             return
-        base = self.caps[k] / self.cap_factor[k]
-        self.cap_factor[k] = min(1.0, self.cap_factor[k] + self.speed_step)
         self.cap_step[k] = int(step)
-        if self.cap_factor[k] >= 1.0:
+        if self.caps[k] + self.raise_step >= self.base[k]:
             self.caps[k] = np.inf
-            self.events.append({"step": int(step), "event": "cap removed", "stretch": k, "lap": self.lap,
-                                "reason": "model error in pre-change range", "model_error_m": error,
-                                "model_limit_m": limit})
+            self.cap_factor[k] = 1.0
+            self.events.append(dict({"step": int(step), "event": "cap removed",
+                                     "reason": "clean pass, model error in range at this speed; pre-change speed reached"},
+                                    **detail))
         else:
-            self.caps[k] = self.cap_factor[k] * base
-            self.events.append({"step": int(step), "event": "cap raised", "stretch": k, "lap": self.lap,
-                                "cap": float(self.caps[k]), "factor": float(self.cap_factor[k]),
-                                "model_error_m": error, "model_limit_m": limit})
+            self.caps[k] = self.caps[k] + self.raise_step
+            self.cap_factor[k] = self.caps[k] / self.base[k]
+            self.events.append(dict({"step": int(step), "event": "cap raised", "cap": float(self.caps[k]),
+                                     "reason": "clean pass, model error in range at this speed"}, **detail))
 
     def finish_lap(self, step, new_condition_laps):
         """At the end of a lap: store this lap's per-stretch medians as history (a changed stretch skips the lap the
@@ -218,9 +298,16 @@ class ChangeMonitor:
             if self.lap_speeds[k] and not (self.active and self.lap >= (self.detection_lap or 0)):
                 self.speed_history[k].append(float(np.mean(self.lap_speeds[k])))
             self.lap_speeds[k] = []
-            if self.model_lap_values[k] and not (self.active and self.lap >= (self.detection_lap or 0)):
+            before = not (self.active and self.lap >= (self.detection_lap or 0))
+            if self.model_lap_values[k] and before:
                 self.model_history[k].append(float(np.median(self.model_lap_values[k])))
             self.model_lap_values[k] = []
+            if self.lap_pairs[k] and before:
+                self.pair_history[k].append(np.asarray(self.lap_pairs[k]))
+            self.lap_pairs[k] = []
+            if self.lap_slip[k] and before:
+                self.slip_history[k].append(float(np.max(self.lap_slip[k])))
+            self.lap_slip[k] = []
         if (self.active and self.speed_factor is not None and self.lap > self.detection_lap
                 and self.scope != "evidence"):
             self.clean_new_laps += 1
@@ -262,3 +349,28 @@ class ChangeMonitor:
         """Speed cap (m/s, inf when none) at each track position s (any shape)."""
         idx = (np.floor(np.asarray(s) / self.stretch).astype(int)) % self.count
         return self.caps[idx]
+
+
+BODY_X = (-0.2965, 0.2835)
+BODY_Y = 0.155
+
+
+def wall_distance_field(track):
+    from scipy.ndimage import distance_transform_edt
+    occupied = np.asarray(track.occupancy_map) == 0
+    return distance_transform_edt(~occupied) * float(track.spec.resolution)
+
+
+def body_clearance(field, spec, cartesian):
+    xs = np.linspace(BODY_X[0], BODY_X[1], 9)
+    ys = np.linspace(-BODY_Y, BODY_Y, 5)
+    bx = np.concatenate([xs, xs, np.full(5, BODY_X[0]), np.full(5, BODY_X[1])])
+    by = np.concatenate([np.full(9, -BODY_Y), np.full(9, BODY_Y), ys, ys])
+    x = float(cartesian[0])
+    y = float(cartesian[1])
+    yaw = float(cartesian[4])
+    px = x + bx * np.cos(yaw) - by * np.sin(yaw)
+    py = y + bx * np.sin(yaw) + by * np.cos(yaw)
+    col = np.clip(((px - spec.origin[0]) / spec.resolution).astype(int), 0, field.shape[1] - 1)
+    row = np.clip(((py - spec.origin[1]) / spec.resolution).astype(int), 0, field.shape[0] - 1)
+    return float(field[row, col].min())

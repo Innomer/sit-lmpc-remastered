@@ -55,6 +55,15 @@ def cap_speed(run):
                 per.append({"lap": lap + 1, "capped_share": round(float(m.sum() / max(1, ((t[:, 0] >= starts[lap]) & (t[:, 0] < starts[lap + 1])).sum())), 2),
                             "speed": round(float(speed[m].mean()), 2), "cap": round(float(cap[m].mean()), 2)})
         out["per_lap"] = per
+        if t.shape[1] > 11:
+            phases = {}
+            for value, name in ((1, "strong"), (2, "soft")):
+                m = capped & (t[:, 11] == value)
+                if m.any():
+                    phases[name] = {"steps": int(m.sum()), "speed": round(float(speed[m].mean()), 2),
+                                    "cap": round(float(cap[m].mean()), 2),
+                                    "gap": round(float((cap[m] - speed[m]).mean()), 2)}
+            out["per_phase"] = phases
     return out
 
 
@@ -65,10 +74,28 @@ def cap_events(run):
     events = json.loads(events_file.read_text())["events"]
     keep = [e for e in events if e["event"] in ("cap raised", "cap removed", "detected", "detected again")]
     sets = [e for e in events if e["event"] == "cap set"]
-    out = [{"lap": e["lap"] + 1, "event": e["event"], "stretch": e.get("stretch"),
+    out = [{"lap": e["lap"] + 1, "step": e["step"], "event": e["event"], "stretch": e.get("stretch"),
             **({"cap": round(e["cap"], 2)} if "cap" in e else {}),
-            **({"reason": e["reason"]} if "reason" in e else {})} for e in keep]
-    return {"caps_set": len(sets), "caps_set_laps": sorted({e["lap"] + 1 for e in sets}), "events": out}
+            **({"reason": e["reason"]} if "reason" in e else {}),
+            **({"pass_speed": round(e["pass_speed"], 2), "model_error_m": round(e["model_error_m"], 3),
+                "model_limit_m": None if e["model_limit_m"] is None else round(e["model_limit_m"], 3),
+                "min_clearance_m": e["min_clearance_m"] and round(e["min_clearance_m"], 3)} if "pass_speed" in e else {})}
+           for e in keep]
+    kept, skipped = {}, {}
+    for e in events:
+        if e["event"] == "cap kept":
+            for reason in e["reason"].split(", "):
+                kept.setdefault(reason, {}).setdefault(e["lap"] + 1, 0)
+                kept[reason][e["lap"] + 1] += 1
+        if e["event"] == "pass not counted":
+            skipped.setdefault(e["lap"] + 1, 0)
+            skipped[e["lap"] + 1] += 1
+    first = next((e for e in events if e["event"] == "detected"), None)
+    under = next((e for e in events if e["event"] == "under cap" and first and e["step"] >= first["step"]), None)
+    return {"caps_set": len(sets), "caps_set_laps": sorted({e["lap"] + 1 for e in sets}), "events": out,
+            "cap_kept_reasons_per_lap": kept, "passes_not_counted_per_lap": skipped,
+            "detection_to_under_cap_s": round((under["step"] - first["step"]) * 0.1, 1) if under else None,
+            "under_cap_speed": round(under["speed"], 2) if under else None}
 
 
 def main():
@@ -80,11 +107,13 @@ def main():
     parser.add_argument("--reuse", default="hc", help="prefix of earlier bicycle / v11 runs with the same configs")
     parser.add_argument("--extra", nargs="*", default=[], help="other run names to include (e.g. check runs)")
     parser.add_argument("--out", default="results/footprint/evidence-reaction.json")
+    parser.add_argument("--only-react", action="store_true", help="skip the reused bicycle / v11 runs")
     args = parser.parse_args()
     field, resolution, origin, height = wall_distance_field()
     body = outline()
     report, summary = {}, []
-    names = [(f"{args.prefix}-{sc}-{c}-s{s}", sc, c) for sc in SCENARIOS for c in CONTROLLERS for s in args.seeds]
+    names = [(f"{args.prefix}-{sc}-{c}-s{s}", sc, c) for sc in SCENARIOS for c in CONTROLLERS for s in args.seeds
+             if not args.only_react or c == "v11-react"]
     names += [(n, next(sc for sc in SCENARIOS if sc in n), "v11-react") for n in args.extra]
     for name, scenario, controller in names:
         run = Path(args.root) / name
@@ -123,12 +152,13 @@ def main():
         print(f"{name:28s} crash {(crash['type'] + ' lap ' + str(crash['lap']) + ' s=' + str(crash['s']) + ' hit ' + str(crash.get('hit'))) if crash else 'no'}"
               f" | after-change laps {entry['laps_after_change']} | under 0.2 m {entry['laps_under_0.2m']}"
               f" | laps {[round(t, 1) for t in entry['lap_times']]}"
-              + (f" | speed/cap {cs.get('mean_speed')}/{cs.get('mean_cap')} gap {cs.get('mean_gap')}" if cs.get("capped_steps") else "")
+              + (f" | speed/cap {cs.get('mean_speed')}/{cs.get('mean_cap')} gap {cs.get('mean_gap')} phases {cs.get('per_phase')}" if cs.get("capped_steps") else "")
+              + (f" | to under cap {entry['cap_events']['detection_to_under_cap_s']} s" if entry["cap_events"] else "")
               + (f" | det delay {entry.get('detection_delay_s')} false {entry.get('false_detections')} speed {entry['speed_at_detection']}" if "detections" in entry else ""))
     for scenario, (label, _) in SCENARIOS.items():
         for controller, clabel in CONTROLLERS.items():
             rows = [r for n, r in report.items() if r["scenario"] == scenario and r["controller"] == controller
-                    and (n.startswith(args.prefix + "-") or n.startswith(args.reuse + "-"))]
+                    and (n.startswith(args.prefix + "-") or n.startswith(args.reuse + "-")) and "-check-" not in n]
             if not rows:
                 continue
             under = [r["laps_under_0.2m"].split("/") for r in rows]
@@ -138,7 +168,10 @@ def main():
                 "crash_details": [f"{r['crash']['type']} lap {r['crash']['lap']} s={r['crash']['s']}" for r in rows if r["crash"]],
                 "laps_after_change": [r["laps_after_change"] for r in rows],
                 "laps_under_0.2m": f"{sum(int(u[0]) for u in under)}/{sum(int(u[1]) for u in under)}",
-                **({"mean_speed_vs_cap": [f"{c['mean_speed']}/{c['mean_cap']}" for c in caps]} if caps else {}),
+                **({"mean_speed_vs_cap": [f"{c['mean_speed']}/{c['mean_cap']}" for c in caps],
+                    "per_phase": [c.get("per_phase") for c in caps]} if caps else {}),
+                **({"detection_to_under_cap_s": [r["cap_events"]["detection_to_under_cap_s"] for r in rows if r["cap_events"]]}
+                   if any(r["cap_events"] for r in rows) else {}),
                 **({"detection_delay_s": [r.get("detection_delay_s") for r in rows],
                     "false_detections": [r.get("false_detections") for r in rows]} if any("detections" in r for r in rows) else {})})
     print("\nsummary")

@@ -330,24 +330,40 @@ def test_change_monitor_local_caps():
 def test_change_monitor_evidence_caps():
     from sit_lmpc.planners.change_monitor import ChangeMonitor
 
-    def drive(monitor, changed, model_bad, laps, step=0):
+    def drive(monitor, changed, model_bad, laps, step=0, obey=True, clearance=0.5):
         for _ in range(laps):
             for s in np.arange(0.0, 200.0, 0.5):
                 k = int(s // 10)
-                monitor.observe(step, s, 0.2 if k in changed else 0.01, True, speed=9.0,
-                                model_error=0.3 if k in model_bad else 0.02)
+                speed = 5.0 + 4.0 * (s % 10) / 10
+                if obey:
+                    speed = min(speed, monitor.caps[k])
+                monitor.observe(step, s, 0.2 if k in changed else 0.01, True, speed=speed,
+                                model_error=0.3 if k in model_bad else 0.02, clearance=clearance, slip=0.05)
                 step += 1
             monitor.finish_lap(step, 0)
         return step
 
-    m = ChangeMonitor(200.0, stretch=10, speed_factor=0.8, speed_step=0.05, scope="evidence")
+    m = ChangeMonitor(200.0, stretch=10, speed_factor=0.8, scope="evidence", raise_step=0.3)
     step = drive(m, set(), set(), 5)
+    step = drive(m, {9, 10, 11}, {9, 10, 11}, 1, step, obey=False)
+    assert np.isfinite(m.caps).all()
+    assert any(e["event"] == "pass not counted" and e["stretch"] == 12 for e in m.events)
+    assert not m.soft[:19].any() and m.sample_weights()[9] == m.strong_weight and m.rank_mask()[9] == 1
+    m.observe(step, 0.5, 0.01, True, speed=9.0, model_error=0.02, clearance=0.5, slip=0.05)
+    assert not m.soft[0]
+    m.observe(step + 1, 1.0, 0.01, True, speed=1.0, model_error=0.02, clearance=0.5, slip=0.05)
+    assert m.soft[0] and m.sample_weights()[0] == m.soft_weight and m.rank_mask()[0] == 0
+    step += 2
     step = drive(m, {9, 10, 11}, {9, 10, 11}, 1, step)
-    assert not np.isfinite(m.caps[12:19]).any() and np.isfinite(m.caps[:12]).all()
-    step = drive(m, {9, 10, 11}, {9, 10, 11}, 1, step)
-    assert np.flatnonzero(np.isfinite(m.caps)).tolist() == [9, 10, 11]
-    assert np.allclose(m.cap_factor[[9, 10, 11]], 0.8)
+    assert np.flatnonzero(np.isfinite(m.caps[:19])).tolist() == [9, 10, 11]
+    assert any(e["event"] == "cap kept" and e["stretch"] == 9 for e in m.events)
+    before = m.caps[[9, 10, 11]].copy()
+    step = drive(m, {9, 10, 11}, set(), 1, step, clearance=0.1)
+    assert np.allclose(m.caps[[9, 10, 11]], before)
+    step = drive(m, {9, 10, 11}, set(), 1, step)
+    assert np.allclose(m.caps[[9, 10, 11]], before + 0.3)
     step = drive(m, {9, 10, 11, 15}, {9, 10, 11}, 1, step)
     assert np.flatnonzero(np.isfinite(m.caps)).tolist() == [9, 10, 11, 15]
-    drive(m, {9, 10, 11}, set(), 2, step)
-    assert np.allclose(m.cap_factor[[9, 10, 11]], 0.9)
+    assert not np.isfinite(m.caps[12:15]).any()
+    step = drive(m, {9, 10, 11}, set(), 10, step)
+    assert np.all(m.caps[[9, 10, 11]] <= m.base[[9, 10, 11]]) or not np.isfinite(m.caps[[9, 10, 11]]).any()

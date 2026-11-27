@@ -228,6 +228,12 @@ class PlannerConfig:
     change_breakdown: bool = False
     change_cap_rank_weight: float = 1.0
     change_cap_sample_weight: float = 1.0
+    change_cap_strong_weight: float = 0.1
+    change_cap_soft_weight: float = 0.03
+    change_raise_band: float = 0.5
+    change_raise_step: float = 0.3
+    change_min_clearance: float = 0.2
+    change_pass_share: float = 0.9
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000

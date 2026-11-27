@@ -938,3 +938,149 @@ These were not tried:
 - a strong sampling weight right after detection with a softer one later;
 - raising caps based on the bicycle tag, or on v11's error compared at the same speed;
 - requiring the pass speed to be under the cap before a pass counts.
+
+## 40. Speed reaction: two-phase cap weight, speed-matched raising, counted passes
+
+### What changed
+
+Three fixes to the evidence reaction from entry 39 (`configs/world/rssm-latent-v11-react.yaml`):
+
+1. **Two-phase cap weight.**
+   - Every capped stretch starts in a strong phase: sampling weight `change_cap_strong_weight` (0.1), and the cap counts in the final pick (`change_cap_rank_weight` 1).
+   - Once the car's speed is at or under the cap on the current pass of that stretch, the stretch switches to a soft phase: sampling weight `change_cap_soft_weight` (0.03), and the cap no longer counts in the final pick.
+   - Each new pass starts strong again (see the check runs for why).
+   - The phase on the car's stretch is logged each step (`change_trace.npy` column 11: 0 no cap, 1 strong, 2 soft), and an "under cap" event is logged when a stretch goes soft.
+2. **Speed-matched cap raising.** A still-changed stretch's cap goes up only after a counted pass on which all of these hold:
+   - v11's 1.0 s error (median over the pass) is no higher than the largest per-lap median of its pre-change error on the same stretch, using only steps whose speed was within ±0.5 m/s of the pass's mean speed (`change_raise_band`; at least 3 such steps per lap);
+   - the minimum body-to-wall clearance on the pass is at least 0.2 m (`change_min_clearance`). It is computed live from the sim map with the same measure as the report scripts, and agrees with them within one map pixel;
+   - the max |slip angle| on the pass is no higher than the stretch's pre-change max.
+
+   The raise is +0.3 m/s per qualifying pass (`change_raise_step`) and never goes above the pre-change speed; reaching it removes the cap. Each refusal is logged as "cap kept" with its reasons.
+3. **Counted passes.** A pass on a capped stretch counts toward relaxing or raising only if the speed was at or under the cap on at least 90% of its steps (`change_pass_share`). Otherwise a "pass not counted" event is logged.
+
+Code: `change_monitor.py` (phases, matched limit, slip history, clearance helpers), `lmppi.py` (per-stretch cap weights in sampling and final pick), `runner.py` (live clearance and slip passed to the monitor, phase in the trace), schema and defaults. Unit test: `test_change_monitor_evidence_caps` (rewritten). Report: `scripts/ev_report.py --prefix ev2` (output `results/footprint/evidence2-reaction.json`; the check runs alone are in `evidence2-check.json`).
+
+### Check runs
+
+The first check runs latched the soft phase: a stretch went soft the first time the car was under its cap and stayed soft for good. Both spun in lap 10 (grip drop at s = 114.4, patch at s = 113.0). In lap 10 the car came into the still-capped stretches 8–10 from an uncapped stretch at 9–10.5 m/s against caps of 6–7 m/s. A soft cap (0.03, not in the final pick) cannot brake that. These runs are kept as `ev2-check-*-s1-latch`.
+
+Fix: each new pass starts strong. So while the car is still on the stretch before, the cap ahead is strong and the car brakes before entering.
+
+| Check run (per-pass phase) | Result | Laps after change (s) | Strong phase speed / cap | Soft phase speed / cap | Detection → under cap |
+|---|---|---|---|---|---|
+| grip drop μ 0.55 | no crash, 15 laps | 54.4, 51.7, 54.4, 52.3, 52.7, 49.9, 51.5 | 9.22 / 7.17 (185 steps) | 6.53 / 7.10 (3415 steps) | 0.3 s |
+| patch μ 0.45 | no crash, 15 laps | 50.6, 44.0, 41.6, 42.2, 41.6, 41.5, 40.6 | 9.99 / 6.86 (86 steps) | 6.22 / 6.93 (911 steps) | 2.6 s |
+
+The strong-phase steps are mostly the car braking into a capped stretch, so it is over the cap by definition there.
+
+Cap timelines:
+- **Grip drop check:** stretch 1 was raised in laps 11, 13 and 15 (7.47 → 7.77 → 8.07). Every other changed stretch kept its cap all run, mostly with "no pre-change data at this speed" (22–25 per lap), with a few "slip above pre-change range" and "clearance under limit".
+- **Patch check:** stretches 12–34 were removed in lap 9 and 0–7 in lap 10 (tag matches history). Stretch 10 was raised in each of laps 10–14 (6.42 → 7.62). Stretches 9 and 11 kept their caps.
+
+### Seed runs
+
+Bicycle and v11 without reaction are reused from entry 38 (`hc-*`).
+
+**Grip drop, μ 0.55, from lap 9**
+
+| Controller | Seed | Crash | Laps after change, lap times (s) | Laps < 0.2 m | Strong speed / cap | Soft speed / cap | Detection → under cap | Detection delay |
+|---|---|---|---|---|---|---|---|---|
+| bicycle | 1–3 | spin lap 9 (s = 178.1 / 112.1 / 176.9) | 0 / 0 / 0 | 3/3 | – | – | – | – |
+| v11 | 1 | spin lap 9, s = 176.7 | 0 | 1/1 | – | – | – | – |
+| v11 | 2 | spin lap 11, s = 179.4 | 2: 39.7, 40.0 | 3/3 | – | – | – | – |
+| v11 | 3 | spin lap 11, s = 179.7 | 2: 40.2, 40.0 | 2/3 | – | – | – | – |
+| v11 + reaction | 1 | no | 7: 55.5, 50.4, 54.9, 54.1, 52.5, 51.0, 51.7 | 3/7 | 9.38 / 6.91 | 6.53 / 7.10 | 0.2 s | 1.1 s |
+| v11 + reaction | 2 | no | 7: 55.3, 53.4, 55.1, 54.4, 51.6, 51.1, 51.2 | 3/7 | 9.31 / 7.08 | 6.51 / 7.08 | 0.1 s | 1.2 s |
+| v11 + reaction | 3 | spin lap 9, s = 38.5 | 0 | 0/1 | 9.43 / 6.90 | – | never | 1.6 s |
+
+**Patch, μ 0.45 at s = 85–115 m, from lap 9**
+
+| Controller | Seed | Crash | Laps after change, lap times (s) | Laps < 0.2 m | Strong speed / cap | Soft speed / cap | Detection → under cap | Detection delay |
+|---|---|---|---|---|---|---|---|---|
+| bicycle | 1–3 | spin lap 9 (s = 110.9 / 113.0 / 111.7) | 0 / 0 / 0 | 2/3 | – | – | – | – |
+| v11 | 1–3 | spin lap 9 (s = 112.9 / 112.0 / 112.6) | 0 / 0 / 0 | 1/3 | – | – | – | – |
+| v11 + reaction | 1 | no | 7: 51.3, 43.9, 42.9, 42.6, 42.2, 41.7, 41.0 | 5/7 | 9.40 / 7.17 | 6.29 / 6.97 | 0.4 s | 0.4 s |
+| v11 + reaction | 2 | spin lap 14, s = 113.5 | 5: 49.0, 43.9, 40.7, 41.2, 41.1 | 3/6 | 9.57 / 7.17 | 6.42 / 7.06 | 0.4 s | 0.6 s |
+| v11 + reaction | 3 | no | 7: 50.9, 43.7, 41.8, 43.2, 42.3, 43.3, 40.5 | 4/7 | 10.02 / 6.75 | 6.20 / 6.79 | 0.9 s | 0.5 s |
+
+**No change, v11 + reaction**
+
+| Seed | Crash | Laps 6–15 mean | Detections |
+|---|---|---|---|
+| 1 | no | 38.52 s | 0 |
+| 2 | spin lap 10, s = 108.9 | 38.45 s (laps 6–9) | 1, during the spin |
+| 3 | no | 38.78 s | 0 |
+
+v11 without reaction (`fp-none-v11-s1..3`): 38.93 / 37.13 / 38.88 s.
+
+The seed 2 spin is not caused by the reaction. Speed fell from 8.5 to 0.7 m/s over steps 3560–3590 with no cap anywhere. The one detection came at step 3599, from the spin itself. So this is a plain v11 spin on a normal lap that happened to occur in a run with the reaction switched on. The fp-none-v11 seeds had no such spin.
+
+**False detections:** none before the change in any harsh run. The only detection in a no-change run is the one triggered by the spin above.
+
+**Planning time** (no change): p50 / p95 about 70 / 91 ms with the react config, against 53 / 70 ms for v11. Entry 39's react runs show the same (72 / 92 ms), so the cost comes from what the react config turns on (per-candidate cost logging `change_breakdown`, v11's own error replay), not from this entry's changes. It was not split further.
+
+### Summary
+
+| Scenario | Controller | Crashes | Laps after change | Laps < 0.2 m |
+|---|---|---|---|---|
+| grip drop μ 0.55 | bicycle | 3/3 | 0, 0, 0 | 3/3 |
+| | v11 | 3/3 | 0, 2, 2 | 6/7 |
+| | v11 + reaction | 1/3 | 7, 7, 0 | 6/15 |
+| patch μ 0.45 | bicycle | 3/3 | 0, 0, 0 | 2/3 |
+| | v11 | 3/3 | 0, 0, 0 | 1/3 |
+| | v11 + reaction | 1/3 | 7, 5, 7 | 12/20 |
+| no change | v11 + reaction | 1/3 (v11 spin, reaction inactive) | – | 0/40 |
+
+With the check runs included, 6 of 8 harsh runs with the reaction finished all 15 laps, against 0 of 6 without it.
+
+### Cap timelines (seed runs)
+
+- **Grip drop, seed 1:**
+  - lap 9: detection in stretch 1, every stretch capped;
+  - tag matches removed 8 stretches in lap 9 and 3 each in laps 11, 13 and 15;
+  - one raise in the whole run: stretch 31 in lap 13 (to 7.5);
+  - everything else stayed capped. Each lap had 19–28 "no pre-change data at this speed", 0–2 "slip above pre-change range", and in laps 13–14 one "clearance under limit".
+- **Grip drop, seed 2:**
+  - tag matches removed 4 stretches in lap 9, then 1 per lap;
+  - stretch 28 was raised in laps 9–13 (7.5 → 8.7) and removed in lap 14 (pre-change speed reached);
+  - stretch 6 was raised in laps 11–15 (7.28 → 8.48); stretches 8, 9 and 12 once each in laps 13–14;
+  - the rest kept their caps (18–29 "no pre-change data" per lap).
+- **Grip drop, seed 3:** detection at 1.6 s. The car never got under the cap and spun 2.8 s later at s = 38.5. In those 28 steps every candidate was over the cap: the fastest feasible plan averaged 9.7 m/s against a 6.9 cap, and the chosen plan peaked 3.3 m/s over it. The cap term never decided the final pick. Strong weight 0.1 was not enough to pull the samples down in time. This is the same failure as entry 39 at 0.03, now in 1 of 3 runs instead of 3 of 3.
+- **Patch, seeds 1 and 3:**
+  - stretches 12–34 were removed in lap 9 and 0–8 in lap 10 (tag matches history);
+  - repeat detections capped only their own stretch (12, 13, 8);
+  - stretches 9, 10 and 11 kept their caps for the whole run: 1–2 "no pre-change data at this speed" per lap, a few "slip above pre-change range", and 2–9 passes per lap not counted.
+- **Patch, seed 2:** same, except that in lap 12 stretch 11 (s = 110–120 m, holding the last 5 m of the patch) relaxed with a tag of 0.99 m and lost its cap. The spin came in lap 14 at s = 113.5, inside stretch 11, at about 6 m/s (the old cap there was 5.95).
+
+### Bug found: post-change laps leak into the tag history
+
+A stretch that is capped but not yet judged (CONSERVATIVE, not marked changed) keeps adding each lap's tag to its "pre-change" history. With the 90% rule, the car can drive such a stretch for several laps without a counted pass. On patch seed 2, stretch 11's history gained 0.84, 1.17 and 1.03 m in laps 9–11 (0.0–0.56 m before), so its limit rose to about 2.5 m and a 0.99 m tag "matched history". Patch seed 3 has the same leak (stretch 11 history up to 1.3 m) but no counted pass happened to come before the end of the run.
+
+The fix is one line in `finish_lap`: skip history for stretches that are capped and still waiting to be judged. It is not applied; all runs here used the code as described above.
+
+### What the runs show
+
+1. **The reaction now keeps the car alive in most harsh runs:** 4 of 6 seed runs and both check runs finished 15 laps, against 0 of 6 for v11 and the bicycle.
+2. **Soft phase:** the car drove 0.56–0.68 m/s under the cap on capped stretches. That is close to, but not inside, the 0.5 m/s target.
+3. **The speed-matched raise almost never fires on the grip drop.** At 0.8× speed the car is slower than it ever was on most stretches before the change, so there are no pre-change samples to compare with. Caps stay at 0.8× and laps stay at 50–55 s, against 38 s before the change. On the patch, the stretches inside the patch (9–11) never got raised either. Where a match existed, v11's error was again below its pre-change level (0.18–0.34 m against 0.28–0.67 m). So speed alone does not explain why v11's error drops after the change.
+4. **Near-misses are frequent:** 6 of 15 and 12 of 20 laps after the change came under 0.2 m clearance, with caps in place. The caps keep speed down but do not keep the car away from the wall.
+5. **Two crashes, two causes:**
+   - strong weight 0.1 sometimes cannot brake from 9.4 to 6.9 m/s in the 2–3 s after a late detection;
+   - the history leak removed a cap inside the patch.
+
+### Default
+
+The reaction stays off by default (`change_speed: null`). By the rule set for this test it beats v11 without reaction on survival (6 of 8 against 0 of 6). It was kept off for these reasons:
+- one of the two crashes comes from the history bug above;
+- the other is the no-braking failure, which is still open;
+- grip-drop laps cost 13–17 s each with no way back up;
+- the react config adds about 17 ms of planning time (p95 about 91 ms, close to the 100 ms control period).
+
+`change_detection` itself needs the RSSM backend, so the plain default config could not switch it on anyway; only the v11 change configs could.
+
+### Not done
+
+- the history fix;
+- a stronger or longer strong phase for late detections (for example the final-pick weight ×1000 until under the cap);
+- a fallback for raising when no pre-change data exists at the capped speed (for example the bicycle tag);
+- splitting the planning-time cost between cost logging and the error replay.

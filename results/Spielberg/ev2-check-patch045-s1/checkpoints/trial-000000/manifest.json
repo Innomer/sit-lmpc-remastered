@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/ev2-check-patch045-s1",
+  "files": {
+    "state.json": "8af34c923ffeb3023a98338bc0f4cc2acabf526e9eab50322c8939d73d2db1cf",
+    "events.jsonl": "77fb7c7dc676f10703e0ab464fc25f3f2ecc4e99366045c6864b64b8e64e3c72",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "4ec2bc54cae47892246035b14d8c34301d6d5fc928e069ca467596083839c549",
+    "config.yaml": "0097be6685c63ad25694677b49beaf9c5d9cc27c35c6ef4a931df2e7881f2e07",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "9d17b4997e3d8f40feecb4ed6271a186575bcba6daa17db3a0b09897c03067c1"
+  }
+}

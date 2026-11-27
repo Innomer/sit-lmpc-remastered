@@ -718,14 +718,23 @@ class LMPPI:
             self.config.boundary_limit, self.config.safe_set_threshold,
         )
 
-    def change_cap_cost(self, frenet, safe_set):
+    def change_cap_cost(self, frenet, safe_set, weights=None):
         """Per-step cost above the change monitor's per-stretch speed caps (safe set v2 speed reaction)."""
         monitor = getattr(safe_set, "change_monitor", None)
         if monitor is None or not np.isfinite(monitor.caps).any():
             return None
         caps = jnp.asarray(np.where(np.isfinite(monitor.caps), monitor.caps, 1e3), frenet.dtype)
         idx = jnp.floor(frenet[..., 0] / monitor.stretch).astype(jnp.int32) % monitor.count
-        return jnp.clip((frenet[..., 3] - caps[idx]) / 0.5, 0.0, 1.0)
+        cost = jnp.clip((frenet[..., 3] - caps[idx]) / 0.5, 0.0, 1.0)
+        if weights is not None:
+            cost = cost * jnp.asarray(weights, frenet.dtype)[idx]
+        return cost
+
+    def change_cap_weights(self, safe_set, rank):
+        monitor = getattr(safe_set, "change_monitor", None)
+        if monitor is None or monitor.scope != "evidence":
+            return None
+        return monitor.rank_mask() if rank else monitor.sample_weights()
 
     def candidate_breakdown(self, frenet, distances, extra, safety, terminal_values, safe_set, value_snapshot,
                             value_key):
@@ -908,9 +917,11 @@ class LMPPI:
             self.track.get_s_search_range(frenet_state[0], self.config.search_points)
         )
         states = to_frenet(self.track, cartesian, indices, frenet_state[0])
-        stretch_cap = self.change_cap_cost(states, safe_set)
+        sample_weights = self.change_cap_weights(safe_set, rank=False)
+        stretch_cap = self.change_cap_cost(states, safe_set, sample_weights)
         if stretch_cap is not None:
-            sample_extra = dict(sample_extra, stretch_cap=self.config.change_cap_sample_weight * stretch_cap)
+            scale = 1.0 if sample_weights is not None else self.config.change_cap_sample_weight
+            sample_extra = dict(sample_extra, stretch_cap=scale * stretch_cap)
         extra_cost = sum(sample_extra.values()) if sample_extra else None
         scenario_key = jax.random.fold_in(sample_key, 17) if distribution_needed else None
         sample_scenarios = sample_frenet = sample_chance = None
@@ -1057,7 +1068,7 @@ class LMPPI:
         trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
         candidate_frenet = to_frenet(self.track, trajectories, indices, frenet_state[0])
         candidate_extra = self.model_safety_costs(state, candidates[:, : self.config.horizon])
-        candidate_cap = self.change_cap_cost(candidate_frenet, safe_set)
+        candidate_cap = self.change_cap_cost(candidate_frenet, safe_set, self.change_cap_weights(safe_set, rank=True))
         if candidate_cap is not None:
             candidate_extra = dict(candidate_extra, stretch_cap=candidate_cap)
         soft = () if getattr(self.config.dynamics, "rssm_risk_rank", False) else SOFT_TERMS
