@@ -12,6 +12,7 @@ simulation:
   car:
     max_speed: 7.0
     record_bag: true
+    bag_topics: [/pf/pose/odom, /odom, /sensors/imu/raw, /sensors/imu, /sensors/core, /scan, /drive, /joy, /tf, /tf_static]
 planner:
   sit_lmpc_mode: false
   half_width: 0.40  # body-corner limit = half_width - footprint_buffer; set half_width to the 5th-percentile wall distance from scripts/make_track.py

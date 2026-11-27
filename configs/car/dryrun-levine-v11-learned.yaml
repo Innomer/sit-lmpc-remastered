@@ -1,0 +1,21 @@
+# Dry run of configs/car/levine-v11-learned.yaml on the ROS sim (car backend, real time, same code path as on the car) on the
+# Levine sim map. Bridge: configs/car/ros-bridge-dryrun-levine.yaml. Start the run, then press go:
+#   ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty
+extends: levine-v11-learned.yaml
+output:
+  exp_name: car-dryrun-levine-v11-learned
+simulation:
+  map: tracks/levine_sim/levine_sim
+  max_laps: 8
+  car:
+    odom_topic: /ego_racecar/pf_odom
+    speed_topic: /ego_racecar/wheel_odom
+    imu_topic: /ego_racecar/imu
+    scan_topic: /scan
+    joy_topic: ""
+    start_zone: 4.0
+    bag_topics: [/ego_racecar/pf_odom, /ego_racecar/wheel_odom, /ego_racecar/imu, /scan, /drive]
+planner:
+  half_width: 0.57
+  warmup:
+    path: tracks/levine_sim/levine_sim_centerline.csv
