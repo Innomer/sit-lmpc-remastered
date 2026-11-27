@@ -10,7 +10,9 @@
 Episode view: left, the map with the episode's path coloured by speed, the car at the current step and its LiDAR
 returns (1080 beams over 270 degrees, mounted 0.275 m ahead of the rear axle); right, speed, steering, yaw rate,
 slip, grip and mass ratio under the car, and the controls, with a cursor at the current step. A slider moves through
-the episode. Keys: right / left = next / previous episode, up / down = +10 / -10 steps, home / end = first / last step.
+the episode; buttons step through episodes (< Prev, Next >, << 10, 10 >>) and the "ep" box jumps to an episode number
+(type it, press Enter). Keys (click the plot first): right / left or n / p = next / previous episode, up / down =
++10 / -10 steps, home / end = first / last step.
 Runs on the CPU only.
 """
 
@@ -103,11 +105,31 @@ class Viewer:
         for ax in self.ax_series[:-1]:
             ax.tick_params(labelbottom=False)
         self.title = self.fig.text(0.05, 0.94, "", fontsize=9, va="center", family="monospace")
-        self.slider_ax = self.fig.add_axes((0.05, 0.03, 0.9, 0.025))
+        self.slider_ax = self.fig.add_axes((0.05, 0.03, 0.62, 0.025))
         self.slider = None
         self.maps = {}
+        from matplotlib.widgets import Button, TextBox
+        self.buttons = []
+        for x, label, delta in ((0.70, "<< 10", -10), (0.75, "< Prev", -1), (0.80, "Next >", 1), (0.85, "10 >>", 10)):
+            button = Button(self.fig.add_axes((x, 0.02, 0.045, 0.04)), label)
+            button.on_clicked(lambda _, d=delta: self.move(d))
+            self.buttons.append(button)
+        self.goto = TextBox(self.fig.add_axes((0.935, 0.02, 0.045, 0.04)), "ep ", initial=str(self.index + 1))
+        self.goto.on_submit(self.jump)
         self.fig.canvas.mpl_connect("key_press_event", self.on_key)
         self.show_episode(step)
+
+    def move(self, delta):
+        self.index = (self.index + delta) % len(self.episodes)
+        self.show_episode(0)
+
+    def jump(self, text):
+        try:
+            number = int(text)
+        except ValueError:
+            return
+        self.index = int(np.clip(number - 1, 0, len(self.episodes) - 1))
+        self.show_episode(0)
 
     def episode(self):
         e = self.episodes[self.index]
@@ -179,6 +201,8 @@ class Viewer:
             self.cursors.append(ax.axvline(step * 0.1, color="tab:red", lw=1))
         self.ax_series[-1].set_xlabel("time (s)")
         self.title.set_text(f"[{self.index + 1}/{len(self.episodes)}]  " + describe(e))
+        if hasattr(self, "goto") and self.goto.text != str(self.index + 1):
+            self.goto.set_val(str(self.index + 1))
         self.slider_ax.clear()
         self.slider = Slider(self.slider_ax, "step", 0, self.steps - 1, valinit=step, valstep=1)
         self.slider.on_changed(lambda value: self.show_step(int(value)))
@@ -203,9 +227,8 @@ class Viewer:
 
     def on_key(self, event):
         step = int(self.slider.val)
-        if event.key in ("right", "left"):
-            self.index = (self.index + (1 if event.key == "right" else -1)) % len(self.episodes)
-            self.show_episode(0)
+        if event.key in ("right", "left", "n", "p"):
+            self.move(1 if event.key in ("right", "n") else -1)
         elif event.key in ("up", "down"):
             self.slider.set_val(int(np.clip(step + (10 if event.key == "up" else -10), 0, self.steps - 1)))
         elif event.key == "home":
@@ -265,6 +288,8 @@ def main():
     if args.export:
         matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    for name in ("keymap.back", "keymap.forward", "keymap.home", "keymap.pan", "keymap.zoom"):
+        plt.rcParams[name] = [k for k in plt.rcParams[name] if k not in ("left", "right", "home", "p", "n")]
     episodes = select(load_manifest(args.dataset), args)
     if not episodes:
         raise SystemExit("no episodes match the filters")
