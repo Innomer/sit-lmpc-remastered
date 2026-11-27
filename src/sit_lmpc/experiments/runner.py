@@ -459,8 +459,10 @@ def _run(config, tracking_only, keyboard_cleanup):
                 del model_tag_predictors[:-tag_steps - 1], model_tag_states[:-tag_steps - 1]
             return cartesian, frenet
         cartesian, frenet = np.array(cartesian, copy=True), np.array(frenet, copy=True)
-        cartesian[[2, 3, 5, 6]] = anchor
-        frenet[[2, 3, 5, 6]] = anchor
+        fields = [3, 5, 6] if planner.dynamics.rssm_command_steering else [2, 3, 5, 6]
+        values = np.asarray(anchor)[1:] if planner.dynamics.rssm_command_steering else anchor
+        cartesian[fields] = values
+        frenet[fields] = values
         if model_error_needed:
             model_tag_predictors.append(model)
             model_tag_states.append(np.asarray(cartesian, np.float32))

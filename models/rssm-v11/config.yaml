@@ -1,0 +1,67 @@
+balance_cap: 5.0
+balance_track: true
+batch: 32
+clip: 1.0
+comparison_every: 5000
+coverage_dataset: data/f1tenth-coverage
+coverage_fraction: 0.5
+coverage_fraction_start: 0.2
+coverage_ramp: 0.3
+data_cut:
+- 1.2
+- 10.0
+dataset: data/f1tenth-track
+diagnostic_window: 80
+eval_every: 500
+high_slip_fraction: 0.0
+horizon_ramp: 0.5
+horizon_start: 2
+integrator_timestep: 0.02
+kl_warmup: 3000
+learning_rate: 0.0001
+model:
+  beams: 64
+  body_frame_residual: true
+  condition: 8
+  fast: 24
+  hidden: 128
+  sensors: 9
+seed: 20261127
+selection:
+- anchor
+- residual
+- prediction
+- true_state_prediction
+- lidar
+settings:
+  anchor_weights:
+  - 1.0
+  - 3.0
+  - 1.0
+  - 1.0
+  condition_walk_std: 0.05
+  free_nats: 1.0
+  huber_delta: 1.0
+  prediction_steps: 15
+  prediction_stride: 2
+  window_loss_cap: 10.0
+skip_factor: 1000000000000.0
+steps: 30000
+stop_factor: 3.0
+stop_from_step: 15000
+stop_patience: 3
+timestep: 0.1
+val_batches: 8
+vehicle_config: configs/world/world-nochance.yaml
+weights:
+  anchor: 1.0
+  condition: 3.0
+  consistency: 0.5
+  kl: 1.0
+  lidar: 1.0
+  prediction: 1.0
+  prediction_lidar: 0.5
+  residual: 1.0
+  sensors: 1.0
+  true_state_prediction: 1.0
+window: 40

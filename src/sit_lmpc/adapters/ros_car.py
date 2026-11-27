@@ -63,6 +63,10 @@ class RosCar:
         self.odom_yaw_rate = 0.0
         self.close_scan = False
         self.closest = math.inf
+        self.imu = None
+        self.scan = None
+        self.encoder_pose = None
+        self.applied_control = np.zeros(2)
         self.go = False
         self.joy_pressed = False
         self.delta = 0.0
@@ -93,7 +97,7 @@ class RosCar:
                 self.node.create_subscription(Odometry, car.speed_topic, self._speed_callback, 10))
         if car.imu_topic:
             self.subscriptions.append(self.node.create_subscription(Imu, car.imu_topic, self._imu_callback, 10))
-        if car.scan_topic and car.stop_distance > 0:
+        if car.scan_topic and (car.stop_distance > 0 or car.world_model_inputs):
             self.subscriptions.append(
                 self.node.create_subscription(LaserScan, car.scan_topic, self._scan_callback, 10))
         if car.joy_topic:
@@ -133,9 +137,13 @@ class RosCar:
         self.speed = msg.twist.twist.linear.x
 
     def _imu_callback(self, msg):
+        self.imu = msg
         self.yaw_rate = self.car.imu_yaw_scale * msg.angular_velocity.z
 
     def _scan_callback(self, msg):
+        self.scan = msg
+        if self.car.stop_distance <= 0:
+            return
         ranges = np.asarray(msg.ranges, dtype=float)
         angles = msg.angle_min + msg.angle_increment * np.arange(ranges.size)
         valid = (np.abs(angles) < self.car.scan_half_angle) & np.isfinite(ranges) & (ranges > 0.05)
@@ -231,6 +239,39 @@ class RosCar:
         if age > self.car.odom_timeout:
             self._stop("stale_odometry")
             raise RuntimeError(f"odometry from {self.car.odom_topic} is {age:.2f} s old; stopped the car")
+
+    def encoder_observation(self):
+        """The world model's 9 sensor inputs from the car, in the layout and units of the training data
+        (sit_lmpc.world.data, as RosSimulator.encoder_observation): IMU acceleration x, y (m/s^2, body frame, gravity
+        removed) and gyro yaw rate (rad/s), wheel speed (m/s), particle-filter pose change in the previous body frame
+        divided by the timestep (m/s, m/s, rad/s), and the last control in planner units (steering rate rad/s,
+        acceleration m/s^2). Signs and units come from simulation.car (scripts/car_check.py suggests them)."""
+        if self.imu is None or self.odom is None or self.speed is None:
+            raise RuntimeError("world-model inputs missing: no IMU, odometry or wheel speed yet")
+        car = self.car
+        accel = self.imu.linear_acceleration
+        msg = self.odom
+        current = (msg.pose.pose.position.x, msg.pose.pose.position.y, quaternion_yaw(msg.pose.pose.orientation))
+        previous = current if self.encoder_pose is None else self.encoder_pose
+        dx, dy = current[0] - previous[0], current[1] - previous[1]
+        body_dx = math.cos(previous[2]) * dx + math.sin(previous[2]) * dy
+        body_dy = -math.sin(previous[2]) * dx + math.cos(previous[2]) * dy
+        dyaw = wrap_angle(current[2] - previous[2])
+        self.encoder_pose = current
+        dt = self.timestep
+        observation = np.array([car.imu_accel_scale[0] * accel.x, car.imu_accel_scale[1] * accel.y,
+                                car.imu_yaw_scale * self.imu.angular_velocity.z, self.speed,
+                                body_dx / dt, body_dy / dt, dyaw / dt,
+                                self.applied_control[0], self.applied_control[1]], dtype=np.float32)
+        return observation, np.array(current)
+
+    def lidar_scan(self):
+        """The latest LiDAR scan resampled onto the training layout (1080 beams over 270 degrees; returns under
+        0.05 m dropped)."""
+        from sit_lmpc.world.rssm_runtime import resample_scan
+        if self.scan is None:
+            raise RuntimeError(f"no LiDAR scan on {self.car.scan_topic}")
+        return resample_scan(self.scan.ranges, self.scan.angle_min, self.scan.angle_increment)
 
     def _measured(self):
         msg = self.odom
@@ -328,6 +369,8 @@ class RosCar:
         self.track.s_guess = None
         frenet = cartesian.copy()
         frenet[[0, 1, 4]] = (s, ey, ephi)
+        self.applied_control = np.zeros(2)
+        self.encoder_pose = None
         self.emit("car_start_accepted", behind=float(behind), launch_speed=self.launch_speed)
         self.returned_at = None
         return (cartesian, frenet), {"lap_times": [0.0], "lap_counts": [0], "sim_time": 0.0}
@@ -405,6 +448,7 @@ class RosCar:
         if self.delay_steps:
             self.pending.append(np.asarray(control, dtype=float))
             self.delta_history.append(self.delta)
+        self.applied_control = np.asarray(control, dtype=float)
         observation = self._observe()
         self.tick = deadline
         collision = self.close_scan

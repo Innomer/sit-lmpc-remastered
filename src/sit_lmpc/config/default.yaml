@@ -39,6 +39,8 @@ simulation:
     odom_topic: /pf/pose/odom  # nav_msgs/Odometry pose (rear axle) from the particle filter.
     speed_topic: /odom  # nav_msgs/Odometry whose twist.linear.x is the speed (VESC wheel odometry); "" uses odom_topic.
     imu_topic: /sensors/imu/raw  # sensor_msgs/Imu; yaw rate = imu_yaw_scale * angular_velocity.z. "" uses odom_topic's twist.
+    imu_accel_scale: [1.0, 1.0]  # World-model input: factors on the IMU linear acceleration x, y to get m/s^2 in the body frame (x forward, y left); scripts/car_check.py suggests them.
+    world_model_inputs: false  # Subscribe to the LiDAR for the world model even when stop_distance is 0 (planner.dynamics.backend rssm).
     imu_yaw_scale: 1.0  # Sign and unit factor for the gyro; scripts/car_check.py suggests it.
     drive_topic: /drive  # ackermann_msgs/AckermannDriveStamped (speed, steering_angle) into the car's mux.
     scan_topic: /scan  # sensor_msgs/LaserScan for the proximity stop; "" disables it.
@@ -92,6 +94,7 @@ planner:
     rssm: null  # backend rssm: trained RSSM run folder (sit_lmpc.world.rssm_train), filtered every control step from IMU, wheel speed, PF pose and LiDAR.
     rssm_variant: latent  # [latent, cheap] latent: full world-model rollout of every candidate (h, s, x); cheap: bicycle + residual with h and s held fixed.
     rssm_model_timestep: 0.1  # Model step for planning rollouts in seconds (0.15 with horizon 10 covers 1.5 s); control stays at simulation.timestep.
+    rssm_command_steering: false  # With rssm_state: keep the planner's steering from the commands (the car adapter's servo-rate estimate) and take only speed, yaw rate and slip from the world model.
     rssm_state: true  # Replace steering, speed, yaw rate and slip in the planner state with the RSSM estimate.
     rssm_clearance_margin: 0.35  # LiDAR clearance check (latent variant): candidates whose predicted nearest LiDAR range drops below this many metres are penalised.
     rssm_clearance_weight: 0.0  # Weight of that penalty, added to the safety cost at every step; 0 disables.

@@ -1,0 +1,20 @@
+# Real car, Levine: v11 + the learned change handling (no speed caps, no hand-written speed rule). Change detection
+# from the bicycle model's position error per stretch; after a detection the safe set keeps only laps whose stretch
+# tag matches the current condition (slowest pre-change laps until enough new-condition laps exist) and a value
+# network with the tag as an extra input is trained. Nothing changes before a detection.
+#   sit-racecar --config configs/car/levine-v11-learned.yaml
+extends: levine-v11.yaml
+output:
+  exp_name: car-levine-v11-learned
+planner:
+  change_detection: true
+  change_window: 10
+  change_ratio: 3.0
+  change_floor: 0.05
+  change_new_laps: 2
+  change_conservative_laps: 2
+  change_value: false
+  change_speed: null
+  change_cap_scope: track
+  change_safe_set: tag
+  change_value_tag: true

@@ -169,8 +169,10 @@ def main():
     print(f"wrote {out}/{args.name}_*  length {length:.2f} m, {len(centerline)} centerline points")
     print(f"wall distance from centerline: min {walls.min():.2f} m, 5th percentile {np.percentile(walls, 5):.2f} m, "
           f"median {np.median(walls):.2f} m")
-    print(f"suggested planner.half_width (CoG point, car half-width {args.car_half_width} m): "
-          f"{np.percentile(walls, 5) - args.car_half_width:.2f}")
+    print(f"suggested planner.half_width (body-corner track limit, footprint_limits on; the planner subtracts "
+          f"footprint_buffer): {np.percentile(walls, 5):.2f}")
+    print(f"  narrowest wall distance {np.min(walls):.2f} m; old centre-point setting (footprint_limits off, "
+          f"car half-width {args.car_half_width} m): {np.percentile(walls, 5) - args.car_half_width:.2f}")
     print(f"simulation.map: {out}/{args.name}")
 
 

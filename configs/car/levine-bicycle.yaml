@@ -1,0 +1,23 @@
+# Real car, Levine (tracks/levine_self_again; rebuild it from the PF map first, docs/CAR_RUNBOOK.md): bicycle-model
+# SIT-LMPC baseline with all planner fixes (shifted previous plan, safe set in the hard tier, body-corner track limit,
+# reduced-speed candidates, safe-set cap). Retry mode: after a stop the car waits for the operator's go at the start
+# line. 7 m/s hard cap on every command; 0.2 s delay compensation. Stretch length and tag window follow the track
+# length (about 2-3 m stretches and a 0.5 s tag on a 20-50 m track).
+#   sit-racecar --config configs/car/levine-bicycle.yaml
+extends: ../car-levine-known.yaml
+output:
+  exp_name: car-levine-bicycle
+simulation:
+  max_laps: 15
+  car:
+    max_speed: 7.0
+    record_bag: true
+planner:
+  sit_lmpc_mode: false
+  half_width: 0.40  # body-corner limit = half_width - footprint_buffer; set half_width to the 5th-percentile wall distance from scripts/make_track.py
+  footprint_buffer: 0.10
+  horizon: 15
+  action_rate_penalty: 0.1
+  safety_speed_cap: 7.0
+  warmup:
+    max_speed: 7.0  # the speed profile (max_lat_accel 4 m/s^2) keeps corners slower; lower this for the first laps

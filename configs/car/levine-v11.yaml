@@ -1,0 +1,20 @@
+# Real car, Levine: SIT-LMPC with the rssm-v11 world model (models/rssm-v11). v11 reads the car's LiDAR, IMU, wheel
+# speed and PF pose every 0.1 s in the training layout (RosCar.encoder_observation / lidar_scan); the planner keeps
+# its steering from the commands and takes speed, yaw rate and slip from v11. LiDAR clearance check on.
+#   sit-racecar --config configs/car/levine-v11.yaml
+extends: levine-bicycle.yaml
+output:
+  exp_name: car-levine-v11
+simulation:
+  car:
+    world_model_inputs: true
+planner:
+  dynamics:
+    backend: rssm
+    rssm: models/rssm-v11
+    rssm_variant: latent
+    rssm_model_timestep: 0.1
+    rssm_state: true
+    rssm_command_steering: true
+    rssm_clearance_margin: 0.35
+    rssm_clearance_weight: 1.0

@@ -34,6 +34,8 @@ class CarConfig:
     speed_topic: str = "/odom"
     imu_topic: str = "/sensors/imu/raw"
     imu_yaw_scale: float = 1.0
+    imu_accel_scale: tuple[float, float] = (1.0, 1.0)
+    world_model_inputs: bool = False
     drive_topic: str = "/drive"
     scan_topic: str = "/scan"
     joy_topic: str = "/joy"
@@ -144,6 +146,7 @@ class DynamicsConfig:
     rssm_variant: str = "latent"
     rssm_model_timestep: float = 0.1
     rssm_state: bool = True
+    rssm_command_steering: bool = False
     rssm_clearance_margin: float = 0.35
     rssm_clearance_weight: float = 0.0
     rssm_risk: str | None = None
@@ -476,9 +479,14 @@ class ExperimentConfig:
                     isinstance(dynamics.rssm_risk, str) and (Path(dynamics.rssm_risk) / "risk_head.msgpack").is_file())):
                 raise ValueError("planner.dynamics.rssm_risk_weight > 0 needs planner.dynamics.rssm_risk, a trained "
                                  "crash-risk head folder (sit_lmpc.world.rssm_risk)")
-            if s.backend != "ros" or not (s.ros.imu_topic and s.ros.wheel_topic and s.ros.pose_topic and s.ros.lidar_topic):
+            sim_ok = s.backend == "ros" and s.ros.imu_topic and s.ros.wheel_topic and s.ros.pose_topic and s.ros.lidar_topic
+            car_ok = (s.backend == "car" and s.car.world_model_inputs and s.car.imu_topic and s.car.scan_topic
+                      and s.car.odom_topic and s.car.speed_topic)
+            if not (sim_ok or car_ok):
                 raise ValueError("planner.dynamics.backend rssm needs backend ros with simulation.ros imu_topic, "
-                                 "wheel_topic, pose_topic and lidar_topic (bridge sensors and LiDAR enabled)")
+                                 "wheel_topic, pose_topic and lidar_topic (bridge sensors and LiDAR enabled), or backend "
+                                 "car with simulation.car.world_model_inputs and imu_topic, scan_topic, odom_topic and "
+                                 "speed_topic")
         if dynamics.checkpoint is not None and (not isinstance(dynamics.checkpoint, str) or not dynamics.checkpoint.strip()):
             raise ValueError("planner.dynamics.checkpoint must be null or a nonempty path")
         for name in ("particles", "verification_particles", "update_batch_size",
