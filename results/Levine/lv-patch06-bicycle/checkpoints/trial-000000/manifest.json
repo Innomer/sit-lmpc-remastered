@@ -1,0 +1,17 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Levine/lv-patch06-bicycle",
+  "files": {
+    "state.json": "d270c4786a46d990ae60bfd651af9256be59d02632e5adb91c00c2c7f9566930",
+    "events.jsonl": "baaa355a2faf3011516502488f89528ceb8736ae3e44887f565ffdec48104450",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "751ea7c916528ec80941c78c646ea9e767938b5c830893633b4394839b1d1521",
+    "config.yaml": "4b592b742c4f38940eb1ef5de6f904d8160add261104d62f92e1090d5fe3045b",
+    "map/levine_sim_map.yaml": "44d7f788caed269757ded80dabc347f6c5cd1b4a6a19ac40b53daec742108abd",
+    "map/levine_sim_map.png": "f5983fdc8e1a2395f533502a582089d0c0b76835523f4d21a00982da4af2b29e",
+    "map/levine_sim_centerline.csv": "b162cd63c4e99a1bf16a45359614751918a2025d7b1a144cdb639532cce359f4",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "4a217a766b9160e17fadbc13d43f4e0b43291b54e48eeead273fb66bfca4eae7"
+  }
+}

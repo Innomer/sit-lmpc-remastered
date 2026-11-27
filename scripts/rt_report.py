@@ -130,11 +130,18 @@ def main():
     parser.add_argument("--change-lap", type=int, default=8)
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
-    field, resolution, origin, height = wall_distance_field()
     body = outline()
     report = {}
+    fields = {}
     for name in args.runs:
         run = Path(args.root) / name
+        import yaml
+        from sit_lmpc.track.resources import map_path
+        track = (yaml.safe_load((run / "config.yaml").read_text()).get("simulation") or {}).get("map", "Spielberg")
+        map_yaml = Path(str(map_path(track)) + "_map.yaml")
+        if map_yaml not in fields:
+            fields[map_yaml] = wall_distance_field(map_yaml)
+        field, resolution, origin, height = fields[map_yaml]
         change_lap = args.change_lap if "-none-" not in name else 10 ** 6
         rows, change_attempt = analyse(run, change_lap, field, resolution, origin, height, body)
         entry = summarize(name, rows, change_attempt, run)

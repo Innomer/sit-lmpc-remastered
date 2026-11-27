@@ -1,0 +1,97 @@
+{
+  "status": "error",
+  "laps": 6,
+  "successful_laps": 6,
+  "trials": 7,
+  "history_laps": 0,
+  "attempts": 8,
+  "failed_attempts": 1,
+  "incomplete_attempts": 1,
+  "applied_steps": 678,
+  "learned_steps": 193,
+  "training_generations": 5,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 0,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": null,
+  "predictor_friction": 1.0489000082015991,
+  "dynamics_predictor": {
+    "kind": "rssm",
+    "variant": "latent",
+    "model_timestep": 0.1,
+    "hidden": 128,
+    "latent": 32
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.05,
+    "lambda_count": 16,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 59.253233055991586,
+  "partial_lap": {
+    "file": "partial_lap.npz",
+    "lap": 8,
+    "completed": false,
+    "termination_reason": "error",
+    "steps": 4,
+    "duration": 0.4,
+    "lap_time": null,
+    "mean_speed": 6.690221786499023,
+    "safe_set_max": 2.0014495849609375,
+    "safe_set_mean": 0.6738626156002283,
+    "boundary_max": 22.11054039001465,
+    "boundary_mean": 9.428132116794586,
+    "actual_boundary_max": 0.0,
+    "actual_boundary_mean": 0.0,
+    "out_of_bounds_steps": 0,
+    "max_abs_lateral_offset": 0.054811492562294006,
+    "nonfinite_lateral_steps": 0,
+    "attempt_id": 8,
+    "outcome": "incomplete",
+    "lambda_summary": {
+      "steps": 4,
+      "terms": {
+        "hull": {
+          "mean": 6.25,
+          "max": 17.5,
+          "steps": 4
+        },
+        "boundary": {
+          "mean": 7.1875,
+          "max": 18.75,
+          "steps": 4
+        }
+      }
+    },
+    "safety_summary": {
+      "steps": 4,
+      "clearance": {
+        "steps_any_candidate": 0.25,
+        "mean_share_of_candidates": 0.012939453125,
+        "steps_chosen_plan": 0.0
+      },
+      "speed": {
+        "steps_any_candidate": 0.5,
+        "mean_share_of_candidates": 0.5,
+        "steps_chosen_plan": 0.5
+      }
+    }
+  },
+  "device_memory": {
+    "bytes_in_use": 2838272,
+    "peak_bytes_in_use": 334797312,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 6167724032
+  }
+}

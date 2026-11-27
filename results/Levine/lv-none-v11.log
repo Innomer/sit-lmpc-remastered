@@ -1,0 +1,73 @@
+[start] learning | seed=1 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0.031, -0.0691, 0, 5, 0.009685, 0, 0 | reached=0.1021, -0.06841, 0, 5, 0.009685, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[attempt] #1 success | 98 steps
+[lap] trial 1 | 9.8 s | avg speed 6.592 m/s | mppi
+[control_step_timing] steps=100
+[attempt] #2 success | 97 steps
+[lap] trial 2 | 9.7 s | avg speed 6.624 m/s | mppi
+[safe_set_retention] laps=1 | states=132 | min_states=1000000
+[control_step_timing] steps=200
+[attempt] #3 success | 96 steps
+[lap] trial 3 | 9.6 s | avg speed 6.62 m/s | mppi
+[safe_set_retention] laps=2 | states=229 | min_states=1000000
+[training] generation=1 | epochs=300 | loss=-1.089 | gradient_steps=300
+[control_step_timing] steps=300
+[attempt] #4 success | 97 steps
+[lap] trial 4 | 9.7 s | avg speed 6.622 m/s | mppi
+[safe_set_retention] laps=3 | states=326 | min_states=1000000
+[training] generation=2 | epochs=300 | loss=-0.6456 | gradient_steps=900
+[control_step_timing] steps=400
+[training] generation=3 | epochs=300 | loss=-0.4855 | gradient_steps=1500
+[attempt] #5 success | 97 steps
+[lap] trial 5 | 9.7 s | avg speed 6.621 m/s | mppi
+[safe_set_retention] laps=4 | states=423 | min_states=1000000
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Levine/lv-none-v11/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[training] generation=4 | epochs=300 | loss=-0.3363 | gradient_steps=2400
+[learned_controller_started] step=485 | value_generation=3 | hull_facets=1902
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[attempt] #6 success | 115 steps
+[lap] trial 6 | 11.5 s | avg speed 5.416 m/s | lmppi | lambda_ss mean=5.891 max=18.75 | lambda_boundary mean=3.217 max=18.75
+[safe_set_retention] laps=5 | states=520 | min_states=1000000
+[training] generation=5 | epochs=300 | loss=-1.157 | gradient_steps=3300
+[attempt] #7 failure | 74 steps | collision | lambda_ss mean=5.034 max=18.75 | lambda_boundary mean=2.973 max=18.75
+[ros_launch] target_speed=0 | speed=0
+[ros_reset] run_up=0 | requested=0.4486, -0.01125, 0, 0, 37.71, 0, 0 | reached=0.4486, -0.01125, 0, 0, 0.01204, 0, 0
+[lap_reset] next_attempt=8 | failures=1
+[error] type=ValueError | message=not enough local safe-set points for learned control
+[attempt] #8 incomplete | 4 steps | error | lambda_ss mean=6.25 max=17.5 | lambda_boundary mean=7.188 max=18.75
+[partial_lap] attempt_id=8 | steps=4 | termination_reason=error
+[finish] status=error | trials=7 | successful_laps=6 | failed_attempts=1 | applied_steps=678 | training_generations=5 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Levine/lv-none-v11
+[control_timing_summary] steps=678 | control_period_seconds=0.1 | stepping=lockstep
+Traceback (most recent call last):
+  File "/home/mann-bhanushali/sim_ws/.venv/bin/sit-racecar", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/cli/racecar.py", line 124, in main
+    execute()
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/cli/racecar.py", line 116, in execute
+    result = run(config, tracking_only=tracking_only)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/experiments/runner.py", line 215, in run
+    return _run(config, tracking_only, keyboard_cleanup)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/experiments/runner.py", line 1429, in _run
+    result = learned.update(
+             ^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/planners/lmppi.py", line 1071, in update
+    selected, reference = safe_set.select_bounds(bounds, speed)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/planners/safe_set.py", line 461, in select_bounds
+    return self.select_window(*self.window(bounds, speed))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/planners/safe_set.py", line 485, in select_window
+    raise ValueError("not enough local safe-set points for learned control")
+ValueError: not enough local safe-set points for learned control
