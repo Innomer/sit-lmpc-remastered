@@ -1,0 +1,21 @@
+[INFO] [1795740648.450557111] [bridge]: Loading map from path: /home/mann-bhanushali/sim_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/maps/Spielberg.yaml
+[INFO] [1795740648.781592304] [bridge]: Start poses: ego_racecar=(0.00, 0.00, -2.88)
+[INFO] [1795740649.081415454] [bridge]: Running in synchronous mode. Simulation will step only on new /drive messages.
+[INFO] [1795740649.091818736] [bridge]: Using simulation time. Will publish /clock topic. Drive and odom will be as fast as possible.
+[INFO] [1795740649.098861606] [bridge]: simulated sensors on: {'imu_offset_x': 0.05, 'imu_offset_y': 0.01, 'imu_yaw_misalignment': 0.01, 'accel_bias_x': 0.2, 'accel_bias_y': -0.15, 'accel_noise': 0.3, 'gyro_bias': 0.01, 'gyro_noise': 0.01, 'gyro_scale': 1.01, 'wheel_scale': 1.03, 'wheel_noise': 0.05, 'pose_noise': 0.02, 'yaw_noise': 0.01, 'pose_lag': 0.05}
+[INFO] [1795740678.736433848] [bridge]: ego_racecar completed lap 1, last lap 38.39 s
+[INFO] [1795740687.266743202] [bridge]: ego_racecar completed lap 2, last lap 38.27 s
+[INFO] [1795740697.210680586] [bridge]: ego_racecar completed lap 3, last lap 38.27 s
+[INFO] [1795740706.827927793] [bridge]: ego_racecar completed lap 4, last lap 38.27 s
+[INFO] [1795740716.034777493] [bridge]: ego_racecar completed lap 5, last lap 38.27 s
+[INFO] [1795740751.457820457] [bridge]: ego_racecar completed lap 6, last lap 39.03 s
+[INFO] [1795740784.874101042] [bridge]: ego_racecar completed lap 7, last lap 39.01 s
+[INFO] [1795740816.825997635] [bridge]: ego_racecar completed lap 8, last lap 39.39 s
+[INFO] [1795740816.833484328] [bridge]: 60 friction zones set
+[INFO] [1795740851.523842003] [bridge]: ego_racecar completed lap 9, last lap 40.72 s
+[INFO] [1795740885.502173957] [bridge]: ego_racecar completed lap 10, last lap 40.13 s
+[INFO] [1795740923.360905911] [bridge]: ego_racecar completed lap 11, last lap 39.07 s
+[INFO] [1795740957.037636736] [bridge]: ego_racecar completed lap 12, last lap 38.20 s
+[INFO] [1795740990.897248743] [bridge]: ego_racecar completed lap 13, last lap 38.28 s
+[INFO] [1795741024.913914606] [bridge]: ego_racecar completed lap 14, last lap 37.74 s
+[INFO] [1795741059.020849122] [bridge]: ego_racecar completed lap 15, last lap 37.90 s

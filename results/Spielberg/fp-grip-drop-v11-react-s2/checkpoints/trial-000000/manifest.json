@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/fp-grip-drop-v11-react-s2",
+  "files": {
+    "state.json": "c48163d4f4271ed5c9d125dac3a183f98bbf12293deb5e847ec087ca2a7890f5",
+    "events.jsonl": "d69e481e1f60941244ad3337644fb90d2b17c000e3e56ad9bb0c6ad765f87eb1",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "b4e9b197ac37d6e1a650c5f9c121c6a0f675eda96a96c20947af9bc3c089f8d4",
+    "config.yaml": "9c963792a93c4489443c29d6cf071b3385d39d20ebd01a310abbc52695747dab",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "f0f837cce854bbbb7908df933e3376e419c8043181910fec8c411c3a9334d403"
+  }
+}

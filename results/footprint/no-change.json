@@ -1,0 +1,366 @@
+{
+ "runs": {
+  "fp-none-bicycle-s1": {
+   "learned_laps": [
+    38.4,
+    39.4,
+    37.4,
+    38.5,
+    38.8,
+    38.1,
+    37.7,
+    37.7,
+    37.7,
+    38.1
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.81,
+   "p99_body_abs_ey": 0.72,
+   "max_abs_heading_error": 1.23,
+   "p99_abs_heading_error": 0.68,
+   "planning_p50_ms": 41.0,
+   "planning_p95_ms": 55.5
+  },
+  "fp-none-bicycle-s2": {
+   "learned_laps": [
+    38.3,
+    38.9,
+    38.2,
+    38.9,
+    38.0,
+    38.6,
+    38.9,
+    38.0,
+    38.1,
+    39.0
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.84,
+   "p99_body_abs_ey": 0.74,
+   "max_abs_heading_error": 1.18,
+   "p99_abs_heading_error": 0.69,
+   "planning_p50_ms": 40.9,
+   "planning_p95_ms": 57.4
+  },
+  "fp-none-bicycle-s3": {
+   "learned_laps": [
+    38.0,
+    39.0,
+    38.0,
+    39.3,
+    38.5,
+    38.2,
+    38.1,
+    37.7,
+    37.8,
+    37.8
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.82,
+   "p99_body_abs_ey": 0.73,
+   "max_abs_heading_error": 1.18,
+   "p99_abs_heading_error": 0.7,
+   "planning_p50_ms": 41.0,
+   "planning_p95_ms": 55.7
+  },
+  "fp-none-bicycle-s4": {
+   "learned_laps": [
+    39.9,
+    40.4,
+    42.4,
+    42.9,
+    41.5,
+    38.6,
+    38.5,
+    38.4,
+    38.0,
+    37.8
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.84,
+   "p99_body_abs_ey": 0.74,
+   "max_abs_heading_error": 1.17,
+   "p99_abs_heading_error": 0.69,
+   "planning_p50_ms": 41.2,
+   "planning_p95_ms": 59.3
+  },
+  "fp-none-bicycle-s5": {
+   "learned_laps": [
+    39.6,
+    41.2,
+    41.9,
+    42.8,
+    40.8,
+    39.3,
+    39.0,
+    38.2,
+    38.0,
+    38.1
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.81,
+   "p99_body_abs_ey": 0.73,
+   "max_abs_heading_error": 1.11,
+   "p99_abs_heading_error": 0.68,
+   "planning_p50_ms": 41.5,
+   "planning_p95_ms": 59.5
+  },
+  "fp-none-v11-s1": {
+   "learned_laps": [
+    38.4,
+    39.8,
+    39.7,
+    40.0,
+    39.4,
+    38.5,
+    38.7,
+    38.0,
+    38.9,
+    37.9
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.92,
+   "p99_body_abs_ey": 0.79,
+   "max_abs_heading_error": 1.39,
+   "p99_abs_heading_error": 0.77,
+   "planning_p50_ms": 56.7,
+   "planning_p95_ms": 70.9
+  },
+  "fp-none-v11-s2": {
+   "learned_laps": [
+    37.0,
+    37.8,
+    36.9,
+    37.8,
+    37.5,
+    36.9,
+    36.3,
+    38.0,
+    36.4,
+    36.7
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.95,
+   "p99_body_abs_ey": 0.82,
+   "max_abs_heading_error": 1.38,
+   "p99_abs_heading_error": 0.74,
+   "planning_p50_ms": 56.7,
+   "planning_p95_ms": 71.6
+  },
+  "fp-none-v11-s3": {
+   "learned_laps": [
+    40.7,
+    40.2,
+    39.9,
+    39.4,
+    39.0,
+    38.2,
+    38.1,
+    37.7,
+    37.6,
+    38.0
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.92,
+   "p99_body_abs_ey": 0.77,
+   "max_abs_heading_error": 1.31,
+   "p99_abs_heading_error": 0.77,
+   "planning_p50_ms": 57.4,
+   "planning_p95_ms": 72.5
+  },
+  "fp-none-v11-s4": {
+   "learned_laps": [
+    39.7,
+    41.0,
+    41.5,
+    41.1,
+    40.1,
+    38.6,
+    38.1,
+    36.9,
+    36.8,
+    36.1
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.87,
+   "p99_body_abs_ey": 0.77,
+   "max_abs_heading_error": 1.38,
+   "p99_abs_heading_error": 0.75,
+   "planning_p50_ms": 56.8,
+   "planning_p95_ms": 72.1
+  },
+  "fp-none-v11-s5": {
+   "learned_laps": [
+    39.7,
+    40.3,
+    40.9,
+    40.4,
+    40.0,
+    38.5,
+    38.6,
+    37.8,
+    38.4,
+    38.0
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.9,
+   "p99_body_abs_ey": 0.79,
+   "max_abs_heading_error": 1.46,
+   "p99_abs_heading_error": 0.73,
+   "planning_p50_ms": 56.9,
+   "planning_p95_ms": 71.9
+  },
+  "fp-none-v3-s1-r2": {
+   "learned_laps": [
+    37.7,
+    38.4,
+    38.3,
+    38.2,
+    37.0,
+    36.9,
+    38.1,
+    38.4,
+    38.2,
+    36.8
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 1.03,
+   "p99_body_abs_ey": 0.74,
+   "max_abs_heading_error": 0.93,
+   "p99_abs_heading_error": 0.59,
+   "planning_p50_ms": 137.9,
+   "planning_p95_ms": 178.2
+  },
+  "fp-none-v3-s2-r2": {
+   "learned_laps": [
+    37.3,
+    38.2,
+    37.3,
+    37.4,
+    37.3,
+    38.0,
+    37.1,
+    37.4,
+    38.3
+   ],
+   "crashes": [
+    {
+     "attempt": 6,
+     "s": 95.5,
+     "type": "wall",
+     "slip": 0.37,
+     "hit": [
+      -65.7,
+      42.39
+     ]
+    }
+   ],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.94,
+   "p99_body_abs_ey": 0.76,
+   "max_abs_heading_error": 1.21,
+   "p99_abs_heading_error": 0.61,
+   "planning_p50_ms": 142.9,
+   "planning_p95_ms": 179.8
+  },
+  "fp-none-v3-s3-r2": {
+   "learned_laps": [
+    38.3,
+    38.0,
+    38.3,
+    37.9,
+    37.9,
+    37.8,
+    36.7,
+    37.8,
+    37.3,
+    36.6
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.9,
+   "p99_body_abs_ey": 0.77,
+   "max_abs_heading_error": 0.9,
+   "p99_abs_heading_error": 0.6,
+   "planning_p50_ms": 145.3,
+   "planning_p95_ms": 183.4
+  },
+  "fp-none-v3-s4-r2": {
+   "learned_laps": [
+    37.6,
+    38.5,
+    37.9,
+    37.6,
+    36.6,
+    36.9,
+    37.1,
+    36.3,
+    35.1,
+    36.3
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 1.12,
+   "p99_body_abs_ey": 0.79,
+   "max_abs_heading_error": 1.22,
+   "p99_abs_heading_error": 0.62,
+   "planning_p50_ms": 143.5,
+   "planning_p95_ms": 184.2
+  },
+  "fp-none-v3-s5-r2": {
+   "learned_laps": [
+    37.9,
+    38.2,
+    38.0,
+    37.2,
+    37.3,
+    36.6,
+    37.3,
+    36.1,
+    36.5,
+    36.7
+   ],
+   "crashes": [],
+   "learned_attempts": 10,
+   "max_body_abs_ey": 0.9,
+   "p99_body_abs_ey": 0.77,
+   "max_abs_heading_error": 1.09,
+   "p99_abs_heading_error": 0.62,
+   "planning_p50_ms": 144.1,
+   "planning_p95_ms": 184.1
+  }
+ },
+ "summary": {
+  "bicycle": {
+   "runs": 5,
+   "runs_with_a_crash": 0,
+   "crashes_per_learned_attempt": "0/50 (0%)",
+   "crash_spots_s": []
+  },
+  "v11": {
+   "runs": 5,
+   "runs_with_a_crash": 0,
+   "crashes_per_learned_attempt": "0/50 (0%)",
+   "crash_spots_s": []
+  },
+  "v3": {
+   "runs": 5,
+   "runs_with_a_crash": 1,
+   "crashes_per_learned_attempt": "1/50 (2%)",
+   "crash_spots_s": [
+    95.5
+   ]
+  }
+ }
+}

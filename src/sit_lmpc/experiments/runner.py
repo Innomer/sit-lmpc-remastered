@@ -724,9 +724,9 @@ def _run(config, tracking_only, keyboard_cleanup):
     def safety_summary():
         names = sorted({name for step in safety_trace for name in step})
         return {"steps": len(safety_trace), **{
-            name: {"steps_any_candidate": float(np.mean([step[name][0] > 0 for step in safety_trace])),
-                   "mean_share_of_candidates": float(np.mean([step[name][0] for step in safety_trace])),
-                   "steps_chosen_plan": float(np.mean([step[name][1] for step in safety_trace]))}
+            name: {"steps_any_candidate": float(np.mean([step.get(name, (0, 0))[0] > 0 for step in safety_trace])),
+                   "mean_share_of_candidates": float(np.mean([step.get(name, (0, 0))[0] for step in safety_trace])),
+                   "steps_chosen_plan": float(np.mean([step.get(name, (0, 0))[1] for step in safety_trace]))}
             for name in names}}
     init_saved = initial_snapshot is not None
     learned_steps, lap_time = 0, 0.0

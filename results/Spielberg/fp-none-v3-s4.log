@@ -1,0 +1,124 @@
+[dynamics_model_loaded] kind=gaussian_bnn | latent_dimension=16 | particles=64 | adaptation=frozen_population | numerical_substep_mismatch=True
+[start] learning | seed=4 | friction actual/model=1.049/None | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[attempt] #1 success | 384 steps
+[lap] trial 1 | 38.4 s | avg speed 8.894 m/s | mppi
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[attempt] #2 success | 381 steps
+[lap] trial 2 | 38.1 s | avg speed 8.913 m/s | mppi
+[safe_set_retention] laps=1 | states=428 | min_states=1000000
+[control_step_timing] steps=800
+[control_step_timing] steps=900
+[control_step_timing] steps=1000
+[training] generation=1 | epochs=300 | loss=-0.1987 | gradient_steps=600
+[control_step_timing] steps=1100
+[attempt] #3 success | 380 steps
+[lap] trial 3 | 38 s | avg speed 8.906 m/s | mppi
+[safe_set_retention] laps=2 | states=808 | min_states=1000000
+[control_step_timing] steps=1200
+[control_step_timing] steps=1300
+[training] generation=2 | epochs=300 | loss=-1.133 | gradient_steps=1800
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[attempt] #4 success | 381 steps
+[lap] trial 4 | 38.1 s | avg speed 8.918 m/s | mppi
+[safe_set_retention] laps=3 | states=1189 | min_states=1000000
+[control_step_timing] steps=1600
+[control_step_timing] steps=1700
+[training] generation=3 | epochs=300 | loss=-1.392 | gradient_steps=3300
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[attempt] #5 success | 380 steps
+[lap] trial 5 | 38 s | avg speed 8.912 m/s | mppi
+[safe_set_retention] laps=4 | states=1569 | min_states=1000000
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/fp-none-v3-s4/init.npz
+[error] type=ValueError | message=Incompatible shapes for broadcasting: shapes=[(4, 16), (1024, 15, 1)]
+[training] generation=4 | epochs=300 | loss=-2.138 | gradient_steps=5100
+[attempt] #6 incomplete | 0 steps | error
+[finish] status=error | trials=5 | successful_laps=5 | failed_attempts=0 | applied_steps=1906 | training_generations=4 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/fp-none-v3-s4
+[control_timing_summary] steps=1906 | control_period_seconds=0.1 | stepping=lockstep
+Traceback (most recent call last):
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/lax/lax.py", line 216, in _broadcast_shapes_uncached
+    return _try_broadcast_shapes(*rank_promoted_shapes, name='broadcast_shapes')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/lax/lax.py", line 129, in _try_broadcast_shapes
+    raise TypeError(f'{name} got incompatible shapes for broadcasting: '
+TypeError: broadcast_shapes got incompatible shapes for broadcasting: (1, 4, 16), (1024, 15, 1).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/lax/lax.py", line 194, in broadcast_shapes
+    return _broadcast_shapes_cached(*shapes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/lax/lax.py", line 200, in _broadcast_shapes_cached
+    return _broadcast_shapes_uncached(*shapes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/lax/lax.py", line 219, in _broadcast_shapes_uncached
+    raise ValueError(f"Incompatible shapes for broadcasting: shapes={list(shapes)}") from err
+ValueError: Incompatible shapes for broadcasting: shapes=[(4, 16), (1024, 15, 1)]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/lax/lax.py", line 216, in _broadcast_shapes_uncached
+    return _try_broadcast_shapes(*rank_promoted_shapes, name='broadcast_shapes')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/lax/lax.py", line 129, in _try_broadcast_shapes
+    raise TypeError(f'{name} got incompatible shapes for broadcasting: '
+TypeError: broadcast_shapes got incompatible shapes for broadcasting: (1, 4, 16), (1024, 15, 1).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/mann-bhanushali/sim_ws/.venv/bin/sit-racecar", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/cli/racecar.py", line 124, in main
+    execute()
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/cli/racecar.py", line 116, in execute
+    result = run(config, tracking_only=tracking_only)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/experiments/runner.py", line 214, in run
+    return _run(config, tracking_only, keyboard_cleanup)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/experiments/runner.py", line 1339, in _run
+    result = learned.update(
+             ^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/planners/lmppi.py", line 864, in update
+    boundary_states = with_margin(with_footprint(states, self.corners), self.margins)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/src/sit_lmpc/planners/lmppi.py", line 118, in with_footprint
+    ey = frenet[..., 1:2] + c[:, 0] * jnp.sin(psi) + c[:, 1] * jnp.cos(psi)
+                            ~~~~~~~~^~~~~~~~~~~~~~
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/numpy/array_methods.py", line 774, in _operator_mul
+    return ufuncs.multiply(self, cast(ArrayLike, other))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/numpy/ufunc_api.py", line 183, in __call__
+    return call(*args)
+           ^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/numpy/ufuncs.py", line 1280, in multiply
+    x, y = promote_args("multiply", x, y)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/numpy/util.py", line 229, in promote_args
+    return promote_shapes(fun_name, *promote_dtypes(*args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/jax/_src/numpy/util.py", line 59, in promote_shapes
+    result_rank = len(lax.broadcast_shapes(*shapes))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Incompatible shapes for broadcasting: shapes=[(4, 16), (1024, 15, 1)]
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

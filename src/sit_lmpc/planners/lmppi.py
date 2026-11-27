@@ -101,6 +101,25 @@ def boundary_margins(config):
     return np.asarray(margin, dtype=float)
 
 
+def footprint_corners(length, width, offset):
+    """The car body's four corners (4, 2) in the car frame about the state's reference point (centre of gravity)."""
+    half_l, half_w = 0.5 * length, 0.5 * width
+    return np.array([[offset + half_l, half_w], [offset + half_l, -half_w],
+                     [offset - half_l, half_w], [offset - half_l, -half_w]])
+
+
+def with_footprint(frenet, corners):
+    """Frenet states whose e_y is the body corner furthest from the centre line (signed): corner (dx, dy) sits at
+    e_y + dx sin(heading error) + dy cos(heading error), track curvature over half a car length ignored."""
+    if corners is None:
+        return frenet
+    c = jnp.asarray(corners, frenet.dtype)
+    psi = frenet[..., 4:5]
+    ey = frenet[..., 1:2] + c[:, 0] * jnp.sin(psi) + c[:, 1] * jnp.cos(psi)
+    worst = jnp.take_along_axis(ey, jnp.argmax(jnp.abs(ey), axis=-1, keepdims=True), axis=-1)[..., 0]
+    return frenet.at[..., 1].set(worst)
+
+
 def with_margin(frenet, margins):
     """Frenet states with |e_y| widened by the per-step margin, for the track-limit checks only."""
     if margins is None:
@@ -117,6 +136,9 @@ def safety_step_costs(states, config):
     if config.safety_slip_weight > 0:
         terms["slip"] = config.safety_slip_weight * jnp.clip(
             (jnp.abs(states[..., 6]) - config.safety_slip_limit) / 0.1, 0., 1.)
+    if getattr(config, "safety_heading_limit", None) is not None and config.safety_heading_weight > 0:
+        terms["heading"] = config.safety_heading_weight * jnp.clip(
+            (jnp.abs(states[..., 4]) - config.safety_heading_limit) / 0.2, 0., 1.)
     return terms
 
 
@@ -456,6 +478,14 @@ class LMPPI:
         lambdas = lambdas[np.argsort(np.linalg.norm(lambdas, axis=1))]
         self.lambdas = jnp.asarray(lambdas, dtype=model.params.dtype)
         self.margins = boundary_margins(config)
+        self.corners = None
+        if getattr(config, "footprint_limits", False):
+            from sit_lmpc.dynamics.st import PARAMETER_FIELDS
+            raw = np.asarray(model.params, dtype=float)
+            params = dict(zip(PARAMETER_FIELDS, raw)) if raw.shape == (len(PARAMETER_FIELDS),) else {}
+            self.corners = footprint_corners(config.footprint_length or params.get("length", 0.58),
+                                             config.footprint_width or params.get("width", 0.31),
+                                             config.footprint_offset)
         self.risk_lambdas = None
         self._lambda_tables = {(False, False): self.lambdas}
         self._warmed_terms = set()
@@ -833,7 +863,7 @@ class LMPPI:
             self.track.get_s_search_range(frenet_state[0], self.config.search_points)
         )
         states = to_frenet(self.track, cartesian, indices, frenet_state[0])
-        boundary_states = with_margin(states, self.margins)
+        boundary_states = with_margin(with_footprint(states, self.corners), self.margins)
         stretch_cap = self.change_cap_cost(states, safe_set)
         if stretch_cap is not None:
             sample_extra = dict(sample_extra, stretch_cap=stretch_cap)
@@ -1048,7 +1078,7 @@ class LMPPI:
             if not bool(jnp.all(jnp.isfinite(candidate_risk))):
                 raise FloatingPointError("nonfinite candidate risk probabilities")
         packet = finish_candidates(
-            with_margin(candidate_frenet, self.margins), candidate_distances, candidate_chance if chance_active else None,
+            with_margin(with_footprint(candidate_frenet, self.corners), self.margins), candidate_distances, candidate_chance if chance_active else None,
             candidate_risk if risk_active else None, cutoff if risk_active else None,
             terminal_values, candidates, trajectories,
             member_trajectories if hasattr(self.model, "weights") else None,

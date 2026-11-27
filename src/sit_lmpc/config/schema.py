@@ -245,6 +245,12 @@ class PlannerConfig:
     safety_slip_limit: float = 0.35
     safety_slip_weight: float = 0.0
     boundary_margin: float | tuple[float, ...] | None = None
+    footprint_limits: bool = True
+    footprint_length: float | None = None
+    footprint_width: float | None = None
+    footprint_offset: float = -0.0065
+    safety_heading_limit: float | None = None
+    safety_heading_weight: float = 1.0
     mean_value: bool = True
     scan_rollout: bool = True
     safe_set_selection: str = "exact"
@@ -825,6 +831,11 @@ class ExperimentConfig:
             raise ValueError("planner.safety_speed_cap must be null or > 0")
         if p.safety_speed_weight < 0 or p.safety_slip_weight < 0 or not p.safety_slip_limit > 0:
             raise ValueError("planner.safety_speed_weight and safety_slip_weight must be >= 0, safety_slip_limit > 0")
+        if (p.footprint_length is not None and not p.footprint_length > 0) or (
+                p.footprint_width is not None and not p.footprint_width > 0):
+            raise ValueError("planner.footprint_length / footprint_width must be null or > 0")
+        if p.safety_heading_limit is not None and not (p.safety_heading_limit > 0 and p.safety_heading_weight >= 0):
+            raise ValueError("planner.safety_heading_limit must be null or > 0, safety_heading_weight >= 0")
         if p.boundary_margin is not None:
             margins = (p.boundary_margin,) if isinstance(p.boundary_margin, (int, float)) else tuple(p.boundary_margin)
             if any(not (isinstance(m, (int, float)) and math.isfinite(m) and m >= 0) for m in margins) or (

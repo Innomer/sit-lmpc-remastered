@@ -209,6 +209,12 @@ planner:
   safety_speed_weight: 1.0  # Weight of the speed-cap penalty per step.
   safety_slip_limit: 0.35  # Predicted |slip| (rad) above this is penalised (full penalty 0.1 rad over).
   safety_slip_weight: 0.0  # Weight of the slip penalty per step; 0 disables (off by default: at 0.35 rad it held the bicycle baseline back). Safety penalties are not scaled by the lambda grid and also rank the final candidates.
+  footprint_limits: true  # Track limits on the car body: the boundary check (sampling cost and final ranking) uses the body corner furthest from the centre line instead of the reference point.
+  footprint_length: null  # Body length (m); null takes the vehicle's length parameter (0.58 m).
+  footprint_width: null  # Body width (m); null takes the vehicle's width parameter (0.31 m).
+  footprint_offset: -0.0065  # Body centre ahead of the reference point (the centre of gravity), m; the sim's collision body spans -0.125..0.455 m from the rear axle.
+  safety_heading_limit: null  # Heading relative to the track (rad) above which predicted steps are penalised (full penalty 0.2 rad over); null disables (e.g. 0.6).
+  safety_heading_weight: 1.0  # Weight of that penalty; counts in the final ranking like the other safety costs.
   boundary_margin: null  # Track-limit margin in metres per predicted step: one value (ramped linearly from value/H at step 1 to value at step H) or one value per step. Tightens the boundary check in the plan reward and the final ranking (model error near the edges). null disables.
   mean_value: true  # [true, false] true: average V(x_1..x_H) or Q(x_0,u_0)..Q(x_H-1,u_H-1); false: terminal V(x_H) or Q(x_H,u_H) with a sampled extra action.
   scan_rollout: true  # [true, false] true: use jax.lax.scan for ST rollouts; false: use the unrolled baseline. --no-scan overrides this to false. Both paths use the same dynamics.

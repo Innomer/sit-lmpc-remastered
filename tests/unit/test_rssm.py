@@ -291,3 +291,14 @@ def test_change_monitor_speed_caps():
     lap(lambda s: 0.3 if 40 <= s < 60 else 0.003, speed=6.0)
     m.finish_lap(step, 1)
     assert np.isclose(m.caps[m.index(45.0)], 0.9 * 8.0)
+
+
+def test_footprint_uses_the_furthest_body_corner():
+    from sit_lmpc.planners.lmppi import footprint_corners, with_footprint
+    corners = footprint_corners(0.58, 0.31, 0.0)
+    frenet = jnp.zeros((1, 3, 7))
+    frenet = frenet.at[0, 0, 1].set(0.5).at[0, 1, 1].set(-0.5).at[0, 2, 1].set(0.5).at[0, 2, 4].set(np.pi / 2)
+    body = with_footprint(frenet, corners)
+    assert np.isclose(float(body[0, 0, 1]), 0.5 + 0.155) and np.isclose(float(body[0, 1, 1]), -0.5 - 0.155)
+    assert np.isclose(float(body[0, 2, 1]), 0.5 + 0.29, atol=1e-6)
+    assert with_footprint(frenet, None) is frenet

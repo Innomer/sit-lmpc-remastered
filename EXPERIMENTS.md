@@ -657,3 +657,98 @@ Old code in detached git worktrees (`~/sim_ws/wt-old-v3` at `b93d4d7`, `~/sim_ws
 | bicycle | **no evidence of a regression.** 0 crashes in 4 old-code runs and 1 in 4 HEAD-equivalent runs, at the s ≈ 109 m corner. At HEAD every added feature is off or zero for the bicycle baseline, so the code path is the same as the old one up to floating-point order; one crash in four runs cannot be separated from chance (and same-seed runs diverge right after the warm-up, entry 35) |
 | What it means | the earlier "clean" results were partly luck (single runs, not reproducible after the warm-up) and, for v3, partly crashes that did not end the run. The two crash spots are a property of this track and this planner (SIT-LMPC sampling, the value function and the warm-up line), shared by the bicycle model, v3 and v11; the world-model crashes there are not caused by the world model |
 | Not done | no bisect (no regression found); no fix. More seeds of the bicycle baseline (old vs HEAD) would tighten the bicycle comparison |
+
+## 37. Body-footprint track limits; change scenarios with the footprint
+
+### What changed
+
+Before this, the planner checked track limits on the centre point of the rear axle only (`e_y` of the state). The body sticks out about 0.3 m on each side and 0.28 m to the front, more when the car is at an angle to the track, so plans that kept the centre point inside could still put a corner of the body on the wall.
+
+- `footprint_limits` (default **on**, all controllers): the planner takes the four body corners from (x, y, yaw) and uses the worst corner's offset in place of `e_y` for every track-limit check: the sampling cost and the final pick (same priority as before: boundary × 1000). Corner offset: `e_y + dx·sin(ψ_e) + dy·cos(ψ_e)`. Size from the vehicle parameters (0.58 × 0.31 m), or `footprint_length` / `footprint_width`; `footprint_offset` −0.0065 m (body centre relative to the state point). The margin option (entry 26) is applied on top. Code: `footprint_corners` / `with_footprint` in `planners/lmppi.py`; unit test in `tests/unit/test_rssm.py`.
+- `safety_heading_limit` (default **off**): a safety cost on |heading relative to the track| above the limit (ramps from 0 to `safety_heading_weight` over 0.2 rad), added with the other safety costs outside the λ grid. Built and tested; not needed in the runs below (v3 and v11 did not crash at s ≈ 34 m or s ≈ 109 m with the footprint on).
+- v3 (`gaussian_bnn`) keeps its parameters as a 2-D array, so the size lookup fell back wrongly at first (shape error at the first learned step); fixed by using 0.58 × 0.31 m when the parameters are not one flat vector.
+
+### No-change runs, 5 seeds, 15 laps (5 warm-up + 10 learned)
+
+Same warm-up as entry 36 (varied warm-up, scale 1.0, cap 9 m/s), LiDAR bridge, Spielberg. Bicycle and v11 (+ clearance) use `sit_lmpc_mode: true` (stop at the first crash); v3 needs `false` (retry after a crash), so its crash count is per learned attempt. Body |e_y| = worst body corner; heading = heading relative to the track; both over learned laps up to contact. Planning time on learned steps. Results `results/footprint/no-change.json` (`scripts/footprint_report.py`).
+
+| Run | Crash | Max body \|e_y\| (p99) m | Max \|heading\| (p99) rad | Planning p50 / p95 ms | Learned laps (s) |
+|---|---|---|---|---|---|
+| bicycle s1 | no | 0.81 (0.72) | 1.23 (0.68) | 41.0 / 55.5 | 38.4 39.4 37.4 38.5 38.8 38.1 37.7 37.7 37.7 38.1 |
+| bicycle s2 | no | 0.84 (0.74) | 1.18 (0.69) | 40.9 / 57.4 | 38.3 38.9 38.2 38.9 38.0 38.6 38.9 38.0 38.1 39.0 |
+| bicycle s3 | no | 0.82 (0.73) | 1.18 (0.70) | 41.0 / 55.7 | 38.0 39.0 38.0 39.3 38.5 38.2 38.1 37.7 37.8 37.8 |
+| bicycle s4 | no | 0.84 (0.74) | 1.17 (0.69) | 41.2 / 59.3 | 39.9 40.4 42.4 42.9 41.5 38.6 38.5 38.4 38.0 37.8 |
+| bicycle s5 | no | 0.81 (0.73) | 1.11 (0.68) | 41.5 / 59.5 | 39.6 41.2 41.9 42.8 40.8 39.3 39.0 38.2 38.0 38.1 |
+| v11 s1 | no | 0.92 (0.79) | 1.39 (0.77) | 56.7 / 70.9 | 38.4 39.8 39.7 40.0 39.4 38.5 38.7 38.0 38.9 37.9 |
+| v11 s2 | no | 0.95 (0.82) | 1.38 (0.74) | 56.7 / 71.6 | 37.0 37.8 36.9 37.8 37.5 36.9 36.3 38.0 36.4 36.7 |
+| v11 s3 | no | 0.92 (0.77) | 1.31 (0.77) | 57.4 / 72.5 | 40.7 40.2 39.9 39.4 39.0 38.2 38.1 37.7 37.6 38.0 |
+| v11 s4 | no | 0.87 (0.77) | 1.38 (0.75) | 56.8 / 72.1 | 39.7 41.0 41.5 41.1 40.1 38.6 38.1 36.9 36.8 36.1 |
+| v11 s5 | no | 0.90 (0.79) | 1.46 (0.73) | 56.9 / 71.9 | 39.7 40.3 40.9 40.4 40.0 38.5 38.6 37.8 38.4 38.0 |
+| v3 s1 | no | 1.03 (0.74) | 0.93 (0.59) | 137.9 / 178.2 | 37.7 38.4 38.3 38.2 37.0 36.9 38.1 38.4 38.2 36.8 |
+| v3 s2 | **wall, s = 95.5 m**, attempt 6, hit (−65.70, 42.39); run went on | 0.94 (0.76) | 1.21 (0.61) | 142.9 / 179.8 | 37.3 38.2 37.3 37.4 37.3 38.0 37.1 37.4 38.3 |
+| v3 s3 | no | 0.90 (0.77) | 0.90 (0.60) | 145.3 / 183.4 | 38.3 38.0 38.3 37.9 37.9 37.8 36.7 37.8 37.3 36.6 |
+| v3 s4 | no | 1.12 (0.79) | 1.22 (0.62) | 143.5 / 184.2 | 37.6 38.5 37.9 37.6 36.6 36.9 37.1 36.3 35.1 36.3 |
+| v3 s5 | no | 0.90 (0.77) | 1.09 (0.62) | 144.1 / 184.1 | 37.9 38.2 38.0 37.2 37.3 36.6 37.3 36.1 36.5 36.7 |
+
+| Crashes per learned attempt | Without footprint (entry 36) | With footprint |
+|---|---|---|
+| bicycle | 0/40 old code, 1/33 (3%) HEAD | **0/50** |
+| v3 | 3/30 (10%) old code, 5/28 (18%) HEAD | **1/50 (2%)**, at s = 95.5 m (a spot not seen before) |
+| v11 + clearance | crashed at s ≈ 109 m in earlier runs (entry 35) | **0/50** |
+
+The two known crash spots (s ≈ 34 m and s ≈ 109 m) are gone for all three models. Body p99 |e_y| for the bicycle dropped from about 0.88 m to 0.72–0.74 m. Lap times are in the same range as before (learned laps 35–43 s, ending at 36–39 s), so the check costs no clear lap time.
+
+**Planning time.** p50 / p95 on learned steps, before (entry 36 runs) → with footprint: bicycle 33–34 / 47–57 → 41–42 / 56–60 ms (+8 ms); v11 54–57 / 68–73 → 57 / 71–72 ms (+2 ms); v3 133–138 / 173–177 → 138–145 / 178–184 ms (+6 ms). This is more than the few extra array operations should cost: `with_footprint` runs as separate GPU calls outside the compiled rollout cost. Moving it inside the jitted function should bring it close to zero (not done). v3 was already over the 100 ms control step before this; the lockstep sim waits for it, but on the car it would not.
+
+**Invalid runs left in `results/Spielberg/`:** `fp-none-v3-s*-r` (seed passed as the lap count by mistake, runs stopped after "seed" laps); the first `fp-none-v3-s*` attempts (shape error above). The valid v3 runs are `fp-none-v3-s*-r2`.
+
+### Change scenarios, 3 seeds, 15 laps, change after lap 8
+
+Only run after v11 had no crashes in the no-change runs. Grip drop: μ 1.05 → 0.7 on the whole track. Patch: μ 0.6 on s = 85–115 m. Controllers: bicycle + footprint; v11 + footprint, no reaction; v11 + footprint + full reaction (`configs/world/rssm-latent-v11-react.yaml`: change detection, conservative safe set, value option B, per-stretch speed caps at 0.8 of the pre-change speed, raised by 0.05 per clean lap). Results `results/footprint/change.json` (`scripts/fp_change_report.py`).
+
+"Laps to recover" = first lap after the change within 1% of the median of the last three laps. Detection delay for the grip drop is from the start of lap 9 (the change starts there); for the patch it is from the car entering the patch (s = 85 m), since the patch is 11 s into the lap. Speed: mean over 2 s before and 2 s after the first detection, and on the same stretch one lap earlier.
+
+| Scenario | Controller | Seed | Crash | Lap times after the change (s) | Laps to recover | Detection delay | Speed before → after detection (prev. lap same stretch) m/s | False detections |
+|---|---|---|---|---|---|---|---|---|
+| grip drop | bicycle | 1 | no | 40.2 41.8 40.5 40.2 39.7 39.3 39.1 | 6 | – | – | – |
+| grip drop | bicycle | 2 | no | 39.6 39.5 40.0 39.3 39.4 40.0 40.4 | 1 | – | – | – |
+| grip drop | bicycle | 3 | no | 40.0 39.7 40.0 39.5 39.4 38.9 39.4 | 2 | – | – | – |
+| grip drop | v11 | 1 | no | 39.2 38.9 38.5 38.8 39.2 38.6 39.5 | 1 | – | – | – |
+| grip drop | v11 | 2 | no | 38.5 38.8 39.1 39.8 39.5 39.7 38.8 | 1 | – | – | – |
+| grip drop | v11 | 3 | no | 39.5 39.3 39.2 38.5 37.7 38.0 37.7 | 5 | – | – | – |
+| grip drop | v11 + reaction | 1 | no | 66.9 69.0 67.9 66.7 54.6 49.8 48.7 | 6 | 3.0 s | 8.65 → 6.06 (7.89) | 0 |
+| grip drop | v11 + reaction | 2 | no | 66.0 68.2 67.4 65.4 52.9 48.7 47.5 | 6 | 1.9 s | 9.50 → 6.36 (9.72) | 0 |
+| grip drop | v11 + reaction | 3 | no | 66.7 70.9 68.8 67.6 52.8 50.0 47.5 | 6 | 3.7 s | 8.09 → 6.26 (7.85) | 0 |
+| patch | bicycle | 1 | no | 39.2 39.4 38.7 39.4 39.3 38.6 38.9 | 1 | – | – | – |
+| patch | bicycle | 2 | no | 40.8 40.1 39.1 38.2 38.2 37.8 37.9 | 4 | – | – | – |
+| patch | bicycle | 3 | no | 38.6 38.6 39.7 39.5 39.6 39.6 38.5 | 1 | – | – | – |
+| patch | v11 | 1 | no | 40.1 39.4 38.2 38.3 38.4 38.1 37.8 | 3 | – | – | – |
+| patch | v11 | 2 | no | 39.1 49.4 38.4 40.7 38.7 40.5 38.7 | 3 | – | – | – |
+| patch | v11 | 3 | no | 39.8 39.0 38.8 38.3 38.4 39.0 38.4 | 4 | – | – | – |
+| patch | v11 + reaction | 1 | no | 61.8 70.3 70.7 69.3 67.9 67.3 67.5 | (1)* | 0.5 s | 8.55 → 5.13 (8.33) | 0 |
+| patch | v11 + reaction | 2 | no | 60.7 69.4 67.8 69.8 67.3 66.7 67.0 | (1)* | 0.4 s | 8.21 → 5.37 (8.55) | 0 |
+| patch | v11 + reaction | 3 | no | 61.5 71.1 71.2 70.2 69.3 69.2 68.8 | (1)* | 0.8 s | 8.73 → 5.64 (7.92) | 0 |
+
+\* The metric reads "1" only because the laps never get faster again; the car stays at about 68 s per lap to the end.
+
+| Scenario | Controller | Crashes | Mean lap after change (s) | Laps to recover | Detection delay | False detections |
+|---|---|---|---|---|---|---|
+| grip drop | bicycle + footprint | 0/3 | 39.8 | 6, 1, 2 | – | – |
+| grip drop | v11 + footprint | 0/3 | 38.9 | 1, 1, 5 | – | – |
+| grip drop | v11 + footprint + reaction | 0/3 | 60.2 | 6, 6, 6 | 1.9–3.7 s | 0 |
+| patch | bicycle + footprint | 0/3 | 39.0 | 1, 4, 1 | – | – |
+| patch | v11 + footprint | 0/3 | 39.4 | 3, 3, 4 | – | – |
+| patch | v11 + footprint + reaction | 0/3 | 67.9 | never | 0.4–0.8 s after entering the patch | 0 |
+
+### What the change runs show
+
+- **No crashes in any of the 18 runs.** With the footprint on, v11 handles both changes with no reaction at all and is slightly faster than the bicycle model after the grip drop (38.9 vs 39.8 s).
+- **Detection works:** every change was found (2–4 s into the grip drop, under 1 s after entering the patch), and no run had a detection before the change.
+- **The speed reaction is far too strong.** It costs 20–30 s per lap and buys nothing here, since the runs without it did not crash. Two causes, from `change_trace.npy` / `change_events.json`:
+  1. **The whole track gets capped, not the changed part.** Each "detected again" (most laps) puts every stretch that is not marked "changed" back into conservative mode and caps it again. In the patch runs 99–100% of the lap is capped from lap 10 on, though only 3 of the 35 stretches (the patch) are marked changed. The patch runs never recover; the grip-drop runs start to recover only once all stretches are marked changed (lap 13 on) and the caps rise by 0.05 per lap.
+  2. **The car drives about 2 m/s under the cap.** Mean cap ≈ 7.0 m/s, mean speed ≈ 5.0 m/s on capped stretches. The cap cost itself is zero below the cap, so something else slows the car further: most likely the safety cost's × 1000 weight in the final pick (any sampled step above the cap in the 1.5 s horizon ranks the plan last, so the planner keeps a wide gap), with the conservative safe set and value B on top. Not tested.
+- **Bug found and fixed:** the 6 reaction runs first stopped at the end of lap 9 (`KeyError: 'stretch_cap'`). The end-of-lap safety summary looked up each safety term in every step, but the speed-cap term only exists after a detection. Fix in `experiments/runner.py` (`safety_summary`, missing term = 0); planner unchanged. The failed runs are kept as `fp-*-v11-react-s*-keyerror`; patch seed 3 already ran with the fix.
+
+### Not done
+
+Compile the footprint check into the rollout cost (planning time). Fix the reaction: limit re-detection to the stretch where it fires instead of the whole track, and test caps with the safety weight lowered to separate the two slowdown causes. The heading option was not run (not needed).
