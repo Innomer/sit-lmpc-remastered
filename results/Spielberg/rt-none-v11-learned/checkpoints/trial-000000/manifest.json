@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/tmp/claude-1000/-home-mann-bhanushali-sim-ws/fe461a28-837e-4742-9591-a6751092f77d/scratchpad/frozen/results/Spielberg/rt-none-v11-learned",
+  "files": {
+    "state.json": "75b864e96da465a84b033f6959f4abc1c3b3b42c6647822c3a607d3e9f6c08be",
+    "events.jsonl": "447ce7393f2ab2b8ba87722ae8ddbb8bffebd3f3cb889eaba7434044043563cf",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "8803de9399ed91f18c8a20477d486ae8d193c4e7e2e5ce16eebb52e0615714dd",
+    "config.yaml": "982f46e36a0e28bf6622a42f42bd53a923ea9e0098125442e505acf19990e883",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "c21d287a686a4501ac57cb2b22a37ef2d498dc7702ad3e1b8f1d9f66fafbf3cc"
+  }
+}

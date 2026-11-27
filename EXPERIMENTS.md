@@ -55,6 +55,14 @@ Common setup unless stated otherwise:
 | 34 | Safe set v2 (live change detection) + change-aware value, 3 seeds | `d44c313` | failure: detection works (≈1 s, no false alarms), the reaction does not slow the car |
 | 35 | Baseline robustness, run divergence, v11's repeat crash spots, risk head vs speed cap | `7b5a865` | failure: neither option removes the no-change crashes; the speed reaction is built but not run |
 | 36 | Root cause: regression or luck? Old code reproduced in worktrees | next commit | done: not a regression; the old clean runs were partly luck and partly crashes that did not end the run |
+| 37 | Body-footprint track limits; change scenarios with the footprint | `2fb59f0` | partial: limits on the body; the first speed reaction costs laps without clear gains |
+| 38 | Compiled footprint check; local speed reaction; harsher changes (μ 0.55, patch μ 0.45) | `ef29129` | failure: every controller crashes on the harsh changes |
+| 39 | Evidence-based speed reaction | `40b95a3` | failure: soft cap weight too weak, caps raised every pass |
+| 40 | Two-phase cap weight, speed-matched raising, counted passes | `f7f2e7a` | partial: 6 of 8 harsh runs finish; history leak found |
+| 41 | Hard braking, error-vs-speed fit, history fix, planning time; no-change crashes | `8d13397` | partial: boxed-in stops at s ≈ 107 m traced to the planner structure |
+| 42 | LMPC structure fixes (previous plan, safe set in the hard tier, body-corner limit, footprint filter); retry mode | `91209ca`–`9d53ae4` | success: boxed-in stop gone with no change |
+| 43 | Retry mode, harsh changes, all controllers; why v11 does not slow down; learned change handling | `36f35b0`–`0c3cb2d` | failure: every attempt after a change crashes; the candidates hold no slow plan and the model sees no danger |
+| 44 | Speed-scaled safe set after a detection; reduced-speed candidates | `7e73128` | partial: the hand-written reaction finishes laps again (9 after a grip drop), crashes return as caps rise; plain v11 and the learned version still crash on almost every attempt |
 
 Main conclusions so far:
 
@@ -1220,3 +1228,170 @@ The rate is higher in this round's no-change runs: from lap 9 on, 7 slow laps ou
 ### Default
 
 The reaction is on in `rssm-latent-v11-change.yaml` (as asked) and off in the plain default.
+
+## 42. LMPC structure fixes and retry mode
+
+### Planner fixes (all configs)
+
+| Fix | What | Kind |
+|---|---|---|
+| a. Last step's plan kept | sample 0 is last step's plan shifted by one step (zero-padded) with no noise, and the last final-pick candidate is the same plan, every step | structural (LMPC: a feasible plan stays available) |
+| b. Safe set in the hard tier | final pick = 1e7 × (body-corner track-limit violation + safe-set violation) + 1000 × safety terms; before, the safe set counted ×1 against ×1000 for the track limit | structural |
+| c. Body-corner limit | with `footprint_limits`, the limit is `half_width − footprint_buffer` (default 0.10 m, so 1.00 m on Spielberg, 0.10 m from the wall). Before, the corner was held to `half_width − boundary_buffer` = 0.85 m, a buffer set for the centre point that subtracted the car's half-width a second time. The old centre-point check stays available (`footprint_limits: false`) | structural fix |
+| d. Footprint filter | stored safe-set states whose body corner breaks the limit are dropped before the local hull is built (`safe_set_footprint_filter`) | structural fix |
+| e. Tests | `tests/unit/test_planner_structure.py`; none of the full suite's failures are new: each one also fails on the commit before (missing `F110Env.fullscale_vehicle_params`, a test-fixture signature, the gym package path) | |
+
+Also added: a per-step summary of the final pick (`planner_steps.npy`: plans inside the safe set, inside the limits, both, the chosen plan's safe-set distance), a counter of how often the LiDAR clearance check changed the chosen plan (`planner_counts.json`), and the reports `scripts/rt_report.py` and `scripts/dg_report.py`.
+
+### Retry mode
+
+`sit_lmpc_mode: false` (`configs/retry/`). After a crash the car is reset to the start line with the state the crashed attempt started from (about 9 m/s), and the run continues until the given number of attempts.
+
+| Check | Result |
+|---|---|
+| What else it switches on (RSSM and bicycle configs) | nothing: the belief learner needs `belief.enabled` (off), the friction bank is only used by probabilistic safety or the risk constraint (off), model comparisons are off |
+| Crash attempts | saved as failed attempts (`trajectories/failure`), never in the safe set. No between-lap learner uses them: the value function trains on completed laps only, the world model does not train online, the crash-risk head is off |
+| Change timing | the condition scheduler counts completed laps across resets, so "after lap 8" means 8 completed laps in total |
+
+### Quick check, no change, 15 attempts
+
+| | Crashes | Slowest speed at s 100–110 per learned lap | Steps with no plan inside both safe set and limits (s 100–110) | Largest offset at s 100–110 | Laps under 0.2 m clearance | Planning p50 / p95 |
+|---|---|---|---|---|---|---|
+| v11 (`rt-none-v11`) | 0/15 | 6.2–7.4 m/s | 25/140 | 0.76–0.87 m | 9/10 | 64.4 / 83.5 ms |
+| bicycle (`rt-none-bicycle`) | 0/15 | 5.8–8.0 m/s | 6/132 | 0.43–0.65 m | 0/10 | 42.2 / 58.7 ms |
+
+The boxed-in stop is gone. v11 now uses the extra room (up to 0.87 m from the centre), which the new limit allows (body to within 0.10 m of the wall), so the 0.2 m clearance count rises by design. The LiDAR clearance check changed v11's chosen plan on 0.6% of steps.
+
+## 43. Retry mode on harsh changes; why v11 does not slow down
+
+### Setup
+
+Retry mode, one run each, 25 attempts, change after 8 completed laps: grip drop μ 1.05 → 0.55 on the whole track, and a patch of μ 0.45 at s = 85–115 m. Controllers:
+- (a) bicycle (`configs/retry/bicycle.yaml`);
+- (b) v11 with the per-candidate cost log (`v11-diag.yaml`);
+- (c) v11 + hand-written reaction (`v11-react.yaml`, entry 41 settings);
+- (d) v11 + learned change handling (`v11-learned.yaml`): **learned value** with the per-stretch bicycle-error tag as an extra input, trained only after a detection; safe set limited to laps whose tag matches each stretch's current condition (**hand-written matching rule**), slowest pre-change laps as the fallback; no caps;
+- (e) bicycle + hand-written reaction, cap raising on the bicycle's own error (`bicycle-react.yaml`).
+
+Plus no change, 25 attempts, with (b) and (d).
+
+**The reaction runs (c) and (e) of this batch are affected by fix b of entry 42.** With the safe set in the hard tier and the cap one tier below, a braking plan leaves the old fast safe set and loses to a fast plan: braking plans were built on 1,101 / 1,073 / 2,381 steps and chosen 0 / 0 / 0 times (grip c, grip e, patch e), against 2–15 times per run in entry 41. They are listed below but are not a fair test of the reaction.
+
+### Results
+
+| Scenario | Controller | Crashes after the change | Attempts after the change that completed a lap | Crash places (s, m) | Speed, first attempt after vs last 3 laps before | Laps under 0.2 m after |
+|---|---|---|---|---|---|---|
+| grip 0.55 | (a) bicycle | 17/17 | none | 38 ×10, 113 ×4, 177 ×3 | 8.98 vs 8.95 m/s | 9/17 |
+| | (b) v11 | 17/17 | none | 38–41 ×13, 112–116 ×3, 178 | 8.56 vs 9.06 | 11/17 |
+| | (c) v11 + reaction *(affected)* | 17/17 | none | 38–41 ×14, 178 ×2, 114 | 9.15 vs 9.01 | 9/17 |
+| | (d) v11 + learned | 17/17 | none | 113–118 ×7, 38–42 ×6, 178–180 ×3, 224 | 8.68 vs 9.16 | 14/17 |
+| | (e) bicycle + reaction *(affected)* | 17/17 | none | 37–42 ×13, 176–177 ×2, 115 ×2 | 9.78 vs 8.96 | 6/17 |
+| patch 0.45 | (a) bicycle | 17/17 | none | 111–113 ×17 | 9.03 vs 8.95 | 8/17 |
+| | (b) v11 | 17/17 | none | 112–114 ×17 | 8.31 vs 9.13 | 16/17 |
+| | (c) v11 + reaction *(affected)* | 8/17 | 1, 2, 4, 6, 8, 9, 10, 11, 12: 38.5, 38.0, 37.5, 38.6, 38.5, 38.4, 38.0, 38.6, 37.3 s | 109–116 ×4, 3 ×4 (attempts 14–17, just after the restart) | 9.16 vs 9.07 | 12/17 |
+| | (d) v11 + learned | 17/17 | none | 112–114 ×17 | 8.56 vs 9.05 | 16/17 |
+| | (e) bicycle + reaction *(affected)* | 15/17 | 6 (38.2 s), 14 (39.8 s) | 107–115 ×15 | 8.55 vs 8.90 | 16/17 |
+
+Lap times before the change (all runs): warm-up 38.4, 38.3, 38.3, 38.2, 38.3 s, learned laps 6–8 37.8–40.4 s. No crashes before the change in any run. Crash types (heading error over 0.6 rad in the 2 s before contact = spin): nearly all spins.
+
+Crashes by attempt number after the change: in every run except the two patch reaction runs, every attempt from 1 to 17 crashed. Crashes do not stop: with no completed lap after the change, nothing new enters the safe set or the value function.
+
+Learned version (d): change detection worked (grip drop at stretch 1 in lap 9; patch at stretch 9 in lap 9; patch stretches 9–11 marked changed), but the tag-conditioned value never started training, because it trains at the end of a completed lap and none came. The fallback ("slowest stored laps") holds only full-speed laps: even the warm-up laps average 9.2 m/s.
+
+No change, 25 attempts: v11 25/25 laps (38.0–39.8 s), v11 + learned 24/25 (one spin in attempt 14 at s = 34 m, with no detection, no tag value and no safe-set filter active, so the learned parts did not act). Planning p50 / p95 64.2 / 96.9 ms and 68.6 / 97.2 ms: p95 grows with the number of stored laps (83.5 ms over 15 attempts).
+
+### Why v11 does not slow down on its own
+
+From the per-candidate cost log of (b), for the last 5 s before each crash after the change (16 crashes per scenario; chosen plan vs the slowest candidate that stays inside the track limits):
+
+| | Grip drop | Patch |
+|---|---|---|
+| Steps compared | 618 | 683 |
+| Candidates inside the track limits, median | 255 of 256 | 256 of 256 |
+| Mean planned speed, chosen minus slowest in-bounds, median / max | 0.15 / 0.92 m/s | 0.11 / 0.75 m/s |
+| Slowest plan had a larger safe-set distance | 37% of steps | 39% |
+| Slowest plan had a worse (higher) time-to-go | 24% | 53% |
+| Predicted max \|slip\|, chosen minus slowest, median | −0.002 rad | 0.000 rad |
+| Predicted max \|slip\| of the chosen plan, median | 0.10 rad | 0.07 rad |
+| Chosen plan predicted within 0.35 m of a wall | 1.0% | 0.7% |
+
+Answer: **there was no slower plan to choose, and the model did not show the danger.** All 256 candidates are built around last step's plan and end up within about 0.15 m/s of each other, so the final pick has nothing slow to pick. v11's predicted slip and LiDAR are the same for the fast and the slightly slower plan, and far below what happened (the car spun). The safe set's old fast states and the value function are not the deciding factor: the slower plan was worse on the safe-set distance in only 37–39% of steps.
+
+### Corrections
+
+- Spielberg's track length is 343.3 m, not 318 m as two report scripts assumed (`scripts/rt_report.py`, `scripts/dg_report.py`, fixed). Positions under 318 m are unaffected.
+- Entry 41, grip-drop seed 3: the crash was at s = 322 m, before the start line, not "just past the line".
+- The plain-v11 no-change run started by this batch was killed partway (19 laps) when the batch was stopped; it is kept as `rt-none-v11-25-killed` and was rerun in full from the same commit (`rt-none-v11-25`).
+
+## 44. Speed-scaled safe set after a detection; reduced-speed candidates
+
+### What changed
+
+1. **Speed-scaled safe set after a detection** (`change_scale_safe_set`, on by default). When the local hull is built after a detection, stored states from laps driven before the change enter it with their speed scaled by that stretch's factor; positions, offsets and heading are unchanged.
+   - The factor is the stretch's current cap factor (0.8 at detection, or sqrt(μ ratio) in probe mode, following every raise), so the caps and the hull never disagree. Without caps (the learned version) it is `change_speed_factor` (0.8).
+   - It applies to stretches not yet judged or judged changed and not yet on new-condition laps.
+   - Laps driven after the change are never scaled, so once the condition-aware selection uses them, they replace the scaled states. Nothing changes before a detection.
+2. **Reduced-speed candidates, every step, all controllers** (`speed_diverse_factors`, default 0.9 / 0.75 / 0.6). Three final-pick candidates are last step's shifted plan with its speed profile scaled by each factor: steering kept, acceleration recomputed step by step within the limits. They are scored like any other candidate.
+3. **Tests:** `test_reduced_speed_plans_scale_the_speed_profile`, `test_safe_set_speeds_scaled_after_detection_only`.
+
+### No-change check (plain v11, 15 attempts)
+
+| | Before (`rt-none-v11`) | After (`rt2-none-v11`) |
+|---|---|---|
+| Crashes | 0/15 | 0/15 |
+| Learned laps | 39.3, 39.7, 39.4, 39.1, 39.0, 38.8, 39.2, 39.1, 38.8, 38.9 s | 39.6, 39.1, 39.6, 39.2, 38.5, 39.2, 38.6, 39.1, 38.9, 38.6 s |
+| Reduced-speed candidate chosen | – | 8 of 3,904 steps (0.2%, all 0.9×) |
+| Clearance check changed the pick | 0.6% | 0.8% |
+| Planning p50 / p95 | 64.4 / 83.5 ms | **79.0 / 96.8 ms** |
+
+Normal laps are not slower. Planning time is about 14 ms higher. The likely cause is that the reduced-speed plans are built on the host from last step's plan, which forces the GPU to finish its queued work mid-step. This is not yet confirmed by profiling.
+
+### Change runs
+
+Retry mode, one run each, 25 attempts, change after 8 completed laps. (a) bicycle is reused from entry 43.
+
+**Grip drop μ 0.55**
+
+| Controller | Crashes after | Attempts after the change that completed a lap (lap time) | Crash places (s, m) | Speed, first attempt after vs before | Laps to settle (settled lap) | Laps under 0.2 m after | Reduced-speed chosen | Braking plans chosen | Clearance check changed the pick |
+|---|---|---|---|---|---|---|---|---|---|
+| (a) bicycle | 17/17 | none | 38 ×10, 113 ×4, 177 ×3 | 8.98 vs 8.95 m/s | – | 9/17 | – | – | – |
+| (b) v11 | 17/17 | none | 112–115 ×13, 40 ×2, 178 ×2 | 8.11 vs 8.85 | – | 16/17 | 0.2% | – | 0.4% |
+| (c) v11 + reaction | 8/17 | 1, 2, 3, 4, 5, 7, 10, 11, 16: 51.6, 50.5, 50.3, 50.2, 48.8, 49.4, 47.7, 46.5, 46.3 s | 39 ×4, 114, 119, 192, 320 | 6.82 vs 8.98 | 8 (46.5 s) | 14/17 | 0.1% | 0 of 2,143 | 0.0% |
+| (d) v11 + learned | 14/17 | 1, 2, 3: 48.3, 56.4, 50.5 s | 112–116 ×9, 179 ×3, 38–40 ×2 | 7.30 vs 9.14 | – | 16/17 | 0.2% | – | 0.0% |
+| (e) bicycle + reaction | 16/17 | 2: 51.8 s | 38–39 ×6, 178–180 ×4, 215–247 ×6 | 6.67 vs 8.90 | – | 15/17 | 0.2% | 0 of 612 | – |
+
+**Patch μ 0.45 at s = 85–115 m**
+
+| Controller | Crashes after | Attempts after the change that completed a lap (lap time) | Crash places (s, m) | Speed, first attempt after vs before | Laps to settle (settled lap) | Laps under 0.2 m after | Reduced-speed chosen | Braking plans chosen | Clearance check changed the pick |
+|---|---|---|---|---|---|---|---|---|---|
+| (a) bicycle | 17/17 | none | 111–113 ×17 | 9.03 vs 8.95 | – | 8/17 | – | – | – |
+| (b) v11 | 15/17 | 3, 7: 39.8, 40.2 s | 112–115 ×15 | 8.43 vs 8.93 | – | 10/17 | 0.2% | – | 0.2% |
+| (c) v11 + reaction | 10/17 | 2, 4, 5, 12, 15, 16, 17: 50.5, 45.5, 45.1, 43.9, 43.8, 44.0, 42.8 s | 112–115 ×9, 35 | 7.87 vs 8.97 | 4 (43.8 s) | 14/17 | 0.2% | 0 of 1,956 | 0.1% |
+| (d) v11 + learned | 14/17 | 2, 3, 9: 48.4, 42.1, 47.8 s | 112–114 ×14 | 7.97 vs 9.09 | – | 13/17 | 0.1% | – | 0.1% |
+| (e) bicycle + reaction | 13/17 | 2, 5, 9, 17: 50.0, 45.2, 43.3, 43.4 s | 112–114 ×13 | 7.50 vs 8.95 | 3 (43.4 s) | 15/17 | 0.3% | 0 of 1,105 | – |
+
+No crashes before the change in any run; lap times before the change as in entry 43. Nearly all crashes are spins, except (e) on the grip drop (15 of 16 wall hits).
+
+### Summary
+
+| Scenario | Controller | Entry 43: crashes after / laps after | Entry 44: crashes after / laps after |
+|---|---|---|---|
+| grip 0.55 | (a) bicycle | 17/17 / 0 | (same run) |
+| | (b) v11 | 17/17 / 0 | 17/17 / 0 |
+| | (c) v11 + reaction | 17/17 / 0 *(affected)* | **8/17 / 9** |
+| | (d) v11 + learned | 17/17 / 0 | 14/17 / 3 |
+| | (e) bicycle + reaction | 17/17 / 0 *(affected)* | 16/17 / 1 |
+| patch 0.45 | (a) bicycle | 17/17 / 0 | (same run) |
+| | (b) v11 | 17/17 / 0 | 15/17 / 2 |
+| | (c) v11 + reaction | 8/17 / 9 *(affected)* | 10/17 / 7 |
+| | (d) v11 + learned | 17/17 / 0 | 14/17 / 3 |
+| | (e) bicycle + reaction | 15/17 / 2 *(affected)* | 13/17 / 4 |
+
+### What the runs show
+
+1. **The controllers slow down at the change now** (first attempt after the change 6.7–8.0 m/s, against 8.3–9.8 m/s in entry 43), and the reaction runs finish laps again: v11 + reaction completed 9 laps after the grip drop (51.6 → 46.3 s) and 7 after the patch (50.5 → 42.8 s).
+2. **Crashes do not stop as the car learns.** In v11 + reaction on the grip drop, attempts 1–5 after the change all completed, with caps raised 43 times over those five laps (6–10 per lap). Crashes start at attempt 6, mostly at the first corner (s ≈ 39 m) on the restart at about 9 m/s, and continue while the caps keep rising (8–22 raises per completed lap after that). Plain v11, the learned version and the bicycle crash on almost every attempt.
+3. **The reduced-speed candidates are almost never chosen** (0.1–0.3% of steps), even before crashes. A slower plan exists now, but the cost does not prefer it: the model still predicts no danger for the fast plans (entry 43).
+4. **Braking plans are still never chosen** (0 in every reaction run). The cap is in the safety tier, below the hard tier; a hard braking plan leaves even the scaled safe set.
+5. **The learned version detects the change and trains its tag value** (grip drop: all 35 stretches marked changed; patch: 9–11 correct plus 5 false stretch flags at 4, 12, 18, 23, 32), but it finishes only 3 laps after the change in each scenario. It has no hand-written speed rule, so its slowdown comes only from the scaled safe set.
+6. **Planning time:** the 25-attempt change runs show p95 92–106 ms for v11 (the cap on the safe set comes next). The grip-drop v11 run's p95 of 176 ms comes from two laps before the change (attempts 7–8, p95 190–205 ms); every other attempt is 85–105 ms. That spike is not explained.

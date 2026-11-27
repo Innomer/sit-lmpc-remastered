@@ -179,7 +179,7 @@ All on Spielberg in the ROS lockstep sim; every number and run is in [EXPERIMENT
 | Hand-written speed reaction: survival up (6 of 8 harsh runs finished in entry 40) but many hand-set parts and side effects | 39–41 |
 | Boxed-in stops at s ≈ 107 m: the safe set was only a soft cost and last step's plan was not a candidate; fixed structurally | 41–42 |
 | Retry mode, 25 attempts: without a working way to slow down, every controller crashed on all 17 attempts after a harsh change; the candidate set held no slow plan | 43 |
-| Speed-scaled safe set and reduced-speed candidates | 44 |
+| Speed-scaled safe set after a detection and reduced-speed candidates: the cars slow down at the change (first attempt 6.7–8.0 m/s instead of 8.3–9.8); v11 + reaction finishes 9 laps after a μ 0.55 grip drop, but crashes return as caps rise; plain v11 and the learned version still crash on most attempts | 44 |
 
 ## Known limitations
 

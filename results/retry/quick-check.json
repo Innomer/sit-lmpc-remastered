@@ -1,0 +1,404 @@
+{
+ "rt-none-v11": {
+  "attempts": 15,
+  "crashes_before": 0,
+  "attempts_before": 15,
+  "crashes_after": 0,
+  "attempts_after": 0,
+  "crash_attempt_numbers_after_change": [],
+  "crashes": [],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    39.3
+   ],
+   [
+    7,
+    39.7
+   ],
+   [
+    8,
+    39.4
+   ],
+   [
+    9,
+    39.1
+   ],
+   [
+    10,
+    39.0
+   ],
+   [
+    11,
+    38.8
+   ],
+   [
+    12,
+    39.2
+   ],
+   [
+    13,
+    39.1
+   ],
+   [
+    14,
+    38.8
+   ],
+   [
+    15,
+    38.9
+   ]
+  ],
+  "laps_under_0.2m_after": "0/0",
+  "laps_under_0.2m_before": "9/10",
+  "pre_change_lap_s": 38.9,
+  "clearance_check_changed_pick": "24/3913 (0.6%)",
+  "previous_plan_chosen": 9,
+  "planning_ms": {
+   "p50": 64.4,
+   "p95": 83.5
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.0,
+    "min_clearance_m": 0.209,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.89,
+    "min_clearance_m": 0.116,
+    "time_s": 39.7
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.116,
+    "time_s": 39.4
+   },
+   {
+    "attempt": 9,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.97,
+    "min_clearance_m": 0.082,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 10,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.99,
+    "min_clearance_m": 0.082,
+    "time_s": 39.0
+   },
+   {
+    "attempt": 11,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.07,
+    "min_clearance_m": 0.13,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 12,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.058,
+    "time_s": 39.2
+   },
+   {
+    "attempt": 13,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.082,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 14,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.06,
+    "min_clearance_m": 0.082,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 15,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.03,
+    "min_clearance_m": 0.082,
+    "time_s": 38.9
+   }
+  ]
+ },
+ "rt-none-bicycle": {
+  "attempts": 15,
+  "crashes_before": 0,
+  "attempts_before": 15,
+  "crashes_after": 0,
+  "attempts_after": 0,
+  "crash_attempt_numbers_after_change": [],
+  "crashes": [],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    37.7
+   ],
+   [
+    7,
+    39.0
+   ],
+   [
+    8,
+    38.4
+   ],
+   [
+    9,
+    38.2
+   ],
+   [
+    10,
+    38.0
+   ],
+   [
+    11,
+    38.0
+   ],
+   [
+    12,
+    37.8
+   ],
+   [
+    13,
+    37.6
+   ],
+   [
+    14,
+    37.8
+   ],
+   [
+    15,
+    37.7
+   ]
+  ],
+  "laps_under_0.2m_after": "0/0",
+  "laps_under_0.2m_before": "3/10",
+  "pre_change_lap_s": 37.7,
+  "planning_ms": {
+   "p50": 42.9,
+   "p95": 59.0
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.9,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.1,
+    "min_clearance_m": 0.348,
+    "time_s": 37.7
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.78,
+    "min_clearance_m": 0.29,
+    "time_s": 39.0
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.92,
+    "min_clearance_m": 0.239,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 9,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.92,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 10,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.174,
+    "time_s": 38.0
+   },
+   {
+    "attempt": 11,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.29,
+    "time_s": 38.0
+   },
+   {
+    "attempt": 12,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.04,
+    "min_clearance_m": 0.174,
+    "time_s": 37.8
+   },
+   {
+    "attempt": 13,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.07,
+    "min_clearance_m": 0.174,
+    "time_s": 37.6
+   },
+   {
+    "attempt": 14,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.04,
+    "min_clearance_m": 0.232,
+    "time_s": 37.8
+   },
+   {
+    "attempt": 15,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.02,
+    "min_clearance_m": 0.29,
+    "time_s": 37.7
+   }
+  ]
+ }
+}

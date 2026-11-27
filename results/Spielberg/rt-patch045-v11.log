@@ -1,0 +1,165 @@
+[start] learning | seed=1 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[attempt] #1 success | 384 steps
+[lap] trial 1 | 38.4 s | avg speed 9.211 m/s | mppi
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[attempt] #2 success | 383 steps
+[lap] trial 2 | 38.3 s | avg speed 9.231 m/s | mppi
+[safe_set_retention] laps=1 | states=415 | min_states=1000000
+[control_step_timing] steps=800
+[training] generation=1 | epochs=300 | loss=-0.5766 | gradient_steps=600
+[control_step_timing] steps=900
+[control_step_timing] steps=1000
+[control_step_timing] steps=1100
+[attempt] #3 success | 383 steps
+[lap] trial 3 | 38.3 s | avg speed 9.229 m/s | mppi
+[safe_set_retention] laps=2 | states=797 | min_states=1000000
+[control_step_timing] steps=1200
+[training] generation=2 | epochs=300 | loss=-1.142 | gradient_steps=1800
+[control_step_timing] steps=1300
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[attempt] #4 success | 382 steps
+[lap] trial 4 | 38.2 s | avg speed 9.233 m/s | mppi
+[safe_set_retention] laps=3 | states=1180 | min_states=1000000
+[control_step_timing] steps=1600
+[training] generation=3 | epochs=300 | loss=-2.364 | gradient_steps=3300
+[control_step_timing] steps=1700
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[attempt] #5 success | 383 steps
+[lap] trial 5 | 38.3 s | avg speed 9.229 m/s | mppi
+[safe_set_retention] laps=4 | states=1563 | min_states=1000000
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rt-patch045-v11/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[learned_controller_started] step=1915 | value_generation=3 | hull_facets=882
+[training] generation=4 | epochs=300 | loss=-3.364 | gradient_steps=5100
+[control_step_timing] steps=2000
+[control_step_timing] steps=2100
+[control_step_timing] steps=2200
+[attempt] #6 success | 383 steps
+[lap] trial 6 | 38.3 s | avg speed 9.193 m/s | lmppi | lambda_ss mean=3.593 max=18.75 | lambda_boundary mean=4.148 max=18.75
+[safe_set_retention] laps=5 | states=1951 | min_states=1000000
+[control_step_timing] steps=2300
+[training] generation=5 | epochs=300 | loss=-3.405 | gradient_steps=7500
+[control_step_timing] steps=2400
+[control_step_timing] steps=2500
+[control_step_timing] steps=2600
+[attempt] #7 success | 392 steps
+[lap] trial 7 | 39.2 s | avg speed 9.022 m/s | lmppi | lambda_ss mean=3.058 max=18.75 | lambda_boundary mean=3.626 max=18.75
+[safe_set_retention] laps=6 | states=2333 | min_states=1000000
+[control_step_timing] steps=2700
+[training] generation=6 | epochs=300 | loss=-3.632 | gradient_steps=10200
+[control_step_timing] steps=2800
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[attempt] #8 success | 384 steps
+[lap] trial 8 | 38.4 s | avg speed 9.165 m/s | lmppi | lambda_ss mean=1.204 max=18.75 | lambda_boundary mean=0.9831 max=17.5
+[safe_set_retention] laps=7 | states=2733 | min_states=1000000
+[control_step_timing] steps=3100
+[training] generation=7 | epochs=300 | loss=-3.431 | gradient_steps=13500
+[control_step_timing] steps=3200
+[attempt] #9 failure | 142 steps | collision | lambda_ss mean=1.364 max=18.75 | lambda_boundary mean=1.083 max=18.75
+[ros_launch] target_speed=9.093 | speed=9.093
+[ros_reset] run_up=4.297 | requested=-0.4049, 0.3691, 0.01796, 9.093, -53.13, 0.3753, -0.0334 | reached=-0.6492, 0.3005, 0, 9.093, -2.868, 0, 0
+[lap_reset] next_attempt=10 | failures=1
+[control_step_timing] steps=3300
+[attempt] #10 failure | 138 steps | collision | lambda_ss mean=1.096 max=18.75 | lambda_boundary mean=1.078 max=18.75
+[ros_launch] target_speed=9.036 | speed=9.026
+[ros_reset] run_up=4.243 | requested=-0.6492, 0.3005, -0.05045, 9.036, -2.868, -0.03877, -0.01187 | reached=-0.8585, 0.2417, 0, 9.026, -2.868, 0, 0
+[lap_reset] next_attempt=11 | failures=2
+[checkpoint_saved] file=checkpoints/trial-000010 | trials=10
+[control_step_timing] steps=3400
+[attempt] #11 failure | 138 steps | collision | lambda_ss mean=0.8696 max=13.75 | lambda_boundary mean=0.933 max=18.75
+[ros_launch] target_speed=8.999 | speed=8.999
+[ros_reset] run_up=4.208 | requested=-0.8585, 0.2417, -0.05242, 8.999, -2.868, -0.09622, -0.008488 | reached=-1.101, 0.1735, 0, 8.999, -2.868, 0, 0
+[lap_reset] next_attempt=12 | failures=3
+[control_step_timing] steps=3500
+[control_step_timing] steps=3600
+[attempt] #12 failure | 138 steps | collision | lambda_ss mean=0.9149 max=17.5 | lambda_boundary mean=0.9692 max=18.75
+[ros_launch] target_speed=8.863 | speed=8.863
+[ros_reset] run_up=4.08 | requested=-1.101, 0.1735, -0.05256, 8.863, -2.868, -0.065, -0.01277 | reached=-1.295, 0.1192, 0, 8.863, -2.868, 0, 0
+[lap_reset] next_attempt=13 | failures=4
+[control_step_timing] steps=3700
+[attempt] #13 failure | 134 steps | collision | lambda_ss mean=1.138 max=18.75 | lambda_boundary mean=1.007 max=16.25
+[ros_launch] target_speed=8.801 | speed=8.791
+[ros_reset] run_up=4.022 | requested=-1.295, 0.1192, -0.05314, 8.801, -2.868, -0.08011, -0.009561 | reached=-1.459, 0.07309, 0, 8.791, -2.868, 0, 0
+[lap_reset] next_attempt=14 | failures=5
+[control_step_timing] steps=3800
+[control_step_timing] steps=3900
+[attempt] #14 failure | 138 steps | collision | lambda_ss mean=1.25 max=18.75 | lambda_boundary mean=1.033 max=18.75
+[ros_launch] target_speed=8.886 | speed=8.87
+[ros_reset] run_up=4.101 | requested=-1.459, 0.07309, -0.05253, 8.886, -2.868, -0.07103, -0.009976 | reached=-1.632, 0.02455, 0, 8.87, -2.868, 0, 0
+[lap_reset] next_attempt=15 | failures=6
+[control_step_timing] steps=4000
+[attempt] #15 failure | 133 steps | collision | lambda_ss mean=0.8459 max=13.75 | lambda_boundary mean=0.8835 max=16.25
+[ros_launch] target_speed=8.918 | speed=8.918
+[ros_reset] run_up=4.132 | requested=-1.632, 0.02455, -0.05291, 8.918, -2.868, -0.09288, -0.008928 | reached=-1.861, -0.03986, 0, 8.918, -2.868, 0, 0
+[lap_reset] next_attempt=16 | failures=7
+[control_step_timing] steps=4100
+[attempt] #16 failure | 132 steps | collision | lambda_ss mean=0.9186 max=18.75 | lambda_boundary mean=0.9186 max=17.5
+[ros_launch] target_speed=8.66 | speed=8.66
+[ros_reset] run_up=3.893 | requested=-1.861, -0.03986, -0.05262, 8.66, -2.868, -0.03472, -0.01343 | reached=-2.066, -0.09717, 0, 8.66, -2.868, 0, 0
+[lap_reset] next_attempt=17 | failures=8
+[control_step_timing] steps=4200
+[control_step_timing] steps=4300
+[attempt] #17 failure | 135 steps | collision | lambda_ss mean=1.185 max=18.75 | lambda_boundary mean=0.9167 max=15
+[ros_launch] target_speed=8.572 | speed=8.572
+[ros_reset] run_up=3.813 | requested=-2.066, -0.09717, -0.05226, 8.572, -2.868, -0.02482, -0.01333 | reached=-2.263, -0.1527, 0, 8.572, -2.868, 0, 0
+[lap_reset] next_attempt=18 | failures=9
+[control_step_timing] steps=4400
+[attempt] #18 failure | 137 steps | collision | lambda_ss mean=1.286 max=18.75 | lambda_boundary mean=1.323 max=18.75
+[ros_launch] target_speed=8.494 | speed=8.494
+[ros_reset] run_up=3.743 | requested=-2.263, -0.1527, -0.0509, 8.494, -2.868, 0.00865, -0.01289 | reached=-2.445, -0.2038, 0, 8.494, -2.868, 0, 0
+[lap_reset] next_attempt=19 | failures=10
+[control_step_timing] steps=4500
+[attempt] #19 failure | 134 steps | collision | lambda_ss mean=0.9142 max=18.75 | lambda_boundary mean=0.6437 max=6.25
+[ros_launch] target_speed=8.458 | speed=8.458
+[ros_reset] run_up=3.711 | requested=-2.445, -0.2038, -0.05255, 8.458, -2.868, -0.02245, -0.01288 | reached=-2.576, -0.2406, 0, 8.458, -2.868, 0, 0
+[lap_reset] next_attempt=20 | failures=11
+[control_step_timing] steps=4600
+[control_step_timing] steps=4700
+[attempt] #20 failure | 135 steps | collision | lambda_ss mean=1.019 max=18.75 | lambda_boundary mean=0.9167 max=16.25
+[ros_launch] target_speed=8.635 | speed=8.632
+[ros_reset] run_up=3.87 | requested=-2.576, -0.2406, -0.05465, 8.635, -2.868, -0.08652, -0.01002 | reached=-2.72, -0.2808, 0, 8.632, -2.868, 0, 0
+[lap_reset] next_attempt=21 | failures=12
+[checkpoint_saved] file=checkpoints/trial-000020 | trials=20
+[control_step_timing] steps=4800
+[attempt] #21 failure | 138 steps | collision | lambda_ss mean=0.8243 max=11.25 | lambda_boundary mean=0.9149 max=17.5
+[ros_launch] target_speed=8.717 | speed=8.712
+[ros_reset] run_up=3.945 | requested=-2.72, -0.2808, -0.05382, 8.717, -2.868, -0.07977, -0.009445 | reached=-2.874, -0.3241, 0, 8.712, -2.868, 0, 0
+[lap_reset] next_attempt=22 | failures=13
+[control_step_timing] steps=4900
+[attempt] #22 failure | 134 steps | collision | lambda_ss mean=1.614 max=18.75 | lambda_boundary mean=0.9701 max=15
+[ros_launch] target_speed=8.859 | speed=8.859
+[ros_reset] run_up=4.076 | requested=-2.874, -0.3241, -0.05323, 8.859, -2.868, -0.09924, -0.007813 | reached=-3.071, -0.3795, 0, 8.859, -2.868, 0, 0
+[lap_reset] next_attempt=23 | failures=14
+[control_step_timing] steps=5000
+[control_step_timing] steps=5100
+[attempt] #23 failure | 136 steps | collision | lambda_ss mean=1.406 max=18.75 | lambda_boundary mean=1.176 max=17.5
+[ros_launch] target_speed=8.82 | speed=8.82
+[ros_reset] run_up=4.04 | requested=-3.071, -0.3795, -0.05176, 8.82, -2.868, -0.06073, -0.009547 | reached=-3.302, -0.4445, 0, 8.82, -2.868, 0, 0
+[lap_reset] next_attempt=24 | failures=15
+[control_step_timing] steps=5200
+[attempt] #24 failure | 134 steps | collision | lambda_ss mean=1.157 max=16.25 | lambda_boundary mean=0.8862 max=18.75
+[ros_launch] target_speed=8.671 | speed=8.671
+[ros_reset] run_up=3.903 | requested=-3.302, -0.4445, -0.05084, 8.671, -2.868, -0.01875, -0.01304 | reached=-3.497, -0.499, 0, 8.671, -2.868, 0, 0
+[lap_reset] next_attempt=25 | failures=16
+[control_step_timing] steps=5300
+[attempt] #25 failure | 133 steps | collision | lambda_ss mean=0.8459 max=18.75 | lambda_boundary mean=0.8083 max=3.75
+[checkpoint_saved] file=checkpoints/trial-000025 | trials=25
+[finish] status=lap_limit | trials=25 | successful_laps=8 | failed_attempts=17 | applied_steps=5383 | training_generations=7 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rt-patch045-v11
+[control_timing_summary] steps=5383 | control_period_seconds=0.1 | stepping=lockstep

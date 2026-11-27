@@ -1,0 +1,32 @@
+[INFO] [1795798432.649885132] [bridge]: Loading map from path: /home/mann-bhanushali/sim_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/maps/Spielberg.yaml
+[INFO] [1795798432.969510510] [bridge]: Start poses: ego_racecar=(0.00, 0.00, -2.88)
+[INFO] [1795798433.254225086] [bridge]: Running in synchronous mode. Simulation will step only on new /drive messages.
+[INFO] [1795798433.263318601] [bridge]: Using simulation time. Will publish /clock topic. Drive and odom will be as fast as possible.
+[INFO] [1795798433.269494617] [bridge]: simulated sensors on: {'imu_offset_x': 0.05, 'imu_offset_y': 0.01, 'imu_yaw_misalignment': 0.01, 'accel_bias_x': 0.2, 'accel_bias_y': -0.15, 'accel_noise': 0.3, 'gyro_bias': 0.01, 'gyro_noise': 0.01, 'gyro_scale': 1.01, 'wheel_scale': 1.03, 'wheel_noise': 0.05, 'pose_noise': 0.02, 'yaw_noise': 0.01, 'pose_lag': 0.05}
+[INFO] [1795798464.133704420] [bridge]: ego_racecar completed lap 1, last lap 38.39 s
+[INFO] [1795798473.386377047] [bridge]: ego_racecar completed lap 2, last lap 38.27 s
+[INFO] [1795798484.484190753] [bridge]: ego_racecar completed lap 3, last lap 38.27 s
+[INFO] [1795798495.580572144] [bridge]: ego_racecar completed lap 4, last lap 38.27 s
+[INFO] [1795798507.397216985] [bridge]: ego_racecar completed lap 5, last lap 38.27 s
+[INFO] [1795798548.440463577] [bridge]: ego_racecar completed lap 6, last lap 38.02 s
+[INFO] [1795798588.342008984] [bridge]: ego_racecar completed lap 7, last lap 38.57 s
+[INFO] [1795798625.955397676] [bridge]: ego_racecar completed lap 8, last lap 37.85 s
+[INFO] [1795798625.958130607] [bridge]: vehicle condition set to {'mu': 0.55, 'mass_ratio': 1.0}
+[WARN] [1795798632.172461501] [bridge]: ego_racecar hit something at (-36.71, -7.49)
+[WARN] [1795798637.325018724] [bridge]: ego_racecar hit something at (-36.92, -7.11)
+[WARN] [1795798642.082400362] [bridge]: ego_racecar hit something at (-37.17, -6.77)
+[WARN] [1795798647.110439610] [bridge]: ego_racecar hit something at (-36.82, -7.38)
+[WARN] [1795798671.271596688] [bridge]: ego_racecar hit something at (-11.37, 45.97)
+[WARN] [1795798676.051685172] [bridge]: ego_racecar hit something at (-36.69, -7.58)
+[WARN] [1795798701.256610018] [bridge]: ego_racecar hit something at (-11.51, 44.94)
+[WARN] [1795798717.909539130] [bridge]: ego_racecar hit something at (-71.51, 54.53)
+[WARN] [1795798722.712883766] [bridge]: ego_racecar hit something at (-36.96, -7.11)
+[WARN] [1795798727.272490144] [bridge]: ego_racecar hit something at (-37.29, -6.58)
+[WARN] [1795798731.923775293] [bridge]: ego_racecar hit something at (-37.26, -6.60)
+[WARN] [1795798748.276931961] [bridge]: ego_racecar hit something at (-72.11, 54.46)
+[WARN] [1795798752.036103064] [bridge]: ego_racecar hit something at (-36.70, -7.52)
+[WARN] [1795798756.044000196] [bridge]: ego_racecar hit something at (-36.44, -8.03)
+[WARN] [1795798760.692293790] [bridge]: ego_racecar hit something at (-38.37, -4.92)
+[WARN] [1795798764.864614465] [bridge]: ego_racecar hit something at (-36.79, -7.38)
+[WARN] [1795798764.887441571] [bridge]: ego_racecar hit something at (-37.03, -7.05)
+[WARN] [1795798769.652119908] [bridge]: ego_racecar hit something at (-38.61, -4.56)

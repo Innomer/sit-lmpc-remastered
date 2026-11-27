@@ -1,0 +1,19 @@
+{
+ "candidates": {
+  "steps": 2143,
+  "chosen": 0,
+  "previous_chosen": 196
+ },
+ "reduced_speed": {
+  "steps": 6859,
+  "chosen": {
+   "0.9": 6,
+   "0.75": 0,
+   "0.6": 0
+  }
+ },
+ "clearance_check": {
+  "steps": 6859,
+  "changed": 0
+ }
+}

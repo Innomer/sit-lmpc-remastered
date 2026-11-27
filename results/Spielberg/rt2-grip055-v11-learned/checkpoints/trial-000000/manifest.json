@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rt2-grip055-v11-learned",
+  "files": {
+    "state.json": "44ef94b19eef3fdfe32bc91be0b805c45acae168aea9dde9ff9fc00f19be70a9",
+    "events.jsonl": "84aa5e24a3d6a2d16fa2fe87e9252117aaed76c765c8fe4aff6925b435a62b50",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "337b3766a9abf6ea38d38eb2e1ffc5823eb924c9b9d430bc28ad0ff967be2218",
+    "config.yaml": "973683ed0565719ed45d1f319b8f8e0cf13daa7633a709baa6b4a0a04fef6913",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "5f81602ac2c39fd50cfe5ea3b5351f88f8b356646bce6b7a4a95ae5e8dc34686"
+  }
+}

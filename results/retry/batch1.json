@@ -1,0 +1,7189 @@
+{
+ "rt-grip055-bicycle": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 17,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.06,
+    "reason": "collision",
+    "s": 112.6,
+    "hit": [
+     -74.5,
+     54.15
+    ],
+    "attempt": 9
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.7,
+    "reason": "collision",
+    "s": 37.5,
+    "hit": [
+     -36.41,
+     -8.05
+    ],
+    "attempt": 10
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.02,
+    "reason": "collision",
+    "s": 112.0,
+    "hit": [
+     -74.5,
+     54.15
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.04,
+    "reason": "collision",
+    "s": 113.1,
+    "hit": [
+     -73.89,
+     54.22
+    ],
+    "attempt": 12
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.8,
+    "reason": "collision",
+    "s": 38.3,
+    "hit": [
+     -36.84,
+     -7.42
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.56,
+    "reason": "collision",
+    "s": 36.7,
+    "hit": [
+     -36.03,
+     -8.65
+    ],
+    "attempt": 14
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.66,
+    "reason": "collision",
+    "s": 177.1,
+    "hit": [
+     -11.47,
+     45.0
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.72,
+    "reason": "collision",
+    "s": 37.6,
+    "hit": [
+     -36.41,
+     -8.05
+    ],
+    "attempt": 16
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.64,
+    "reason": "collision",
+    "s": 36.9,
+    "hit": [
+     -36.03,
+     -8.65
+    ],
+    "attempt": 17
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.01,
+    "reason": "collision",
+    "s": 113.3,
+    "hit": [
+     -73.89,
+     54.22
+    ],
+    "attempt": 18
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.72,
+    "reason": "collision",
+    "s": 37.7,
+    "hit": [
+     -36.55,
+     -7.82
+    ],
+    "attempt": 19
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.74,
+    "reason": "collision",
+    "s": 38.0,
+    "hit": [
+     -36.66,
+     -7.64
+    ],
+    "attempt": 20
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.58,
+    "reason": "collision",
+    "s": 37.4,
+    "hit": [
+     -36.41,
+     -8.05
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.57,
+    "reason": "collision",
+    "s": 176.4,
+    "hit": [
+     -11.35,
+     45.86
+    ],
+    "attempt": 22
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.64,
+    "reason": "collision",
+    "s": 37.8,
+    "hit": [
+     -36.55,
+     -7.82
+    ],
+    "attempt": 23
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.68,
+    "reason": "collision",
+    "s": 176.8,
+    "hit": [
+     -11.29,
+     45.44
+    ],
+    "attempt": 24
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.51,
+    "reason": "collision",
+    "s": 36.6,
+    "hit": [
+     -36.03,
+     -8.65
+    ],
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    37.8
+   ],
+   [
+    7,
+    38.5
+   ],
+   [
+    8,
+    38.2
+   ]
+  ],
+  "laps_under_0.2m_after": "9/17",
+  "laps_under_0.2m_before": "0/3",
+  "speed_before": 8.95,
+  "speed_first_after": 8.98,
+  "first_after_outcome": "failure",
+  "pre_change_lap_s": 38.2,
+  "previous_plan_chosen": 8,
+  "planning_ms": {
+   "p50": 40.9,
+   "p95": 59.1
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.9,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.06,
+    "min_clearance_m": 0.29,
+    "time_s": 37.8
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.89,
+    "min_clearance_m": 0.246,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.91,
+    "min_clearance_m": 0.259,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 9,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.183,
+    "time_s": 12.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.06,
+     "reason": "collision",
+     "s": 112.6,
+     "hit": [
+      -74.5,
+      54.15
+     ]
+    }
+   },
+   {
+    "attempt": 10,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.74,
+    "min_clearance_m": 0.312,
+    "time_s": 3.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.7,
+     "reason": "collision",
+     "s": 37.5,
+     "hit": [
+      -36.41,
+      -8.05
+     ]
+    }
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.17,
+    "min_clearance_m": 0.058,
+    "time_s": 12.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.02,
+     "reason": "collision",
+     "s": 112.0,
+     "hit": [
+      -74.5,
+      54.15
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.21,
+    "min_clearance_m": 0.082,
+    "time_s": 12.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.04,
+     "reason": "collision",
+     "s": 113.1,
+     "hit": [
+      -73.89,
+      54.22
+     ]
+    }
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.79,
+    "min_clearance_m": 0.209,
+    "time_s": 3.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.8,
+     "reason": "collision",
+     "s": 38.3,
+     "hit": [
+      -36.84,
+      -7.42
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.93,
+    "min_clearance_m": 0.616,
+    "time_s": 3.5,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.56,
+     "reason": "collision",
+     "s": 36.7,
+     "hit": [
+      -36.03,
+      -8.65
+     ]
+    }
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.058,
+    "time_s": 19.6,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.66,
+     "reason": "collision",
+     "s": 177.1,
+     "hit": [
+      -11.47,
+      45.0
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 10.17,
+    "min_clearance_m": 0.259,
+    "time_s": 3.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.72,
+     "reason": "collision",
+     "s": 37.6,
+     "hit": [
+      -36.41,
+      -8.05
+     ]
+    }
+   },
+   {
+    "attempt": 17,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 10.44,
+    "min_clearance_m": 0.338,
+    "time_s": 3.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.64,
+     "reason": "collision",
+     "s": 36.9,
+     "hit": [
+      -36.03,
+      -8.65
+     ]
+    }
+   },
+   {
+    "attempt": 18,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.13,
+    "time_s": 12.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.01,
+     "reason": "collision",
+     "s": 113.3,
+     "hit": [
+      -73.89,
+      54.22
+     ]
+    }
+   },
+   {
+    "attempt": 19,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 10.06,
+    "min_clearance_m": 0.116,
+    "time_s": 3.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.72,
+     "reason": "collision",
+     "s": 37.7,
+     "hit": [
+      -36.55,
+      -7.82
+     ]
+    }
+   },
+   {
+    "attempt": 20,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.93,
+    "min_clearance_m": 0.164,
+    "time_s": 3.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.74,
+     "reason": "collision",
+     "s": 38.0,
+     "hit": [
+      -36.66,
+      -7.64
+     ]
+    }
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.54,
+    "min_clearance_m": 0.367,
+    "time_s": 3.3,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.58,
+     "reason": "collision",
+     "s": 37.4,
+     "hit": [
+      -36.41,
+      -8.05
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.11,
+    "min_clearance_m": 0.0,
+    "time_s": 18.8,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.57,
+     "reason": "collision",
+     "s": 176.4,
+     "hit": [
+      -11.35,
+      45.86
+     ]
+    }
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.61,
+    "min_clearance_m": 0.312,
+    "time_s": 3.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.64,
+     "reason": "collision",
+     "s": 37.8,
+     "hit": [
+      -36.55,
+      -7.82
+     ]
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.04,
+    "min_clearance_m": 0.058,
+    "time_s": 18.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.68,
+     "reason": "collision",
+     "s": 176.8,
+     "hit": [
+      -11.29,
+      45.44
+     ]
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.87,
+    "min_clearance_m": 0.453,
+    "time_s": 2.9,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.51,
+     "reason": "collision",
+     "s": 36.6,
+     "hit": [
+      -36.03,
+      -8.65
+     ]
+    }
+   }
+  ]
+ },
+ "rt-grip055-v11": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 17,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.83,
+    "reason": "collision",
+    "s": 38.7,
+    "hit": [
+     -37.03,
+     -7.04
+    ],
+    "attempt": 9
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.86,
+    "reason": "collision",
+    "s": 112.3,
+    "hit": [
+     -74.25,
+     54.23
+    ],
+    "attempt": 10
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.13,
+    "reason": "collision",
+    "s": 40.2,
+    "hit": [
+     -37.76,
+     -5.78
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.01,
+    "reason": "collision",
+    "s": 38.2,
+    "hit": [
+     -36.84,
+     -7.35
+    ],
+    "attempt": 12
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.97,
+    "reason": "collision",
+    "s": 39.1,
+    "hit": [
+     -37.16,
+     -6.77
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.05,
+    "reason": "collision",
+    "s": 39.1,
+    "hit": [
+     -37.16,
+     -6.77
+    ],
+    "attempt": 14
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.9,
+    "reason": "collision",
+    "s": 40.0,
+    "hit": [
+     -37.62,
+     -5.94
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.86,
+    "reason": "collision",
+    "s": 38.7,
+    "hit": [
+     -37.03,
+     -7.04
+    ],
+    "attempt": 16
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.86,
+    "reason": "collision",
+    "s": 38.4,
+    "hit": [
+     -36.84,
+     -7.35
+    ],
+    "attempt": 17
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.06,
+    "reason": "collision",
+    "s": 39.7,
+    "hit": [
+     -37.48,
+     -6.26
+    ],
+    "attempt": 18
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.75,
+    "reason": "collision",
+    "s": 38.3,
+    "hit": [
+     -36.84,
+     -7.35
+    ],
+    "attempt": 19
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.98,
+    "reason": "collision",
+    "s": 39.8,
+    "hit": [
+     -37.48,
+     -6.26
+    ],
+    "attempt": 20
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.28,
+    "reason": "collision",
+    "s": 116.4,
+    "hit": [
+     -70.21,
+     54.66
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.67,
+    "reason": "collision",
+    "s": 178.4,
+    "hit": [
+     -12.22,
+     43.3
+    ],
+    "attempt": 22
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.88,
+    "reason": "collision",
+    "s": 40.9,
+    "hit": [
+     -38.04,
+     -5.35
+    ],
+    "attempt": 23
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.83,
+    "reason": "collision",
+    "s": 38.0,
+    "hit": [
+     -36.84,
+     -7.35
+    ],
+    "attempt": 24
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.17,
+    "reason": "collision",
+    "s": 113.3,
+    "hit": [
+     -74.25,
+     54.23
+    ],
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.7
+   ],
+   [
+    7,
+    38.9
+   ],
+   [
+    8,
+    39.1
+   ]
+  ],
+  "laps_under_0.2m_after": "11/17",
+  "laps_under_0.2m_before": "3/3",
+  "speed_before": 9.06,
+  "speed_first_after": 8.56,
+  "first_after_outcome": "failure",
+  "pre_change_lap_s": 38.9,
+  "clearance_check_changed_pick": "4/2298 (0.2%)",
+  "previous_plan_chosen": 6,
+  "planning_ms": {
+   "p50": 76.9,
+   "p95": 91.3
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.11,
+    "min_clearance_m": 0.174,
+    "time_s": 38.7
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.05,
+    "min_clearance_m": 0.082,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.01,
+    "min_clearance_m": 0.13,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 9,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.56,
+    "min_clearance_m": 0.29,
+    "time_s": 4.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.83,
+     "reason": "collision",
+     "s": 38.7,
+     "hit": [
+      -37.03,
+      -7.04
+     ]
+    }
+   },
+   {
+    "attempt": 10,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.88,
+    "min_clearance_m": 0.13,
+    "time_s": 13.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.86,
+     "reason": "collision",
+     "s": 112.3,
+     "hit": [
+      -74.25,
+      54.23
+     ]
+    }
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.37,
+    "min_clearance_m": 0.13,
+    "time_s": 4.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.13,
+     "reason": "collision",
+     "s": 40.2,
+     "hit": [
+      -37.76,
+      -5.78
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.59,
+    "min_clearance_m": 0.239,
+    "time_s": 4.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.01,
+     "reason": "collision",
+     "s": 38.2,
+     "hit": [
+      -36.84,
+      -7.35
+     ]
+    }
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.48,
+    "min_clearance_m": 0.183,
+    "time_s": 4.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.97,
+     "reason": "collision",
+     "s": 39.1,
+     "hit": [
+      -37.16,
+      -6.77
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.39,
+    "min_clearance_m": 0.367,
+    "time_s": 4.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.05,
+     "reason": "collision",
+     "s": 39.1,
+     "hit": [
+      -37.16,
+      -6.77
+     ]
+    }
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.81,
+    "min_clearance_m": 0.183,
+    "time_s": 4.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.9,
+     "reason": "collision",
+     "s": 40.0,
+     "hit": [
+      -37.62,
+      -5.94
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.24,
+    "min_clearance_m": 0.312,
+    "time_s": 4.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.86,
+     "reason": "collision",
+     "s": 38.7,
+     "hit": [
+      -37.03,
+      -7.04
+     ]
+    }
+   },
+   {
+    "attempt": 17,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.89,
+    "min_clearance_m": 0.174,
+    "time_s": 3.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.86,
+     "reason": "collision",
+     "s": 38.4,
+     "hit": [
+      -36.84,
+      -7.35
+     ]
+    }
+   },
+   {
+    "attempt": 18,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.59,
+    "min_clearance_m": 0.239,
+    "time_s": 4.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.06,
+     "reason": "collision",
+     "s": 39.7,
+     "hit": [
+      -37.48,
+      -6.26
+     ]
+    }
+   },
+   {
+    "attempt": 19,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.75,
+    "min_clearance_m": 0.209,
+    "time_s": 3.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.75,
+     "reason": "collision",
+     "s": 38.3,
+     "hit": [
+      -36.84,
+      -7.35
+     ]
+    }
+   },
+   {
+    "attempt": 20,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.51,
+    "min_clearance_m": 0.164,
+    "time_s": 4.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.98,
+     "reason": "collision",
+     "s": 39.8,
+     "hit": [
+      -37.48,
+      -6.26
+     ]
+    }
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.17,
+    "min_clearance_m": 0.058,
+    "time_s": 12.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.28,
+     "reason": "collision",
+     "s": 116.4,
+     "hit": [
+      -70.21,
+      54.66
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.0,
+    "min_clearance_m": 0.082,
+    "time_s": 20.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.67,
+     "reason": "collision",
+     "s": 178.4,
+     "hit": [
+      -12.22,
+      43.3
+     ]
+    }
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.24,
+    "min_clearance_m": 0.058,
+    "time_s": 4.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.88,
+     "reason": "collision",
+     "s": 40.9,
+     "hit": [
+      -38.04,
+      -5.35
+     ]
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.7,
+    "min_clearance_m": 0.082,
+    "time_s": 3.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.83,
+     "reason": "collision",
+     "s": 38.0,
+     "hit": [
+      -36.84,
+      -7.35
+     ]
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.082,
+    "time_s": 12.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.17,
+     "reason": "collision",
+     "s": 113.3,
+     "hit": [
+      -74.25,
+      54.23
+     ]
+    }
+   }
+  ]
+ },
+ "rt-grip055-v11-react": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 17,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.8,
+    "reason": "collision",
+    "s": 38.8,
+    "hit": [
+     -36.97,
+     -7.01
+    ],
+    "attempt": 9
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.94,
+    "reason": "collision",
+    "s": 178.1,
+    "hit": [
+     -12.05,
+     43.69
+    ],
+    "attempt": 10
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.16,
+    "reason": "collision",
+    "s": 39.2,
+    "hit": [
+     -37.18,
+     -6.71
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.12,
+    "reason": "collision",
+    "s": 178.1,
+    "hit": [
+     -12.05,
+     43.69
+    ],
+    "attempt": 12
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.01,
+    "reason": "collision",
+    "s": 40.1,
+    "hit": [
+     -37.64,
+     -5.94
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.87,
+    "reason": "collision",
+    "s": 39.0,
+    "hit": [
+     -37.17,
+     -6.74
+    ],
+    "attempt": 14
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.73,
+    "reason": "collision",
+    "s": 38.0,
+    "hit": [
+     -36.93,
+     -7.2
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.86,
+    "reason": "collision",
+    "s": 39.4,
+    "hit": [
+     -37.24,
+     -6.45
+    ],
+    "attempt": 16
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.92,
+    "reason": "collision",
+    "s": 40.0,
+    "hit": [
+     -37.64,
+     -5.94
+    ],
+    "attempt": 17
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.07,
+    "reason": "collision",
+    "s": 41.1,
+    "hit": [
+     -38.31,
+     -5.01
+    ],
+    "attempt": 18
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.0,
+    "reason": "collision",
+    "s": 38.4,
+    "hit": [
+     -36.93,
+     -7.2
+    ],
+    "attempt": 19
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.97,
+    "reason": "collision",
+    "s": 50.6,
+    "hit": [
+     -43.81,
+     2.7
+    ],
+    "attempt": 20
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.22,
+    "reason": "collision",
+    "s": 114.3,
+    "hit": [
+     -72.52,
+     54.4
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.88,
+    "reason": "collision",
+    "s": 39.0,
+    "hit": [
+     -37.17,
+     -6.74
+    ],
+    "attempt": 22
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.11,
+    "reason": "collision",
+    "s": 57.4,
+    "hit": [
+     -47.79,
+     8.22
+    ],
+    "attempt": 23
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.09,
+    "reason": "collision",
+    "s": 41.2,
+    "hit": [
+     -38.31,
+     -5.01
+    ],
+    "attempt": 24
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.73,
+    "reason": "collision",
+    "s": 38.3,
+    "hit": [
+     -36.93,
+     -7.2
+    ],
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.6
+   ],
+   [
+    7,
+    39.2
+   ],
+   [
+    8,
+    39.2
+   ]
+  ],
+  "laps_under_0.2m_after": "9/17",
+  "laps_under_0.2m_before": "3/3",
+  "speed_before": 9.01,
+  "speed_first_after": 9.15,
+  "first_after_outcome": "failure",
+  "pre_change_lap_s": 39.2,
+  "clearance_check_changed_pick": "5/2317 (0.2%)",
+  "previous_plan_chosen": 11,
+  "brake_plans": {
+   "steps": 1101,
+   "chosen": 0
+  },
+  "planning_ms": {
+   "p50": 76.4,
+   "p95": 94.4
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.11,
+    "min_clearance_m": 0.174,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.082,
+    "time_s": 39.2
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.13,
+    "time_s": 39.2
+   },
+   {
+    "attempt": 9,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.15,
+    "min_clearance_m": 0.259,
+    "time_s": 4.5,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.8,
+     "reason": "collision",
+     "s": 38.8,
+     "hit": [
+      -36.97,
+      -7.01
+     ]
+    }
+   },
+   {
+    "attempt": 10,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.94,
+    "min_clearance_m": 0.116,
+    "time_s": 20.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.94,
+     "reason": "collision",
+     "s": 178.1,
+     "hit": [
+      -12.05,
+      43.69
+     ]
+    }
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.62,
+    "min_clearance_m": 0.418,
+    "time_s": 4.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.16,
+     "reason": "collision",
+     "s": 39.2,
+     "hit": [
+      -37.18,
+      -6.71
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.0,
+    "min_clearance_m": 0.116,
+    "time_s": 20.5,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.12,
+     "reason": "collision",
+     "s": 178.1,
+     "hit": [
+      -12.05,
+      43.69
+     ]
+    }
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.55,
+    "min_clearance_m": 0.209,
+    "time_s": 4.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.01,
+     "reason": "collision",
+     "s": 40.1,
+     "hit": [
+      -37.64,
+      -5.94
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.69,
+    "min_clearance_m": 0.338,
+    "time_s": 4.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.87,
+     "reason": "collision",
+     "s": 39.0,
+     "hit": [
+      -37.17,
+      -6.74
+     ]
+    }
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.86,
+    "min_clearance_m": 0.183,
+    "time_s": 3.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.73,
+     "reason": "collision",
+     "s": 38.0,
+     "hit": [
+      -36.93,
+      -7.2
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.43,
+    "min_clearance_m": 0.259,
+    "time_s": 4.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.86,
+     "reason": "collision",
+     "s": 39.4,
+     "hit": [
+      -37.24,
+      -6.45
+     ]
+    }
+   },
+   {
+    "attempt": 17,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.21,
+    "min_clearance_m": 0.13,
+    "time_s": 4.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.92,
+     "reason": "collision",
+     "s": 40.0,
+     "hit": [
+      -37.64,
+      -5.94
+     ]
+    }
+   },
+   {
+    "attempt": 18,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.64,
+    "min_clearance_m": 0.13,
+    "time_s": 4.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.07,
+     "reason": "collision",
+     "s": 41.1,
+     "hit": [
+      -38.31,
+      -5.01
+     ]
+    }
+   },
+   {
+    "attempt": 19,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.73,
+    "min_clearance_m": 0.239,
+    "time_s": 3.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.0,
+     "reason": "collision",
+     "s": 38.4,
+     "hit": [
+      -36.93,
+      -7.2
+     ]
+    }
+   },
+   {
+    "attempt": 20,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.82,
+    "min_clearance_m": 0.0,
+    "time_s": 5.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.97,
+     "reason": "collision",
+     "s": 50.6,
+     "hit": [
+      -43.81,
+      2.7
+     ]
+    }
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.74,
+    "min_clearance_m": 0.13,
+    "time_s": 13.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.22,
+     "reason": "collision",
+     "s": 114.3,
+     "hit": [
+      -72.52,
+      54.4
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.66,
+    "min_clearance_m": 0.259,
+    "time_s": 3.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.88,
+     "reason": "collision",
+     "s": 39.0,
+     "hit": [
+      -37.17,
+      -6.74
+     ]
+    }
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.42,
+    "min_clearance_m": 0.058,
+    "time_s": 6.0,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.11,
+     "reason": "collision",
+     "s": 57.4,
+     "hit": [
+      -47.79,
+      8.22
+     ]
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.6,
+    "min_clearance_m": 0.058,
+    "time_s": 4.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.09,
+     "reason": "collision",
+     "s": 41.2,
+     "hit": [
+      -38.31,
+      -5.01
+     ]
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 10.35,
+    "min_clearance_m": 0.389,
+    "time_s": 3.5,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.73,
+     "reason": "collision",
+     "s": 38.3,
+     "hit": [
+      -36.93,
+      -7.2
+     ]
+    }
+   }
+  ]
+ },
+ "rt-grip055-v11-learned": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 17,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.58,
+    "reason": "collision",
+    "s": 117.6,
+    "hit": [
+     -69.31,
+     54.71
+    ],
+    "attempt": 9
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.18,
+    "reason": "collision",
+    "s": 114.4,
+    "hit": [
+     -72.85,
+     54.35
+    ],
+    "attempt": 10
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.76,
+    "reason": "collision",
+    "s": 223.9,
+    "hit": [
+     -48.52,
+     28.35
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.95,
+    "reason": "collision",
+    "s": 39.1,
+    "hit": [
+     -37.22,
+     -6.59
+    ],
+    "attempt": 12
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.21,
+    "reason": "collision",
+    "s": 117.7,
+    "hit": [
+     -69.31,
+     54.71
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.99,
+    "reason": "collision",
+    "s": 40.7,
+    "hit": [
+     -37.85,
+     -5.63
+    ],
+    "attempt": 14
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.19,
+    "reason": "collision",
+    "s": 40.4,
+    "hit": [
+     -37.85,
+     -5.63
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.83,
+    "reason": "collision",
+    "s": 178.6,
+    "hit": [
+     -12.29,
+     43.24
+    ],
+    "attempt": 16
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.26,
+    "reason": "collision",
+    "s": 114.5,
+    "hit": [
+     -72.63,
+     54.38
+    ],
+    "attempt": 17
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.32,
+    "reason": "collision",
+    "s": 179.5,
+    "hit": [
+     -12.78,
+     42.47
+    ],
+    "attempt": 18
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.94,
+    "reason": "collision",
+    "s": 177.5,
+    "hit": [
+     -11.65,
+     44.53
+    ],
+    "attempt": 19
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.91,
+    "reason": "collision",
+    "s": 41.6,
+    "hit": [
+     -38.42,
+     -4.86
+    ],
+    "attempt": 20
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.63,
+    "reason": "collision",
+    "s": 38.5,
+    "hit": [
+     -36.95,
+     -7.05
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.38,
+    "reason": "collision",
+    "s": 113.7,
+    "hit": [
+     -73.68,
+     54.22
+    ],
+    "attempt": 22
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.08,
+    "reason": "collision",
+    "s": 39.4,
+    "hit": [
+     -37.22,
+     -6.59
+    ],
+    "attempt": 23
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.15,
+    "reason": "collision",
+    "s": 113.8,
+    "hit": [
+     -73.3,
+     54.33
+    ],
+    "attempt": 24
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.22,
+    "reason": "collision",
+    "s": 113.2,
+    "hit": [
+     -73.68,
+     54.22
+    ],
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.3
+   ],
+   [
+    7,
+    38.2
+   ],
+   [
+    8,
+    38.8
+   ]
+  ],
+  "laps_under_0.2m_after": "14/17",
+  "laps_under_0.2m_before": "2/3",
+  "speed_before": 9.16,
+  "speed_first_after": 8.68,
+  "first_after_outcome": "failure",
+  "pre_change_lap_s": 38.3,
+  "clearance_check_changed_pick": "2/3221 (0.1%)",
+  "previous_plan_chosen": 7,
+  "planning_ms": {
+   "p50": 65.5,
+   "p95": 81.5
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.209,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.082,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.06,
+    "min_clearance_m": 0.164,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 9,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.68,
+    "min_clearance_m": 0.058,
+    "time_s": 14.0,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.58,
+     "reason": "collision",
+     "s": 117.6,
+     "hit": [
+      -69.31,
+      54.71
+     ]
+    }
+   },
+   {
+    "attempt": 10,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.73,
+    "min_clearance_m": 0.058,
+    "time_s": 13.5,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.18,
+     "reason": "collision",
+     "s": 114.4,
+     "hit": [
+      -72.85,
+      54.35
+     ]
+    }
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.74,
+    "min_clearance_m": 0.082,
+    "time_s": 26.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.76,
+     "reason": "collision",
+     "s": 223.9,
+     "hit": [
+      -48.52,
+      28.35
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.19,
+    "min_clearance_m": 0.239,
+    "time_s": 4.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.95,
+     "reason": "collision",
+     "s": 39.1,
+     "hit": [
+      -37.22,
+      -6.59
+     ]
+    }
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.71,
+    "min_clearance_m": 0.0,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.21,
+     "reason": "collision",
+     "s": 117.7,
+     "hit": [
+      -69.31,
+      54.71
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.33,
+    "min_clearance_m": 0.164,
+    "time_s": 4.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.99,
+     "reason": "collision",
+     "s": 40.7,
+     "hit": [
+      -37.85,
+      -5.63
+     ]
+    }
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.02,
+    "min_clearance_m": 0.164,
+    "time_s": 4.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.19,
+     "reason": "collision",
+     "s": 40.4,
+     "hit": [
+      -37.85,
+      -5.63
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.84,
+    "min_clearance_m": 0.164,
+    "time_s": 20.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.83,
+     "reason": "collision",
+     "s": 178.6,
+     "hit": [
+      -12.29,
+      43.24
+     ]
+    }
+   },
+   {
+    "attempt": 17,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.68,
+    "min_clearance_m": 0.116,
+    "time_s": 13.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.26,
+     "reason": "collision",
+     "s": 114.5,
+     "hit": [
+      -72.63,
+      54.38
+     ]
+    }
+   },
+   {
+    "attempt": 18,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.8,
+    "min_clearance_m": 0.058,
+    "time_s": 20.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.32,
+     "reason": "collision",
+     "s": 179.5,
+     "hit": [
+      -12.78,
+      42.47
+     ]
+    }
+   },
+   {
+    "attempt": 19,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.13,
+    "time_s": 20.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.94,
+     "reason": "collision",
+     "s": 177.5,
+     "hit": [
+      -11.65,
+      44.53
+     ]
+    }
+   },
+   {
+    "attempt": 20,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.49,
+    "min_clearance_m": 0.058,
+    "time_s": 4.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.91,
+     "reason": "collision",
+     "s": 41.6,
+     "hit": [
+      -38.42,
+      -4.86
+     ]
+    }
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.44,
+    "min_clearance_m": 0.259,
+    "time_s": 3.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.63,
+     "reason": "collision",
+     "s": 38.5,
+     "hit": [
+      -36.95,
+      -7.05
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.87,
+    "min_clearance_m": 0.058,
+    "time_s": 12.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.38,
+     "reason": "collision",
+     "s": 113.7,
+     "hit": [
+      -73.68,
+      54.22
+     ]
+    }
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.05,
+    "min_clearance_m": 0.239,
+    "time_s": 4.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.08,
+     "reason": "collision",
+     "s": 39.4,
+     "hit": [
+      -37.22,
+      -6.59
+     ]
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.8,
+    "min_clearance_m": 0.174,
+    "time_s": 12.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.15,
+     "reason": "collision",
+     "s": 113.8,
+     "hit": [
+      -73.3,
+      54.33
+     ]
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.77,
+    "min_clearance_m": 0.13,
+    "time_s": 12.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.22,
+     "reason": "collision",
+     "s": 113.2,
+     "hit": [
+      -73.68,
+      54.22
+     ]
+    }
+   }
+  ]
+ },
+ "rt-grip055-bicycle-react": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 17,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.67,
+    "reason": "collision",
+    "s": 37.8,
+    "hit": [
+     -36.44,
+     -8.03
+    ],
+    "attempt": 9
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.65,
+    "reason": "collision",
+    "s": 37.9,
+    "hit": [
+     -36.69,
+     -7.58
+    ],
+    "attempt": 10
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.74,
+    "reason": "collision",
+    "s": 38.8,
+    "hit": [
+     -37.03,
+     -7.05
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.77,
+    "reason": "collision",
+    "s": 38.2,
+    "hit": [
+     -36.71,
+     -7.49
+    ],
+    "attempt": 12
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.82,
+    "reason": "collision",
+    "s": 176.3,
+    "hit": [
+     -11.37,
+     45.97
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.72,
+    "reason": "collision",
+    "s": 37.5,
+    "hit": [
+     -36.44,
+     -8.03
+    ],
+    "attempt": 14
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.71,
+    "reason": "collision",
+    "s": 176.8,
+    "hit": [
+     -11.37,
+     45.97
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.05,
+    "reason": "collision",
+    "s": 115.3,
+    "hit": [
+     -72.11,
+     54.46
+    ],
+    "attempt": 16
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.79,
+    "reason": "collision",
+    "s": 38.5,
+    "hit": [
+     -36.92,
+     -7.11
+    ],
+    "attempt": 17
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.92,
+    "reason": "collision",
+    "s": 38.8,
+    "hit": [
+     -37.03,
+     -7.05
+    ],
+    "attempt": 18
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.66,
+    "reason": "collision",
+    "s": 38.6,
+    "hit": [
+     -36.92,
+     -7.11
+    ],
+    "attempt": 19
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.08,
+    "reason": "collision",
+    "s": 115.0,
+    "hit": [
+     -72.11,
+     54.46
+    ],
+    "attempt": 20
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.69,
+    "reason": "collision",
+    "s": 37.5,
+    "hit": [
+     -36.44,
+     -8.03
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.63,
+    "reason": "collision",
+    "s": 36.9,
+    "hit": [
+     -36.44,
+     -8.03
+    ],
+    "attempt": 22
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.79,
+    "reason": "collision",
+    "s": 40.8,
+    "hit": [
+     -38.37,
+     -4.92
+    ],
+    "attempt": 23
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.68,
+    "reason": "collision",
+    "s": 38.0,
+    "hit": [
+     -36.69,
+     -7.58
+    ],
+    "attempt": 24
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.71,
+    "reason": "collision",
+    "s": 41.7,
+    "hit": [
+     -38.61,
+     -4.56
+    ],
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.0
+   ],
+   [
+    7,
+    38.6
+   ],
+   [
+    8,
+    37.8
+   ]
+  ],
+  "laps_under_0.2m_after": "6/17",
+  "laps_under_0.2m_before": "0/3",
+  "speed_before": 8.96,
+  "speed_first_after": 9.78,
+  "first_after_outcome": "failure",
+  "pre_change_lap_s": 38.0,
+  "previous_plan_chosen": 35,
+  "brake_plans": {
+   "steps": 1073,
+   "chosen": 0
+  },
+  "planning_ms": {
+   "p50": 64.5,
+   "p95": 82.8
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.9,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.0,
+    "min_clearance_m": 0.29,
+    "time_s": 38.0
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.86,
+    "min_clearance_m": 0.246,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.02,
+    "min_clearance_m": 0.328,
+    "time_s": 37.8
+   },
+   {
+    "attempt": 9,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.78,
+    "min_clearance_m": 0.389,
+    "time_s": 4.0,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.67,
+     "reason": "collision",
+     "s": 37.8,
+     "hit": [
+      -36.44,
+      -8.03
+     ]
+    }
+   },
+   {
+    "attempt": 10,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.99,
+    "min_clearance_m": 0.338,
+    "time_s": 4.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.65,
+     "reason": "collision",
+     "s": 37.9,
+     "hit": [
+      -36.69,
+      -7.58
+     ]
+    }
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.06,
+    "min_clearance_m": 0.209,
+    "time_s": 4.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.74,
+     "reason": "collision",
+     "s": 38.8,
+     "hit": [
+      -37.03,
+      -7.05
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.46,
+    "min_clearance_m": 0.312,
+    "time_s": 4.0,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.77,
+     "reason": "collision",
+     "s": 38.2,
+     "hit": [
+      -36.71,
+      -7.49
+     ]
+    }
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.51,
+    "min_clearance_m": 0.058,
+    "time_s": 20.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.82,
+     "reason": "collision",
+     "s": 176.3,
+     "hit": [
+      -11.37,
+      45.97
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.45,
+    "min_clearance_m": 0.638,
+    "time_s": 3.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.72,
+     "reason": "collision",
+     "s": 37.5,
+     "hit": [
+      -36.44,
+      -8.03
+     ]
+    }
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.29,
+    "min_clearance_m": 0.058,
+    "time_s": 21.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.71,
+     "reason": "collision",
+     "s": 176.8,
+     "hit": [
+      -11.37,
+      45.97
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.1,
+    "min_clearance_m": 0.058,
+    "time_s": 14.0,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.05,
+     "reason": "collision",
+     "s": 115.3,
+     "hit": [
+      -72.11,
+      54.46
+     ]
+    }
+   },
+   {
+    "attempt": 17,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.12,
+    "min_clearance_m": 0.209,
+    "time_s": 3.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.79,
+     "reason": "collision",
+     "s": 38.5,
+     "hit": [
+      -36.92,
+      -7.11
+     ]
+    }
+   },
+   {
+    "attempt": 18,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.54,
+    "min_clearance_m": 0.209,
+    "time_s": 3.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.92,
+     "reason": "collision",
+     "s": 38.8,
+     "hit": [
+      -37.03,
+      -7.05
+     ]
+    }
+   },
+   {
+    "attempt": 19,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.54,
+    "min_clearance_m": 0.29,
+    "time_s": 3.6,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.66,
+     "reason": "collision",
+     "s": 38.6,
+     "hit": [
+      -36.92,
+      -7.11
+     ]
+    }
+   },
+   {
+    "attempt": 20,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.12,
+    "min_clearance_m": 0.058,
+    "time_s": 13.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.08,
+     "reason": "collision",
+     "s": 115.0,
+     "hit": [
+      -72.11,
+      54.46
+     ]
+    }
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.99,
+    "min_clearance_m": 0.41,
+    "time_s": 3.6,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.69,
+     "reason": "collision",
+     "s": 37.5,
+     "hit": [
+      -36.44,
+      -8.03
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.77,
+    "min_clearance_m": 0.616,
+    "time_s": 3.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.63,
+     "reason": "collision",
+     "s": 36.9,
+     "hit": [
+      -36.44,
+      -8.03
+     ]
+    }
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.25,
+    "min_clearance_m": 0.058,
+    "time_s": 3.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.79,
+     "reason": "collision",
+     "s": 40.8,
+     "hit": [
+      -38.37,
+      -4.92
+     ]
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.44,
+    "min_clearance_m": 0.338,
+    "time_s": 3.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.68,
+     "reason": "collision",
+     "s": 38.0,
+     "hit": [
+      -36.69,
+      -7.58
+     ]
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.22,
+    "min_clearance_m": 0.058,
+    "time_s": 3.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.71,
+     "reason": "collision",
+     "s": 41.7,
+     "hit": [
+      -38.61,
+      -4.56
+     ]
+    }
+   }
+  ]
+ },
+ "rt-patch045-bicycle": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 17,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.09,
+    "reason": "collision",
+    "s": 112.3,
+    "hit": [
+     -74.89,
+     54.15
+    ],
+    "attempt": 9
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.06,
+    "reason": "collision",
+    "s": 111.9,
+    "hit": [
+     -75.22,
+     54.06
+    ],
+    "attempt": 10
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.92,
+    "reason": "collision",
+    "s": 111.3,
+    "hit": [
+     -76.6,
+     53.23
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.93,
+    "reason": "collision",
+    "s": 111.8,
+    "hit": [
+     -75.24,
+     54.08
+    ],
+    "attempt": 12
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.12,
+    "reason": "collision",
+    "s": 111.8,
+    "hit": [
+     -75.39,
+     54.04
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.1,
+    "reason": "collision",
+    "s": 111.9,
+    "hit": [
+     -75.22,
+     54.06
+    ],
+    "attempt": 14
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.05,
+    "reason": "collision",
+    "s": 111.5,
+    "hit": [
+     -75.94,
+     53.86
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.75,
+    "reason": "collision",
+    "s": 111.3,
+    "hit": [
+     -76.6,
+     53.23
+    ],
+    "attempt": 16
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.96,
+    "reason": "collision",
+    "s": 110.6,
+    "hit": [
+     -76.6,
+     53.23
+    ],
+    "attempt": 17
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.25,
+    "reason": "collision",
+    "s": 112.2,
+    "hit": [
+     -74.96,
+     54.11
+    ],
+    "attempt": 18
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.14,
+    "reason": "collision",
+    "s": 112.1,
+    "hit": [
+     -75.03,
+     54.13
+    ],
+    "attempt": 19
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.04,
+    "reason": "collision",
+    "s": 111.7,
+    "hit": [
+     -75.4,
+     54.04
+    ],
+    "attempt": 20
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.99,
+    "reason": "collision",
+    "s": 111.7,
+    "hit": [
+     -75.4,
+     54.04
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.07,
+    "reason": "collision",
+    "s": 113.2,
+    "hit": [
+     -73.65,
+     54.29
+    ],
+    "attempt": 22
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.17,
+    "reason": "collision",
+    "s": 112.3,
+    "hit": [
+     -74.89,
+     54.15
+    ],
+    "attempt": 23
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.06,
+    "reason": "collision",
+    "s": 111.7,
+    "hit": [
+     -75.4,
+     54.04
+    ],
+    "attempt": 24
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.97,
+    "reason": "collision",
+    "s": 111.7,
+    "hit": [
+     -75.94,
+     53.86
+    ],
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    37.8
+   ],
+   [
+    7,
+    38.5
+   ],
+   [
+    8,
+    38.2
+   ]
+  ],
+  "laps_under_0.2m_after": "8/17",
+  "laps_under_0.2m_before": "0/3",
+  "speed_before": 8.95,
+  "speed_first_after": 9.03,
+  "first_after_outcome": "failure",
+  "pre_change_lap_s": 38.2,
+  "previous_plan_chosen": 9,
+  "planning_ms": {
+   "p50": 41.3,
+   "p95": 60.2
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.9,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.06,
+    "min_clearance_m": 0.29,
+    "time_s": 37.8
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.89,
+    "min_clearance_m": 0.246,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.91,
+    "min_clearance_m": 0.259,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 9,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.03,
+    "min_clearance_m": 0.239,
+    "time_s": 12.6,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.09,
+     "reason": "collision",
+     "s": 112.3,
+     "hit": [
+      -74.89,
+      54.15
+     ]
+    }
+   },
+   {
+    "attempt": 10,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.41,
+    "min_clearance_m": 0.13,
+    "time_s": 12.0,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.06,
+     "reason": "collision",
+     "s": 111.9,
+     "hit": [
+      -75.22,
+      54.06
+     ]
+    }
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.43,
+    "min_clearance_m": 0.164,
+    "time_s": 11.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.92,
+     "reason": "collision",
+     "s": 111.3,
+     "hit": [
+      -76.6,
+      53.23
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.25,
+    "min_clearance_m": 0.209,
+    "time_s": 12.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.93,
+     "reason": "collision",
+     "s": 111.8,
+     "hit": [
+      -75.24,
+      54.08
+     ]
+    }
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.48,
+    "min_clearance_m": 0.441,
+    "time_s": 11.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.12,
+     "reason": "collision",
+     "s": 111.8,
+     "hit": [
+      -75.39,
+      54.04
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.164,
+    "time_s": 12.0,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.1,
+     "reason": "collision",
+     "s": 111.9,
+     "hit": [
+      -75.22,
+      54.06
+     ]
+    }
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.28,
+    "min_clearance_m": 0.328,
+    "time_s": 11.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.05,
+     "reason": "collision",
+     "s": 111.5,
+     "hit": [
+      -75.94,
+      53.86
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.11,
+    "min_clearance_m": 0.232,
+    "time_s": 11.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.75,
+     "reason": "collision",
+     "s": 111.3,
+     "hit": [
+      -76.6,
+      53.23
+     ]
+    }
+   },
+   {
+    "attempt": 17,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.4,
+    "min_clearance_m": 0.174,
+    "time_s": 11.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.96,
+     "reason": "collision",
+     "s": 110.6,
+     "hit": [
+      -76.6,
+      53.23
+     ]
+    }
+   },
+   {
+    "attempt": 18,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.19,
+    "min_clearance_m": 0.246,
+    "time_s": 11.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.25,
+     "reason": "collision",
+     "s": 112.2,
+     "hit": [
+      -74.96,
+      54.11
+     ]
+    }
+   },
+   {
+    "attempt": 19,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.17,
+    "min_clearance_m": 0.082,
+    "time_s": 11.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.14,
+     "reason": "collision",
+     "s": 112.1,
+     "hit": [
+      -75.03,
+      54.13
+     ]
+    }
+   },
+   {
+    "attempt": 20,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.08,
+    "min_clearance_m": 0.13,
+    "time_s": 11.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.04,
+     "reason": "collision",
+     "s": 111.7,
+     "hit": [
+      -75.4,
+      54.04
+     ]
+    }
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.39,
+    "min_clearance_m": 0.41,
+    "time_s": 11.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.99,
+     "reason": "collision",
+     "s": 111.7,
+     "hit": [
+      -75.4,
+      54.04
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.03,
+    "min_clearance_m": 0.116,
+    "time_s": 11.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.07,
+     "reason": "collision",
+     "s": 113.2,
+     "hit": [
+      -73.65,
+      54.29
+     ]
+    }
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.19,
+    "min_clearance_m": 0.239,
+    "time_s": 11.5,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.17,
+     "reason": "collision",
+     "s": 112.3,
+     "hit": [
+      -74.89,
+      54.15
+     ]
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.12,
+    "min_clearance_m": 0.246,
+    "time_s": 11.5,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.06,
+     "reason": "collision",
+     "s": 111.7,
+     "hit": [
+      -75.4,
+      54.04
+     ]
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.22,
+    "min_clearance_m": 0.082,
+    "time_s": 11.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.97,
+     "reason": "collision",
+     "s": 111.7,
+     "hit": [
+      -75.94,
+      53.86
+     ]
+    }
+   }
+  ]
+ },
+ "rt-patch045-v11": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 17,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.31,
+    "reason": "collision",
+    "s": 113.5,
+    "hit": [
+     -73.67,
+     54.27
+    ],
+    "attempt": 9
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.93,
+    "reason": "collision",
+    "s": 111.9,
+    "hit": [
+     -75.01,
+     54.11
+    ],
+    "attempt": 10
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.0,
+    "reason": "collision",
+    "s": 112.1,
+    "hit": [
+     -75.01,
+     54.11
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.13,
+    "reason": "collision",
+    "s": 113.3,
+    "hit": [
+     -73.92,
+     54.25
+    ],
+    "attempt": 12
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.15,
+    "reason": "collision",
+    "s": 112.6,
+    "hit": [
+     -74.7,
+     54.14
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.39,
+    "reason": "collision",
+    "s": 113.8,
+    "hit": [
+     -73.43,
+     54.29
+    ],
+    "attempt": 14
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.08,
+    "reason": "collision",
+    "s": 112.2,
+    "hit": [
+     -74.95,
+     54.09
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.2,
+    "reason": "collision",
+    "s": 112.0,
+    "hit": [
+     -75.01,
+     54.11
+    ],
+    "attempt": 16
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.15,
+    "reason": "collision",
+    "s": 112.6,
+    "hit": [
+     -74.42,
+     54.17
+    ],
+    "attempt": 17
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.27,
+    "reason": "collision",
+    "s": 112.8,
+    "hit": [
+     -74.42,
+     54.17
+    ],
+    "attempt": 18
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.19,
+    "reason": "collision",
+    "s": 112.8,
+    "hit": [
+     -74.42,
+     54.17
+    ],
+    "attempt": 19
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.28,
+    "reason": "collision",
+    "s": 113.2,
+    "hit": [
+     -74.01,
+     54.22
+    ],
+    "attempt": 20
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.01,
+    "reason": "collision",
+    "s": 112.8,
+    "hit": [
+     -74.32,
+     54.16
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.13,
+    "reason": "collision",
+    "s": 111.8,
+    "hit": [
+     -75.01,
+     54.11
+    ],
+    "attempt": 22
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.17,
+    "reason": "collision",
+    "s": 113.3,
+    "hit": [
+     -73.92,
+     54.25
+    ],
+    "attempt": 23
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.3,
+    "reason": "collision",
+    "s": 113.5,
+    "hit": [
+     -73.67,
+     54.27
+    ],
+    "attempt": 24
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.12,
+    "reason": "collision",
+    "s": 112.7,
+    "hit": [
+     -74.42,
+     54.17
+    ],
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.3
+   ],
+   [
+    7,
+    39.2
+   ],
+   [
+    8,
+    38.4
+   ]
+  ],
+  "laps_under_0.2m_after": "16/17",
+  "laps_under_0.2m_before": "1/3",
+  "speed_before": 9.13,
+  "speed_first_after": 8.31,
+  "first_after_outcome": "failure",
+  "pre_change_lap_s": 38.4,
+  "clearance_check_changed_pick": "4/3468 (0.1%)",
+  "previous_plan_chosen": 3,
+  "planning_ms": {
+   "p50": 77.3,
+   "p95": 91.9
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.19,
+    "min_clearance_m": 0.209,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.02,
+    "min_clearance_m": 0.209,
+    "time_s": 39.2
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.17,
+    "min_clearance_m": 0.082,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 9,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.31,
+    "min_clearance_m": 0.13,
+    "time_s": 14.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.31,
+     "reason": "collision",
+     "s": 113.5,
+     "hit": [
+      -73.67,
+      54.27
+     ]
+    }
+   },
+   {
+    "attempt": 10,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.39,
+    "min_clearance_m": 0.164,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.93,
+     "reason": "collision",
+     "s": 111.9,
+     "hit": [
+      -75.01,
+      54.11
+     ]
+    }
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.37,
+    "min_clearance_m": 0.164,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.0,
+     "reason": "collision",
+     "s": 112.1,
+     "hit": [
+      -75.01,
+      54.11
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.45,
+    "min_clearance_m": 0.164,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.13,
+     "reason": "collision",
+     "s": 113.3,
+     "hit": [
+      -73.92,
+      54.25
+     ]
+    }
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.63,
+    "min_clearance_m": 0.164,
+    "time_s": 13.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.15,
+     "reason": "collision",
+     "s": 112.6,
+     "hit": [
+      -74.7,
+      54.14
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.46,
+    "min_clearance_m": 0.116,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.39,
+     "reason": "collision",
+     "s": 113.8,
+     "hit": [
+      -73.43,
+      54.29
+     ]
+    }
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.67,
+    "min_clearance_m": 0.164,
+    "time_s": 13.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.08,
+     "reason": "collision",
+     "s": 112.2,
+     "hit": [
+      -74.95,
+      54.09
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.69,
+    "min_clearance_m": 0.164,
+    "time_s": 13.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.2,
+     "reason": "collision",
+     "s": 112.0,
+     "hit": [
+      -75.01,
+      54.11
+     ]
+    }
+   },
+   {
+    "attempt": 17,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.49,
+    "min_clearance_m": 0.164,
+    "time_s": 13.5,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.15,
+     "reason": "collision",
+     "s": 112.6,
+     "hit": [
+      -74.42,
+      54.17
+     ]
+    }
+   },
+   {
+    "attempt": 18,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.36,
+    "min_clearance_m": 0.164,
+    "time_s": 13.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.27,
+     "reason": "collision",
+     "s": 112.8,
+     "hit": [
+      -74.42,
+      54.17
+     ]
+    }
+   },
+   {
+    "attempt": 19,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.56,
+    "min_clearance_m": 0.13,
+    "time_s": 13.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.19,
+     "reason": "collision",
+     "s": 112.8,
+     "hit": [
+      -74.42,
+      54.17
+     ]
+    }
+   },
+   {
+    "attempt": 20,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.49,
+    "min_clearance_m": 0.246,
+    "time_s": 13.5,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.28,
+     "reason": "collision",
+     "s": 113.2,
+     "hit": [
+      -74.01,
+      54.22
+     ]
+    }
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.28,
+    "min_clearance_m": 0.13,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.01,
+     "reason": "collision",
+     "s": 112.8,
+     "hit": [
+      -74.32,
+      54.16
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.49,
+    "min_clearance_m": 0.082,
+    "time_s": 13.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.13,
+     "reason": "collision",
+     "s": 111.8,
+     "hit": [
+      -75.01,
+      54.11
+     ]
+    }
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.41,
+    "min_clearance_m": 0.164,
+    "time_s": 13.6,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.17,
+     "reason": "collision",
+     "s": 113.3,
+     "hit": [
+      -73.92,
+      54.25
+     ]
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.53,
+    "min_clearance_m": 0.13,
+    "time_s": 13.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.3,
+     "reason": "collision",
+     "s": 113.5,
+     "hit": [
+      -73.67,
+      54.27
+     ]
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.53,
+    "min_clearance_m": 0.13,
+    "time_s": 13.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.12,
+     "reason": "collision",
+     "s": 112.7,
+     "hit": [
+      -74.42,
+      54.17
+     ]
+    }
+   }
+  ]
+ },
+ "rt-patch045-v11-react": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 8,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   3,
+   5,
+   7,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 2.96,
+    "reason": "collision",
+    "s": 113.5,
+    "hit": [
+     -73.41,
+     54.22
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.36,
+    "reason": "collision",
+    "s": 114.4,
+    "hit": [
+     -73.41,
+     54.22
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.84,
+    "reason": "collision",
+    "s": 108.8,
+    "hit": [
+     -74.92,
+     51.65
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.11,
+    "reason": "collision",
+    "s": 116.1,
+    "hit": [
+     -70.44,
+     54.65
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.11,
+    "reason": "out_of_bounds",
+    "s": 2.9,
+    "hit": null,
+    "attempt": 22
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.11,
+    "reason": "out_of_bounds",
+    "s": 3.0,
+    "hit": null,
+    "attempt": 23
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.11,
+    "reason": "out_of_bounds",
+    "s": 3.2,
+    "hit": null,
+    "attempt": 24
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.11,
+    "reason": "out_of_bounds",
+    "s": 3.2,
+    "hit": null,
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.7
+   ],
+   [
+    7,
+    39.0
+   ],
+   [
+    8,
+    39.1
+   ],
+   [
+    9,
+    38.5
+   ],
+   [
+    10,
+    38.0
+   ],
+   [
+    12,
+    37.5
+   ],
+   [
+    14,
+    38.6
+   ],
+   [
+    16,
+    38.5
+   ],
+   [
+    17,
+    38.4
+   ],
+   [
+    18,
+    38.0
+   ],
+   [
+    19,
+    38.6
+   ],
+   [
+    20,
+    37.3
+   ]
+  ],
+  "laps_under_0.2m_after": "12/17",
+  "laps_under_0.2m_before": "3/3",
+  "speed_before": 9.07,
+  "speed_first_after": 9.16,
+  "first_after_outcome": "success",
+  "laps_to_settle": 2,
+  "settled_lap_s": 38.0,
+  "pre_change_lap_s": 39.0,
+  "clearance_check_changed_pick": "4/5171 (0.1%)",
+  "previous_plan_chosen": 27,
+  "brake_plans": {
+   "steps": 3655,
+   "chosen": 1
+  },
+  "planning_ms": {
+   "p50": 76.0,
+   "p95": 101.7
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.17,
+    "min_clearance_m": 0.174,
+    "time_s": 38.7
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.02,
+    "min_clearance_m": 0.164,
+    "time_s": 39.0
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.02,
+    "min_clearance_m": 0.13,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 9,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 9.16,
+    "min_clearance_m": 0.13,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 10,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 9.32,
+    "min_clearance_m": 0.116,
+    "time_s": 38.0
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.66,
+    "min_clearance_m": 0.232,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 2.96,
+     "reason": "collision",
+     "s": 113.5,
+     "hit": [
+      -73.41,
+      54.22
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 9.38,
+    "min_clearance_m": 0.082,
+    "time_s": 37.5
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.59,
+    "min_clearance_m": 0.082,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.36,
+     "reason": "collision",
+     "s": 114.4,
+     "hit": [
+      -73.41,
+      54.22
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 9.16,
+    "min_clearance_m": 0.058,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 7.65,
+    "min_clearance_m": 0.164,
+    "time_s": 15.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.84,
+     "reason": "collision",
+     "s": 108.8,
+     "hit": [
+      -74.92,
+      51.65
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 9.14,
+    "min_clearance_m": 0.082,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 17,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 9.21,
+    "min_clearance_m": 0.13,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 18,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 9.3,
+    "min_clearance_m": 0.058,
+    "time_s": 38.0
+   },
+   {
+    "attempt": 19,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 9.18,
+    "min_clearance_m": 0.058,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 20,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 9.45,
+    "min_clearance_m": 0.164,
+    "time_s": 37.3
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.73,
+    "min_clearance_m": 0.082,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.11,
+     "reason": "collision",
+     "s": 116.1,
+     "hit": [
+      -70.44,
+      54.65
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 9.08,
+    "min_clearance_m": 0.591,
+    "time_s": 0.1,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.11,
+     "reason": "out_of_bounds",
+     "s": 2.9,
+     "hit": null
+    }
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.71,
+    "min_clearance_m": 0.624,
+    "time_s": 0.1,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.11,
+     "reason": "out_of_bounds",
+     "s": 3.0,
+     "hit": null
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.15,
+    "min_clearance_m": 0.64,
+    "time_s": 0.1,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.11,
+     "reason": "out_of_bounds",
+     "s": 3.2,
+     "hit": null
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.3,
+    "min_clearance_m": 0.661,
+    "time_s": 0.1,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.11,
+     "reason": "out_of_bounds",
+     "s": 3.2,
+     "hit": null
+    }
+   }
+  ]
+ },
+ "rt-patch045-v11-learned": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 17,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.34,
+    "reason": "collision",
+    "s": 113.5,
+    "hit": [
+     -73.75,
+     54.26
+    ],
+    "attempt": 9
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.33,
+    "reason": "collision",
+    "s": 112.5,
+    "hit": [
+     -74.51,
+     54.14
+    ],
+    "attempt": 10
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.12,
+    "reason": "collision",
+    "s": 112.3,
+    "hit": [
+     -74.86,
+     54.14
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.22,
+    "reason": "collision",
+    "s": 112.8,
+    "hit": [
+     -74.4,
+     54.18
+    ],
+    "attempt": 12
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.47,
+    "reason": "collision",
+    "s": 113.7,
+    "hit": [
+     -73.51,
+     54.26
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.21,
+    "reason": "collision",
+    "s": 113.6,
+    "hit": [
+     -73.51,
+     54.26
+    ],
+    "attempt": 14
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.3,
+    "reason": "collision",
+    "s": 113.0,
+    "hit": [
+     -74.13,
+     54.22
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.4,
+    "reason": "collision",
+    "s": 112.2,
+    "hit": [
+     -74.86,
+     54.14
+    ],
+    "attempt": 16
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.31,
+    "reason": "collision",
+    "s": 113.8,
+    "hit": [
+     -73.51,
+     54.26
+    ],
+    "attempt": 17
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.16,
+    "reason": "collision",
+    "s": 112.7,
+    "hit": [
+     -74.4,
+     54.18
+    ],
+    "attempt": 18
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.23,
+    "reason": "collision",
+    "s": 112.8,
+    "hit": [
+     -74.4,
+     54.18
+    ],
+    "attempt": 19
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.36,
+    "reason": "collision",
+    "s": 113.0,
+    "hit": [
+     -74.21,
+     54.16
+    ],
+    "attempt": 20
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.17,
+    "reason": "collision",
+    "s": 112.2,
+    "hit": [
+     -74.86,
+     54.14
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.17,
+    "reason": "collision",
+    "s": 114.2,
+    "hit": [
+     -73.08,
+     54.34
+    ],
+    "attempt": 22
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.37,
+    "reason": "collision",
+    "s": 111.7,
+    "hit": [
+     -75.24,
+     54.11
+    ],
+    "attempt": 23
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.41,
+    "reason": "collision",
+    "s": 112.9,
+    "hit": [
+     -74.21,
+     54.16
+    ],
+    "attempt": 24
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.14,
+    "reason": "collision",
+    "s": 111.9,
+    "hit": [
+     -75.24,
+     54.11
+    ],
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.4
+   ],
+   [
+    7,
+    39.4
+   ],
+   [
+    8,
+    38.9
+   ]
+  ],
+  "laps_under_0.2m_after": "16/17",
+  "laps_under_0.2m_before": "3/3",
+  "speed_before": 9.05,
+  "speed_first_after": 8.56,
+  "first_after_outcome": "failure",
+  "pre_change_lap_s": 38.9,
+  "clearance_check_changed_pick": "1/3399 (0.0%)",
+  "previous_plan_chosen": 11,
+  "planning_ms": {
+   "p50": 66.3,
+   "p95": 82.0
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.18,
+    "min_clearance_m": 0.13,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.082,
+    "time_s": 39.4
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.02,
+    "min_clearance_m": 0.164,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 9,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.56,
+    "min_clearance_m": 0.082,
+    "time_s": 13.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.34,
+     "reason": "collision",
+     "s": 113.5,
+     "hit": [
+      -73.75,
+      54.26
+     ]
+    }
+   },
+   {
+    "attempt": 10,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.78,
+    "min_clearance_m": 0.082,
+    "time_s": 13.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.33,
+     "reason": "collision",
+     "s": 112.5,
+     "hit": [
+      -74.51,
+      54.14
+     ]
+    }
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.73,
+    "min_clearance_m": 0.13,
+    "time_s": 13.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.12,
+     "reason": "collision",
+     "s": 112.3,
+     "hit": [
+      -74.86,
+      54.14
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.87,
+    "min_clearance_m": 0.164,
+    "time_s": 13.0,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.22,
+     "reason": "collision",
+     "s": 112.8,
+     "hit": [
+      -74.4,
+      54.18
+     ]
+    }
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.68,
+    "min_clearance_m": 0.116,
+    "time_s": 13.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.47,
+     "reason": "collision",
+     "s": 113.7,
+     "hit": [
+      -73.51,
+      54.26
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.6,
+    "min_clearance_m": 0.164,
+    "time_s": 13.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.21,
+     "reason": "collision",
+     "s": 113.6,
+     "hit": [
+      -73.51,
+      54.26
+     ]
+    }
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.68,
+    "min_clearance_m": 0.164,
+    "time_s": 13.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.3,
+     "reason": "collision",
+     "s": 113.0,
+     "hit": [
+      -74.13,
+      54.22
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.71,
+    "min_clearance_m": 0.13,
+    "time_s": 13.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.4,
+     "reason": "collision",
+     "s": 112.2,
+     "hit": [
+      -74.86,
+      54.14
+     ]
+    }
+   },
+   {
+    "attempt": 17,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.63,
+    "min_clearance_m": 0.13,
+    "time_s": 13.3,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.31,
+     "reason": "collision",
+     "s": 113.8,
+     "hit": [
+      -73.51,
+      54.26
+     ]
+    }
+   },
+   {
+    "attempt": 18,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.48,
+    "min_clearance_m": 0.246,
+    "time_s": 13.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.16,
+     "reason": "collision",
+     "s": 112.7,
+     "hit": [
+      -74.4,
+      54.18
+     ]
+    }
+   },
+   {
+    "attempt": 19,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.69,
+    "min_clearance_m": 0.174,
+    "time_s": 13.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.23,
+     "reason": "collision",
+     "s": 112.8,
+     "hit": [
+      -74.4,
+      54.18
+     ]
+    }
+   },
+   {
+    "attempt": 20,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.76,
+    "min_clearance_m": 0.174,
+    "time_s": 13.0,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.36,
+     "reason": "collision",
+     "s": 113.0,
+     "hit": [
+      -74.21,
+      54.16
+     ]
+    }
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.74,
+    "min_clearance_m": 0.13,
+    "time_s": 12.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.17,
+     "reason": "collision",
+     "s": 112.2,
+     "hit": [
+      -74.86,
+      54.14
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.64,
+    "min_clearance_m": 0.13,
+    "time_s": 13.2,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.17,
+     "reason": "collision",
+     "s": 114.2,
+     "hit": [
+      -73.08,
+      54.34
+     ]
+    }
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.99,
+    "min_clearance_m": 0.164,
+    "time_s": 12.5,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.37,
+     "reason": "collision",
+     "s": 111.7,
+     "hit": [
+      -75.24,
+      54.11
+     ]
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.73,
+    "min_clearance_m": 0.164,
+    "time_s": 12.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.41,
+     "reason": "collision",
+     "s": 112.9,
+     "hit": [
+      -74.21,
+      54.16
+     ]
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.79,
+    "min_clearance_m": 0.183,
+    "time_s": 12.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.14,
+     "reason": "collision",
+     "s": 111.9,
+     "hit": [
+      -75.24,
+      54.11
+     ]
+    }
+   }
+  ]
+ },
+ "rt-patch045-bicycle-react": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 8,
+  "crashes_after": 15,
+  "attempts_after": 17,
+  "crash_attempt_numbers_after_change": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   15,
+   16,
+   17
+  ],
+  "crashes": [
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.29,
+    "reason": "collision",
+    "s": 108.4,
+    "hit": [
+     -75.61,
+     49.88
+    ],
+    "attempt": 9
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.25,
+    "reason": "collision",
+    "s": 113.5,
+    "hit": [
+     -73.87,
+     54.26
+    ],
+    "attempt": 10
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.97,
+    "reason": "collision",
+    "s": 113.0,
+    "hit": [
+     -74.16,
+     54.2
+    ],
+    "attempt": 11
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.32,
+    "reason": "collision",
+    "s": 107.9,
+    "hit": [
+     -75.56,
+     49.81
+    ],
+    "attempt": 12
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.97,
+    "reason": "collision",
+    "s": 112.9,
+    "hit": [
+     -74.25,
+     54.2
+    ],
+    "attempt": 13
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.82,
+    "reason": "collision",
+    "s": 113.1,
+    "hit": [
+     -74.16,
+     54.2
+    ],
+    "attempt": 15
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.04,
+    "reason": "collision",
+    "s": 113.8,
+    "hit": [
+     -73.47,
+     54.31
+    ],
+    "attempt": 16
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.82,
+    "reason": "collision",
+    "s": 112.8,
+    "hit": [
+     -74.25,
+     54.2
+    ],
+    "attempt": 17
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.35,
+    "reason": "collision",
+    "s": 108.1,
+    "hit": [
+     -75.56,
+     49.81
+    ],
+    "attempt": 18
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.21,
+    "reason": "collision",
+    "s": 113.4,
+    "hit": [
+     -73.87,
+     54.26
+    ],
+    "attempt": 19
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.38,
+    "reason": "collision",
+    "s": 114.2,
+    "hit": [
+     -73.01,
+     54.34
+    ],
+    "attempt": 20
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.16,
+    "reason": "collision",
+    "s": 113.5,
+    "hit": [
+     -73.52,
+     54.3
+    ],
+    "attempt": 21
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.37,
+    "reason": "collision",
+    "s": 115.0,
+    "hit": [
+     -72.12,
+     54.49
+    ],
+    "attempt": 23
+   },
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 1.27,
+    "reason": "collision",
+    "s": 114.2,
+    "hit": [
+     -73.01,
+     54.34
+    ],
+    "attempt": 24
+   },
+   {
+    "type": "wall",
+    "max_heading_error_last_2s": 0.53,
+    "reason": "collision",
+    "s": 106.9,
+    "hit": [
+     -74.86,
+     49.08
+    ],
+    "attempt": 25
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.2
+   ],
+   [
+    7,
+    39.0
+   ],
+   [
+    8,
+    38.1
+   ],
+   [
+    14,
+    38.2
+   ],
+   [
+    22,
+    39.8
+   ]
+  ],
+  "laps_under_0.2m_after": "16/17",
+  "laps_under_0.2m_before": "1/3",
+  "speed_before": 8.9,
+  "speed_first_after": 8.55,
+  "first_after_outcome": "failure",
+  "pre_change_lap_s": 38.2,
+  "previous_plan_chosen": 54,
+  "brake_plans": {
+   "steps": 2381,
+   "chosen": 0
+  },
+  "planning_ms": {
+   "p50": 68.5,
+   "p95": 90.0
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.9,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.338,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.76,
+    "min_clearance_m": 0.164,
+    "time_s": 39.0
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.232,
+    "time_s": 38.1
+   },
+   {
+    "attempt": 9,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.55,
+    "min_clearance_m": 0.13,
+    "time_s": 12.7,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.29,
+     "reason": "collision",
+     "s": 108.4,
+     "hit": [
+      -75.61,
+      49.88
+     ]
+    }
+   },
+   {
+    "attempt": 10,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.2,
+    "min_clearance_m": 0.209,
+    "time_s": 13.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.25,
+     "reason": "collision",
+     "s": 113.5,
+     "hit": [
+      -73.87,
+      54.26
+     ]
+    }
+   },
+   {
+    "attempt": 11,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.27,
+    "min_clearance_m": 0.082,
+    "time_s": 13.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.97,
+     "reason": "collision",
+     "s": 113.0,
+     "hit": [
+      -74.16,
+      54.2
+     ]
+    }
+   },
+   {
+    "attempt": 12,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.46,
+    "min_clearance_m": 0.13,
+    "time_s": 12.6,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.32,
+     "reason": "collision",
+     "s": 107.9,
+     "hit": [
+      -75.56,
+      49.81
+     ]
+    }
+   },
+   {
+    "attempt": 13,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.27,
+    "min_clearance_m": 0.082,
+    "time_s": 13.6,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.97,
+     "reason": "collision",
+     "s": 112.9,
+     "hit": [
+      -74.25,
+      54.2
+     ]
+    }
+   },
+   {
+    "attempt": 14,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 8.87,
+    "min_clearance_m": 0.174,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 15,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.35,
+    "min_clearance_m": 0.164,
+    "time_s": 13.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.82,
+     "reason": "collision",
+     "s": 113.1,
+     "hit": [
+      -74.16,
+      54.2
+     ]
+    }
+   },
+   {
+    "attempt": 16,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 7.98,
+    "min_clearance_m": 0.13,
+    "time_s": 14.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.04,
+     "reason": "collision",
+     "s": 113.8,
+     "hit": [
+      -73.47,
+      54.31
+     ]
+    }
+   },
+   {
+    "attempt": 17,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.14,
+    "min_clearance_m": 0.058,
+    "time_s": 14.0,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.82,
+     "reason": "collision",
+     "s": 112.8,
+     "hit": [
+      -74.25,
+      54.2
+     ]
+    }
+   },
+   {
+    "attempt": 18,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.3,
+    "min_clearance_m": 0.164,
+    "time_s": 13.0,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.35,
+     "reason": "collision",
+     "s": 108.1,
+     "hit": [
+      -75.56,
+      49.81
+     ]
+    }
+   },
+   {
+    "attempt": 19,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.24,
+    "min_clearance_m": 0.13,
+    "time_s": 13.8,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.21,
+     "reason": "collision",
+     "s": 113.4,
+     "hit": [
+      -73.87,
+      54.26
+     ]
+    }
+   },
+   {
+    "attempt": 20,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.2,
+    "min_clearance_m": 0.164,
+    "time_s": 13.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.38,
+     "reason": "collision",
+     "s": 114.2,
+     "hit": [
+      -73.01,
+      54.34
+     ]
+    }
+   },
+   {
+    "attempt": 21,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.17,
+    "min_clearance_m": 0.058,
+    "time_s": 13.9,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.16,
+     "reason": "collision",
+     "s": 113.5,
+     "hit": [
+      -73.52,
+      54.3
+     ]
+    }
+   },
+   {
+    "attempt": 22,
+    "outcome": "success",
+    "after_change": true,
+    "mean_speed": 8.58,
+    "min_clearance_m": 0.116,
+    "time_s": 39.8
+   },
+   {
+    "attempt": 23,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.07,
+    "min_clearance_m": 0.058,
+    "time_s": 14.4,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.37,
+     "reason": "collision",
+     "s": 115.0,
+     "hit": [
+      -72.12,
+      54.49
+     ]
+    }
+   },
+   {
+    "attempt": 24,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.15,
+    "min_clearance_m": 0.174,
+    "time_s": 14.1,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 1.27,
+     "reason": "collision",
+     "s": 114.2,
+     "hit": [
+      -73.01,
+      54.34
+     ]
+    }
+   },
+   {
+    "attempt": 25,
+    "outcome": "failure",
+    "after_change": true,
+    "mean_speed": 8.45,
+    "min_clearance_m": 0.082,
+    "time_s": 12.7,
+    "crash": {
+     "type": "wall",
+     "max_heading_error_last_2s": 0.53,
+     "reason": "collision",
+     "s": 106.9,
+     "hit": [
+      -74.86,
+      49.08
+     ]
+    }
+   }
+  ]
+ },
+ "rt-none-v11-25": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 25,
+  "crashes_after": 0,
+  "attempts_after": 0,
+  "crash_attempt_numbers_after_change": [],
+  "crashes": [],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.0
+   ],
+   [
+    7,
+    38.6
+   ],
+   [
+    8,
+    38.7
+   ],
+   [
+    9,
+    38.8
+   ],
+   [
+    10,
+    38.9
+   ],
+   [
+    11,
+    38.5
+   ],
+   [
+    12,
+    39.3
+   ],
+   [
+    13,
+    38.2
+   ],
+   [
+    14,
+    39.0
+   ],
+   [
+    15,
+    38.4
+   ],
+   [
+    16,
+    38.7
+   ],
+   [
+    17,
+    38.3
+   ],
+   [
+    18,
+    38.5
+   ],
+   [
+    19,
+    38.8
+   ],
+   [
+    20,
+    39.3
+   ],
+   [
+    21,
+    38.7
+   ],
+   [
+    22,
+    39.1
+   ],
+   [
+    23,
+    39.4
+   ],
+   [
+    24,
+    39.8
+   ],
+   [
+    25,
+    38.6
+   ]
+  ],
+  "laps_under_0.2m_after": "0/0",
+  "laps_under_0.2m_before": "19/20",
+  "pre_change_lap_s": 39.4,
+  "clearance_check_changed_pick": "69/7756 (0.9%)",
+  "previous_plan_chosen": 8,
+  "planning_ms": {
+   "p50": 64.2,
+   "p95": 96.9
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.25,
+    "min_clearance_m": 0.183,
+    "time_s": 38.0
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.15,
+    "min_clearance_m": 0.239,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.08,
+    "min_clearance_m": 0.116,
+    "time_s": 38.7
+   },
+   {
+    "attempt": 9,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.05,
+    "min_clearance_m": 0.058,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 10,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.03,
+    "min_clearance_m": 0.082,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 11,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.15,
+    "min_clearance_m": 0.13,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 12,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.082,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 13,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.082,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 14,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.99,
+    "min_clearance_m": 0.082,
+    "time_s": 39.0
+   },
+   {
+    "attempt": 15,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.14,
+    "min_clearance_m": 0.082,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 16,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.07,
+    "min_clearance_m": 0.13,
+    "time_s": 38.7
+   },
+   {
+    "attempt": 17,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.17,
+    "min_clearance_m": 0.058,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 18,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.15,
+    "min_clearance_m": 0.082,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 19,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.06,
+    "min_clearance_m": 0.116,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 20,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.164,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 21,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.07,
+    "min_clearance_m": 0.13,
+    "time_s": 38.7
+   },
+   {
+    "attempt": 22,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.164,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 23,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.058,
+    "time_s": 39.4
+   },
+   {
+    "attempt": 24,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.81,
+    "min_clearance_m": 0.082,
+    "time_s": 39.8
+   },
+   {
+    "attempt": 25,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.09,
+    "min_clearance_m": 0.058,
+    "time_s": 38.6
+   }
+  ]
+ },
+ "rt-none-v11-learned": {
+  "attempts": 25,
+  "crashes_before": 1,
+  "attempts_before": 25,
+  "crashes_after": 0,
+  "attempts_after": 0,
+  "crash_attempt_numbers_after_change": [],
+  "crashes": [
+   {
+    "type": "spin",
+    "max_heading_error_last_2s": 0.8,
+    "reason": "collision",
+    "s": 34.4,
+    "hit": [
+     -33.87,
+     -8.29
+    ],
+    "attempt": 14
+   }
+  ],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    39.5
+   ],
+   [
+    7,
+    39.6
+   ],
+   [
+    8,
+    39.1
+   ],
+   [
+    9,
+    39.7
+   ],
+   [
+    10,
+    39.3
+   ],
+   [
+    11,
+    39.3
+   ],
+   [
+    12,
+    38.4
+   ],
+   [
+    13,
+    38.7
+   ],
+   [
+    15,
+    38.8
+   ],
+   [
+    16,
+    38.5
+   ],
+   [
+    17,
+    38.0
+   ],
+   [
+    18,
+    38.5
+   ],
+   [
+    19,
+    38.4
+   ],
+   [
+    20,
+    38.1
+   ],
+   [
+    21,
+    38.3
+   ],
+   [
+    22,
+    38.6
+   ],
+   [
+    23,
+    38.0
+   ],
+   [
+    24,
+    38.6
+   ],
+   [
+    25,
+    37.8
+   ]
+  ],
+  "laps_under_0.2m_after": "0/0",
+  "laps_under_0.2m_before": "19/20",
+  "pre_change_lap_s": 38.0,
+  "clearance_check_changed_pick": "60/7389 (0.8%)",
+  "previous_plan_chosen": 10,
+  "planning_ms": {
+   "p50": 68.6,
+   "p95": 97.2
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.96,
+    "min_clearance_m": 0.13,
+    "time_s": 39.5
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.89,
+    "min_clearance_m": 0.174,
+    "time_s": 39.6
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.99,
+    "min_clearance_m": 0.164,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 9,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.83,
+    "min_clearance_m": 0.116,
+    "time_s": 39.7
+   },
+   {
+    "attempt": 10,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.082,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 11,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.164,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 12,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.15,
+    "min_clearance_m": 0.082,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 13,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.04,
+    "min_clearance_m": 0.082,
+    "time_s": 38.7
+   },
+   {
+    "attempt": 14,
+    "outcome": "failure",
+    "after_change": false,
+    "mean_speed": 9.83,
+    "min_clearance_m": 0.605,
+    "time_s": 3.7,
+    "crash": {
+     "type": "spin",
+     "max_heading_error_last_2s": 0.8,
+     "reason": "collision",
+     "s": 34.4,
+     "hit": [
+      -33.87,
+      -8.29
+     ]
+    }
+   },
+   {
+    "attempt": 15,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.06,
+    "min_clearance_m": 0.116,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 16,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.12,
+    "min_clearance_m": 0.13,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 17,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.082,
+    "time_s": 38.0
+   },
+   {
+    "attempt": 18,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.09,
+    "min_clearance_m": 0.082,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 19,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.14,
+    "min_clearance_m": 0.082,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 20,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.22,
+    "min_clearance_m": 0.082,
+    "time_s": 38.1
+   },
+   {
+    "attempt": 21,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.058,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 22,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.1,
+    "min_clearance_m": 0.082,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 23,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.26,
+    "min_clearance_m": 0.082,
+    "time_s": 38.0
+   },
+   {
+    "attempt": 24,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.09,
+    "min_clearance_m": 0.082,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 25,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.28,
+    "min_clearance_m": 0.13,
+    "time_s": 37.8
+   }
+  ]
+ },
+ "rt-none-v11": {
+  "attempts": 15,
+  "crashes_before": 0,
+  "attempts_before": 15,
+  "crashes_after": 0,
+  "attempts_after": 0,
+  "crash_attempt_numbers_after_change": [],
+  "crashes": [],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    39.3
+   ],
+   [
+    7,
+    39.7
+   ],
+   [
+    8,
+    39.4
+   ],
+   [
+    9,
+    39.1
+   ],
+   [
+    10,
+    39.0
+   ],
+   [
+    11,
+    38.8
+   ],
+   [
+    12,
+    39.2
+   ],
+   [
+    13,
+    39.1
+   ],
+   [
+    14,
+    38.8
+   ],
+   [
+    15,
+    38.9
+   ]
+  ],
+  "laps_under_0.2m_after": "0/0",
+  "laps_under_0.2m_before": "9/10",
+  "pre_change_lap_s": 38.9,
+  "clearance_check_changed_pick": "24/3913 (0.6%)",
+  "previous_plan_chosen": 9,
+  "planning_ms": {
+   "p50": 64.4,
+   "p95": 83.5
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.0,
+    "min_clearance_m": 0.209,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.89,
+    "min_clearance_m": 0.116,
+    "time_s": 39.7
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.116,
+    "time_s": 39.4
+   },
+   {
+    "attempt": 9,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.97,
+    "min_clearance_m": 0.082,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 10,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.99,
+    "min_clearance_m": 0.082,
+    "time_s": 39.0
+   },
+   {
+    "attempt": 11,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.07,
+    "min_clearance_m": 0.13,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 12,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.058,
+    "time_s": 39.2
+   },
+   {
+    "attempt": 13,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.082,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 14,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.06,
+    "min_clearance_m": 0.082,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 15,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.03,
+    "min_clearance_m": 0.082,
+    "time_s": 38.9
+   }
+  ]
+ },
+ "rt-none-bicycle": {
+  "attempts": 15,
+  "crashes_before": 0,
+  "attempts_before": 15,
+  "crashes_after": 0,
+  "attempts_after": 0,
+  "crash_attempt_numbers_after_change": [],
+  "crashes": [],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.2
+   ],
+   [
+    7,
+    38.9
+   ],
+   [
+    8,
+    38.3
+   ],
+   [
+    9,
+    38.9
+   ],
+   [
+    10,
+    38.6
+   ],
+   [
+    11,
+    38.2
+   ],
+   [
+    12,
+    38.5
+   ],
+   [
+    13,
+    38.5
+   ],
+   [
+    14,
+    38.8
+   ],
+   [
+    15,
+    38.3
+   ]
+  ],
+  "laps_under_0.2m_after": "0/0",
+  "laps_under_0.2m_before": "0/10",
+  "pre_change_lap_s": 38.5,
+  "previous_plan_chosen": 13,
+  "planning_ms": {
+   "p50": 42.2,
+   "p95": 58.7
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.9,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.338,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.8,
+    "min_clearance_m": 0.348,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 9,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.78,
+    "min_clearance_m": 0.29,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 10,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.86,
+    "min_clearance_m": 0.29,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 11,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.9,
+    "min_clearance_m": 0.371,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 12,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.87,
+    "min_clearance_m": 0.296,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 13,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.85,
+    "min_clearance_m": 0.29,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 14,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.81,
+    "min_clearance_m": 0.348,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 15,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.88,
+    "min_clearance_m": 0.259,
+    "time_s": 38.3
+   }
+  ]
+ }
+}
