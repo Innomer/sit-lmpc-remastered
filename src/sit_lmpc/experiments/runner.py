@@ -1994,6 +1994,8 @@ def _run(config, tracking_only, keyboard_cleanup):
                     np.save(directory / "model_error_tag.npy", np.asarray(model_error_trace, np.float32))
                 if safe_set_trace:
                     np.save(directory / "safe_set_trace.npy", np.asarray(safe_set_trace, np.float64))
+                if getattr(learned, "step_log", None):
+                    np.save(directory / "planner_steps.npy", np.asarray(learned.step_log, np.float64))
                 (directory / "planner_counts.json").write_text(json.dumps(
                     {"candidates": dict(getattr(learned, "brake_counts", {})),
                      "clearance_check": dict(getattr(learned, "clearance_counts", {}))}, indent=1) + "\n")

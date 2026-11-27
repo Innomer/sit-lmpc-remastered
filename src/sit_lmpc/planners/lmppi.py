@@ -506,6 +506,7 @@ class LMPPI:
         self.breakdown_log = []
         self.brake_counts = {"steps": 0, "chosen": 0, "previous_chosen": 0}
         self.clearance_counts = {"steps": 0, "changed": 0}
+        self.step_log = []
         self.brake_active = False
         if self.corners is not None or self.margins is not None:
             dtype = np.asarray(model.params).dtype if np.asarray(model.params).dtype.kind == "f" else np.float32
@@ -1190,6 +1191,11 @@ class LMPPI:
             packet["no_clearance_index"] = select_candidate(
                 boundary_view(candidate_frenet, self.boundary), candidate_distances, self.config.boundary_limit,
                 self.config.safe_set_threshold, terminal_values, safety_without)[0]
+        view = boundary_view(candidate_frenet, self.boundary)
+        in_bounds = ~jnp.any(jnp.abs(view[:, :, 1]) > self.config.boundary_limit, axis=1)
+        in_hull = candidate_distances <= self.config.safe_set_threshold
+        packet["step_summary"] = jnp.stack([jnp.sum(in_hull), jnp.sum(in_bounds), jnp.sum(in_hull & in_bounds),
+                                            candidate_distances[packet["index"]]])
         if getattr(self.config, "change_breakdown", False):
             packet["breakdown"] = self.candidate_breakdown(
                 candidate_frenet, candidate_distances, candidate_extra, candidate_safety, terminal_values,
@@ -1209,6 +1215,9 @@ class LMPPI:
             if chance_active and not empirical_chance else None,
         ))
         index, ss_violation, boundary_violation = packet["index"], packet["hull"], packet["boundary"]
+        summary = np.asarray(packet["step_summary"], float)
+        self.step_log.append([float(frenet_state[0]), float(state[3]), *summary.tolist(), float(int(index)),
+                              float(packet.get("no_clearance_index", -1))])
         if "no_clearance_index" in packet:
             self.clearance_counts["steps"] += 1
             self.clearance_counts["changed"] += int(int(packet["no_clearance_index"]) != int(index))

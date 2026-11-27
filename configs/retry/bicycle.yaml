@@ -1,0 +1,6 @@
+# Retry mode: bicycle (known-varied-warmup.yaml); a crash resets the car to the start line and the run continues.
+extends: ../fast-diag/known-varied-warmup.yaml
+output:
+  exp_name: retry-bicycle
+planner:
+  sit_lmpc_mode: false
