@@ -617,6 +617,7 @@ def _run(config, tracking_only, keyboard_cleanup):
                                        raise_band=planner.change_raise_band, raise_step=planner.change_raise_step,
                                        min_clearance=planner.change_min_clearance,
                                        pass_share=planner.change_pass_share)
+        change_monitor.scale_factor = float(planner.change_speed_factor)
         safe_set.change_monitor = change_monitor
     density_trainer = (
         SafeSetDensityTrainer(planner.safe_set_density, planner.dynamics, simulation,
@@ -2041,6 +2042,7 @@ def _run(config, tracking_only, keyboard_cleanup):
                 np.save(directory / "planner_steps.npy", np.asarray(learned.step_log, np.float64))
             (directory / "planner_counts.json").write_text(json.dumps(
                 {"candidates": dict(getattr(learned, "brake_counts", {})),
+                 "reduced_speed": dict(getattr(learned, "reduced_counts", {})),
                  "clearance_check": dict(getattr(learned, "clearance_counts", {}))}, indent=1) + "\n")
             if getattr(learned, "breakdown_log", None):
                 shapes = {}

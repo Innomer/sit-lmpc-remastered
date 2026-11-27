@@ -69,6 +69,7 @@ class ChangeMonitor:
         self.fit_min_points = int(fit_min_points)
         self.uncounted = np.zeros(self.count, bool)
         self.pre_limit = None
+        self.scale_factor = float(speed_factor) if speed_factor is not None else 0.8
         self.last_pass_tag = np.full(self.count, np.nan)
         self.pending = []
         self.records = np.zeros((0, 3))
@@ -165,6 +166,18 @@ class ChangeMonitor:
         elif self.scope == "track" and self.speed_history[j]:
             self.cap_factor[j] = factor
             self.caps[j] = factor * float(np.median(self.speed_history[j][-self.history_laps:]))
+
+    def safe_set_factors(self):
+        """Per-stretch speed factor for stored pre-change states in the hull: after a detection, stretches not yet
+        judged or judged changed (and not yet on new-condition laps) use their cap factor (the same factor as the
+        cap, so the two never disagree), or scale_factor where there is no cap; everything else 1."""
+        factors = np.ones(self.count)
+        if not self.active:
+            return factors
+        flagged = (self.mode == CONSERVATIVE) | (self.changed & (self.mode != NEW))
+        capped = np.isfinite(self.caps)
+        factors[flagged] = np.where(capped[flagged], self.cap_factor[flagged], self.scale_factor)
+        return factors
 
     def lap_tags(self):
         """Per-stretch median tag of the lap being driven (nan where the lap did not pass)."""

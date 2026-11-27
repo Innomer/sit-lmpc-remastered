@@ -103,6 +103,23 @@ def boundary_margins(config):
     return np.asarray(margin, dtype=float)
 
 
+def reduced_speed_plans(previous, speed, factors, timestep, accel_scale, length):
+    """Last step's plan (shifted) with its speed profile scaled by each factor: same steering, acceleration
+    recomputed step by step to follow factor x the plan's own speed profile, within the acceleration limits."""
+    plan = np.asarray(previous, dtype=float)[:length]
+    nominal = float(speed) + np.cumsum(plan[:, 1] * accel_scale * timestep)
+    out = []
+    for factor in factors:
+        current, accel = float(speed), []
+        for k in range(length):
+            target = max(0.0, factor * nominal[k])
+            a = float(np.clip((target - current) / timestep, -accel_scale, accel_scale))
+            current = max(0.0, current + a * timestep)
+            accel.append(a / accel_scale)
+        out.append(np.column_stack([plan[:, 0], accel]))
+    return np.asarray(out)
+
+
 def with_previous_plan(candidates, previous):
     """Last step's plan, shifted by one step (zero-padded), as the last final-pick candidate."""
     return candidates.at[-1].set(jnp.asarray(previous, candidates.dtype)[: candidates.shape[1]])
@@ -505,6 +522,8 @@ class LMPPI:
         self.boundary = None
         self.breakdown_log = []
         self.brake_counts = {"steps": 0, "chosen": 0, "previous_chosen": 0}
+        self.speed_factors = tuple(getattr(config, "speed_diverse_factors", ()) or ())
+        self.reduced_counts = {"steps": 0, "chosen": {str(f): 0 for f in self.speed_factors}}
         self.clearance_counts = {"steps": 0, "changed": 0}
         self.step_log = []
         self.brake_active = False
@@ -750,7 +769,7 @@ class LMPPI:
         speed = float(state[3])
         if not monitor.strong_ahead(frenet_state[0], speed * self.config.horizon * self.model.timestep, speed):
             return candidates
-        if len(candidates) <= count + 1:
+        if len(candidates) <= count + 1 + len(self.speed_factors):
             return candidates
         profiles = np.asarray([[-1.0, -1.0], [-0.7, -0.7], [-0.4, -0.4], [-1.0, 0.0]])[:count]
         length = candidates.shape[1]
@@ -761,7 +780,18 @@ class LMPPI:
         brake = jnp.stack([steer, jnp.asarray(accel, candidates.dtype)], axis=-1)
         self.brake_active = True
         self.brake_counts["steps"] += 1
-        return candidates.at[-len(profiles) - 1:-1].set(brake)
+        tail = 1 + len(self.speed_factors)
+        return candidates.at[-len(profiles) - tail:-tail].set(brake)
+
+    def with_reduced_speed(self, candidates, previous, state):
+        count = len(self.speed_factors)
+        if not count or len(candidates) <= count + 1:
+            return candidates
+        plans = reduced_speed_plans(np.asarray(jax.device_get(previous)), float(state[3]), self.speed_factors,
+                                    float(self.model.timestep), float(np.asarray(self.model.action_scale)[1]),
+                                    candidates.shape[1])
+        self.reduced_counts["steps"] += 1
+        return candidates.at[-count - 1:-1].set(jnp.asarray(plans, candidates.dtype))
 
     def value_inputs(self, states, value_snapshot, safe_set):
         if value_snapshot.input_mode != "state_tag":
@@ -1112,6 +1142,7 @@ class LMPPI:
                 **proposal_options
             )
         candidates = self.with_brake_candidates(candidates, safe_set, frenet_state, state)
+        candidates = self.with_reduced_speed(candidates, previous, state)
         candidates = with_previous_plan(candidates, previous)
         trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
         candidate_frenet = to_frenet(self.track, trajectories, indices, frenet_state[0])
@@ -1231,9 +1262,13 @@ class LMPPI:
         if "no_clearance_index" in packet:
             self.clearance_counts["steps"] += 1
             self.clearance_counts["changed"] += int(int(packet["no_clearance_index"]) != int(index))
-        if int(index) == candidates.shape[0] - 1:
+        last = candidates.shape[0] - 1
+        reduced = len(self.speed_factors)
+        if int(index) == last:
             self.brake_counts["previous_chosen"] += 1
-        elif self.brake_active and int(index) >= candidates.shape[0] - 1 - int(getattr(self.config, "change_brake_candidates", 0)):
+        elif reduced and last - reduced <= int(index) < last:
+            self.reduced_counts["chosen"][str(self.speed_factors[int(index) - (last - reduced)])] += 1
+        elif self.brake_active and int(index) >= last - reduced - int(getattr(self.config, "change_brake_candidates", 0)):
             self.brake_counts["chosen"] += 1
         if "breakdown" in packet:
             monitor = getattr(safe_set, "change_monitor", None)

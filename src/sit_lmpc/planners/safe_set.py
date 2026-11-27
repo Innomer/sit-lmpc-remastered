@@ -478,7 +478,24 @@ class SafeSet:
             indices = rng.choice(indices, self.config.hull_selection_points, replace=False)
         if len(indices) < 6:
             raise ValueError("not enough local safe-set points for learned control")
-        return arr_f[indices], arr_c[indices]
+        selected_f, selected_c = arr_f[indices], arr_c[indices]
+        if (self.change_monitor is not None and self.change_monitor.active
+                and getattr(self.config, "change_scale_safe_set", True)):
+            factors = self.speed_scale(selected_f[:, 0], records[indices])
+            if np.any(factors != 1.0):
+                selected_f, selected_c = selected_f.copy(), selected_c.copy()
+                selected_f[:, 3] *= factors
+                selected_c[:, 3] *= factors
+        return selected_f, selected_c
+
+    def speed_scale(self, s, records):
+        """Speed factor per selected state: the stretch's factor (ChangeMonitor.safe_set_factors) for states from
+        laps driven before the detection, 1 for laps driven after it."""
+        monitor = self.change_monitor
+        info = self.record_info + [None] * (len(self.frenet) - len(self.record_info))
+        pre = np.asarray([info[int(r)] is None or info[int(r)]["lap"] < monitor.detection_lap for r in records])
+        idx = (np.floor(np.asarray(s) / monitor.stretch).astype(int)) % monitor.count
+        return np.where(pre, monitor.safe_set_factors()[idx], 1.0)
 
     def speculate(self, window, dtype):
         """Do not consume the real host stream unless this geometry is accepted."""

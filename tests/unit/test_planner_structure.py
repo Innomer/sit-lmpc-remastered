@@ -95,3 +95,52 @@ def test_tag_matched_safe_set_and_tag_value_inputs():
     monitor.last_pass_tag[4] = 0.4
     tags = monitor.query_tags()
     assert np.isclose(tags[4], 0.4) and np.isclose(tags[0], 0.01)
+
+
+def test_reduced_speed_plans_scale_the_speed_profile():
+    from sit_lmpc.planners.lmppi import reduced_speed_plans
+
+    previous = np.column_stack([np.linspace(-0.2, 0.2, 15), np.zeros(15)])
+    plans = reduced_speed_plans(previous, 8.0, (0.9, 0.75, 0.6), 0.1, 9.51, 15)
+    assert plans.shape == (3, 15, 2)
+    assert np.allclose(plans[:, :, 0], previous[:, 0])
+    assert np.all(np.abs(plans[:, :, 1]) <= 1.0)
+    for plan, factor in zip(plans, (0.9, 0.75, 0.6)):
+        speed = 8.0 + np.cumsum(plan[:, 1] * 9.51 * 0.1)
+        assert np.isclose(speed[-1], factor * 8.0, atol=1e-6)
+        assert np.all(speed[1:] <= speed[:-1] + 1e-9)
+
+
+def test_safe_set_speeds_scaled_after_detection_only():
+    from sit_lmpc.planners.change_monitor import ChangeMonitor, CONSERVATIVE, NORMAL
+
+    planner = load_config().planner
+    monitor = ChangeMonitor(100.0, stretch=10, speed_factor=0.8)
+    safe = SafeSet(planner, 0.1, 100.0)
+    safe.change_monitor = monitor
+    lap = np.zeros((100, 7))
+    lap[:, 0] = np.linspace(0.0, 99.0, 100)
+    lap[:, 1] = np.where(np.arange(100) % 2, 0.2, -0.2)
+    lap[:, 3] = 9.0
+    after = lap.copy()
+    after[:, 3] = 6.0
+    safe.frenet = [lap, after]
+    safe.cartesian = [lap.copy(), after.copy()]
+    safe.record_info = [{"lap": 3, "laptime": 38.0, "warmup": False}, {"lap": 9, "laptime": 50.0, "warmup": False}]
+    selected, _ = safe.select_window(10.0, 40.0)
+    assert np.allclose(np.sort(np.unique(selected[:, 3])), [6.0, 9.0])
+    monitor.active, monitor.detection_lap = True, 8
+    monitor.mode[:] = NORMAL
+    monitor.mode[2] = CONSERVATIVE
+    monitor.caps[2], monitor.cap_factor[2] = 7.2, 0.8
+    selected, _ = safe.select_window(10.0, 40.0)
+    s = selected[:, 0]
+    pre = selected[:, 3] != 6.0
+    on_flagged = (s >= 20.0) & (s < 30.0)
+    assert np.allclose(selected[pre & on_flagged, 3], 7.2)
+    assert np.allclose(selected[pre & ~on_flagged, 3], 9.0)
+    assert np.all(selected[~pre, 3] == 6.0)
+    assert np.isclose(safe.frenet[0][25, 3], 9.0)
+    monitor.caps[2], monitor.cap_factor[2] = np.inf, 1.0
+    monitor.changed[3] = True
+    assert np.allclose(monitor.safe_set_factors()[[2, 3, 4]], [0.8, 0.8, 1.0])
