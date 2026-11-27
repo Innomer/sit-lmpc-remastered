@@ -1,0 +1,55 @@
+[start] learning | seed=3586456803 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[car_bag_recording] topics=/ego_racecar/pf_odom, /ego_racecar/wheel_odom, /ego_racecar/imu, /scan, /drive
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.842 | launch_speed=1.5
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[car_launch] speed=1.585
+[control_step_timing] steps=50 | overruns=1 | watchdog_stops=1
+[control_step_timing] steps=100 | overruns=1 | watchdog_stops=1
+[attempt] #1 success | 149 steps
+[lap] trial 1 | 14.9 s | avg speed 4.026 m/s | mppi
+[checkpoint_saved] file=checkpoints/trial-000001 | trials=1
+[control_step_timing] steps=150 | overruns=1 | watchdog_stops=1
+[control_step_timing] steps=200 | overruns=1 | watchdog_stops=1
+[control_step_timing] steps=250 | overruns=1 | watchdog_stops=1
+[attempt] #2 success | 149 steps
+[lap] trial 2 | 14.9 s | avg speed 4.192 m/s | mppi
+[training] generation=1 | epochs=300 | loss=-0.3421 | gradient_steps=600
+[checkpoint_saved] file=checkpoints/trial-000002 | trials=2
+[car_stop] reason=obstacle | speed=0.2463 | closest_scan=0.2217
+[attempt] #3 failure | 1 steps | collision
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.867 | launch_speed=1.5
+[lap_reset] next_attempt=4 | failures=1
+[checkpoint_saved] file=checkpoints/trial-000003 | trials=3
+[car_stop] reason=launch_obstacle | speed=0.1084 | closest_scan=2.158
+[error] type=RuntimeError | message=the car left the track or saw an obstacle while driving to the start line
+[attempt] #4 incomplete | 0 steps | error
+[finish] status=error | trials=3 | successful_laps=2 | failed_attempts=1 | applied_steps=299 | training_generations=1 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/wt-irl-world-model/results/dryrun/dry-v11
+[control_timing_summary] steps=299 | control_period_seconds=0.1 | overruns=2 | watchdog_stops=2
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/cli/racecar.py", line 128, in <module>
+    main()
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/cli/racecar.py", line 124, in main
+    execute()
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/cli/racecar.py", line 116, in execute
+    result = run(config, tracking_only=tracking_only)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/experiments/runner.py", line 215, in run
+    return _run(config, tracking_only, keyboard_cleanup)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/experiments/runner.py", line 1638, in _run
+    (next_cartesian, next_frenet), control, terminated, truncated, info = simulator.step(
+                                                                          ^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/adapters/ros_car.py", line 429, in step
+    self._launch()
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/adapters/ros_car.py", line 394, in _launch
+    raise RuntimeError("the car left the track or saw an obstacle while driving to the start line")
+RuntimeError: the car left the track or saw an obstacle while driving to the start line

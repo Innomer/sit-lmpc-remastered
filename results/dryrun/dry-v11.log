@@ -1,0 +1,96 @@
+[value_precompile]
+[planner_precompile]
+[start] learning | seed=2099822334 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[car_bag_recording] topics=/ego_racecar/pf_odom, /ego_racecar/wheel_odom, /ego_racecar/imu, /scan, /drive
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.888 | launch_speed=1.5
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[car_launch] speed=1.524
+[control_step_timing] steps=50 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=100 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=150 | overruns=1 | watchdog_stops=0
+[attempt] #1 success | 152 steps
+[lap] trial 1 | 15.2 s | avg speed 4.156 m/s | mppi
+[checkpoint_saved] file=checkpoints/trial-000001 | trials=1
+[car_lap_stop] speed=0.05121
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.851 | launch_speed=1.5
+[car_launch] speed=1.487
+[control_step_timing] steps=200 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=250 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=300 | overruns=1 | watchdog_stops=0
+[attempt] #2 success | 153 steps
+[lap] trial 2 | 15.3 s | avg speed 4.145 m/s | mppi
+[car_lap_stop] speed=0.06837
+[training] generation=1 | epochs=300 | loss=-0.3503 | gradient_steps=600
+[checkpoint_saved] file=checkpoints/trial-000002 | trials=2
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.856 | launch_speed=1.5
+[car_launch] speed=1.553
+[control_step_timing] steps=350 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=400 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=450 | overruns=1 | watchdog_stops=0
+[attempt] #3 success | 153 steps
+[lap] trial 3 | 15.3 s | avg speed 4.142 m/s | mppi
+[car_lap_stop] speed=0.07848
+[training] generation=2 | epochs=300 | loss=-0.1861 | gradient_steps=1200
+[checkpoint_saved] file=checkpoints/trial-000003 | trials=3
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.878 | launch_speed=1.5
+[car_launch] speed=1.437
+[control_step_timing] steps=500 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=550 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=600 | overruns=1 | watchdog_stops=0
+[attempt] #4 success | 153 steps
+[lap] trial 4 | 15.3 s | avg speed 4.162 m/s | mppi
+[car_lap_stop] speed=0.08812
+[training] generation=3 | epochs=300 | loss=-0.3122 | gradient_steps=2100
+[checkpoint_saved] file=checkpoints/trial-000004 | trials=4
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.838 | launch_speed=1.5
+[car_launch] speed=1.553
+[control_step_timing] steps=650 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=700 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=750 | overruns=1 | watchdog_stops=0
+[attempt] #5 success | 153 steps
+[lap] trial 5 | 15.3 s | avg speed 4.134 m/s | mppi
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/wt-irl-world-model/results/dryrun/dry-v11/init.npz
+[car_lap_stop] speed=0.007735
+[training] generation=4 | epochs=300 | loss=-0.9389 | gradient_steps=3300
+[checkpoint_saved] file=checkpoints/trial-000005 | trials=5
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.903 | launch_speed=1.5
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[car_launch] speed=1.537
+[learned_controller_started] step=764 | value_generation=4 | hull_facets=280
+[control_step_timing] steps=800 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=850 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=900 | overruns=1 | watchdog_stops=0
+[attempt] #6 success | 156 steps
+[lap] trial 6 | 15.6 s | avg speed 4.04 m/s | lmppi | lambda_ss mean=5.048 max=18.75 | lambda_boundary mean=1.859 max=18.75
+[car_lap_stop] speed=0.09883
+[training] generation=5 | epochs=300 | loss=-1.344 | gradient_steps=4500
+[checkpoint_saved] file=checkpoints/trial-000006 | trials=6
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.841 | launch_speed=1.5
+[car_launch] speed=1.482
+[control_step_timing] steps=950 | overruns=1 | watchdog_stops=0
+[car_stop] reason=out_of_bounds | speed=0.7484 | closest_scan=3.484
+[attempt] #7 failure | 78 steps | out_of_bounds | 1 out-of-bounds steps | lambda_ss mean=5.385 max=18.75 | lambda_boundary mean=2.436 max=18.75
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.863 | launch_speed=1.5
+[lap_reset] next_attempt=8 | failures=1
+[checkpoint_saved] file=checkpoints/trial-000007 | trials=7
+[car_launch] speed=1.614
+[control_step_timing] steps=1000 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=1050 | overruns=1 | watchdog_stops=0
+[car_stop] reason=out_of_bounds | speed=0.6934 | closest_scan=3.483
+[attempt] #8 failure | 78 steps | out_of_bounds | 1 out-of-bounds steps | lambda_ss mean=4.936 max=18.75 | lambda_boundary mean=2.067 max=18.75
+[checkpoint_saved] file=checkpoints/trial-000008 | trials=8
+[finish] status=lap_limit | trials=8 | successful_laps=6 | failed_attempts=2 | applied_steps=1076 | training_generations=5 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/wt-irl-world-model/results/dryrun/dry-v11
+[control_timing_summary] steps=1076 | control_period_seconds=0.1 | overruns=1 | watchdog_stops=0

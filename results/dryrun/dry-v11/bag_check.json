@@ -1,0 +1,92 @@
+{
+ "bag": "results/dryrun/dry-v11/bag",
+ "config": "configs/car/dryrun-levine-v11.yaml",
+ "starts": 243,
+ "seconds": 197.7,
+ "errors": {
+  "v11_0.5s": {
+   "position_m": [
+    0.183,
+    0.422
+   ],
+   "yaw_rate": [
+    0.161,
+    0.606
+   ],
+   "speed": [
+    0.517,
+    1.193
+   ]
+  },
+  "bicycle_0.5s": {
+   "position_m": [
+    0.097,
+    0.24
+   ],
+   "yaw_rate": [
+    0.142,
+    0.53
+   ],
+   "speed": [
+    0.309,
+    0.863
+   ]
+  },
+  "v11_1.0s": {
+   "position_m": [
+    0.534,
+    1.167
+   ],
+   "yaw_rate": [
+    0.197,
+    0.783
+   ],
+   "speed": [
+    0.711,
+    1.672
+   ]
+  },
+  "bicycle_1.0s": {
+   "position_m": [
+    0.303,
+    0.894
+   ],
+   "yaw_rate": [
+    0.161,
+    0.768
+   ],
+   "speed": [
+    0.612,
+    1.523
+   ]
+  },
+  "v11_1.5s": {
+   "position_m": [
+    1.056,
+    2.237
+   ],
+   "yaw_rate": [
+    0.256,
+    1.016
+   ],
+   "speed": [
+    0.868,
+    2.347
+   ]
+  },
+  "bicycle_1.5s": {
+   "position_m": [
+    0.734,
+    1.954
+   ],
+   "yaw_rate": [
+    0.196,
+    1.133
+   ],
+   "speed": [
+    0.911,
+    2.142
+   ]
+  }
+ }
+}

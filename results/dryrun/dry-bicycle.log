@@ -1,0 +1,32 @@
+[start] learning | seed=3008623625 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[car_bag_recording] topics=/ego_racecar/pf_odom, /ego_racecar/wheel_odom, /ego_racecar/imu, /scan, /drive
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.799 | launch_speed=1.5
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[car_launch] speed=1.494
+[control_step_timing] steps=50 | overruns=0 | watchdog_stops=0
+[control_step_timing] steps=100 | overruns=0 | watchdog_stops=0
+[control_step_timing] steps=150 | overruns=0 | watchdog_stops=0
+[attempt] #1 success | 151 steps
+[lap] trial 1 | 15.1 s | avg speed 4.207 m/s | mppi
+[checkpoint_saved] file=checkpoints/trial-000001 | trials=1
+[car_stop] reason=out_of_bounds | speed=0.7108 | closest_scan=3.516
+[attempt] #2 failure | 14 steps | out_of_bounds | 1 out-of-bounds steps
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.839 | launch_speed=7
+[lap_reset] next_attempt=3 | failures=1
+[checkpoint_saved] file=checkpoints/trial-000002 | trials=2
+[car_launch] speed=6.239
+[control_step_timing] steps=200 | overruns=0 | watchdog_stops=0
+[control_step_timing] steps=250 | overruns=0 | watchdog_stops=0
+[control_step_timing] steps=300 | overruns=0 | watchdog_stops=0
+[attempt] #3 success | 148 steps
+[lap] trial 3 | 14.8 s | avg speed 4.209 m/s | mppi
+[training] generation=1 | epochs=300 | loss=-0.3176 | gradient_steps=600
+[finish] status=interrupted | trials=3 | successful_laps=2 | failed_attempts=1 | applied_steps=313 | training_generations=1 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/wt-irl-world-model/results/dryrun/dry-bicycle
+[control_timing_summary] steps=313 | control_period_seconds=0.1 | overruns=0 | watchdog_stops=1

@@ -1,0 +1,54 @@
+[start] learning | seed=4275720891 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[car_bag_recording] topics=/ego_racecar/pf_odom, /ego_racecar/wheel_odom, /ego_racecar/imu, /scan, /drive
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.849 | launch_speed=1.5
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[car_launch] speed=1.559
+[control_step_timing] steps=50 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=100 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=150 | overruns=1 | watchdog_stops=0
+[attempt] #1 success | 150 steps
+[lap] trial 1 | 15 s | avg speed 4.104 m/s | mppi
+[checkpoint_saved] file=checkpoints/trial-000001 | trials=1
+[control_step_timing] steps=200 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=250 | overruns=1 | watchdog_stops=0
+[attempt] #2 success | 149 steps
+[lap] trial 2 | 14.9 s | avg speed 4.175 m/s | mppi
+[control_step_timing] steps=300 | overruns=1 | watchdog_stops=0
+[car_stop] reason=out_of_bounds | speed=3.756 | closest_scan=0.3391
+[attempt] #3 failure | 12 steps | out_of_bounds | 1 out-of-bounds steps
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[training] generation=1 | epochs=300 | loss=-0.3816 | gradient_steps=600
+[car_start_accepted] behind=1.847 | launch_speed=1.5
+[lap_reset] next_attempt=4 | failures=1
+[checkpoint_saved] file=checkpoints/trial-000003 | trials=3
+[error] type=FileExistsError | message=Checkpoint already exists: /home/mann-bhanushali/sim_ws/wt-irl-world-model/results/dryrun/dry-v11/checkpoints/trial-000003
+[attempt] #4 incomplete | 0 steps | error
+[finish] status=error | trials=3 | successful_laps=2 | failed_attempts=1 | applied_steps=311 | training_generations=1 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/wt-irl-world-model/results/dryrun/dry-v11
+[control_timing_summary] steps=311 | control_period_seconds=0.1 | overruns=2 | watchdog_stops=1
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/cli/racecar.py", line 128, in <module>
+    main()
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/cli/racecar.py", line 124, in main
+    execute()
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/cli/racecar.py", line 116, in execute
+    result = run(config, tracking_only=tracking_only)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/experiments/runner.py", line 215, in run
+    return _run(config, tracking_only, keyboard_cleanup)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/experiments/runner.py", line 1390, in _run
+    write_checkpoint(*pending_checkpoint)
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/experiments/runner.py", line 1041, in write_checkpoint
+    saved = save_checkpoint(
+            ^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/wt-irl-world-model/src/sit_lmpc/data/experiment_checkpoint.py", line 152, in save_checkpoint
+    raise FileExistsError(f"Checkpoint already exists: {target}")
+FileExistsError: Checkpoint already exists: /home/mann-bhanushali/sim_ws/wt-irl-world-model/results/dryrun/dry-v11/checkpoints/trial-000003
