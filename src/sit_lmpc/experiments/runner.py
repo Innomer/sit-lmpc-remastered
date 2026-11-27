@@ -2031,32 +2031,32 @@ def _run(config, tracking_only, keyboard_cleanup):
                 if lidar_trace:
                     np.save(directory / "rssm_lidar.npy", np.asarray(lidar_trace))
                     np.save(directory / "rssm_memory.npy", np.asarray(memory_trace))
-                if tag_trace:
-                    np.save(directory / "condition_tag.npy", np.asarray(tag_trace, np.float32))
-                if model_error_trace:
-                    np.save(directory / "model_error_tag.npy", np.asarray(model_error_trace, np.float32))
-                if safe_set_trace:
-                    np.save(directory / "safe_set_trace.npy", np.asarray(safe_set_trace, np.float64))
-                if getattr(learned, "step_log", None):
-                    np.save(directory / "planner_steps.npy", np.asarray(learned.step_log, np.float64))
-                (directory / "planner_counts.json").write_text(json.dumps(
-                    {"candidates": dict(getattr(learned, "brake_counts", {})),
-                     "clearance_check": dict(getattr(learned, "clearance_counts", {}))}, indent=1) + "\n")
-                if getattr(learned, "breakdown_log", None):
-                    shapes = {}
-                    for row in learned.breakdown_log:
-                        for key, value in row.items():
-                            shapes.setdefault(key, np.shape(value))
-                    np.savez_compressed(directory / "candidate_breakdown.npz", **{
-                        key: np.stack([np.broadcast_to(np.asarray(row.get(key, np.nan), np.float64), shape)
-                                       for row in learned.breakdown_log]) for key, shape in shapes.items()})
-                if change_monitor is not None:
-                    np.save(directory / "change_trace.npy", np.asarray(change_trace, np.float64))
-                    (directory / "change_events.json").write_text(json.dumps(
-                        {"events": change_monitor.events, "stretch_m": change_monitor.stretch,
-                         "stretches": change_monitor.count,
-                         "history": [[float(v) for v in h] for h in change_monitor.history],
-                         "brake": dict(getattr(learned, "brake_counts", {}))}, indent=1) + "\n")
+            if tag_trace:
+                np.save(directory / "condition_tag.npy", np.asarray(tag_trace, np.float32))
+            if model_error_trace:
+                np.save(directory / "model_error_tag.npy", np.asarray(model_error_trace, np.float32))
+            if safe_set_trace:
+                np.save(directory / "safe_set_trace.npy", np.asarray(safe_set_trace, np.float64))
+            if getattr(learned, "step_log", None):
+                np.save(directory / "planner_steps.npy", np.asarray(learned.step_log, np.float64))
+            (directory / "planner_counts.json").write_text(json.dumps(
+                {"candidates": dict(getattr(learned, "brake_counts", {})),
+                 "clearance_check": dict(getattr(learned, "clearance_counts", {}))}, indent=1) + "\n")
+            if getattr(learned, "breakdown_log", None):
+                shapes = {}
+                for row in learned.breakdown_log:
+                    for key, value in row.items():
+                        shapes.setdefault(key, np.shape(value))
+                np.savez_compressed(directory / "candidate_breakdown.npz", **{
+                    key: np.stack([np.broadcast_to(np.asarray(row.get(key, np.nan), np.float64), shape)
+                                   for row in learned.breakdown_log]) for key, shape in shapes.items()})
+            if change_monitor is not None:
+                np.save(directory / "change_trace.npy", np.asarray(change_trace, np.float64))
+                (directory / "change_events.json").write_text(json.dumps(
+                    {"events": change_monitor.events, "stretch_m": change_monitor.stretch,
+                     "stretches": change_monitor.count,
+                     "history": [[float(v) for v in h] for h in change_monitor.history],
+                     "brake": dict(getattr(learned, "brake_counts", {}))}, indent=1) + "\n")
     return RunResult(
         directory,
         status,
