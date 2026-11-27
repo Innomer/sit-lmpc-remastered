@@ -371,6 +371,7 @@ class RosCar:
         frenet[[0, 1, 4]] = (s, ey, ephi)
         self.applied_control = np.zeros(2)
         self.encoder_pose = None
+        self.close_scan = False
         self.emit("car_start_accepted", behind=float(behind), launch_speed=self.launch_speed)
         self.returned_at = None
         return (cartesian, frenet), {"lap_times": [0.0], "lap_counts": [0], "sim_time": 0.0}
@@ -407,6 +408,35 @@ class RosCar:
         self.emit("car_launch", seconds=time.perf_counter() - started, speed=self.speed)
         self._seed_delay()
         self.launch_speed = None
+
+    def brake_to_stop(self):
+        started = time.perf_counter()
+        start_speed = max(float(self.speed or 0.0), 0.0)
+        self.track.s_guess = None
+        while True:
+            self._check_odom()
+            cartesian = self._measured()
+            if float(cartesian[3]) < 0.1:
+                break
+            x, y, yaw = float(cartesian[0]), float(cartesian[1]), float(cartesian[4])
+            s, ey, _ = self.track.cartesian_to_frenet(x, y, yaw, use_s_guess=self.track.s_guess is not None)
+            if abs(ey) > self.half_width or self.close_scan:
+                self._stop("stop_out_of_bounds" if abs(ey) > self.half_width else "stop_obstacle")
+                break
+            goal = self.track.frenet_to_cartesian(s + self.car.launch_lookahead, 0.0, 0.0)
+            rear_x = x - self.params["lr"] * math.cos(yaw)
+            rear_y = y - self.params["lr"] * math.sin(yaw)
+            dx, dy = goal[0] - rear_x, goal[1] - rear_y
+            lateral = -dx * math.sin(yaw) + dy * math.cos(yaw)
+            curvature = 2.0 * lateral / max(dx * dx + dy * dy, 1e-6)
+            elapsed = time.perf_counter() - started
+            self._drive(math.atan(self.wheelbase * curvature), max(start_speed - self.car.stop_decel * elapsed, 0.0))
+            self._record()
+            self._wait_until(time.perf_counter() + 0.05, new_odom=True)
+            if elapsed > start_speed / self.car.stop_decel + 3.0:
+                break
+        self._stop()
+        self.emit("car_lap_stop", seconds=time.perf_counter() - started, speed=self.speed)
 
     def _follow_targets(self, targets, deadline):
         start_delta, start_speed = self.delta, self.speed

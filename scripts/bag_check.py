@@ -13,7 +13,8 @@ controls that were actually sent:
 - v11: from its filtered state (PF pose + its estimate; steering from the commands when rssm_command_steering);
 - bicycle: the nominal single-track model from the measured state (PF pose, steering command, wheel speed, IMU yaw
   rate, kinematic slip).
-Errors are against what was measured: position against the PF pose (centre of gravity), yaw rate against the IMU,
+Starts are skipped when the window has a stop (wheel speed under 0.5 m/s) or a pose jump (car carried back to the
+line); the world model's filter restarts after every jump, as in a run. Errors are against what was measured: position against the PF pose (centre of gravity), yaw rate against the IMU,
 speed against the wheel speed. Prints median / 90th percentile per horizon and writes JSON next to the bag.
 """
 
@@ -87,8 +88,9 @@ def timeline(messages, car, timestep, lr):
                    (float(drive.drive.speed) - speed) / car.speed_horizon)
         accel = imu.linear_acceleration
         yaw_rate = car.imu_yaw_scale * imu.angular_velocity.z
+        jump = previous_pose is not None and math.hypot(dx, dy) > 3 * max(speed, 1.0) * timestep + 0.3
         rows.append({
-            "t": t, "rear": rear, "steer": steer, "speed": speed, "yaw_rate": yaw_rate, "control": control,
+            "t": t, "rear": rear, "jump": jump, "steer": steer, "speed": speed, "yaw_rate": yaw_rate, "control": control,
             "observation": np.array([car.imu_accel_scale[0] * accel.x, car.imu_accel_scale[1] * accel.y, yaw_rate, speed,
                                      body[0] / timestep, body[1] / timestep, body[2] / timestep, 0.0, 0.0], np.float32),
             "scan": (scan.ranges, scan.angle_min, scan.angle_increment),
@@ -130,7 +132,14 @@ def main():
     rssm = RSSMFilter(planner.dynamics.rssm, bicycle.params, bicycle.action_scale, planner.dynamics.rssm_variant,
                       planner.dynamics.rssm_model_timestep, bicycle.integrator_timestep)
     filtered = []
+    since_jump = []
+    count = 0
     for row in rows:
+        if row["jump"]:
+            rssm.reset()
+            count = 0
+        count += 1
+        since_jump.append(count)
         anchor, _, _ = rssm.step(row["observation"], resample_scan(*row["scan"]), row["rear"],
                                  np.asarray(row["observation"][7:9]))
         filtered.append((rssm.predictor(), np.asarray(anchor)))
@@ -138,6 +147,9 @@ def main():
     first = int(round(args.warmup / simulation.timestep))
     for i in range(first, len(rows) - max(HORIZONS) - 1, args.stride):
         row = rows[i]
+        window = rows[i:i + max(HORIZONS) + 1]
+        if since_jump[i] < first or any(r["jump"] or r["speed"] < 0.5 for r in window):
+            continue
         controls = np.clip(np.asarray([r["control"] for r in rows[i + 1:i + 1 + max(HORIZONS)]]), -scale, scale)
         actions = controls / scale
         yaw = row["rear"][2]

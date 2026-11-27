@@ -59,6 +59,8 @@ simulation:
     start_heading: 0.6  # Largest heading error (rad) accepted at a restart.
     launch_lookahead: 1.0  # Pure pursuit lookahead (m) on the centerline while driving to the start line.
     launch_timeout: 10.0  # Seconds allowed to reach the start line after go.
+    stop_each_lap: false  # true: after every lap the car slows to a stop, trains the value function and saves the checkpoint while standing, then waits for go behind the start line.
+    stop_decel: 3.0  # Deceleration (m/s^2) of that stop; the car follows the centreline while slowing down.
     record_bag: true  # Record bag_topics with ros2 bag into the run directory.
     bag_topics: [/pf/pose/odom, /odom, /sensors/imu/raw, /sensors/imu, /sensors/core, /drive, /joy, /tf, /tf_static]  # Topics recorded per run.
   replay_path: null  # Only read when backend is replay: a recorded attempt .npz (cartesian, frenet) replayed as the plant to time the planner without a simulator.

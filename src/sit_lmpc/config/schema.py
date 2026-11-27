@@ -53,6 +53,8 @@ class CarConfig:
     start_heading: float = 0.6
     launch_lookahead: float = 1.0
     launch_timeout: float = 10.0
+    stop_each_lap: bool = False
+    stop_decel: float = 3.0
     record_bag: bool = True
     bag_topics: tuple[str, ...] = ("/pf/pose/odom", "/odom", "/sensors/imu/raw", "/sensors/imu",
                                    "/sensors/core", "/drive", "/joy", "/tf", "/tf_static")

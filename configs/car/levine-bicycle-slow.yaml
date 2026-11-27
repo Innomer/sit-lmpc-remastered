@@ -5,6 +5,7 @@ output:
   exp_name: car-levine-bicycle-slow
 simulation:
   initial_speed: 1.0
+  retry_speed: 1.0
   max_laps: 8
   car:
     max_speed: 2.0

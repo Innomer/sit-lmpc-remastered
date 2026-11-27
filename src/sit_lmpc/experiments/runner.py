@@ -46,7 +46,7 @@ from sit_lmpc.planners.lmppi import (
 from sit_lmpc.planners.safe_set import SafeSet
 from sit_lmpc.planners.change_monitor import wall_distance_field, body_clearance, stretch_length, tag_seconds
 from sit_lmpc.planners.probabilistic import SafetyStop, configured_candidate_counts
-from sit_lmpc.training.value import ValueTrainer
+from sit_lmpc.training.value import ValueTrainer, feature_names, fit_value
 from sit_lmpc.training.risk import RiskTrainer
 from sit_lmpc.training.risk import Episode
 from sit_lmpc.training.dynamics import DynamicsBeliefLearner
@@ -668,6 +668,36 @@ def _run(config, tracking_only, keyboard_cleanup):
             context=learning_context,
         )
     )
+    if simulation.backend == "car" and trainer is not None:
+        precompile_started = time.perf_counter()
+        width = len(feature_names(config.value.input_mode)) + 1
+        dummy = np.random.default_rng(0).normal(size=(200, width))
+        warm_snapshot, _ = fit_value(trainer.state, dummy, replace(config.value, epochs=1), planner.half_width,
+                                     simulation.seed, 0)
+        trainer.warmup(warm_snapshot)
+        events.emit("value_precompile", seconds=time.perf_counter() - precompile_started)
+        precompile_started = time.perf_counter()
+        from sit_lmpc.planners.warm_laps import warm_safe_set
+
+        warm_snapshots = [warm_snapshot]
+        if planner.change_value_tag:
+            tag_config = replace(config.value, input_mode="state_tag", epochs=1)
+            tag_dummy = np.random.default_rng(0).normal(size=(200, len(feature_names("state_tag")) + 1))
+            tag_state = ValueTrainer(tag_config, planner.half_width, simulation.seed, directory).state
+            tag_snapshot, _ = fit_value(tag_state, tag_dummy, tag_config, planner.half_width, simulation.seed, 0)
+            warm_snapshots.append(tag_snapshot)
+        warm_planner = LMPPI(planner, model, track, simulation.seed, config.value.samples,
+                             randomness=ExperimentRandomness(simulation.seed), value_input_mode=config.value.input_mode,
+                             scenario_provider=current_distribution())
+        warm_safe, warm_frenet, warm_cartesian = warm_safe_set(
+            planner, simulation.timestep, track, simulation.seed, learned.corners,
+            min(planner.warmup.max_speed, simulation.car.max_speed))
+        warm_safe.change_monitor = change_monitor
+        for snapshot_used in warm_snapshots:
+            for position in (40, 41, 42):
+                warm_planner.update(jnp.asarray(warm_cartesian[position, :7]), warm_frenet[position, :7].copy(),
+                                    snapshot_used, warm_safe)
+        events.emit("planner_precompile", seconds=time.perf_counter() - precompile_started)
     def risk_query_counts(cutoff):
         counts = []
         if config.diagnostics.keyboard_controls and interactive_available(config.diagnostics):
@@ -915,8 +945,32 @@ def _run(config, tracking_only, keyboard_cleanup):
                         previous=previous_predictor, current=current_predictor,
                         risk_context="continuation policy changed; reassess cutoff on fresh attempts")
 
+    pending_checkpoint = None
+
+    def busy(worker):
+        return worker is not None and worker.thread is not None and worker.thread.is_alive()
+
+    def start_value_training():
+        nonlocal tag_trainer
+        trainer.context = {
+            **learning_context,
+            "collected_success_controller_versions": sorted(success_controller_versions),
+            "successful_attempt_count": len(laps),
+        }
+        trainer.start(safe_set.training_data(config.value.input_mode))
+        if planner.change_value_tag and change_monitor is not None and change_monitor.active:
+            if tag_trainer is None:
+                tag_trainer = ValueTrainer(
+                    replace(config.value, input_mode="state_tag"), planner.half_width, simulation.seed,
+                    directory / "value_tag", events.emit, randomness=randomness.fork("value_tag"),
+                    prediction_batch_size=planner.samples * planner.horizon, context=learning_context)
+                events.emit("tag_value_started", lap=change_monitor.lap)
+            tag_trainer.start(safe_set.training_data("state_tag"))
+
     def write_checkpoint(next_step, state_cartesian, state_frenet, *, reset_from_failure=False):
         """Publish only a complete trial boundary, after both workers finish."""
+        nonlocal pending_checkpoint
+        pending_checkpoint = None
         if trainer is not None:
             trainer.wait()
         if risk_trainer is not None:
@@ -1362,7 +1416,15 @@ def _run(config, tracking_only, keyboard_cleanup):
                 renderer=renderer, plots=restored_plots, emit=events.emit)
         if not resuming:
             write_checkpoint(0, cartesian, frenet)
+        pending_training = False
+        lap_stop = simulation.backend == "car" and simulation.car.stop_each_lap and trainer is not None
         for index in range(resume_state["next_step"] if resuming else 0, simulation.max_steps):
+            if not busy(trainer) and not busy(tag_trainer):
+                if pending_checkpoint is not None:
+                    write_checkpoint(*pending_checkpoint)
+                if pending_training:
+                    start_value_training()
+                    pending_training = False
             if history is not None and history.poll():
                 status = "interrupted"
                 break
@@ -1851,22 +1913,10 @@ def _run(config, tracking_only, keyboard_cleanup):
                     events.emit("safe_set_retention", laps=len(safe_set.frenet),
                                 states=safe_set.state_count, min_states=planner.safe_set_min_states)
                 if safe_set_added and trainer is not None:
-                    trainer.context = {
-                        **learning_context,
-                        "collected_success_controller_versions": sorted(
-                            success_controller_versions
-                        ),
-                        "successful_attempt_count": len(laps),
-                    }
-                    trainer.start(safe_set.training_data(config.value.input_mode))
-                    if planner.change_value_tag and change_monitor is not None and change_monitor.active:
-                        if tag_trainer is None:
-                            tag_trainer = ValueTrainer(
-                                replace(config.value, input_mode="state_tag"), planner.half_width, simulation.seed,
-                                directory / "value_tag", events.emit, randomness=randomness.fork("value_tag"),
-                                prediction_batch_size=planner.samples * planner.horizon, context=learning_context)
-                            events.emit("tag_value_started", lap=change_monitor.lap)
-                        tag_trainer.start(safe_set.training_data("state_tag"))
+                    if simulation.backend == "car" and (lap_stop or busy(trainer) or busy(tag_trainer)):
+                        pending_training = True
+                    else:
+                        start_value_training()
                 if density_trainer is not None:
                     density_trainer.fit(safe_set)
                     publish_density()
@@ -1884,11 +1934,19 @@ def _run(config, tracking_only, keyboard_cleanup):
                 )
                 lap_time = 0.0
                 if dataset.trials >= simulation.max_laps:
+                    if lap_stop:
+                        simulator.brake_to_stop()
+                        if pending_training:
+                            start_value_training()
+                            pending_training = False
                     write_checkpoint(index + 1, next_cartesian, next_frenet)
                     status = "lap_limit"
                     break
                 if dataset.trials % config.output.checkpoint_every_trials == 0:
-                    write_checkpoint(index + 1, next_cartesian, next_frenet)
+                    if simulation.backend == "car" and (busy(trainer) or pending_training):
+                        pending_checkpoint = (index + 1, next_cartesian.copy(), next_frenet.copy())
+                    else:
+                        write_checkpoint(index + 1, next_cartesian, next_frenet)
             if terminated or truncated:
                 status = "simulator_terminated" if terminated else "simulator_truncated"
                 break
@@ -1896,6 +1954,31 @@ def _run(config, tracking_only, keyboard_cleanup):
                 if risk_trainer is not None:
                     risk_trainer.wait()
                     show_validation()
+                if lap_stop:
+                    simulator.brake_to_stop()
+                    if pending_training:
+                        start_value_training()
+                        pending_training = False
+                    trainer.wait()
+                    if tag_trainer is not None:
+                        tag_trainer.wait()
+                    if pending_checkpoint is not None:
+                        write_checkpoint(*pending_checkpoint)
+                    restart = finished[0].cartesian[0].copy()
+                    if simulation.retry_speed is not None:
+                        restart[3] = float(simulation.retry_speed)
+                        restart[[2, 5, 6]] = 0.0
+                    (next_cartesian, next_frenet), _ = simulator.reset(restart)
+                    if encoder_belief is not None:
+                        encoder_belief.reset()
+                        next_cartesian, next_frenet = apply_encoder(next_cartesian, next_frenet)
+                    if rssm_filter is not None:
+                        rssm_filter.reset()
+                        next_cartesian, next_frenet = apply_rssm(next_cartesian, next_frenet)
+                    elif change_monitor is not None:
+                        next_cartesian, next_frenet = apply_tag(next_cartesian, next_frenet)
+                    nominal.actions = jnp.zeros((planner.horizon, 2), dtype=model.params.dtype)
+                    learned.actions = jnp.zeros_like(learned.actions)
                 collector = begin_attempt(next_cartesian, next_frenet)
             cartesian, frenet = next_cartesian, next_frenet
     except SafetyStop as error:

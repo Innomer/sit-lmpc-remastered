@@ -8,6 +8,8 @@ simulation:
   map: tracks/levine_sim/levine_sim
   steering_limit: null  # the sim car's own limit (0.42 rad): the Levine sim centreline has 0.9 m corners, tighter than the real car's 0.34 rad allows (0.93 m), so the warm-up profile would stop there
   max_laps: 8
+  ros:
+    actuation_delay: 0.0  # the sim bridge has no actuation delay; the car configs compensate the real 0.2 s
   car:
     odom_topic: /ego_racecar/pf_odom
     speed_topic: /ego_racecar/wheel_odom

@@ -9,8 +9,10 @@ output:
   exp_name: car-levine-bicycle
 simulation:
   max_laps: 15
+  retry_speed: 1.5  # after a stop the car drives to the start line at this speed, not at the failed lap's line speed
   car:
     max_speed: 7.0
+    stop_each_lap: true  # after every lap: slow to a stop, train and save while standing, then wait for go behind the line
     record_bag: true
     bag_topics: [/pf/pose/odom, /odom, /sensors/imu/raw, /sensors/imu, /sensors/core, /scan, /drive, /joy, /tf, /tf_static]
 planner:

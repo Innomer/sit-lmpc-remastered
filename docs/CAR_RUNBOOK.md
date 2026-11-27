@@ -124,8 +124,18 @@ If it leaves the track or sees an obstacle it stops and waits; put it back behin
 python -m sit_lmpc.cli.racecar --config configs/car/levine-bicycle.yaml
 ```
 
-15 laps: 5 warm-up, 10 learned. The bag (`/pf/pose/odom`, `/odom`, IMU, `/scan`, `/drive`, …) is recorded in
-`results/levine_self_again/car-levine-bicycle-<time>/bag`. After a battery swap, resume from the last checkpoint:
+15 laps: 5 warm-up, 10 learned. The run records its own bag (`simulation.car.record_bag: true`) in
+`results/levine_self_again/car-levine-bicycle-<time>/bag`; check that the log prints `car_bag_recording`. To record by
+hand instead (for example a joystick drive, or if the run's recording failed), in another terminal with the same shell
+setup:
+
+```bash
+ros2 bag record -o bags/levine-$(date +%Y%m%d-%H%M%S) \
+  /pf/pose/odom /odom /sensors/imu/raw /sensors/imu /sensors/core /scan /drive /joy /tf /tf_static
+```
+
+Ctrl-C stops the recording. These are the topics in `simulation.car.bag_topics`; `scripts/bag_check.py` needs at
+least the pose, wheel speed, IMU, `/scan` and `/drive`. After a battery swap, resume from the last checkpoint:
 `python -m sit_lmpc.cli.racecar --config configs/car/levine-bicycle.yaml --resume results/levine_self_again/car-levine-bicycle-<time>/checkpoints/trial-<N>`.
 
 ## 8. Offline bag check (laptop or Jetson, no driving)
