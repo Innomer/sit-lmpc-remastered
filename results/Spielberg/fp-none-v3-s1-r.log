@@ -1,0 +1,18 @@
+[dynamics_model_loaded] kind=gaussian_bnn | latent_dimension=16 | particles=64 | adaptation=frozen_population | numerical_substep_mismatch=True
+[start] learning | seed=1 | friction actual/model=1.049/None | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[attempt] #1 success | 384 steps
+[lap] trial 1 | 38.4 s | avg speed 8.894 m/s | mppi
+[checkpoint_saved] file=checkpoints/trial-000001 | trials=1
+[finish] status=lap_limit | trials=1 | successful_laps=1 | failed_attempts=0 | applied_steps=384 | training_generations=0 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/fp-none-v3-s1-r
+[control_timing_summary] steps=384 | control_period_seconds=0.1 | stepping=lockstep

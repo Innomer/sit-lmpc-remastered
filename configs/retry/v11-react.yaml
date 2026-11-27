@@ -1,0 +1,6 @@
+# Retry mode: v11 + the hand-written speed reaction (rssm-latent-v11-react.yaml, entry 41 settings).
+extends: ../world/rssm-latent-v11-react.yaml
+output:
+  exp_name: retry-v11-react
+planner:
+  sit_lmpc_mode: false

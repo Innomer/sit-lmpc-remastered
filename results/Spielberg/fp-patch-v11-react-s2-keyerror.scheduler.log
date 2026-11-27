@@ -1,0 +1,2 @@
+[condition] waiting; 1 events by lap
+[condition] after lap 8: {'lap': 8, 'patches': [{'s_start': 85.0, 's_end': 115.0, 'mu': 0.6}]}

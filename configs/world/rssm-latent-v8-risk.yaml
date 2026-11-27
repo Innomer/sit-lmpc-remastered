@@ -1,0 +1,9 @@
+# rssm-v8 with the LiDAR clearance check and the crash-risk head (runs/rssm-v8-risk) as a soft cost, varied warm-up
+# (full pure-pursuit profile capped at 9 m/s). Same planner settings as configs/fast-diag/known-varied-warmup.yaml.
+extends: rssm-latent-v8-varied.yaml
+output:
+  exp_name: rssm-latent-v8-risk
+planner:
+  dynamics:
+    rssm_risk: runs/rssm-v8-risk
+    rssm_risk_weight: 1.0

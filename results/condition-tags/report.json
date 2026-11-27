@@ -1,0 +1,54 @@
+{
+ "change-grip-drop-v11": {
+  "change_step": 3095,
+  "probe_before_change": {
+   "mean": 1.0270226001739502,
+   "within_0.1": 0.982875605815832
+  },
+  "fallback_before_change_m": {
+   "median": 0.003461856162175536,
+   "p95": 0.1828264385461807
+  },
+  "probe_after_change": {
+   "mean": 0.9202395081520081,
+   "true": 0.7000000000000002,
+   "within_0.1_after_2s": 0.05102420856610801,
+   "seconds_to_within_0.1_for_2s": null
+  },
+  "fallback_after_change_m": {
+   "median": 0.20285646617412567,
+   "p95": 1.3658804655075067
+  }
+ },
+ "change-patch-v11": {
+  "change_step": 3123,
+  "probe_before_change": {
+   "mean": 1.0278124809265137,
+   "within_0.1": 0.9852705731668268
+  },
+  "fallback_before_change_m": {
+   "median": 0.0032977566588670015,
+   "p95": 0.18150590956211013
+  },
+  "patch": {
+   "passes": 4,
+   "steps_per_pass": [
+    38,
+    38,
+    35,
+    32
+   ],
+   "probe_inside_mean": 0.9116108417510986,
+   "probe_outside_mean": 1.0131440162658691,
+   "probe_inside_within_0.1": 0.0,
+   "probe_min_per_pass": [
+    0.7421976327896118,
+    0.7348475456237793,
+    0.7088918685913086,
+    0.7045873999595642
+   ],
+   "fallback_inside_median_m": 0.2394563853740692,
+   "fallback_outside_median_m": 4.0713766793487594e-05
+  }
+ }
+}

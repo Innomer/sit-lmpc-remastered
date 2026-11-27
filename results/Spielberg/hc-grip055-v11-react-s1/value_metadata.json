@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "model": "normalizing_flow",
+  "value_config": {
+    "model": "normalizing_flow",
+    "input_mode": "state",
+    "hidden_dims": 128,
+    "layers": 4,
+    "bins": 8,
+    "activation": "swish",
+    "batch_size": 300,
+    "epochs": 300,
+    "learning_rate": 5e-05,
+    "samples": 20,
+    "boundary_samples": 100
+  },
+  "generation": 12,
+  "input_mode": "state",
+  "features": [
+    "s",
+    "ey",
+    "steering_angle",
+    "speed",
+    "heading_error"
+  ],
+  "state_units": [
+    "m",
+    "m",
+    "rad",
+    "m/s",
+    "rad"
+  ],
+  "action_units": [],
+  "action_timing": null,
+  "target": "legacy extended successful-lap time value (not paper task cost)",
+  "context": {
+    "master_seed": 1,
+    "map": "Spielberg",
+    "track_length": 343.32261693378706,
+    "boundary_half_width": 1.1,
+    "timestep": 0.1,
+    "state_noise": 0.001,
+    "control_noise": [
+      0.001,
+      0.001
+    ],
+    "process_noise": "none; existing noise is controller-input/actuation noise",
+    "sit_lmpc_mode": true,
+    "dynamics_belief": "disabled",
+    "dynamics_predictor": "fixed",
+    "endpoint_action": "none; state-only estimates",
+    "mixed_input_modes": false,
+    "risk_control_use": "predictor learned-risk score; independent of geometric chance events",
+    "probabilistic_safety": false,
+    "chance_control_use": "any-step boundary and terminal-hull violation probabilities; LMPPI only, tracking warm-up unconstrained",
+    "value_continuation": "logged successful-lap behavior; legacy time target",
+    "warmup_source": null,
+    "collected_success_controller_versions": [
+      [
+        "lmppi",
+        3
+      ],
+      [
+        "lmppi",
+        4
+      ],
+      [
+        "lmppi",
+        5
+      ],
+      [
+        "lmppi",
+        6
+      ],
+      [
+        "lmppi",
+        7
+      ],
+      [
+        "lmppi",
+        8
+      ],
+      [
+        "lmppi",
+        9
+      ],
+      [
+        "lmppi",
+        10
+      ],
+      [
+        "lmppi",
+        11
+      ],
+      [
+        "mppi",
+        0
+      ]
+    ],
+    "successful_attempt_count": 13
+  }
+}

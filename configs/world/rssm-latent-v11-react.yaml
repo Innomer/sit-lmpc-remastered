@@ -1,0 +1,4 @@
+# Same as rssm-latent-v11-change.yaml (the evidence speed reaction is on there since entry 41), under its own name.
+extends: rssm-latent-v11-change.yaml
+output:
+  exp_name: rssm-latent-v11-react

@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rssm-latent-slow-smoke",
+  "files": {
+    "state.json": "aefe41a4d30d27a4dbdbdeb8ee4c7a576af23d2e4a0109f2a7e9b2beb793a6fc",
+    "events.jsonl": "cb29b97e489143c7ff2de8e0a8499442c6d8530e5bc910387d3e91895ee6051f",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "cda24e599689cf65209ebb43ef9ba7422592144c6e9ed95578beaa6223aa6c87",
+    "config.yaml": "4bbf6ddc2e3961a14af2e68917a3286972471f1cd34db4f0ccc93d13e1190d28",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "0d7aa015a3ba0102ec6e49afd43bd3508314ca459a14dc1c610f60a9554f11bb"
+  }
+}

@@ -1,0 +1,8 @@
+# rssm-v8 with the LiDAR clearance check and a warm-up whose speed varies around the lap (full pure-pursuit profile,
+# capped at 9 m/s, inside the Spielberg training data).
+extends: rssm-latent-v8-slow.yaml
+output:
+  exp_name: rssm-latent-v8-varied
+planner:
+  warmup:
+    speed_scale: 1.0

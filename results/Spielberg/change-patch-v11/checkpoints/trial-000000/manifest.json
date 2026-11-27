@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/change-patch-v11",
+  "files": {
+    "state.json": "c68a63a654ff17b7155dc93018bce2b8d51f7b0be12776a9bf26081b92aaa14c",
+    "events.jsonl": "5948460d6e042047c5cde930ac414507f33e350abb63279a5d5d16fc2db4644e",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "49e43846d2420c82a54382101efcf6df2e82f28a352afe0bd230d376e9b27b63",
+    "config.yaml": "8cbdfebb8515a0c5ab6f87c8d10b40259b22dc8a67522246089c8e9f26d6caa7",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "40ad7f5b3c83443a509d5b093a395ac26e6e12de95f23ecc3e7b19b7e4cd2687"
+  }
+}

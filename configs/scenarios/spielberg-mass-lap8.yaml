@@ -1,0 +1,5 @@
+# Mass +30% mid-session, after 8 finished laps.
+map: Spielberg
+events:
+  - lap: 8
+    condition: {mass_ratio: 1.3}

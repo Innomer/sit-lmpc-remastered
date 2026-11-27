@@ -1,0 +1,16 @@
+[INFO] [1795772325.060128488] [bridge]: Loading map from path: /home/mann-bhanushali/sim_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/maps/Spielberg.yaml
+[INFO] [1795772325.386671640] [bridge]: Start poses: ego_racecar=(0.00, 0.00, -2.88)
+[INFO] [1795772325.684100993] [bridge]: Running in synchronous mode. Simulation will step only on new /drive messages.
+[INFO] [1795772325.693827951] [bridge]: Using simulation time. Will publish /clock topic. Drive and odom will be as fast as possible.
+[INFO] [1795772325.700315944] [bridge]: simulated sensors on: {'imu_offset_x': 0.05, 'imu_offset_y': 0.01, 'imu_yaw_misalignment': 0.01, 'accel_bias_x': 0.2, 'accel_bias_y': -0.15, 'accel_noise': 0.3, 'gyro_bias': 0.01, 'gyro_noise': 0.01, 'gyro_scale': 1.01, 'wheel_scale': 1.03, 'wheel_noise': 0.05, 'pose_noise': 0.02, 'yaw_noise': 0.01, 'pose_lag': 0.05}
+[INFO] [1795772361.721849617] [bridge]: ego_racecar completed lap 1, last lap 38.39 s
+[INFO] [1795772372.245874583] [bridge]: ego_racecar completed lap 2, last lap 38.27 s
+[INFO] [1795772385.503731419] [bridge]: ego_racecar completed lap 3, last lap 38.27 s
+[INFO] [1795772399.277936814] [bridge]: ego_racecar completed lap 4, last lap 38.27 s
+[INFO] [1795772413.814681807] [bridge]: ego_racecar completed lap 5, last lap 38.27 s
+[INFO] [1795772464.025635710] [bridge]: ego_racecar completed lap 6, last lap 39.58 s
+[INFO] [1795772509.797672931] [bridge]: ego_racecar completed lap 7, last lap 39.19 s
+[INFO] [1795772556.140753593] [bridge]: ego_racecar completed lap 8, last lap 39.28 s
+[INFO] [1795772556.152243146] [bridge]: 60 friction zones set
+[INFO] [1795772615.993845575] [bridge]: ego_racecar completed lap 9, last lap 51.58 s
+[WARN] [1795772634.535815329] [bridge]: ego_racecar hit something at (-74.13, 54.13)

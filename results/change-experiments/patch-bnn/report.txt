@@ -1,0 +1,19 @@
+== patch-bnn
+attempt  1  success    mppi    38.4 s
+attempt  2  success    mppi    38.1 s
+attempt  3  success    mppi    38.0 s
+attempt  4  success    mppi    38.1 s
+attempt  5  success    mppi    38.0 s
+attempt  6  success    lmppi   37.9 s
+attempt  7  success    lmppi   38.8 s
+attempt  8  success    lmppi   36.6 s
+attempt  9  success    lmppi   35.9 s
+attempt 10  success    lmppi   35.7 s
+attempt 11  success    lmppi   35.6 s
+attempt 12  success    lmppi   35.3 s
+attempt 13  failure    lmppi   10.9 s  ended at s 115 m, max |slip| 1.46
+attempt 14  failure    lmppi    3.4 s  ended at s 35 m, max |slip| 1.07
+attempt 15  success    lmppi   35.8 s
+[finish] status=lap_limit | trials=15 | successful_laps=13 | failed_attempts=2 | applied_steps=4965 | training
+planning (learned laps) p50 584 ms, p95 774 ms
+condition: {'lap': 7, 'patches': [{'s_start': 85.0, 's_end': 115.0, 'mu': 0.6}]}

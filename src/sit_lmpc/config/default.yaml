@@ -34,6 +34,7 @@ simulation:
     imu_topic: ""  # sensor_msgs/Imu from the bridge's simulated sensors (sensors_enabled); used by belief_update encoder. "" disables.
     wheel_topic: ""  # nav_msgs/Odometry whose twist.linear.x is the simulated wheel speed; used by belief_update encoder.
     pose_topic: ""  # nav_msgs/Odometry with the simulated noisy, lagged particle-filter pose; used by belief_update encoder.
+    lidar_topic: ""  # sensor_msgs/LaserScan for the RSSM world model (planner.dynamics.backend rssm), resampled to 1080 beams over 270 degrees. "" disables.
   car:  # Only read when backend is car (the real F1TENTH car; also needs ros stepping realtime, drive_mode speed_steering_angle, bridge_substeps 1). docs/CAR_DEPLOYMENT.md.
     odom_topic: /pf/pose/odom  # nav_msgs/Odometry pose (rear axle) from the particle filter.
     speed_topic: /odom  # nav_msgs/Odometry whose twist.linear.x is the speed (VESC wheel odometry); "" uses odom_topic.
@@ -67,6 +68,7 @@ simulation:
   friction: 0.5  # Actual Gym friction mu; positive and independent of the predictor/bank; never given to the belief learner.
   mass_ratio: 1.0  # Actual Gym mass divided by nominal 1225.88785 kg; positive, simulator-only, with yaw inertia unchanged as in the v2 training data.
   initial_speed: 10.0  # Starting speed and MPPI tracking target in m/s; > 0. Resume keeps the saved vehicle velocity but uses this new tracking target.
+  retry_speed: null  # Retry mode (planner.sit_lmpc_mode false): after a crash the car restarts at the start line; null keeps the speed the crashed attempt started with, a number restarts at that speed (0 = from standstill, steering, yaw rate and slip zeroed).
   max_laps: 100  # Total successful + physically failed trials, including restored trials; must exceed checkpoint progress on resume, but may be below the old limit.
   max_steps: 100000  # Total control-step cap, including restored steps; must exceed checkpoint progress on resume, but may be below the old limit.
   seed_mode: auto  # [auto, fixed] auto generates a fresh master seed; fixed reuses simulation.seed.
@@ -87,6 +89,16 @@ planner:
     belief_update: frozen  # [frozen, posterior, encoder] frozen keeps BNN prior sampling; posterior updates the Gaussian function belief between laps; encoder sets it every step from the world-model encoder (residual checkpoint + planner.dynamics.encoder). ST uses planner.belief.
     encoder: null  # belief_update encoder only: a trained world-encoder run folder (sit_lmpc.world.train output).
     encoder_state: true  # belief_update encoder: true replaces steering, speed, yaw rate and slip with the encoder's estimate; false keeps the measured state.
+    rssm: null  # backend rssm: trained RSSM run folder (sit_lmpc.world.rssm_train), filtered every control step from IMU, wheel speed, PF pose and LiDAR.
+    rssm_variant: latent  # [latent, cheap] latent: full world-model rollout of every candidate (h, s, x); cheap: bicycle + residual with h and s held fixed.
+    rssm_model_timestep: 0.1  # Model step for planning rollouts in seconds (0.15 with horizon 10 covers 1.5 s); control stays at simulation.timestep.
+    rssm_state: true  # Replace steering, speed, yaw rate and slip in the planner state with the RSSM estimate.
+    rssm_clearance_margin: 0.35  # LiDAR clearance check (latent variant): candidates whose predicted nearest LiDAR range drops below this many metres are penalised.
+    rssm_clearance_weight: 0.0  # Weight of that penalty, added to the safety cost at every step; 0 disables.
+    rssm_grip_probe: null  # Grip probe folder (sit_lmpc.world.rssm_grip) on this RSSM's (h, d), for planner.condition_tag probe.
+    rssm_risk: null  # Crash-risk head folder (sit_lmpc.world.rssm_risk) trained on this RSSM's latent.
+    rssm_risk_weight: 0.0  # Weight x predicted probability of a crash within 1.5 s at every predicted step. 0 disables.
+    rssm_risk_rank: false  # true: the risk cost also counts in the final candidate ranking (like the other safety costs); false: soft cost only.
     likelihood_power: 1.0  # BNN posterior only: maximum calibrated evidence power; with legacy standard, 1 is ordinary Bayes and (0,1) manually tempers it.
     posterior_method: tempered  # [standard, tempered, noise, noise_tempered] standard uses uncalibrated Bayes; tempered calibrates evidence power; noise calibrates observation noise; noise_tempered calibrates both. Used for BNN posterior updates.
     calibration_fraction: 0.2  # Dynamics hold-out fraction; NF safe-set density uses all retained states for both training and calibration.
@@ -164,6 +176,40 @@ planner:
   safe_set_size: 4  # Positive minimum number of extended lap records retained. LMPPI starts after safe_set_size + 1 completed warm-up laps (here: five).
   condition_threshold: 0.0  # Condition-aware safe set (belief_update encoder): use only laps whose mean estimated friction (encoder z read-out, sit_lmpc.world.readout) lies within this many units of μ of the current estimate; 0 uses every lap.
   condition_min_laps: 4  # Condition-aware safe set: if fewer laps lie within condition_threshold, use this many closest laps.
+  condition_mode: lap  # [lap, state] lap: tag each lap with its mean estimated friction. state: tag every stored state (centered 2 s average of the per-step grip read-out, grip_readout.npz); per hull window, each lap's grip there is the median of its tags, and laps within condition_threshold of the newest lap's value (or of the current filtered estimate when that is lower by more than condition_threshold) are kept, at least condition_min_laps.
+  condition_tau: 1.0  # State mode: forgetting time constant (s) of the confidence-weighted current grip estimate.
+  condition_tag: readout  # [readout, probe, bicycle_error] what tags stored states (backend rssm, state mode): readout = the RSSM's grip read-out from c; probe = a grip probe on (h, d) (planner.dynamics.rssm_grip_probe); bicycle_error = the nominal bicycle model's 1.0 s position error ending at that step (model-agnostic; larger = worse). The current value is the median of the last 2 s.
+  change_detection: false  # Safe set v2 (backend rssm): detect a condition change live from the nominal bicycle model's 1.0 s position error and react within the lap (sit_lmpc.planners.change_monitor).
+  change_stretch: null  # Track stretch length (m) for per-stretch history, modes and the safe-set cap. null: track length / 15 clipped to [2, 10] m (10 m on Spielberg, 4.1 m on the Levine sim map).
+  change_window: 10  # Steps in the live median that is compared with the stretch's history.
+  change_ratio: 3.0  # A change is flagged when the live median exceeds change_ratio x the stretch's history median ...
+  change_floor: 0.05  # ... and this floor (m). The same test decides, when a stretch is driven after a change, whether it still looks changed.
+  change_new_laps: 2  # Laps driven fully after the change needed before changed stretches use them instead of the conservative laps.
+  change_conservative_laps: 2  # Conservative set: this many of the slowest laps from before the change, warm-up laps first.
+  change_value: true  # Option B: in conservative / new-condition windows, score candidates with the time-to-go of the same laps (by track position) instead of the learned value function.
+  change_speed: null  # [null, fixed, probe] safe set v2 speed reaction: on a detected change, cap every stretch at factor x its pre-change speed at once; fixed uses change_speed_factor, probe uses sqrt(grip probe / nominal grip) clipped to [0.6, 1.0]. A relaxed stretch loses its cap; a changed stretch's factor rises by change_speed_step per lap driven after the change until 1.0.
+  change_speed_factor: 0.8  # Speed-cap factor for change_speed fixed.
+  change_speed_step: 0.05  # Factor added per lap after the change on changed stretches.
+  change_cap_scope: evidence  # [evidence, local, track] evidence: cap every stretch at the detection; a stretch's cap is removed once a pass driven under it shows a tag matching its history, and on a stretch that still looks changed it is raised by change_speed_step only after a pass on which v11's own 1.0 s prediction error is within that stretch's pre-change range (no timer); a repeat detection caps only its own stretch. local: cap only stretches whose live tag shows a change (a repeat detection caps only its own stretch); track: the old behaviour, every detection caps every stretch not marked changed.
+  change_global_share: 0.5  # local scope: cap the whole track (except stretches relaxed since the change) once more than this share of the stretches driven since the change look changed ...
+  change_global_min: 8  # ... and at least this many stretches (80 m) have been driven since the change; fewer would let a short patch, driven first after detection, look like a track-wide change.
+  change_cap_rank_weight: 1.0  # Weight of the stretch speed-cap cost in the final pick, on the scale of the safe-set violation (track limits and the other safety terms count x1000). At x1000 a 0.1 m/s overshoot vetoed a plan like a wall hit and the car drove about 2 m/s under the cap (entry 38).
+  change_cap_sample_weight: 1.0  # Weight of the stretch speed-cap cost per step in the sampling (cost ramps 0 -> 1 over 0.5 m/s above the cap).
+  change_cap_strong_weight: 0.1  # evidence scope: sampling weight of the cap cost on a capped stretch until the car is first at or under its cap there; the cap also counts in the final pick (change_cap_rank_weight) in this phase.
+  change_cap_soft_weight: 0.03  # evidence scope: sampling weight once the car is under the cap on the current pass of that stretch (every new pass starts strong again); the cap no longer counts in the final pick, so the car drives close to it.
+  change_raise_band: 0.5  # Unused since entry 41 (was the speed band for matching pre-change errors).
+  change_raise_step: 0.3  # evidence scope: a still-changed stretch's cap is raised only if v11's 1.0 s error on the latest counted pass (replayed in one batch at lap end) is at or below a line fitted to that stretch's pre-change error against speed, evaluated at the pass's mean speed, the pass is clean (body clearance >= change_min_clearance, max |slip| within the stretch's pre-change max), and then by this many m/s, never above the pre-change speed (reaching it removes the cap).
+  change_min_clearance: 0.2  # Minimum body-to-wall clearance (m, sim map) for a clean pass.
+  change_pass_share: 0.9  # A pass on a capped stretch counts toward relaxing or raising only if the speed was at or under the cap on at least this share of its steps.
+  change_brake_candidates: 4  # evidence scope: while a strong-phase cap below the current speed lies within the planning horizon, the last this-many final-pick candidates (highest lambdas) are replaced by hard-braking plans (accel -1, -0.7, -0.4 throughout, -1 then 0) with the steering of the first candidate, so a cap-respecting plan exists.
+  change_safe_set: laps  # [laps, tag] After a detected change: laps uses the pre-change slowest laps / laps driven fully after the change (safe set v2); tag keeps, per hull window, only stored laps whose per-stretch bicycle-error tag matches each stretch's current condition (changed vs normal), falling back to the slowest pre-change laps while a stretch is unjudged or has fewer than change_new_laps matching laps. Nothing is filtered before a detection.
+  change_value_tag: false  # After the first detection, train a second value network with the stretch's tag as an extra input (state_tag) and use it once ready; before a detection the plain value is used.
+  change_scale_safe_set: true  # After a detection, stored pre-change states on stretches not yet judged or judged changed enter the hull with their speed scaled by that stretch's cap factor (change_speed_factor where there is no cap), so the safe set and the caps agree; laps driven after the change are not scaled. Nothing changes before a detection.
+  speed_diverse_factors: [0.9, 0.75, 0.6]  # Every step, final-pick candidates that are last step's shifted plan with its speed profile scaled by these factors (steering kept, acceleration recomputed within limits); scored like any other candidate. [] disables.
+  safe_set_cap_laps: 4  # Safe-set cap: per stretch (change_stretch), only the newest this-many stored laps plus the lap with the lowest mean speed on that stretch enter the hull and the value training data; after a detected change also every lap driven after it and the conservative fallback laps. 0 keeps everything. Bounds planning time and value training as laps accumulate.
+  change_tag_seconds: null  # Change-detection tag window (s): the bicycle model's position error over this prediction time. null: 1.0 s, or 0.5 s when stretches are under 5 m.
+  change_breakdown: false  # Log the final-pick cost breakdown of every candidate each learned step (candidate_breakdown.npz).
+  condition_fallback: closest  # [closest, newest] when fewer than condition_min_laps laps match on a stretch: take the closest-tagged laps, or the newest laps.
   safe_set_min_states: 0  # Nonnegative integer; 0 disables the state-count minimum. Shared by controller safe-set retention and fixed-step NF training history. Keep at least safe_set_size laps and add older successful laps to reach this many unique states; NF uses all retained states and repeats passes to reach steps.
   safe_set_max_points: 2000000  # Positive cap on combined safe-set candidate points before local selection. Excess points are randomly subsampled; full saved lap data is not discarded.
   hull_selection_points: 1000  # Maximum local points used to construct the five-dimensional hull; integer >= 6. Higher values can increase hull construction and evaluation cost.
@@ -203,6 +249,19 @@ planner:
   reference_interval: 3.0  # Positive local safe-set search-window factor; original default is 3.0. Window margins use speed * (reference_interval +/- 1) * timestep.
   search_points: 400  # Local waypoint-index search range for Cartesian -> Frenet projection. Use a positive integer; larger ranges search more of the track.
   action_rate_penalty: 0.01  # Nonnegative LMPPI penalty on consecutive changes in normalized actions. Set 0.0 to disable the action-rate penalty.
+  safety_speed_cap: null  # Planner speed cap in m/s: predicted steps above it are penalised (full penalty 0.5 m/s over). null disables.
+  safety_speed_weight: 1.0  # Weight of the speed-cap penalty per step.
+  safety_slip_limit: 0.35  # Predicted |slip| (rad) above this is penalised (full penalty 0.1 rad over).
+  safety_slip_weight: 0.0  # Weight of the slip penalty per step; 0 disables (off by default: at 0.35 rad it held the bicycle baseline back). Safety penalties are not scaled by the lambda grid and also rank the final candidates.
+  footprint_limits: true  # Track limits on the car body: the boundary check (sampling cost and final ranking) uses the body corner furthest from the centre line instead of the reference point.
+  footprint_length: null  # Body length (m); null takes the vehicle's length parameter (0.58 m).
+  footprint_width: null  # Body width (m); null takes the vehicle's width parameter (0.31 m).
+  footprint_buffer: 0.10  # With footprint_limits, the body-corner track limit is half_width - footprint_buffer (the car's half-width is not subtracted again; 1.10 - 0.10 = 1.00 m on Spielberg). Without footprint_limits the old centre-point limit half_width - boundary_buffer applies.
+  safe_set_footprint_filter: true  # With footprint_limits, drop stored safe-set states whose body corner breaks the track limit before building the local hull.
+  footprint_offset: -0.0065  # Body centre ahead of the reference point (the centre of gravity), m; the sim's collision body spans -0.125..0.455 m from the rear axle.
+  safety_heading_limit: null  # Heading relative to the track (rad) above which predicted steps are penalised (full penalty 0.2 rad over); null disables (e.g. 0.6).
+  safety_heading_weight: 1.0  # Weight of that penalty; counts in the final ranking like the other safety costs.
+  boundary_margin: null  # Track-limit margin in metres per predicted step: one value (ramped linearly from value/H at step 1 to value at step H) or one value per step. Tightens the boundary check in the plan reward and the final ranking (model error near the edges). null disables.
   mean_value: true  # [true, false] true: average V(x_1..x_H) or Q(x_0,u_0)..Q(x_H-1,u_H-1); false: terminal V(x_H) or Q(x_H,u_H) with a sampled extra action.
   scan_rollout: true  # [true, false] true: use jax.lax.scan for ST rollouts; false: use the unrolled baseline. --no-scan overrides this to false. Both paths use the same dynamics.
 

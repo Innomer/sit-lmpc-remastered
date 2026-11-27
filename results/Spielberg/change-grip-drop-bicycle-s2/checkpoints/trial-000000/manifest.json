@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/change-grip-drop-bicycle-s2",
+  "files": {
+    "state.json": "1f67d8fd3b69bc3d2c96b9479f5a71cbed317d1325a67d11e63f7dcebafdc548",
+    "events.jsonl": "76306b581fe62a1fe3093e8d335af74b1488d73641830b9ffe68517858634eae",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "a413aaec477853d7f7d5019a4479807e36065c0065f29702450bca320b0b7740",
+    "config.yaml": "a1a502edbb744979eaf6e9cd18c64458dea5062e0af55cfb5ce34cc3ade08f5d",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "467e764b5fcdfb4ac79d9711edc265795ef3a7d5554b9469d170ea2ef219333e"
+  }
+}

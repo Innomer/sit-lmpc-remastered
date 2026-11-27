@@ -1,0 +1,9 @@
+# Sim-only diagnostic: rssm-v8 + LiDAR clearance planning from the sim's true state (steering, speed, yaw rate, slip
+# not replaced by the RSSM estimate; the filter still runs every step for the memory and latent). Slip cost off, no
+# margin, no risk head, varied warm-up.
+extends: rssm-latent-v8-varied.yaml
+output:
+  exp_name: rssm-latent-v8-truestate
+planner:
+  dynamics:
+    rssm_state: false

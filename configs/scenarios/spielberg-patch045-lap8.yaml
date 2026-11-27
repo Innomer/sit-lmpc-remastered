@@ -1,0 +1,5 @@
+# Low-grip patch (mu 0.45) on one corner, s = 85-115 m, from 8 finished laps on.
+map: Spielberg
+events:
+  - lap: 8
+    patches: [{s_start: 85.0, s_end: 115.0, mu: 0.45}]

@@ -44,6 +44,9 @@ class EncoderBelief:
         self._step = step
         readout = run / "condition_readout.npz"
         self.readout = dict(np.load(readout)) if readout.exists() else None
+        grip = run / "grip_readout.npz"
+        self.grip_readout = dict(np.load(grip)) if grip.exists() else None
+        self.last_w_std = None
         self.reset()
 
     def friction(self, w_mean):
@@ -51,6 +54,16 @@ class EncoderBelief:
         if self.readout is None:
             return None
         return float(np.asarray(w_mean) @ self.readout["weights"] + self.readout["bias"])
+
+    def grip(self, w_mean, w_std):
+        """Per-step grip estimate from the read-out refit on per-step w (scripts/grip_estimate_eval.py) and its
+        variance from the encoder's own w std, or None without grip_readout.npz."""
+        if self.grip_readout is None:
+            return None
+        weights = self.grip_readout["weights"]
+        value = float(np.asarray(w_mean) @ weights + self.grip_readout["bias"])
+        variance = float((np.asarray(w_std) ** 2) @ (weights ** 2))
+        return value, variance
 
     def reset(self):
         self.carry = jnp.zeros((1, self.hidden_size), jnp.float32)
@@ -61,6 +74,7 @@ class EncoderBelief:
         normalized = (np.asarray(observation, np.float32) - self.observation_mean) / self.observation_std
         self.carry, hidden, w_mean, w_log_std = self._step(self.carry, jnp.asarray(normalized))
         w_mean, w_std = np.asarray(w_mean), np.exp(np.asarray(w_log_std))
+        self.last_w_std = w_std
         z_mean = self.prior_mean + self.prior_factor @ w_mean
         z_factor = self.prior_factor * w_std[None, :]
         return np.asarray(hidden), z_mean, z_factor, w_mean

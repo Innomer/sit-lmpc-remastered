@@ -1,0 +1,65 @@
+[start] learning | seed=1 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[attempt] #1 success | 638 steps
+[lap] trial 1 | 63.8 s | avg speed 5.555 m/s | mppi
+[control_step_timing] steps=700
+[control_step_timing] steps=800
+[control_step_timing] steps=900
+[control_step_timing] steps=1000
+[control_step_timing] steps=1100
+[control_step_timing] steps=1200
+[attempt] #2 success | 638 steps
+[lap] trial 2 | 63.8 s | avg speed 5.529 m/s | mppi
+[safe_set_retention] laps=1 | states=669 | min_states=1000000
+[control_step_timing] steps=1300
+[training] generation=1 | epochs=300 | loss=-1.452 | gradient_steps=900
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[control_step_timing] steps=1600
+[control_step_timing] steps=1700
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[attempt] #3 success | 637 steps
+[lap] trial 3 | 63.7 s | avg speed 5.53 m/s | mppi
+[safe_set_retention] laps=2 | states=1306 | min_states=1000000
+[control_step_timing] steps=2000
+[training] generation=2 | epochs=300 | loss=-2.469 | gradient_steps=2400
+[control_step_timing] steps=2100
+[control_step_timing] steps=2200
+[control_step_timing] steps=2300
+[control_step_timing] steps=2400
+[control_step_timing] steps=2500
+[attempt] #4 success | 638 steps
+[lap] trial 4 | 63.8 s | avg speed 5.532 m/s | mppi
+[safe_set_retention] laps=3 | states=1944 | min_states=1000000
+[control_step_timing] steps=2600
+[training] generation=3 | epochs=300 | loss=-2.534 | gradient_steps=4800
+[control_step_timing] steps=2700
+[control_step_timing] steps=2800
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[control_step_timing] steps=3100
+[attempt] #5 success | 637 steps
+[lap] trial 5 | 63.7 s | avg speed 5.53 m/s | mppi
+[safe_set_retention] laps=4 | states=2582 | min_states=1000000
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rssm-latent-slow-smoke/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[learned_controller_started] step=3188 | value_generation=3 | hull_facets=1102
+[control_step_timing] steps=3200
+[training] generation=4 | epochs=300 | loss=-2.558 | gradient_steps=7800
+[attempt] #6 failure | 90 steps | collision | lambda_ss mean=6.528 max=18.75 | lambda_boundary mean=4.792 max=18.75
+[finish] status=collision | trials=6 | successful_laps=5 | failed_attempts=1 | applied_steps=3278 | training_generations=4 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rssm-latent-slow-smoke
+[control_timing_summary] steps=3278 | control_period_seconds=0.1 | stepping=lockstep

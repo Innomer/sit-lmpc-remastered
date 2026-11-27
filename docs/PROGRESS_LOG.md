@@ -2,7 +2,7 @@
 
 ESE 6150 Team 8. A running history of what was built, tried and found, one line per item.
 Details are in `NOTES.md`, `docs/CAR_DEPLOYMENT.md` and `results/baselines/README.md`.
-Last updated 2026-11-17.
+Last updated 2026-11-22.
 
 ## 1. Methods in play
 
@@ -152,3 +152,71 @@ Frozen copies: `results/baselines/` (configs, seeds, commit, summaries, figures)
 | irl | `910a837` | Jetson CUDA detection, memory note | yes |
 | irl | `ea7e5fb` | frozen sim baselines | yes |
 | irl | `c54aad5` | merge of ros-sim up to `0537143` | yes |
+
+## 10. Issues and fixes (2026-11-17 to 2026-11-22)
+
+Every problem hit since the closed-loop runs, what caused it, what was changed, and where it stands.
+
+### 10.1 Grip-change experiments (old technique, `ros-sim`)
+
+| Date | Issue | Cause | Fix | Result / status |
+|---|---|---|---|---|
+| 11-17 | Video renderer crashed with GPU out-of-memory | the track code imports JAX, which tried to reserve most of the GPU while a run held it | `render_run_video.py` forces JAX onto the CPU | fixed |
+| 11-17 | Wrong run name gave "no saved attempts yet" | missing-folder case not handled | clear message listing runs with saved laps | fixed |
+| 11-17 | Grip chart in videos unreadable | true grip drawn flat at the current value; raw per-step guess swings ±0.3; colour bar overlapped | true grip as a step line, 2 s average of the guess, horizontal colour bar | fixed |
+| 11-17 | Video showed the grip drop one attempt early in the TAs' BNN run | the scheduler counts finished laps, the video counted attempts (a crash shifts it) | video counts finished laps like the scheduler | fixed; runs themselves were right |
+| 11-17 | Re-render wiped both run videos | libx264 needs an even frame height (12×7.5 in at 110 dpi = 825) | 112 dpi (1344×840) | originals lost; re-rendered copies are the only ones |
+| 11-17 | A video was committed while still rendering, and its push never reached GitHub | commit ran before the render finished | recommitted the finished file and pushed again | fixed |
+| 11-17 | Closed-loop grip guess swung ±0.23 (warm-up) / ±0.10–0.16 (learned), against ±0.06 offline | the linear read-out picks up cornering-dependent changes in z, worst in the hairpin; encoder inputs checked and found consistent (gyro 0.015 rad/s, wheel 0.28 m/s, controls exact) | read-out refit on per-step z + confidence-weighted filter (τ 1 s) | swing roughly halved (0.06–0.09 on learned laps); per-step noise remains |
+| 11-17 | Grip filter could flip which laps it used within seconds | it compared lap tags with the jumpy per-step guess | per-state tags from the steadier estimate | superseded by the next two rows |
+| 11-17 | Per-point grip filter made the car crawl and stall in the hairpin (`speed_too_low`) | keeping single points by grip kept only part of each corner (the guess dips in tight corners), so the hull ended behind the plan and the planner braked | keep or drop whole laps per stretch of track (median tag per lap per hull window, at least 4 laps) | fixed; rerun stopped by user after 9 clean laps (2 on the patch) |
+| 11-17 | Patch test can't show the filter well | the read-out reads ~0.70 in the hairpin even on normal grip, and the patch (μ 0.6) sits exactly there | none yet | open: move the patch to a fast stretch or make the read-out manoeuvre-aware |
+| 11-17 | Lap-12 spin was blamed on the filter switching to low-grip laps | wrong guess | checked: only 3 low-grip laps were stored then, every step still used a high-grip lap | claim corrected in the results README |
+| 11-17 | Unclear why our runs spin once per run | — | compared slip at the spin corners across models | planner drives 0.55–0.76 rad slip with every model; known model never spins, learned models spin at ~0.72–0.80 (likely model error at high slip, little data there) |
+| 11-17 | "Lateral acceleration vs grip limit" metric gave impossible values | the sim's single-track tyre model is linear, with no friction cap | use slip angle instead | fixed |
+| 11-17 | Known-model runs end at the first collision; other configs carry on | not checked yet | none | open (makes "laps finished" unfair to compare) |
+
+### 10.2 Planner (shared fix, applied to `ros-sim`, `irl`, `world-model`)
+
+| Date | Issue | Cause | Fix | Result / status |
+|---|---|---|---|---|
+| 11-22 | With the 15-step horizon, 41% of planning steps took over 100 ms (p95 236 ms), at any sample count | XLA compiles while driving: hulls copied with `jnp.asarray` (new shape each step) and oversized hulls (>1190 facets) sliced on the GPU | host-side `device_put` and host-side chunking | p95 30 ms, no step over 100 ms; own commit on each branch; lockstep results before it stay valid (NOTES.md) |
+| 11-22 | Bench checkpoints failed to load ("Missing failure trajectory collection") | git does not store empty folders | `.gitkeep` in `failure/` and `incomplete/` | fixed on `world-model` |
+| 11-22 | World-model planning cost estimated at 135 ms+ | estimate assumed poor GPU efficiency | measured: full latent rollout of 1024 × 15 steps 3.7 ms, one filter step 0.1 ms | all variants ~30 ms p95 on the laptop; Jetson still to measure (`scripts/jetson_timing.sh`) |
+
+### 10.3 On-track data collection with LiDAR (`world-model`)
+
+| Date | Issue | Cause | Fix | Result / status |
+|---|---|---|---|---|
+| 11-22 | Existing dataset useless for LiDAR | drives were in empty space, no track walls | new collector driving random vehicles around Spielberg, custom1, Levine sim map | `data/f1tenth-track` |
+| 11-22 | Scan simulator import failed | the venv's `f1tenth_gym` is the bridge's copy, not the vendored one | use the bridge gym's `SegmentScanSimulator2D` (same LiDAR model as the closed-loop sim) | fixed |
+| 11-22 | Batched LiDAR ran out of memory (101 GB) | every pose gathered its own copy of nearby walls | `lax.map` in chunks of 16, on the GPU | 600 Spielberg scans in 50 ms |
+| 11-22 | Levine map would not load | extra `centerline:` key in the yaml | removed | fixed |
+| 11-22 | Track-frame lateral offset of −37.9 m at the start | projection without a hint snapped to the wrong part of the track | previous `s` passed as `s_guess` | fixed |
+| 11-22 | Driver weaved ±0.9 m and hit walls | steering noise up to 1 rad/s; followed the raceline, which hugs the walls | centre line, steering noise ≤ 0.08 × max rate, accel noise ≤ 0.12 × max | better on wide tracks |
+| 11-22 | Car reached 11.5 m/s into the Spielberg hairpin and crashed | speed rule looked only ~10 m ahead; 4 m lookahead cut corners; bumpy centre-line curvature | braking-aware speed profile computed backwards around the lap, smoothed curvature, lookahead 0.6–2.5 m, per-map speed caps | custom1 8/8 full episodes; remaining crashes mostly real grip losses |
+| 11-22 | GPU recompiled the scan for every episode length | variable input length | pad poses to a fixed length | fixed |
+| 11-22 | Levine: 77% of episodes crashed, only ~11% of the data | 1.7 m corridor at 3–7 m/s | 200 extra episodes at 2–5 m/s (crashes ~40%); `--start-index`, `--speed-cap`, `--append` options | Levine ~105k steps; dataset 789 episodes, 293k transitions |
+
+### 10.4 RSSM training (`world-model`)
+
+| Date | Issue | Cause | Fix | Result / status |
+|---|---|---|---|---|
+| 11-22 | Model saw the car's absolute heading | residual and GRU took `x[2:]` (includes yaw) | networks get only steering, speed, yaw rate, slip (normalised) | fixed |
+| 11-22 | Training losses NaN from the start | untrained anchor head produced impossible states (negative speed, huge yaw rate); bicycle rollout exploded (1 s error 54 m) | anchor bounded with a sigmoid to physical limits; rollout states clamped | partly fixed (next row) |
+| 11-22 | Still NaN | the single-track model's low-speed branch has NaN gradients (same issue as the EKF on 11-16) | no gradients through the bicycle model (residual and anchor still train) | fixed |
+| 11-22 | Learning-rate schedule crashed on short test runs | warm-up (500) longer than the run | warm-up = min(500, steps/2) | fixed |
+| 11-22 | RSSM unit tests failed with a dtype error | tests run JAX in 64-bit mode, weights are 32-bit | bicycle casts its inputs to the parameter dtype | 5/5 pass |
+| 11-22 | `test_probability_safety.py` shows 46 errors | the venv uses the system's old pytest, which treats a helper named `setup()` as a setup hook | none (environment, not code) | open |
+| 11-22 | No TensorBoard | not installed | installed `tensorboard` and `tensorboardX` (optional `world` dependency) | localhost:6006 |
+| 11-22 | Model-vs-truth comparisons were images, not graphs | TensorBoard line charts only plot against training step | each checkpoint's comparison written as its own run with step = time index / beam, overlaid via Custom Scalars; top-down LiDAR points added | done |
+| 11-22 | `rssm-v1` blew up at step 9,800 (all losses ×100) and never fully recovered | 24 training episodes end in a spin (slip up to 1.4 rad, yaw rate > 8 rad/s) beyond the model's limits; one batch of those corrupted Adam's statistics | episodes cut before slip > 1.0 rad or yaw rate > 8 rad/s; gradient clip 10 → 1; drop non-finite updates; skip batches 20× above the running loss | `rssm-v2`: no spikes, no skipped batches so far; v1's best checkpoint (step 9,000) kept |
+| 11-22 | Grip head barely learned in v1 (best 0.85; 1.0 = no skill) | KL on c held it near the prior | grip-head weight 1 → 3 | v2 at step 6,000: 0.83 and falling; if it stalls, loosen the KL on c next |
+
+### 10.5 Design deviations to confirm
+
+| Date | What | Why |
+|---|---|---|
+| 11-22 | Anchor head predicts steering, speed, yaw rate, slip; x, y and heading come from the PF | learning absolute map position from LiDAR would tie the model to particular maps; same as the v3 encoder |
+| 11-22 | Condition part c is held constant over a planning rollout (mean of its random walk) | matches the random-walk prior; only the fast part d is sampled |
+| 11-22 | Data collection drives at 10 Hz with one control per 0.1 s | the model assumes a constant control per step (the 100 Hz warm-up driver would break that) |

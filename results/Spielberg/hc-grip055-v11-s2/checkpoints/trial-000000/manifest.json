@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/hc-grip055-v11-s2",
+  "files": {
+    "state.json": "f100890ef4882e5b7f0a967ec0d39590366830bd29e29c94890a6173d66ac9d3",
+    "events.jsonl": "df8bbbeca4d2be9054ee084ab03e953b5534b43840dc29e70cc67014086f3a00",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "60f75364ae246d85d36bd109a4ff0ba91434db6d455fdea65f4facea6763c237",
+    "config.yaml": "cb4c5de5b43f6f1524040ff2f079a1b670a4e53dffa2929fd55822e0c6f3cbf1",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "180652c9261880bd5002707a93b135d6a037c6722de7ec96d88d25adac8aaaaf"
+  }
+}

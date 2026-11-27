@@ -1,0 +1,8 @@
+# rssm-v8 with the LiDAR clearance check and the pure-pursuit warm-up capped at 9 m/s, inside the Spielberg training
+# data (max 10.3 m/s). The uncapped warm-up reaches 14.6 m/s.
+extends: rssm-latent-v8.yaml
+output:
+  exp_name: rssm-latent-v8-slow
+planner:
+  warmup:
+    max_speed: 9.0

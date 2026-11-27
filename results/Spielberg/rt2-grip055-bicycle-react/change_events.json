@@ -1,0 +1,4394 @@
+{
+ "events": [
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 0,
+   "lap": 8,
+   "cap": 7.19993730024858
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 1,
+   "lap": 8,
+   "cap": 7.252046758478338
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 2,
+   "lap": 8,
+   "cap": 7.368571472167969
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 3,
+   "lap": 8,
+   "cap": 7.199965737082742
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 4,
+   "lap": 8,
+   "cap": 7.1999533219770955
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 5,
+   "lap": 8,
+   "cap": 7.098347334428268
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 6,
+   "lap": 8,
+   "cap": 7.173159096457742
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 7,
+   "lap": 8,
+   "cap": 7.404465692693538
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 8,
+   "lap": 8,
+   "cap": 7.199920425415039
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 9,
+   "lap": 8,
+   "cap": 7.199995283647017
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 10,
+   "lap": 8,
+   "cap": 7.178651081431996
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 11,
+   "lap": 8,
+   "cap": 5.952352523803711
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 12,
+   "lap": 8,
+   "cap": 7.173958310213957
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 13,
+   "lap": 8,
+   "cap": 7.097517522176107
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 14,
+   "lap": 8,
+   "cap": 7.199972464821555
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 15,
+   "lap": 8,
+   "cap": 7.199986891313033
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 16,
+   "lap": 8,
+   "cap": 7.199984533136541
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 17,
+   "lap": 8,
+   "cap": 7.001010208129883
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 18,
+   "lap": 8,
+   "cap": 6.911026446024578
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 19,
+   "lap": 8,
+   "cap": 6.976985168457031
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 20,
+   "lap": 8,
+   "cap": 7.195539855957032
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 21,
+   "lap": 8,
+   "cap": 7.199981689453125
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 22,
+   "lap": 8,
+   "cap": 7.19993179321289
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 23,
+   "lap": 8,
+   "cap": 7.251164800470526
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 24,
+   "lap": 8,
+   "cap": 7.236155700683594
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 25,
+   "lap": 8,
+   "cap": 7.199974961714311
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 26,
+   "lap": 8,
+   "cap": 7.200001907348633
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 27,
+   "lap": 8,
+   "cap": 7.208725322376599
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 28,
+   "lap": 8,
+   "cap": 7.200015120072798
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 29,
+   "lap": 8,
+   "cap": 7.199979553222656
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 30,
+   "lap": 8,
+   "cap": 7.077391468394886
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 31,
+   "lap": 8,
+   "cap": 7.199994173916903
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 32,
+   "lap": 8,
+   "cap": 7.200001373291016
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 33,
+   "lap": 8,
+   "cap": 7.2000004855069255
+  },
+  {
+   "step": 3085,
+   "event": "cap set",
+   "stretch": 34,
+   "lap": 8,
+   "cap": 7.199977042458274
+  },
+  {
+   "step": 3085,
+   "event": "detected",
+   "stretch": 1,
+   "lap": 8,
+   "short_m": 0.05295457877218723,
+   "limit_m": 0.05
+  },
+  {
+   "step": 3091,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 8,
+   "cap": 7.252046758478338,
+   "speed": 7.146552562713623
+  },
+  {
+   "step": 3093,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 8,
+   "cap": 7.368571472167969,
+   "speed": 7.0651373863220215
+  },
+  {
+   "step": 3107,
+   "event": "changed",
+   "stretch": 2,
+   "lap": 8,
+   "tag_m": 0.09607905149459839
+  },
+  {
+   "step": 3107,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 8,
+   "cap": 7.199965737082742,
+   "speed": 6.874927043914795
+  },
+  {
+   "step": 3123,
+   "event": "changed",
+   "stretch": 3,
+   "lap": 8,
+   "tag_m": 0.39665986597537994
+  },
+  {
+   "step": 3123,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 8,
+   "cap": 7.1999533219770955,
+   "speed": 6.602262020111084
+  },
+  {
+   "step": 3138,
+   "event": "changed",
+   "stretch": 4,
+   "lap": 8,
+   "tag_m": 0.3091069161891937
+  },
+  {
+   "step": 3138,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 8,
+   "cap": 7.098347334428268,
+   "speed": 6.58157205581665
+  },
+  {
+   "step": 3152,
+   "event": "changed",
+   "stretch": 5,
+   "lap": 8,
+   "tag_m": 0.0556967668235302
+  },
+  {
+   "step": 3152,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 8,
+   "cap": 7.173159096457742,
+   "speed": 7.025073528289795
+  },
+  {
+   "step": 3167,
+   "event": "changed",
+   "stretch": 6,
+   "lap": 8,
+   "tag_m": 0.06643618643283844
+  },
+  {
+   "step": 3167,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 8,
+   "cap": 7.404465692693538,
+   "speed": 6.71336030960083
+  },
+  {
+   "step": 3182,
+   "event": "relaxed",
+   "stretch": 7,
+   "lap": 8,
+   "tag_m": 0.037549108266830444
+  },
+  {
+   "step": 3182,
+   "event": "cap removed",
+   "stretch": 7,
+   "lap": 8,
+   "reason": "tag matches history"
+  },
+  {
+   "step": 3182,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 8,
+   "cap": 7.199920425415039,
+   "speed": 6.43468713760376
+  },
+  {
+   "step": 3196,
+   "event": "relaxed",
+   "stretch": 8,
+   "lap": 8,
+   "tag_m": 0.04433906823396683
+  },
+  {
+   "step": 3196,
+   "event": "cap removed",
+   "stretch": 8,
+   "lap": 8,
+   "reason": "tag matches history"
+  },
+  {
+   "step": 3196,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 8,
+   "cap": 7.199995283647017,
+   "speed": 6.9018731117248535
+  },
+  {
+   "step": 3210,
+   "event": "changed",
+   "stretch": 9,
+   "lap": 8,
+   "tag_m": 0.24894053488969803
+  },
+  {
+   "step": 3210,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 8,
+   "cap": 7.178651081431996,
+   "speed": 6.957992076873779
+  },
+  {
+   "step": 3226,
+   "event": "changed",
+   "stretch": 10,
+   "lap": 8,
+   "tag_m": 0.056441402062773705
+  },
+  {
+   "step": 3226,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 8,
+   "cap": 5.952352523803711,
+   "speed": 5.609959125518799
+  },
+  {
+   "step": 3245,
+   "event": "pass not counted",
+   "stretch": 11,
+   "lap": 8,
+   "cap": 5.952352523803711,
+   "share_under_cap": 0.6842105263157895
+  },
+  {
+   "step": 3245,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 8,
+   "cap": 7.173958310213957,
+   "speed": 6.2901291847229
+  },
+  {
+   "step": 3260,
+   "event": "pass not counted",
+   "stretch": 12,
+   "lap": 8,
+   "cap": 7.173958310213957,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 3260,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 8,
+   "cap": 7.097517522176107,
+   "speed": 6.909759998321533
+  },
+  {
+   "step": 3275,
+   "event": "changed",
+   "stretch": 13,
+   "lap": 8,
+   "tag_m": 0.0818401426076889
+  },
+  {
+   "step": 3275,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 8,
+   "cap": 7.199972464821555,
+   "speed": 6.242583751678467
+  },
+  {
+   "step": 3291,
+   "event": "changed",
+   "stretch": 14,
+   "lap": 8,
+   "tag_m": 0.06746040657162666
+  },
+  {
+   "step": 3291,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 8,
+   "cap": 7.199986891313033,
+   "speed": 6.4817795753479
+  },
+  {
+   "step": 3305,
+   "event": "pass not counted",
+   "stretch": 15,
+   "lap": 8,
+   "cap": 7.199986891313033,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 3305,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 8,
+   "cap": 7.199984533136541,
+   "speed": 7.181948184967041
+  },
+  {
+   "step": 3320,
+   "event": "changed",
+   "stretch": 16,
+   "lap": 8,
+   "tag_m": 0.09199812263250351
+  },
+  {
+   "step": 3320,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 8,
+   "cap": 7.001010208129883,
+   "speed": 6.933811664581299
+  },
+  {
+   "step": 3336,
+   "event": "changed",
+   "stretch": 17,
+   "lap": 8,
+   "tag_m": 0.128311425447464
+  },
+  {
+   "step": 3336,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 8,
+   "cap": 6.911026446024578,
+   "speed": 5.946420192718506
+  },
+  {
+   "step": 3353,
+   "event": "changed",
+   "stretch": 18,
+   "lap": 8,
+   "tag_m": 0.659864068031311
+  },
+  {
+   "step": 3353,
+   "event": "under cap",
+   "stretch": 19,
+   "lap": 8,
+   "cap": 6.976985168457031,
+   "speed": 5.801771640777588
+  },
+  {
+   "step": 3368,
+   "event": "changed",
+   "stretch": 19,
+   "lap": 8,
+   "tag_m": 0.46223604679107666
+  },
+  {
+   "step": 3368,
+   "event": "under cap",
+   "stretch": 20,
+   "lap": 8,
+   "cap": 7.195539855957032,
+   "speed": 6.97144889831543
+  },
+  {
+   "step": 3383,
+   "event": "changed",
+   "stretch": 20,
+   "lap": 8,
+   "tag_m": 0.2785649597644806
+  },
+  {
+   "step": 3384,
+   "event": "under cap",
+   "stretch": 21,
+   "lap": 8,
+   "cap": 7.199981689453125,
+   "speed": 7.021707534790039
+  },
+  {
+   "step": 3398,
+   "event": "changed",
+   "stretch": 21,
+   "lap": 8,
+   "tag_m": 0.10053840279579163
+  },
+  {
+   "step": 3398,
+   "event": "under cap",
+   "stretch": 22,
+   "lap": 8,
+   "cap": 7.19993179321289,
+   "speed": 6.847223281860352
+  },
+  {
+   "step": 3414,
+   "event": "changed",
+   "stretch": 22,
+   "lap": 8,
+   "tag_m": 1.112496554851532
+  },
+  {
+   "step": 3414,
+   "event": "under cap",
+   "stretch": 23,
+   "lap": 8,
+   "cap": 7.251164800470526,
+   "speed": 6.612438201904297
+  },
+  {
+   "step": 3428,
+   "event": "changed",
+   "stretch": 23,
+   "lap": 8,
+   "tag_m": 0.2997402399778366
+  },
+  {
+   "step": 3428,
+   "event": "under cap",
+   "stretch": 24,
+   "lap": 8,
+   "cap": 7.236155700683594,
+   "speed": 6.7155256271362305
+  },
+  {
+   "step": 3443,
+   "event": "changed",
+   "stretch": 24,
+   "lap": 8,
+   "tag_m": 0.6333012580871582
+  },
+  {
+   "step": 3443,
+   "event": "under cap",
+   "stretch": 25,
+   "lap": 8,
+   "cap": 7.199974961714311,
+   "speed": 6.925634384155273
+  },
+  {
+   "step": 3447,
+   "event": "changed",
+   "stretch": 25,
+   "lap": 8,
+   "tag_m": 1.24889075756073
+  },
+  {
+   "step": 3450,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 8,
+   "cap": 7.19993730024858,
+   "speed": 7.00645637512207
+  },
+  {
+   "step": 3460,
+   "event": "pass not counted",
+   "stretch": 0,
+   "lap": 8,
+   "cap": 7.19993730024858,
+   "share_under_cap": 0.7692307692307693
+  },
+  {
+   "step": 3460,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 8,
+   "cap": 7.252046758478338,
+   "speed": 6.903454780578613
+  },
+  {
+   "step": 3475,
+   "event": "pass not counted",
+   "stretch": 1,
+   "lap": 8,
+   "cap": 7.252046758478338,
+   "share_under_cap": 0.7333333333333333
+  },
+  {
+   "step": 3475,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 8,
+   "cap": 7.368571472167969,
+   "speed": 6.837675094604492
+  },
+  {
+   "step": 3489,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 8,
+   "cap": 7.199965737082742,
+   "speed": 6.632930755615234
+  },
+  {
+   "step": 3504,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 8,
+   "cap": 7.1999533219770955,
+   "speed": 6.310464859008789
+  },
+  {
+   "step": 3520,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 8,
+   "cap": 7.098347334428268,
+   "speed": 6.098320007324219
+  },
+  {
+   "step": 3535,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 8,
+   "cap": 7.173159096457742,
+   "speed": 6.679965972900391
+  },
+  {
+   "step": 3548,
+   "event": "pass not counted",
+   "stretch": 6,
+   "lap": 8,
+   "cap": 7.173159096457742,
+   "share_under_cap": 0.46153846153846156
+  },
+  {
+   "step": 3555,
+   "event": "cap set",
+   "stretch": 7,
+   "lap": 8,
+   "cap": 7.404465692693538
+  },
+  {
+   "step": 3555,
+   "event": "detected again",
+   "stretch": 7,
+   "lap": 8,
+   "short_m": 0.0695801954716444,
+   "limit_m": 0.05
+  },
+  {
+   "step": 3558,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 8,
+   "cap": 7.404465692693538,
+   "speed": 7.324182033538818
+  },
+  {
+   "step": 3561,
+   "event": "cap set",
+   "stretch": 8,
+   "lap": 8,
+   "cap": 7.199920425415039
+  },
+  {
+   "step": 3561,
+   "event": "detected again",
+   "stretch": 8,
+   "lap": 8,
+   "short_m": 0.22019409388303757,
+   "limit_m": 0.05
+  },
+  {
+   "step": 3562,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 8,
+   "cap": 7.199920425415039,
+   "speed": 6.786080837249756
+  },
+  {
+   "step": 3575,
+   "event": "changed",
+   "stretch": 8,
+   "lap": 8,
+   "tag_m": 0.17729488015174866
+  },
+  {
+   "step": 3575,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 8,
+   "cap": 7.199995283647017,
+   "speed": 6.938692569732666
+  },
+  {
+   "step": 3589,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 8,
+   "cap": 7.178651081431996,
+   "speed": 6.6729559898376465
+  },
+  {
+   "step": 3605,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 8,
+   "cap": 5.952352523803711,
+   "speed": 5.451151371002197
+  },
+  {
+   "step": 3625,
+   "event": "changed",
+   "stretch": 11,
+   "lap": 8,
+   "tag_m": 0.7285666465759277
+  },
+  {
+   "step": 3625,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 8,
+   "cap": 7.173958310213957,
+   "speed": 6.536675930023193
+  },
+  {
+   "step": 3639,
+   "event": "pass not counted",
+   "stretch": 12,
+   "lap": 8,
+   "cap": 7.173958310213957,
+   "share_under_cap": 0.6428571428571429
+  },
+  {
+   "step": 3640,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 8,
+   "cap": 7.097517522176107,
+   "speed": 7.072984218597412
+  },
+  {
+   "step": 3653,
+   "event": "pass not counted",
+   "stretch": 13,
+   "lap": 8,
+   "cap": 7.097517522176107,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 3653,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 8,
+   "cap": 7.199972464821555,
+   "speed": 6.787292003631592
+  },
+  {
+   "step": 3667,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 8,
+   "cap": 7.199986891313033,
+   "speed": 6.754538059234619
+  },
+  {
+   "step": 3681,
+   "event": "pass not counted",
+   "stretch": 15,
+   "lap": 8,
+   "cap": 7.199986891313033,
+   "share_under_cap": 0.5714285714285714
+  },
+  {
+   "step": 3681,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 8,
+   "cap": 7.199984533136541,
+   "speed": 6.833054065704346
+  },
+  {
+   "step": 3695,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 8,
+   "cap": 7.001010208129883,
+   "speed": 6.738206386566162
+  },
+  {
+   "step": 3711,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 8,
+   "cap": 6.911026446024578,
+   "speed": 6.063801288604736
+  },
+  {
+   "step": 3728,
+   "event": "under cap",
+   "stretch": 19,
+   "lap": 8,
+   "cap": 6.976985168457031,
+   "speed": 6.3517632484436035
+  },
+  {
+   "step": 3743,
+   "event": "pass not counted",
+   "stretch": 19,
+   "lap": 8,
+   "cap": 6.976985168457031,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 3743,
+   "event": "under cap",
+   "stretch": 20,
+   "lap": 8,
+   "cap": 7.195539855957032,
+   "speed": 6.313721179962158
+  },
+  {
+   "step": 3758,
+   "event": "under cap",
+   "stretch": 21,
+   "lap": 8,
+   "cap": 7.199981689453125,
+   "speed": 5.998226642608643
+  },
+  {
+   "step": 3773,
+   "event": "pass not counted",
+   "stretch": 21,
+   "lap": 8,
+   "cap": 7.199981689453125,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 3773,
+   "event": "under cap",
+   "stretch": 22,
+   "lap": 8,
+   "cap": 7.19993179321289,
+   "speed": 6.905118465423584
+  },
+  {
+   "step": 3789,
+   "event": "under cap",
+   "stretch": 23,
+   "lap": 8,
+   "cap": 7.251164800470526,
+   "speed": 6.3888468742370605
+  },
+  {
+   "step": 3804,
+   "event": "pass not counted",
+   "stretch": 23,
+   "lap": 8,
+   "cap": 7.251164800470526,
+   "share_under_cap": 0.8
+  },
+  {
+   "step": 3810,
+   "event": "under cap",
+   "stretch": 24,
+   "lap": 8,
+   "cap": 7.236155700683594,
+   "speed": 6.785232067108154
+  },
+  {
+   "step": 3818,
+   "event": "pass not counted",
+   "stretch": 24,
+   "lap": 8,
+   "cap": 7.236155700683594,
+   "share_under_cap": 0.5714285714285714
+  },
+  {
+   "step": 3818,
+   "event": "under cap",
+   "stretch": 25,
+   "lap": 8,
+   "cap": 7.199974961714311,
+   "speed": 6.44157075881958
+  },
+  {
+   "step": 3833,
+   "event": "under cap",
+   "stretch": 26,
+   "lap": 8,
+   "cap": 7.200001907348633,
+   "speed": 6.408421039581299
+  },
+  {
+   "step": 3847,
+   "event": "pass not counted",
+   "stretch": 26,
+   "lap": 8,
+   "cap": 7.200001907348633,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 3847,
+   "event": "under cap",
+   "stretch": 27,
+   "lap": 8,
+   "cap": 7.208725322376599,
+   "speed": 6.894265651702881
+  },
+  {
+   "step": 3861,
+   "event": "pass not counted",
+   "stretch": 27,
+   "lap": 8,
+   "cap": 7.208725322376599,
+   "share_under_cap": 0.6428571428571429
+  },
+  {
+   "step": 3861,
+   "event": "under cap",
+   "stretch": 28,
+   "lap": 8,
+   "cap": 7.200015120072798,
+   "speed": 6.72895622253418
+  },
+  {
+   "step": 3876,
+   "event": "changed",
+   "stretch": 28,
+   "lap": 8,
+   "tag_m": 0.08220180869102478
+  },
+  {
+   "step": 3876,
+   "event": "under cap",
+   "stretch": 29,
+   "lap": 8,
+   "cap": 7.199979553222656,
+   "speed": 6.705986976623535
+  },
+  {
+   "step": 3890,
+   "event": "changed",
+   "stretch": 29,
+   "lap": 8,
+   "tag_m": 0.06608385965228081
+  },
+  {
+   "step": 3891,
+   "event": "under cap",
+   "stretch": 30,
+   "lap": 8,
+   "cap": 7.077391468394886,
+   "speed": 6.900078773498535
+  },
+  {
+   "step": 3905,
+   "event": "changed",
+   "stretch": 30,
+   "lap": 8,
+   "tag_m": 0.37378132343292236
+  },
+  {
+   "step": 3905,
+   "event": "under cap",
+   "stretch": 31,
+   "lap": 8,
+   "cap": 7.199994173916903,
+   "speed": 6.117398262023926
+  },
+  {
+   "step": 3921,
+   "event": "changed",
+   "stretch": 31,
+   "lap": 8,
+   "tag_m": 0.4997994303703308
+  },
+  {
+   "step": 3921,
+   "event": "under cap",
+   "stretch": 32,
+   "lap": 8,
+   "cap": 7.200001373291016,
+   "speed": 6.789309501647949
+  },
+  {
+   "step": 3936,
+   "event": "changed",
+   "stretch": 32,
+   "lap": 8,
+   "tag_m": 0.8925323486328125
+  },
+  {
+   "step": 3939,
+   "event": "under cap",
+   "stretch": 33,
+   "lap": 8,
+   "cap": 7.2000004855069255,
+   "speed": 7.062270164489746
+  },
+  {
+   "step": 3950,
+   "event": "pass not counted",
+   "stretch": 33,
+   "lap": 8,
+   "cap": 7.2000004855069255,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 3950,
+   "event": "under cap",
+   "stretch": 34,
+   "lap": 8,
+   "cap": 7.199977042458274,
+   "speed": 6.875812530517578
+  },
+  {
+   "step": 3965,
+   "event": "pass not counted",
+   "stretch": 34,
+   "lap": 8,
+   "cap": 7.199977042458274,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 3965,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 8,
+   "cap": 7.19993730024858,
+   "speed": 7.053749084472656
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.368571472167969,
+   "reason": "model error above pre-change fit, slip above pre-change range",
+   "stretch": 2,
+   "lap": 8,
+   "pass_speed": 7.08072178704398,
+   "model_error_m": 0.09607905149459839,
+   "model_limit_m": 0.02053093684622887,
+   "min_clearance_m": 0.47795040412159917,
+   "max_slip": 0.07188956439495087,
+   "slip_limit": 0.06225209683179855
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199965737082742,
+   "reason": "model error above pre-change fit, clearance under limit",
+   "stretch": 3,
+   "lap": 8,
+   "pass_speed": 6.439368188381195,
+   "model_error_m": 0.39665986597537994,
+   "model_limit_m": -0.04277009295375753,
+   "min_clearance_m": 0.05796,
+   "max_slip": 0.35195136070251465,
+   "slip_limit": 0.4659586548805237
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.1999533219770955,
+   "reason": "model error above pre-change fit, clearance under limit",
+   "stretch": 4,
+   "lap": 8,
+   "pass_speed": 6.53544282913208,
+   "model_error_m": 0.3091069161891937,
+   "model_limit_m": -0.09808131604959536,
+   "min_clearance_m": 0.05796,
+   "max_slip": 0.06066599860787392,
+   "slip_limit": 0.11160149425268173
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.098347334428268,
+   "reason": "model error above pre-change fit",
+   "stretch": 5,
+   "lap": 8,
+   "pass_speed": 6.701029300689697,
+   "model_error_m": 0.0556967668235302,
+   "model_limit_m": -0.10249806203397521,
+   "min_clearance_m": 0.6557425446011568,
+   "max_slip": 0.04704068601131439,
+   "slip_limit": 0.10422386974096298
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.173159096457742,
+   "reason": "model error above pre-change fit, slip above pre-change range",
+   "stretch": 6,
+   "lap": 8,
+   "pass_speed": 6.840885321299235,
+   "model_error_m": 0.06643618643283844,
+   "model_limit_m": -0.003880887160433971,
+   "min_clearance_m": 0.6608456763874603,
+   "max_slip": 0.05312177166342735,
+   "slip_limit": 0.03526698425412178
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199995283647017,
+   "reason": "model error above pre-change fit",
+   "stretch": 9,
+   "lap": 8,
+   "pass_speed": 6.882767268589565,
+   "model_error_m": 0.24894053488969803,
+   "model_limit_m": 0.00866116250385066,
+   "min_clearance_m": 0.6161232513061002,
+   "max_slip": 0.07127178460359573,
+   "slip_limit": 0.11750824004411697
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.178651081431996,
+   "reason": "model error above pre-change fit",
+   "stretch": 10,
+   "lap": 8,
+   "pass_speed": 6.254950523376465,
+   "model_error_m": 0.056441402062773705,
+   "model_limit_m": -0.005681066424221552,
+   "min_clearance_m": 0.2898,
+   "max_slip": 0.0692506954073906,
+   "slip_limit": 0.16592130064964294
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.097517522176107,
+   "reason": "model error above pre-change fit",
+   "stretch": 13,
+   "lap": 8,
+   "pass_speed": 6.5890529950459795,
+   "model_error_m": 0.0818401426076889,
+   "model_limit_m": -0.07309396845817429,
+   "min_clearance_m": 0.899781165395231,
+   "max_slip": 0.04893181473016739,
+   "slip_limit": 0.0666373148560524
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199972464821555,
+   "reason": "model error above pre-change fit, slip above pre-change range",
+   "stretch": 14,
+   "lap": 8,
+   "pass_speed": 5.95356947183609,
+   "model_error_m": 0.06746040657162666,
+   "model_limit_m": -0.013304481727955592,
+   "min_clearance_m": 0.6955199999999999,
+   "max_slip": 0.063288114964962,
+   "slip_limit": 0.04252011328935623
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199984533136541,
+   "reason": "model error above pre-change fit",
+   "stretch": 16,
+   "lap": 8,
+   "pass_speed": 6.757055759429932,
+   "model_error_m": 0.09199812263250351,
+   "model_limit_m": 0.014252127740074744,
+   "min_clearance_m": 0.63756,
+   "max_slip": 0.03551248833537102,
+   "slip_limit": 0.10679569095373154
+  },
+  {
+   "step": 3965,
+   "event": "cap raised",
+   "cap": 7.301010208129883,
+   "reason": "clean pass, model error at or below pre-change fit",
+   "stretch": 17,
+   "lap": 8,
+   "pass_speed": 6.4358989000320435,
+   "model_error_m": 0.128311425447464,
+   "model_limit_m": 0.16640696537391808,
+   "min_clearance_m": 0.2898,
+   "max_slip": 0.5496982932090759,
+   "slip_limit": 0.6581071019172668
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 6.911026446024578,
+   "reason": "model error above pre-change fit, clearance under limit, slip above pre-change range",
+   "stretch": 18,
+   "lap": 8,
+   "pass_speed": 6.185588528128231,
+   "model_error_m": 0.659864068031311,
+   "model_limit_m": 0.11314309866661043,
+   "min_clearance_m": 0.05796,
+   "max_slip": 0.4707247018814087,
+   "slip_limit": 0.3996548652648926
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 6.976985168457031,
+   "reason": "model error above pre-change fit, slip above pre-change range",
+   "stretch": 19,
+   "lap": 8,
+   "pass_speed": 6.436642646789551,
+   "model_error_m": 0.46223604679107666,
+   "model_limit_m": -0.14980103075388917,
+   "min_clearance_m": 0.2898,
+   "max_slip": 0.14935269951820374,
+   "slip_limit": 0.10734611004590988
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.195539855957032,
+   "reason": "model error above pre-change fit, slip above pre-change range",
+   "stretch": 20,
+   "lap": 8,
+   "pass_speed": 6.797037760416667,
+   "model_error_m": 0.2785649597644806,
+   "model_limit_m": -0.029261168286468714,
+   "min_clearance_m": 0.7534799999999999,
+   "max_slip": 0.12934646010398865,
+   "slip_limit": 0.09116331487894058
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199981689453125,
+   "reason": "model error above pre-change fit, clearance under limit",
+   "stretch": 21,
+   "lap": 8,
+   "pass_speed": 6.889569600423177,
+   "model_error_m": 0.10053840279579163,
+   "model_limit_m": -0.029732879902927667,
+   "min_clearance_m": 0.18328561318335926,
+   "max_slip": 0.23860666155815125,
+   "slip_limit": 0.3768528401851654
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.19993179321289,
+   "reason": "model error above pre-change fit, clearance under limit",
+   "stretch": 22,
+   "lap": 8,
+   "pass_speed": 6.635815143585205,
+   "model_error_m": 1.112496554851532,
+   "model_limit_m": 0.002501182310826605,
+   "min_clearance_m": 0.05796,
+   "max_slip": 0.30798596143722534,
+   "slip_limit": 0.31386759877204895
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.251164800470526,
+   "reason": "clearance under limit",
+   "stretch": 23,
+   "lap": 8,
+   "pass_speed": 6.913928372519357,
+   "model_error_m": 0.2997402399778366,
+   "model_limit_m": 0.38192234279620363,
+   "min_clearance_m": 0.18328561318335926,
+   "max_slip": 0.08657801151275635,
+   "slip_limit": 0.112373486161232
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.236155700683594,
+   "reason": "model error above pre-change fit",
+   "stretch": 24,
+   "lap": 8,
+   "pass_speed": 6.878532727559407,
+   "model_error_m": 0.6333012580871582,
+   "model_limit_m": 0.1321191407599543,
+   "min_clearance_m": 0.33796197182523363,
+   "max_slip": 0.23216663300991058,
+   "slip_limit": 0.5425909757614136
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199974961714311,
+   "reason": "model error above pre-change fit, clearance under limit, slip above pre-change range",
+   "stretch": 25,
+   "lap": 8,
+   "pass_speed": 6.686127185821533,
+   "model_error_m": 1.24889075756073,
+   "model_limit_m": 0.003956218547748552,
+   "min_clearance_m": 0.0,
+   "max_slip": 0.3411448299884796,
+   "slip_limit": 0.2672157883644104
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.368571472167969,
+   "reason": "model error above pre-change fit",
+   "stretch": 2,
+   "lap": 8,
+   "pass_speed": 6.861295223236084,
+   "model_error_m": 0.16533856838941574,
+   "model_limit_m": 0.022213286786888345,
+   "min_clearance_m": 0.47795040412159917,
+   "max_slip": 0.04139772802591324,
+   "slip_limit": 0.06225209683179855
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199965737082742,
+   "reason": "model error above pre-change fit, clearance under limit",
+   "stretch": 3,
+   "lap": 8,
+   "pass_speed": 6.446740786234538,
+   "model_error_m": 0.37795349955558777,
+   "model_limit_m": -0.04252607582133028,
+   "min_clearance_m": 0.1639356361502892,
+   "max_slip": 0.36055809259414673,
+   "slip_limit": 0.4659586548805237
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.1999533219770955,
+   "reason": "model error above pre-change fit, clearance under limit",
+   "stretch": 4,
+   "lap": 8,
+   "pass_speed": 6.3698954582214355,
+   "model_error_m": 0.2827347591519356,
+   "model_limit_m": -0.11147562128890909,
+   "min_clearance_m": 0.05796,
+   "max_slip": 0.09239821135997772,
+   "slip_limit": 0.11160149425268173
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.098347334428268,
+   "reason": "model error above pre-change fit",
+   "stretch": 5,
+   "lap": 8,
+   "pass_speed": 6.601848602294922,
+   "model_error_m": 0.04112992435693741,
+   "model_limit_m": -0.10776184703640335,
+   "min_clearance_m": 0.6269332557776784,
+   "max_slip": 0.031445786356925964,
+   "slip_limit": 0.10422386974096298
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199920425415039,
+   "reason": "model error above pre-change fit",
+   "stretch": 8,
+   "lap": 8,
+   "pass_speed": 6.8654888698032925,
+   "model_error_m": 0.17729488015174866,
+   "model_limit_m": 0.001595461140343474,
+   "min_clearance_m": 0.8557691445711278,
+   "max_slip": 0.08801837265491486,
+   "slip_limit": 0.10260540246963501
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199995283647017,
+   "reason": "model error above pre-change fit",
+   "stretch": 9,
+   "lap": 8,
+   "pass_speed": 6.961740153176444,
+   "model_error_m": 0.19186890125274658,
+   "model_limit_m": 0.00878083183045336,
+   "min_clearance_m": 0.6557425446011568,
+   "max_slip": 0.05693156272172928,
+   "slip_limit": 0.11750824004411697
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.178651081431996,
+   "reason": "model error above pre-change fit",
+   "stretch": 10,
+   "lap": 8,
+   "pass_speed": 6.489580810070038,
+   "model_error_m": 0.11500037088990211,
+   "model_limit_m": -0.004134657749249246,
+   "min_clearance_m": 0.40983909037572297,
+   "max_slip": 0.09342188388109207,
+   "slip_limit": 0.16592130064964294
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 5.952352523803711,
+   "reason": "model error above pre-change fit",
+   "stretch": 11,
+   "lap": 8,
+   "pass_speed": 5.048502683639526,
+   "model_error_m": 0.7285666465759277,
+   "model_limit_m": 0.07891598342255418,
+   "min_clearance_m": 0.3278712723005784,
+   "max_slip": 0.3797847628593445,
+   "slip_limit": 0.7219375371932983
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199972464821555,
+   "reason": "model error above pre-change fit, slip above pre-change range",
+   "stretch": 14,
+   "lap": 8,
+   "pass_speed": 6.856622764042446,
+   "model_error_m": 0.1240299716591835,
+   "model_limit_m": -0.006592646213576692,
+   "min_clearance_m": 0.5343647967446957,
+   "max_slip": 0.05153895169496536,
+   "slip_limit": 0.04252011328935623
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199984533136541,
+   "reason": "model error above pre-change fit",
+   "stretch": 16,
+   "lap": 8,
+   "pass_speed": 6.934403760092599,
+   "model_error_m": 0.11523139849305153,
+   "model_limit_m": 0.013534184141741793,
+   "min_clearance_m": 0.8694,
+   "max_slip": 0.06481510400772095,
+   "slip_limit": 0.10679569095373154
+  },
+  {
+   "step": 3965,
+   "event": "cap raised",
+   "cap": 7.601010208129883,
+   "reason": "clean pass, model error at or below pre-change fit",
+   "stretch": 17,
+   "lap": 8,
+   "pass_speed": 6.6337069272994995,
+   "model_error_m": 0.11231610924005508,
+   "model_limit_m": 0.15570100663871267,
+   "min_clearance_m": 0.40571999999999997,
+   "max_slip": 0.582505464553833,
+   "slip_limit": 0.6581071019172668
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 6.911026446024578,
+   "reason": "model error above pre-change fit, clearance under limit",
+   "stretch": 18,
+   "lap": 8,
+   "pass_speed": 5.944061587838566,
+   "model_error_m": 0.6228304505348206,
+   "model_limit_m": 0.08975796929630753,
+   "min_clearance_m": 0.18328561318335926,
+   "max_slip": 0.2977348864078522,
+   "slip_limit": 0.3996548652648926
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.195539855957032,
+   "reason": "model error above pre-change fit",
+   "stretch": 20,
+   "lap": 8,
+   "pass_speed": 6.589718023935954,
+   "model_error_m": 0.243015319108963,
+   "model_limit_m": -0.03540078142023756,
+   "min_clearance_m": 0.5343647967446957,
+   "max_slip": 0.06913873553276062,
+   "slip_limit": 0.09116331487894058
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.19993179321289,
+   "reason": "model error above pre-change fit, clearance under limit, slip above pre-change range",
+   "stretch": 22,
+   "lap": 8,
+   "pass_speed": 6.47971385717392,
+   "model_error_m": 0.9758535623550415,
+   "model_limit_m": 0.0002487941443333752,
+   "min_clearance_m": 0.18328561318335926,
+   "max_slip": 0.3562694489955902,
+   "slip_limit": 0.31386759877204895
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199974961714311,
+   "reason": "model error above pre-change fit",
+   "stretch": 25,
+   "lap": 8,
+   "pass_speed": 6.626143932342529,
+   "model_error_m": 0.6480662226676941,
+   "model_limit_m": 0.0020296143168356817,
+   "min_clearance_m": 0.2089777519258928,
+   "max_slip": 0.21147041022777557,
+   "slip_limit": 0.2672157883644104
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.200015120072798,
+   "reason": "model error above pre-change fit, slip above pre-change range",
+   "stretch": 28,
+   "lap": 8,
+   "pass_speed": 6.738436381022136,
+   "model_error_m": 0.08220180869102478,
+   "model_limit_m": 0.0014373997757935477,
+   "min_clearance_m": 0.6955199999999999,
+   "max_slip": 0.05837839096784592,
+   "slip_limit": 0.04567873477935791
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199979553222656,
+   "reason": "model error above pre-change fit",
+   "stretch": 29,
+   "lap": 8,
+   "pass_speed": 6.760822568620954,
+   "model_error_m": 0.06608385965228081,
+   "model_limit_m": -0.0025676303674522435,
+   "min_clearance_m": 0.7534799999999999,
+   "max_slip": 0.05767148360610008,
+   "slip_limit": 0.1229269877076149
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.077391468394886,
+   "reason": "model error above pre-change fit",
+   "stretch": 30,
+   "lap": 8,
+   "pass_speed": 6.711629867553711,
+   "model_error_m": 0.37378132343292236,
+   "model_limit_m": -0.0767766130069375,
+   "min_clearance_m": 0.3665712263667185,
+   "max_slip": 0.22144083678722382,
+   "slip_limit": 0.2618775963783264
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.199994173916903,
+   "reason": "model error above pre-change fit, clearance under limit, slip above pre-change range",
+   "stretch": 31,
+   "lap": 8,
+   "pass_speed": 6.50655072927475,
+   "model_error_m": 0.4997994303703308,
+   "model_limit_m": 0.032884362581314885,
+   "min_clearance_m": 0.05796,
+   "max_slip": 0.18649202585220337,
+   "slip_limit": 0.1349899023771286
+  },
+  {
+   "step": 3965,
+   "event": "cap kept",
+   "cap": 7.200001373291016,
+   "reason": "model error above pre-change fit, clearance under limit",
+   "stretch": 32,
+   "lap": 8,
+   "pass_speed": 6.6753536860148115,
+   "model_error_m": 0.8925323486328125,
+   "model_limit_m": 0.02414523572152456,
+   "min_clearance_m": 0.05796,
+   "max_slip": 0.2990601360797882,
+   "slip_limit": 0.4151010811328888
+  },
+  {
+   "step": 3980,
+   "event": "changed",
+   "stretch": 0,
+   "lap": 9,
+   "tag_m": 0.09099826216697693
+  },
+  {
+   "step": 3980,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 7.004396438598633
+  },
+  {
+   "step": 3993,
+   "event": "pass not counted",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "share_under_cap": 0.7692307692307693
+  },
+  {
+   "step": 3993,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.8685503005981445
+  },
+  {
+   "step": 4008,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.160618782043457
+  },
+  {
+   "step": 4024,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 6.637751579284668
+  },
+  {
+   "step": 4038,
+   "event": "pass not counted",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "share_under_cap": 0.5
+  },
+  {
+   "step": 4041,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "speed": 7.041289329528809
+  },
+  {
+   "step": 4052,
+   "event": "pass not counted",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 4052,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "speed": 6.802746772766113
+  },
+  {
+   "step": 4066,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 9,
+   "cap": 7.404465692693538,
+   "speed": 6.722809791564941
+  },
+  {
+   "step": 4080,
+   "event": "changed",
+   "stretch": 7,
+   "lap": 9,
+   "tag_m": 0.08650745078921318
+  },
+  {
+   "step": 4080,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "speed": 6.642219543457031
+  },
+  {
+   "step": 4095,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "speed": 6.954838752746582
+  },
+  {
+   "step": 4109,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 9,
+   "cap": 7.178651081431996,
+   "speed": 6.984898567199707
+  },
+  {
+   "step": 4125,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "speed": 5.666105270385742
+  },
+  {
+   "step": 4142,
+   "event": "pass not counted",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "share_under_cap": 0.5882352941176471
+  },
+  {
+   "step": 4144,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "speed": 6.898128509521484
+  },
+  {
+   "step": 4157,
+   "event": "pass not counted",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 4157,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "speed": 6.3532562255859375
+  },
+  {
+   "step": 4172,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "speed": 6.510159492492676
+  },
+  {
+   "step": 4185,
+   "event": "pass not counted",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "share_under_cap": 0.23076923076923078
+  },
+  {
+   "step": 4185,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "speed": 6.72132682800293
+  },
+  {
+   "step": 4199,
+   "event": "changed",
+   "stretch": 15,
+   "lap": 9,
+   "tag_m": 0.20775235444307327
+  },
+  {
+   "step": 4199,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "speed": 6.794917106628418
+  },
+  {
+   "step": 4213,
+   "event": "pass not counted",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "share_under_cap": 0.6428571428571429
+  },
+  {
+   "step": 4213,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 9,
+   "cap": 7.601010208129883,
+   "speed": 7.163178443908691
+  },
+  {
+   "step": 4228,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "speed": 6.442868232727051
+  },
+  {
+   "step": 4244,
+   "event": "pass not counted",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "share_under_cap": 0.6875
+  },
+  {
+   "step": 4244,
+   "event": "under cap",
+   "stretch": 19,
+   "lap": 9,
+   "cap": 6.976985168457031,
+   "speed": 6.558367729187012
+  },
+  {
+   "step": 4259,
+   "event": "pass not counted",
+   "stretch": 19,
+   "lap": 9,
+   "cap": 6.976985168457031,
+   "share_under_cap": 0.4
+  },
+  {
+   "step": 4259,
+   "event": "under cap",
+   "stretch": 20,
+   "lap": 9,
+   "cap": 7.195539855957032,
+   "speed": 6.469470977783203
+  },
+  {
+   "step": 4273,
+   "event": "pass not counted",
+   "stretch": 20,
+   "lap": 9,
+   "cap": 7.195539855957032,
+   "share_under_cap": 0.5714285714285714
+  },
+  {
+   "step": 4273,
+   "event": "under cap",
+   "stretch": 21,
+   "lap": 9,
+   "cap": 7.199981689453125,
+   "speed": 6.840331077575684
+  },
+  {
+   "step": 4287,
+   "event": "under cap",
+   "stretch": 22,
+   "lap": 9,
+   "cap": 7.19993179321289,
+   "speed": 6.474997520446777
+  },
+  {
+   "step": 4299,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 4313,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 6.559267520904541
+  },
+  {
+   "step": 4328,
+   "event": "relaxed",
+   "stretch": 1,
+   "lap": 9,
+   "tag_m": 0.020641211420297623
+  },
+  {
+   "step": 4328,
+   "event": "cap removed",
+   "stretch": 1,
+   "lap": 9,
+   "reason": "tag matches history"
+  },
+  {
+   "step": 4328,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.739116191864014
+  },
+  {
+   "step": 4343,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.799002170562744
+  },
+  {
+   "step": 4358,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 6.336535453796387
+  },
+  {
+   "step": 4359,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 4373,
+   "event": "cap set",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338
+  },
+  {
+   "step": 4373,
+   "event": "detected again",
+   "stretch": 1,
+   "lap": 9,
+   "short_m": 0.05203721299767494,
+   "limit_m": 0.05
+  },
+  {
+   "step": 4385,
+   "event": "pass not counted",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "share_under_cap": 0.0
+  },
+  {
+   "step": 4386,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 7.2338762283325195
+  },
+  {
+   "step": 4400,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.001056671142578
+  },
+  {
+   "step": 4416,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 4430,
+   "event": "pass not counted",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "share_under_cap": 0.8571428571428571
+  },
+  {
+   "step": 4430,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 7.110162258148193
+  },
+  {
+   "step": 4444,
+   "event": "changed",
+   "stretch": 1,
+   "lap": 9,
+   "tag_m": 0.0888516791164875
+  },
+  {
+   "step": 4444,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.502242565155029
+  },
+  {
+   "step": 4459,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.957479000091553
+  },
+  {
+   "step": 4474,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 6.310600280761719
+  },
+  {
+   "step": 4475,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 4489,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 6.10382604598999
+  },
+  {
+   "step": 4504,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.7325119972229
+  },
+  {
+   "step": 4518,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.8007283210754395
+  },
+  {
+   "step": 4533,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 6.472869396209717
+  },
+  {
+   "step": 4548,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "speed": 6.543069362640381
+  },
+  {
+   "step": 4563,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "speed": 6.545262813568115
+  },
+  {
+   "step": 4576,
+   "event": "pass not counted",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "share_under_cap": 0.46153846153846156
+  },
+  {
+   "step": 4577,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 9,
+   "cap": 7.404465692693538,
+   "speed": 7.36808967590332
+  },
+  {
+   "step": 4591,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "speed": 7.0289201736450195
+  },
+  {
+   "step": 4605,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "speed": 6.597358703613281
+  },
+  {
+   "step": 4619,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 9,
+   "cap": 7.178651081431996,
+   "speed": 6.813671112060547
+  },
+  {
+   "step": 4635,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "speed": 5.849458694458008
+  },
+  {
+   "step": 4654,
+   "event": "pass not counted",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "share_under_cap": 0.8947368421052632
+  },
+  {
+   "step": 4660,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "speed": 6.667853355407715
+  },
+  {
+   "step": 4668,
+   "event": "pass not counted",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "share_under_cap": 0.5714285714285714
+  },
+  {
+   "step": 4668,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "speed": 6.3852033615112305
+  },
+  {
+   "step": 4683,
+   "event": "pass not counted",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 4683,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "speed": 6.269980430603027
+  },
+  {
+   "step": 4698,
+   "event": "pass not counted",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 4698,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "speed": 6.655269622802734
+  },
+  {
+   "step": 4712,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "speed": 6.774788856506348
+  },
+  {
+   "step": 4726,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 9,
+   "cap": 7.601010208129883,
+   "speed": 6.941681861877441
+  },
+  {
+   "step": 4742,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "speed": 5.932293891906738
+  },
+  {
+   "step": 4758,
+   "event": "pass not counted",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "share_under_cap": 0.8125
+  },
+  {
+   "step": 4758,
+   "event": "under cap",
+   "stretch": 19,
+   "lap": 9,
+   "cap": 6.976985168457031,
+   "speed": 6.8412933349609375
+  },
+  {
+   "step": 4773,
+   "event": "pass not counted",
+   "stretch": 19,
+   "lap": 9,
+   "cap": 6.976985168457031,
+   "share_under_cap": 0.8
+  },
+  {
+   "step": 4773,
+   "event": "under cap",
+   "stretch": 20,
+   "lap": 9,
+   "cap": 7.195539855957032,
+   "speed": 6.649709701538086
+  },
+  {
+   "step": 4788,
+   "event": "under cap",
+   "stretch": 21,
+   "lap": 9,
+   "cap": 7.199981689453125,
+   "speed": 6.568246841430664
+  },
+  {
+   "step": 4802,
+   "event": "pass not counted",
+   "stretch": 21,
+   "lap": 9,
+   "cap": 7.199981689453125,
+   "share_under_cap": 0.5714285714285714
+  },
+  {
+   "step": 4802,
+   "event": "under cap",
+   "stretch": 22,
+   "lap": 9,
+   "cap": 7.19993179321289,
+   "speed": 6.823860168457031
+  },
+  {
+   "step": 4818,
+   "event": "under cap",
+   "stretch": 23,
+   "lap": 9,
+   "cap": 7.251164800470526,
+   "speed": 6.948758125305176
+  },
+  {
+   "step": 4833,
+   "event": "under cap",
+   "stretch": 24,
+   "lap": 9,
+   "cap": 7.236155700683594,
+   "speed": 6.871438980102539
+  },
+  {
+   "step": 4845,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 4859,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 5.867105007171631
+  },
+  {
+   "step": 4874,
+   "event": "pass not counted",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 4874,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.616487979888916
+  },
+  {
+   "step": 4888,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.748123645782471
+  },
+  {
+   "step": 4903,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 6.584306240081787
+  },
+  {
+   "step": 4918,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "speed": 6.798863410949707
+  },
+  {
+   "step": 4932,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "speed": 7.124276161193848
+  },
+  {
+   "step": 4946,
+   "event": "pass not counted",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 4946,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 9,
+   "cap": 7.404465692693538,
+   "speed": 6.655373573303223
+  },
+  {
+   "step": 4961,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "speed": 6.4026689529418945
+  },
+  {
+   "step": 4976,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "speed": 6.972894668579102
+  },
+  {
+   "step": 4990,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 9,
+   "cap": 7.178651081431996,
+   "speed": 6.817874908447266
+  },
+  {
+   "step": 5006,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "speed": 5.589962005615234
+  },
+  {
+   "step": 5025,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "speed": 6.466236114501953
+  },
+  {
+   "step": 5038,
+   "event": "pass not counted",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "share_under_cap": 0.6923076923076923
+  },
+  {
+   "step": 5040,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "speed": 7.066877365112305
+  },
+  {
+   "step": 5053,
+   "event": "pass not counted",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "share_under_cap": 0.6666666666666666
+  },
+  {
+   "step": 5062,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "speed": 7.1857194900512695
+  },
+  {
+   "step": 5066,
+   "event": "pass not counted",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "share_under_cap": 0.3076923076923077
+  },
+  {
+   "step": 5066,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "speed": 7.1167497634887695
+  },
+  {
+   "step": 5080,
+   "event": "pass not counted",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "share_under_cap": 0.7142857142857143
+  },
+  {
+   "step": 5080,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "speed": 6.669180870056152
+  },
+  {
+   "step": 5094,
+   "event": "pass not counted",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "share_under_cap": 0.8571428571428571
+  },
+  {
+   "step": 5094,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 9,
+   "cap": 7.601010208129883,
+   "speed": 7.21295166015625
+  },
+  {
+   "step": 5108,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "speed": 6.353033065795898
+  },
+  {
+   "step": 5125,
+   "event": "under cap",
+   "stretch": 19,
+   "lap": 9,
+   "cap": 6.976985168457031,
+   "speed": 6.226585388183594
+  },
+  {
+   "step": 5144,
+   "event": "under cap",
+   "stretch": 20,
+   "lap": 9,
+   "cap": 7.195539855957032,
+   "speed": 7.046211242675781
+  },
+  {
+   "step": 5157,
+   "event": "pass not counted",
+   "stretch": 20,
+   "lap": 9,
+   "cap": 7.195539855957032,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 5157,
+   "event": "under cap",
+   "stretch": 21,
+   "lap": 9,
+   "cap": 7.199981689453125,
+   "speed": 6.697528839111328
+  },
+  {
+   "step": 5172,
+   "event": "under cap",
+   "stretch": 22,
+   "lap": 9,
+   "cap": 7.19993179321289,
+   "speed": 6.414711952209473
+  },
+  {
+   "step": 5174,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 5188,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 6.471715450286865
+  },
+  {
+   "step": 5203,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 7.067175388336182
+  },
+  {
+   "step": 5217,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.747813701629639
+  },
+  {
+   "step": 5232,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 5.800626754760742
+  },
+  {
+   "step": 5233,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 5246,
+   "event": "pass not counted",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "share_under_cap": 0.6153846153846154
+  },
+  {
+   "step": 5246,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 7.0328240394592285
+  },
+  {
+   "step": 5261,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.897349834442139
+  },
+  {
+   "step": 5276,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 7.114391803741455
+  },
+  {
+   "step": 5290,
+   "event": "pass not counted",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 5290,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 5.8908562660217285
+  },
+  {
+   "step": 5304,
+   "event": "pass not counted",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "share_under_cap": 0.8571428571428571
+  },
+  {
+   "step": 5304,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "speed": 7.054510593414307
+  },
+  {
+   "step": 5318,
+   "event": "pass not counted",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 5318,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "speed": 6.656928539276123
+  },
+  {
+   "step": 5332,
+   "event": "pass not counted",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "share_under_cap": 0.21428571428571427
+  },
+  {
+   "step": 5332,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 9,
+   "cap": 7.404465692693538,
+   "speed": 7.201943874359131
+  },
+  {
+   "step": 5346,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "speed": 6.781225681304932
+  },
+  {
+   "step": 5363,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "speed": 6.864424228668213
+  },
+  {
+   "step": 5375,
+   "event": "pass not counted",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "share_under_cap": 0.8571428571428571
+  },
+  {
+   "step": 5375,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 9,
+   "cap": 7.178651081431996,
+   "speed": 6.863832950592041
+  },
+  {
+   "step": 5391,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "speed": 5.699177265167236
+  },
+  {
+   "step": 5408,
+   "event": "pass not counted",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "share_under_cap": 0.6666666666666666
+  },
+  {
+   "step": 5408,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "speed": 6.620812892913818
+  },
+  {
+   "step": 5423,
+   "event": "pass not counted",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 5424,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "speed": 6.904473781585693
+  },
+  {
+   "step": 5437,
+   "event": "pass not counted",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "share_under_cap": 0.5
+  },
+  {
+   "step": 5437,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "speed": 6.262531757354736
+  },
+  {
+   "step": 5452,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "speed": 6.48952054977417
+  },
+  {
+   "step": 5467,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "speed": 6.805482387542725
+  },
+  {
+   "step": 5481,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 9,
+   "cap": 7.601010208129883,
+   "speed": 7.028933048248291
+  },
+  {
+   "step": 5496,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "speed": 6.556191921234131
+  },
+  {
+   "step": 5502,
+   "event": "pass not counted",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "share_under_cap": 0.8333333333333334
+  },
+  {
+   "step": 5502,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 5516,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 6.40256929397583
+  },
+  {
+   "step": 5531,
+   "event": "pass not counted",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 5531,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.609364032745361
+  },
+  {
+   "step": 5545,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.898885250091553
+  },
+  {
+   "step": 5560,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 6.018887042999268
+  },
+  {
+   "step": 5575,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "speed": 7.04587984085083
+  },
+  {
+   "step": 5589,
+   "event": "pass not counted",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 5589,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "speed": 7.131262302398682
+  },
+  {
+   "step": 5603,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 9,
+   "cap": 7.404465692693538,
+   "speed": 6.886840343475342
+  },
+  {
+   "step": 5618,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "speed": 6.5594916343688965
+  },
+  {
+   "step": 5632,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "speed": 7.157712459564209
+  },
+  {
+   "step": 5646,
+   "event": "pass not counted",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "share_under_cap": 0.5
+  },
+  {
+   "step": 5646,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 9,
+   "cap": 7.178651081431996,
+   "speed": 6.944294452667236
+  },
+  {
+   "step": 5662,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "speed": 5.7579522132873535
+  },
+  {
+   "step": 5680,
+   "event": "pass not counted",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "share_under_cap": 0.8333333333333334
+  },
+  {
+   "step": 5680,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "speed": 6.6183953285217285
+  },
+  {
+   "step": 5694,
+   "event": "pass not counted",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "share_under_cap": 0.5714285714285714
+  },
+  {
+   "step": 5695,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "speed": 6.8931965827941895
+  },
+  {
+   "step": 5709,
+   "event": "pass not counted",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "share_under_cap": 0.7333333333333333
+  },
+  {
+   "step": 5709,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "speed": 7.09952449798584
+  },
+  {
+   "step": 5723,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "speed": 6.897526741027832
+  },
+  {
+   "step": 5738,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "speed": 7.052465438842773
+  },
+  {
+   "step": 5752,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 9,
+   "cap": 7.601010208129883,
+   "speed": 7.1187744140625
+  },
+  {
+   "step": 5766,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "speed": 5.868760108947754
+  },
+  {
+   "step": 5782,
+   "event": "pass not counted",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "share_under_cap": 0.875
+  },
+  {
+   "step": 5782,
+   "event": "under cap",
+   "stretch": 19,
+   "lap": 9,
+   "cap": 6.976985168457031,
+   "speed": 6.483283996582031
+  },
+  {
+   "step": 5798,
+   "event": "under cap",
+   "stretch": 20,
+   "lap": 9,
+   "cap": 7.195539855957032,
+   "speed": 6.6458234786987305
+  },
+  {
+   "step": 5812,
+   "event": "pass not counted",
+   "stretch": 20,
+   "lap": 9,
+   "cap": 7.195539855957032,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 5812,
+   "event": "under cap",
+   "stretch": 21,
+   "lap": 9,
+   "cap": 7.199981689453125,
+   "speed": 7.002016067504883
+  },
+  {
+   "step": 5826,
+   "event": "under cap",
+   "stretch": 22,
+   "lap": 9,
+   "cap": 7.19993179321289,
+   "speed": 6.553183555603027
+  },
+  {
+   "step": 5834,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 5847,
+   "event": "pass not counted",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "share_under_cap": 0.7692307692307693
+  },
+  {
+   "step": 5848,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 7.106742858886719
+  },
+  {
+   "step": 5862,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.993574619293213
+  },
+  {
+   "step": 5877,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.895115375518799
+  },
+  {
+   "step": 5891,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 5905,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 6.565981388092041
+  },
+  {
+   "step": 5919,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.930528163909912
+  },
+  {
+   "step": 5933,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 5.993161678314209
+  },
+  {
+   "step": 5948,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 5961,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 6.7992024421691895
+  },
+  {
+   "step": 5976,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.857753276824951
+  },
+  {
+   "step": 5990,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.438394069671631
+  },
+  {
+   "step": 6005,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 5.685177326202393
+  },
+  {
+   "step": 6020,
+   "event": "pass not counted",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 6020,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "speed": 7.037601947784424
+  },
+  {
+   "step": 6034,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "speed": 6.931105136871338
+  },
+  {
+   "step": 6049,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 9,
+   "cap": 7.404465692693538,
+   "speed": 6.8987040519714355
+  },
+  {
+   "step": 6064,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "speed": 7.194533824920654
+  },
+  {
+   "step": 6076,
+   "event": "pass not counted",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "share_under_cap": 0.38461538461538464
+  },
+  {
+   "step": 6076,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "speed": 7.12158727645874
+  },
+  {
+   "step": 6091,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 9,
+   "cap": 7.178651081431996,
+   "speed": 6.796398639678955
+  },
+  {
+   "step": 6106,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "speed": 5.899806499481201
+  },
+  {
+   "step": 6124,
+   "event": "pass not counted",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "share_under_cap": 0.7777777777777778
+  },
+  {
+   "step": 6124,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "speed": 6.292906284332275
+  },
+  {
+   "step": 6139,
+   "event": "changed",
+   "stretch": 12,
+   "lap": 9,
+   "tag_m": 0.21635721623897552
+  },
+  {
+   "step": 6139,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "speed": 6.840620517730713
+  },
+  {
+   "step": 6153,
+   "event": "pass not counted",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "share_under_cap": 0.7142857142857143
+  },
+  {
+   "step": 6153,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "speed": 7.158313274383545
+  },
+  {
+   "step": 6168,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "speed": 5.926995754241943
+  },
+  {
+   "step": 6182,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "speed": 6.968102931976318
+  },
+  {
+   "step": 6196,
+   "event": "pass not counted",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "share_under_cap": 0.8571428571428571
+  },
+  {
+   "step": 6196,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 9,
+   "cap": 7.601010208129883,
+   "speed": 7.495112895965576
+  },
+  {
+   "step": 6211,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "speed": 6.072383403778076
+  },
+  {
+   "step": 6218,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 6232,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 6.172061443328857
+  },
+  {
+   "step": 6246,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 7.078190326690674
+  },
+  {
+   "step": 6261,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.9008402824401855
+  },
+  {
+   "step": 6275,
+   "event": "pass not counted",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "share_under_cap": 0.8571428571428571
+  },
+  {
+   "step": 6275,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 6.423678874969482
+  },
+  {
+   "step": 6290,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "speed": 6.283121585845947
+  },
+  {
+   "step": 6305,
+   "event": "pass not counted",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "share_under_cap": 0.6666666666666666
+  },
+  {
+   "step": 6305,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "speed": 6.906409740447998
+  },
+  {
+   "step": 6318,
+   "event": "pass not counted",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "share_under_cap": 0.23076923076923078
+  },
+  {
+   "step": 6318,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 9,
+   "cap": 7.404465692693538,
+   "speed": 7.323117733001709
+  },
+  {
+   "step": 6333,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "speed": 6.92465353012085
+  },
+  {
+   "step": 6348,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "speed": 7.074294567108154
+  },
+  {
+   "step": 6362,
+   "event": "pass not counted",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "share_under_cap": 0.8571428571428571
+  },
+  {
+   "step": 6362,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 9,
+   "cap": 7.178651081431996,
+   "speed": 6.794548511505127
+  },
+  {
+   "step": 6378,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "speed": 5.801167964935303
+  },
+  {
+   "step": 6397,
+   "event": "pass not counted",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "share_under_cap": 0.7368421052631579
+  },
+  {
+   "step": 6397,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "speed": 6.076841831207275
+  },
+  {
+   "step": 6412,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "speed": 6.482239246368408
+  },
+  {
+   "step": 6426,
+   "event": "pass not counted",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "share_under_cap": 0.7857142857142857
+  },
+  {
+   "step": 6426,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "speed": 7.0560221672058105
+  },
+  {
+   "step": 6440,
+   "event": "pass not counted",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "share_under_cap": 0.42857142857142855
+  },
+  {
+   "step": 6441,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "speed": 6.7485527992248535
+  },
+  {
+   "step": 6454,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "speed": 6.849442005157471
+  },
+  {
+   "step": 6468,
+   "event": "pass not counted",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "share_under_cap": 0.6428571428571429
+  },
+  {
+   "step": 6468,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 9,
+   "cap": 7.601010208129883,
+   "speed": 7.315803050994873
+  },
+  {
+   "step": 6483,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "speed": 5.981812953948975
+  },
+  {
+   "step": 6489,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 6502,
+   "event": "pass not counted",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "share_under_cap": 0.8461538461538461
+  },
+  {
+   "step": 6502,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 6.638870716094971
+  },
+  {
+   "step": 6517,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.993923664093018
+  },
+  {
+   "step": 6531,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 6.6917948722839355
+  },
+  {
+   "step": 6547,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 6.320309638977051
+  },
+  {
+   "step": 6562,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "speed": 6.898250579833984
+  },
+  {
+   "step": 6576,
+   "event": "pass not counted",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "share_under_cap": 0.5
+  },
+  {
+   "step": 6577,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "speed": 6.87467098236084
+  },
+  {
+   "step": 6591,
+   "event": "pass not counted",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 6591,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 9,
+   "cap": 7.404465692693538,
+   "speed": 6.4124298095703125
+  },
+  {
+   "step": 6605,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "speed": 7.106976509094238
+  },
+  {
+   "step": 6620,
+   "event": "pass not counted",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "share_under_cap": 0.8666666666666667
+  },
+  {
+   "step": 6620,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "speed": 7.171516418457031
+  },
+  {
+   "step": 6634,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 9,
+   "cap": 7.178651081431996,
+   "speed": 6.791939735412598
+  },
+  {
+   "step": 6650,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "speed": 5.684113502502441
+  },
+  {
+   "step": 6668,
+   "event": "pass not counted",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "share_under_cap": 0.7222222222222222
+  },
+  {
+   "step": 6668,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "speed": 6.336078643798828
+  },
+  {
+   "step": 6682,
+   "event": "pass not counted",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "share_under_cap": 0.5
+  },
+  {
+   "step": 6682,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "speed": 6.414909362792969
+  },
+  {
+   "step": 6696,
+   "event": "pass not counted",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "share_under_cap": 0.35714285714285715
+  },
+  {
+   "step": 6696,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "speed": 7.070484161376953
+  },
+  {
+   "step": 6710,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "speed": 6.797890663146973
+  },
+  {
+   "step": 6724,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "speed": 7.01024055480957
+  },
+  {
+   "step": 6739,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 9,
+   "cap": 7.601010208129883,
+   "speed": 7.237186431884766
+  },
+  {
+   "step": 6753,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "speed": 5.864801406860352
+  },
+  {
+   "step": 6761,
+   "event": "under cap",
+   "stretch": 0,
+   "lap": 9,
+   "cap": 7.19993730024858,
+   "speed": 7.0373969078063965
+  },
+  {
+   "step": 6774,
+   "event": "under cap",
+   "stretch": 1,
+   "lap": 9,
+   "cap": 7.252046758478338,
+   "speed": 6.993241786956787
+  },
+  {
+   "step": 6789,
+   "event": "under cap",
+   "stretch": 2,
+   "lap": 9,
+   "cap": 7.368571472167969,
+   "speed": 6.863160610198975
+  },
+  {
+   "step": 6803,
+   "event": "under cap",
+   "stretch": 3,
+   "lap": 9,
+   "cap": 7.199965737082742,
+   "speed": 7.128987789154053
+  },
+  {
+   "step": 6819,
+   "event": "under cap",
+   "stretch": 4,
+   "lap": 9,
+   "cap": 7.1999533219770955,
+   "speed": 6.2401204109191895
+  },
+  {
+   "step": 6834,
+   "event": "under cap",
+   "stretch": 5,
+   "lap": 9,
+   "cap": 7.098347334428268,
+   "speed": 6.977653503417969
+  },
+  {
+   "step": 6848,
+   "event": "under cap",
+   "stretch": 6,
+   "lap": 9,
+   "cap": 7.173159096457742,
+   "speed": 6.907820701599121
+  },
+  {
+   "step": 6862,
+   "event": "under cap",
+   "stretch": 7,
+   "lap": 9,
+   "cap": 7.404465692693538,
+   "speed": 6.99678897857666
+  },
+  {
+   "step": 6876,
+   "event": "under cap",
+   "stretch": 8,
+   "lap": 9,
+   "cap": 7.199920425415039,
+   "speed": 6.776690483093262
+  },
+  {
+   "step": 6891,
+   "event": "under cap",
+   "stretch": 9,
+   "lap": 9,
+   "cap": 7.199995283647017,
+   "speed": 6.915068626403809
+  },
+  {
+   "step": 6905,
+   "event": "under cap",
+   "stretch": 10,
+   "lap": 9,
+   "cap": 7.178651081431996,
+   "speed": 6.409978866577148
+  },
+  {
+   "step": 6921,
+   "event": "under cap",
+   "stretch": 11,
+   "lap": 9,
+   "cap": 5.952352523803711,
+   "speed": 5.579004287719727
+  },
+  {
+   "step": 6941,
+   "event": "under cap",
+   "stretch": 12,
+   "lap": 9,
+   "cap": 7.173958310213957,
+   "speed": 6.078743934631348
+  },
+  {
+   "step": 6956,
+   "event": "under cap",
+   "stretch": 13,
+   "lap": 9,
+   "cap": 7.097517522176107,
+   "speed": 6.738686561584473
+  },
+  {
+   "step": 6970,
+   "event": "under cap",
+   "stretch": 14,
+   "lap": 9,
+   "cap": 7.199972464821555,
+   "speed": 6.359767913818359
+  },
+  {
+   "step": 6985,
+   "event": "under cap",
+   "stretch": 15,
+   "lap": 9,
+   "cap": 7.199986891313033,
+   "speed": 6.182417869567871
+  },
+  {
+   "step": 7000,
+   "event": "under cap",
+   "stretch": 16,
+   "lap": 9,
+   "cap": 7.199984533136541,
+   "speed": 6.942152976989746
+  },
+  {
+   "step": 7014,
+   "event": "under cap",
+   "stretch": 17,
+   "lap": 9,
+   "cap": 7.601010208129883,
+   "speed": 7.202486991882324
+  },
+  {
+   "step": 7029,
+   "event": "under cap",
+   "stretch": 18,
+   "lap": 9,
+   "cap": 6.911026446024578,
+   "speed": 5.820150375366211
+  },
+  {
+   "step": 7045,
+   "event": "under cap",
+   "stretch": 19,
+   "lap": 9,
+   "cap": 6.976985168457031,
+   "speed": 6.3599348068237305
+  },
+  {
+   "step": 7059,
+   "event": "pass not counted",
+   "stretch": 19,
+   "lap": 9,
+   "cap": 6.976985168457031,
+   "share_under_cap": 0.5714285714285714
+  },
+  {
+   "step": 7059,
+   "event": "under cap",
+   "stretch": 20,
+   "lap": 9,
+   "cap": 7.195539855957032,
+   "speed": 6.828584671020508
+  },
+  {
+   "step": 7073,
+   "event": "pass not counted",
+   "stretch": 20,
+   "lap": 9,
+   "cap": 7.195539855957032,
+   "share_under_cap": 0.7142857142857143
+  },
+  {
+   "step": 7073,
+   "event": "under cap",
+   "stretch": 21,
+   "lap": 9,
+   "cap": 7.199981689453125,
+   "speed": 6.815915107727051
+  },
+  {
+   "step": 7088,
+   "event": "pass not counted",
+   "stretch": 21,
+   "lap": 9,
+   "cap": 7.199981689453125,
+   "share_under_cap": 0.8
+  },
+  {
+   "step": 7088,
+   "event": "under cap",
+   "stretch": 22,
+   "lap": 9,
+   "cap": 7.19993179321289,
+   "speed": 6.5503644943237305
+  }
+ ],
+ "stretch_m": 9.809217626679631,
+ "stretches": 35,
+ "history": [
+  [
+   0.0,
+   0.0013302435399964452,
+   0.0022704803850501776,
+   0.001133102341555059,
+   0.0023224849719554186,
+   0.0031429212540388107,
+   2.337961268494837e-05,
+   5.24114329891745e-05
+  ],
+  [
+   0.0016777634155005217,
+   0.0009697279310785234,
+   0.0014596517430618405,
+   0.0006148772081360221,
+   0.0010987446876242757,
+   3.3595875720493495e-05,
+   6.754445348633453e-05,
+   3.409635610296391e-05
+  ],
+  [
+   0.005641860421746969,
+   0.008255247958004475,
+   0.010048438794910908,
+   0.0035418602637946606,
+   0.008479381911456585,
+   7.149729208322242e-05,
+   5.428514123195782e-05,
+   3.3364973205607384e-05
+  ],
+  [
+   0.04878964275121689,
+   0.07669076323509216,
+   0.11017325893044472,
+   0.022927481681108475,
+   0.08074428886175156,
+   3.0281975341495126e-05,
+   4.30845539085567e-05,
+   2.132480585714802e-05
+  ],
+  [
+   0.17426347732543945,
+   0.07088417187333107,
+   0.16162686049938202,
+   0.15615369379520416,
+   0.13360480964183807,
+   2.4455257516819984e-05,
+   1.9638551748357713e-05,
+   5.8744124089571415e-06
+  ],
+  [
+   0.03132988512516022,
+   0.04339197650551796,
+   0.006614707875996828,
+   0.035308271646499634,
+   0.018371588550508022,
+   1.2971373507753015e-05,
+   1.2212990441184957e-05,
+   1.8596649169921875e-05
+  ],
+  [
+   0.006957509089261293,
+   0.008098759688436985,
+   0.001257575349882245,
+   0.00696357898414135,
+   0.0021266313269734383,
+   2.919240614573937e-05,
+   8.097250974969938e-05,
+   1.3248866707726847e-05
+  ],
+  [
+   0.013996253721415997,
+   0.018206872045993805,
+   0.002900164108723402,
+   0.013056409545242786,
+   0.007375160697847605,
+   3.1071876946953125e-05,
+   4.855317092733458e-05,
+   4.698634620581288e-05
+  ],
+  [
+   0.014414672739803791,
+   0.010288088582456112,
+   0.00020631130610127002,
+   0.015403558034449816,
+   0.008935181424021721,
+   2.320389830856584e-05,
+   5.1125671234331094e-05,
+   2.6973983040079474e-05
+  ],
+  [
+   0.023649247363209724,
+   0.019955463707447052,
+   0.016469651833176613,
+   0.022284317761659622,
+   0.009464851580560207,
+   5.110024721943773e-05,
+   5.188549403101206e-05,
+   3.075507265748456e-05
+  ],
+  [
+   0.012353667058050632,
+   0.009816722013056278,
+   0.010453286580741405,
+   0.013113154098391533,
+   0.015971314162015915,
+   5.50163458683528e-05,
+   7.987178832991049e-05,
+   3.4332275390625e-05
+  ],
+  [
+   0.33168166875839233,
+   0.13773603737354279,
+   0.22618627548217773,
+   0.591901421546936,
+   0.07403158396482468,
+   6.393784678948577e-05,
+   2.616712936287513e-05,
+   5.9709458582801744e-05
+  ],
+  [
+   0.031875669956207275,
+   0.046743035316467285,
+   0.07037969678640366,
+   0.05960140749812126,
+   0.03092663735151291,
+   8.189268555724993e-05,
+   3.598778130253777e-05,
+   6.672994641121477e-05
+  ],
+  [
+   0.03952271491289139,
+   0.016443505883216858,
+   0.027985990047454834,
+   0.04044141247868538,
+   0.006104413419961929,
+   5.2916730055585504e-05,
+   4.3494241253938526e-05,
+   2.9051869205432013e-05
+  ],
+  [
+   0.01675724796950817,
+   0.0043160171480849385,
+   0.013229106552898884,
+   0.01743282936513424,
+   0.0031944895163178444,
+   2.5589766664779745e-05,
+   3.075507265748456e-05,
+   2.288818359375e-05
+  ],
+  [
+   0.003345200326293707,
+   0.0026002724189311266,
+   0.0035122819244861603,
+   0.00347056332975626,
+   0.0006682277307845652,
+   4.973756585968658e-05,
+   2.412626417935826e-05,
+   6.291359750321135e-05
+  ],
+  [
+   0.008390575647354126,
+   0.003498984035104513,
+   0.0057296957820653915,
+   0.008195462636649609,
+   0.002200458664447069,
+   1.6656642401358113e-05,
+   5.6109001889126375e-05,
+   4.0948300920717884e-05
+  ],
+  [
+   0.0678328275680542,
+   0.046844929456710815,
+   0.06567149609327316,
+   0.07004688307642937,
+   0.010583917610347271,
+   1.7265974747715518e-05,
+   3.454355464782566e-05,
+   7.208289025584236e-05
+  ],
+  [
+   0.2717413008213043,
+   0.6928372979164124,
+   0.3512892723083496,
+   0.5199375450611115,
+   0.6226507723331451,
+   4.5226690417621285e-05,
+   2.2015886315784883e-05,
+   5.737918399972841e-05
+  ],
+  [
+   0.0162301417440176,
+   0.03829037584364414,
+   0.01625087484717369,
+   0.022964024916291237,
+   0.02145610749721527,
+   2.4425980882369913e-05,
+   8.079658528004074e-06,
+   3.749199640878942e-05
+  ],
+  [
+   0.06544142961502075,
+   0.030340736731886864,
+   0.04998025670647621,
+   0.0638524517416954,
+   0.04931609332561493,
+   1.9073486328125e-05,
+   1.945121584867593e-05,
+   5.008249354432337e-05
+  ],
+  [
+   0.06806621327996254,
+   0.03321831300854683,
+   0.04365203529596329,
+   0.061308156698942184,
+   0.042538564652204514,
+   7.600730168633163e-05,
+   3.20247927447781e-05,
+   0.00010306744661647826
+  ],
+  [
+   0.07548810541629791,
+   0.05542372167110443,
+   0.0356149822473526,
+   0.059501875191926956,
+   0.018752776086330414,
+   9.067431528819725e-05,
+   4.00543212890625e-05,
+   8.11938189144712e-05
+  ],
+  [
+   0.10797543823719025,
+   0.11922416090965271,
+   0.13171271979808807,
+   0.06759540736675262,
+   0.18342407047748566,
+   3.890243169735186e-05,
+   6.7352011683397e-05,
+   4.317946331866551e-05
+  ],
+  [
+   0.07645339518785477,
+   0.01087432075291872,
+   0.07995494455099106,
+   0.04124932736158371,
+   0.05463218688964844,
+   4.613260898622684e-05,
+   3.9320999349001795e-05,
+   2.143116398656275e-05
+  ],
+  [
+   0.1350340098142624,
+   0.1328778862953186,
+   0.09143278002738953,
+   0.21085889637470245,
+   0.0271090529859066,
+   4.737755807582289e-05,
+   3.0157829314703122e-05,
+   2.024671084654983e-05
+  ],
+  [
+   0.018971538171172142,
+   0.09154196828603745,
+   0.11475169658660889,
+   0.03016068786382675,
+   0.08465427532792091,
+   4.373940282675903e-05,
+   2.3282156689674594e-05,
+   5.5608292313991114e-05
+  ],
+  [
+   0.022027263417840004,
+   0.059743452817201614,
+   0.07718748599290848,
+   0.012189026921987534,
+   0.07141151279211044,
+   2.360883718210971e-05,
+   1.945121584867593e-05,
+   1.925029846461257e-05
+  ],
+  [
+   0.0026258842553943396,
+   0.004677833057940006,
+   0.006641171406954527,
+   0.001415254664607346,
+   0.005541970953345299,
+   3.623982047429308e-05,
+   3.264854967710562e-05,
+   3.248097709729336e-05
+  ],
+  [
+   0.0025373767130076885,
+   0.005609968677163124,
+   0.008033803664147854,
+   0.0016398242441937327,
+   0.005547400563955307,
+   4.091085065738298e-05,
+   1.941455775522627e-05,
+   6.218841735972092e-05
+  ],
+  [
+   0.006121859885752201,
+   0.06667818129062653,
+   0.08835019171237946,
+   0.0067468020133674145,
+   0.060532327741384506,
+   3.589921834645793e-05,
+   4.264961171429604e-05,
+   3.24249267578125e-05
+  ],
+  [
+   0.08101370930671692,
+   0.13028289377689362,
+   0.18908719718456268,
+   0.0363178588449955,
+   0.152387335896492,
+   3.567958265193738e-05,
+   1.7059845049516298e-05,
+   1.3486991520039737e-05
+  ],
+  [
+   0.06627892330288887,
+   0.05546627379953861,
+   0.09335837513208389,
+   0.040102772414684296,
+   0.061830852180719376,
+   2.1115865820320323e-05,
+   6.131020927568898e-05,
+   1.3686349575436907e-05
+  ],
+  [
+   0.14435578882694244,
+   0.1048656702041626,
+   0.04190218448638916,
+   0.17421086132526398,
+   0.10166285187005997,
+   2.005680653383024e-05,
+   2.4579094315413386e-05,
+   4.327596070652362e-05
+  ],
+  [
+   0.003552555339410901,
+   0.008445273153483868,
+   0.0024645356461405754,
+   0.005189472809433937,
+   0.007838649675250053,
+   5.640201015921775e-05,
+   4.394059214973822e-05,
+   2.196760760853067e-05
+  ]
+ ],
+ "brake": {
+  "steps": 612,
+  "chosen": 0,
+  "previous_chosen": 882
+ }
+}

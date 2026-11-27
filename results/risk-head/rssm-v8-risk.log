@@ -1,0 +1,51 @@
+train: 3667 episodes, 507796 steps, 24597 crash-within-1.5-s steps
+val: 464 episodes, 74657 steps, 2992 crash-within-1.5-s steps
+test: 453 episodes, 68175 steps, 2417 crash-within-1.5-s steps
+run rssm-latent-v8-clearance: 3050 steps, crash at None
+run rssm-latent-v8-clearance-long: 2473 steps, crash at 2473
+run rssm-latent-v8-slow-long: 4976 steps, crash at None
+run rssm-latent-v8-varied-long: 2158 steps, crash at 2158
+run rssm-latent-v8-guarded: 1989 steps, crash at 1989
+run rssm-latent-slow-logged: 3284 steps, crash at 3284
+run rssm-latent-v6-smoke: 2685 steps, crash at 2685
+run rssm-latent-v7-smoke: 2369 steps, crash at 2369
+training steps 522442, crash-label share 4.72%
+epoch   1  loss 0.3890  val AUC 0.923
+epoch   2  loss 0.3477  val AUC 0.928
+epoch   3  loss 0.3342  val AUC 0.926
+epoch   4  loss 0.3233  val AUC 0.931
+epoch   5  loss 0.3136  val AUC 0.928
+epoch   6  loss 0.3056  val AUC 0.932
+epoch   7  loss 0.2990  val AUC 0.930
+epoch   8  loss 0.2943  val AUC 0.929
+epoch   9  loss 0.2880  val AUC 0.927
+epoch  10  loss 0.2838  val AUC 0.930
+epoch  11  loss 0.2794  val AUC 0.929
+epoch  12  loss 0.2758  val AUC 0.926
+{
+ "threshold": 0.7816389203071594,
+ "auc": {
+  "val": {
+   "all": 0.9324360157984025,
+   "onset groups": 0.8012560223014744,
+   "other episodes": 0.9145168505764253,
+   "map Spielberg": 0.9399248835292994,
+   "map custom1": 0.8996948129954722,
+   "map levine": 0.9009263097121082,
+   "steps": 74657,
+   "crash steps": 2992
+  },
+  "test": {
+   "all": 0.9180001985188025,
+   "onset groups": 0.8470069408374864,
+   "other episodes": 0.8983514308985134,
+   "map Spielberg": 0.9054331325182108,
+   "map custom1": 0.9254087864460205,
+   "map levine": 0.9196231815453632,
+   "steps": 68175,
+   "crash steps": 2417
+  }
+ }
+}
+rssm-latent-v8-clearance {'held_out': False, 'crash_step': None, 'auc': nan, 'share_of_safe_steps_above_threshold': 0.021967213114754098}
+rssm-latent-v8-slow-long {'held_out': False, 'crash_step': None, 'auc': nan, 'share_of_safe_steps_above_threshold': 0.0}

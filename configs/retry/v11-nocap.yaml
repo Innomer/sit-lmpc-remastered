@@ -1,0 +1,6 @@
+# Plain v11 in retry mode without the safe-set cap (keeps every stored lap), for the planning-time comparison.
+extends: v11.yaml
+output:
+  exp_name: retry-v11-nocap
+planner:
+  safe_set_cap_laps: 0

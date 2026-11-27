@@ -1,0 +1,2 @@
+[condition] waiting; 1 events by lap
+[condition] after lap 8: {'lap': 8, 'condition': {'mu': 0.7}}

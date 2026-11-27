@@ -1,0 +1,81 @@
+{
+ "runs": {
+  "fpjit-bicycle-s1": {
+   "learned_laps": [
+    38.3,
+    39.5,
+    37.9
+   ],
+   "crashes": [],
+   "learned_attempts": 3,
+   "max_body_abs_ey": 0.8,
+   "p99_body_abs_ey": 0.73,
+   "max_abs_heading_error": 1.1,
+   "p99_abs_heading_error": 0.78,
+   "planning_p50_ms": 33.3,
+   "planning_p95_ms": 55.1
+  },
+  "fpjit-v11-s1": {
+   "learned_laps": [
+    38.6,
+    39.6,
+    38.7
+   ],
+   "crashes": [],
+   "learned_attempts": 3,
+   "max_body_abs_ey": 0.85,
+   "p99_body_abs_ey": 0.77,
+   "max_abs_heading_error": 1.26,
+   "p99_abs_heading_error": 0.79,
+   "planning_p50_ms": 54.0,
+   "planning_p95_ms": 68.9
+  },
+  "fpjit-v3-s1": {
+   "learned_laps": [
+    37.0,
+    37.7
+   ],
+   "crashes": [
+    {
+     "attempt": 6,
+     "s": 121.8,
+     "type": "spin",
+     "slip": 1.3,
+     "hit": [
+      -63.91,
+      52.85
+     ]
+    }
+   ],
+   "learned_attempts": 3,
+   "max_body_abs_ey": 1.03,
+   "p99_body_abs_ey": 0.89,
+   "max_abs_heading_error": 2.5,
+   "p99_abs_heading_error": 0.65,
+   "planning_p50_ms": 123.1,
+   "planning_p95_ms": 159.6
+  }
+ },
+ "summary": {
+  "bicycle": {
+   "runs": 1,
+   "runs_with_a_crash": 0,
+   "crashes_per_learned_attempt": "0/3 (0%)",
+   "crash_spots_s": []
+  },
+  "v11": {
+   "runs": 1,
+   "runs_with_a_crash": 0,
+   "crashes_per_learned_attempt": "0/3 (0%)",
+   "crash_spots_s": []
+  },
+  "v3": {
+   "runs": 1,
+   "runs_with_a_crash": 1,
+   "crashes_per_learned_attempt": "1/3 (33%)",
+   "crash_spots_s": [
+    121.8
+   ]
+  }
+ }
+}

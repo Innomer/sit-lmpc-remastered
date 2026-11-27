@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rx-check-grip-drop-s1",
+  "files": {
+    "state.json": "fc3c787d22e8af392a8eba1c765baf92700f4b493a90fe2412f7247eb192dd29",
+    "events.jsonl": "dccd2e90dbe236312d40c78dbc174193f03f0e3a3ab06b49e43bba292d78e34a",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "60678a07457962244d83141d4f57e05a21d58ce91d96a9c0a272d9c71c40780e",
+    "config.yaml": "09ee202a7a05e4e0c9829fb7b28dfe4bdca33325f31fb3b1e4db73371be52646",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "e619c88c14135c618d87f3bd477d17af79ae12c57726a0af9c7279b62ba589e5"
+  }
+}

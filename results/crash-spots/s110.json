@@ -1,0 +1,45 @@
+{
+ "spot_m": 110.0,
+ "crashes": {
+  "change-none-v11-v2-s3": {
+   "steps": 20,
+   "speed_mean": 8.256258010864258,
+   "speed_max": 8.773587226867676,
+   "abs_ey_mean": 0.4956144392490387,
+   "abs_ey_max": 0.8159055709838867,
+   "abs_slip_max": 0.40785425901412964,
+   "pred_error_1p5s_median": 0.0782947838306427,
+   "pred_error_1p5s_p90": 0.09634147882461548
+  },
+  "change-patch-v11-v2-s3": {
+   "steps": 20,
+   "speed_mean": 7.826783657073975,
+   "speed_max": 8.604645729064941,
+   "abs_ey_mean": 0.440712034702301,
+   "abs_ey_max": 0.7190375924110413,
+   "abs_slip_max": 0.42618870735168457,
+   "pred_error_1p5s_median": 0.013545162975788116,
+   "pred_error_1p5s_p90": 0.19834466576576235
+  },
+  "change-grip-drop-v11-v2-s1": {
+   "steps": 20,
+   "speed_mean": 7.71707010269165,
+   "speed_max": 8.636037826538086,
+   "abs_ey_mean": 0.4365702271461487,
+   "abs_ey_max": 0.7339867353439331,
+   "abs_slip_max": 0.45121636986732483,
+   "pred_error_1p5s_median": 0.26399242877960205,
+   "pred_error_1p5s_p90": 0.2786509096622467
+  }
+ },
+ "clean": {
+  "steps": 657,
+  "speed_mean": 7.760446548461914,
+  "speed_max": 9.711627960205078,
+  "abs_ey_mean": 0.43496719002723694,
+  "abs_ey_max": 0.8756400346755981,
+  "abs_slip_max": 0.6280096173286438,
+  "pred_error_1p5s_median": 0.19546949863433838,
+  "pred_error_1p5s_p90": 0.727008855342865
+ }
+}

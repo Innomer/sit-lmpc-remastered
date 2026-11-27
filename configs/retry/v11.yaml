@@ -1,0 +1,6 @@
+# Retry mode: plain v11 (rssm-latent-v11.yaml); a crash resets the car to the start line and the run continues.
+extends: ../world/rssm-latent-v11.yaml
+output:
+  exp_name: retry-v11
+planner:
+  sit_lmpc_mode: false

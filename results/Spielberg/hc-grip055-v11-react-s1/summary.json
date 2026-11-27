@@ -1,0 +1,49 @@
+{
+  "status": "collision",
+  "laps": 13,
+  "successful_laps": 13,
+  "trials": 14,
+  "history_laps": 0,
+  "attempts": 14,
+  "failed_attempts": 1,
+  "incomplete_attempts": 0,
+  "applied_steps": 6171,
+  "learned_steps": 4256,
+  "training_generations": 12,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 0,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": null,
+  "predictor_friction": 1.0489000082015991,
+  "dynamics_predictor": {
+    "kind": "rssm",
+    "variant": "latent",
+    "model_timestep": 0.1,
+    "hidden": 128,
+    "latent": 32
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.05,
+    "lambda_count": 16,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 549.8512965510017,
+  "partial_lap": null,
+  "device_memory": {
+    "bytes_in_use": 1524992,
+    "peak_bytes_in_use": 335493120,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 6167724032
+  }
+}

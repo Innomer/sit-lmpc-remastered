@@ -192,6 +192,15 @@ class PrecompiledHullEvaluator:
         return result
 
 
+def within_footprint_limit(frenet, corners, limit):
+    """Stored states whose body corners all stay within the track limit (same corner model as the planner)."""
+    frenet = np.asarray(frenet)
+    corners = np.asarray(corners, dtype=float)
+    psi = frenet[:, 4:5]
+    ey = frenet[:, 1:2] + corners[:, 0] * np.sin(psi) + corners[:, 1] * np.cos(psi)
+    return np.abs(ey).max(axis=1) <= limit
+
+
 class SafeSet:
     def __init__(self, planner, timestep, track_length, seed=0, randomness=None):
         self.config = planner
@@ -205,8 +214,19 @@ class SafeSet:
         self.state_ids = []
         self.tags = []
         self.previous_tag = None
+        self.state_tags = []
+        self.previous_state_tag = None
         self.condition = None
         self._array_cache = None
+        self.change_monitor = None
+        self.footprint = None
+        self._stretch_speed = {}
+        self._cap_cache = None
+        self.record_info = []
+        self.pending_info = None
+        self.previous_info = None
+        self.value_records = None
+        self.last_change = None
 
     @staticmethod
     def _state_ids(trajectory, count):
@@ -273,11 +293,14 @@ class SafeSet:
     def state_count(self):
         return self._state_count(len(self.frenet))
 
+    def state_mode(self):
+        return getattr(self.config, "condition_mode", "lap") == "state" and getattr(self.config, "condition_threshold", 0.0) > 0
+
     def active(self):
         """Records used for the hull: all of them, or with condition tags those closest to the current belief."""
         count = len(self.frenet)
         threshold = getattr(self.config, "condition_threshold", 0.0)
-        if self.condition is None or threshold <= 0 or not any(tag is not None for tag in self.tags):
+        if self.state_mode() or self.condition is None or threshold <= 0 or not any(tag is not None for tag in self.tags):
             return tuple(range(count))
         tags = self.tags + [None] * (count - len(self.tags))
         distances = np.array([np.inf if tag is None else float(np.linalg.norm(np.asarray(tag) - self.condition))
@@ -292,12 +315,16 @@ class SafeSet:
         """Keep the newest sufficient suffix, preserving the configured lap floor."""
         while len(self.tags) < len(self.frenet):
             self.tags.insert(0, None)
+        while len(self.state_tags) < len(self.frenet):
+            self.state_tags.insert(0, None)
         count = min(self.config.safe_set_size, len(self.frenet))
         minimum = self.config.safe_set_min_states
         if minimum:
             while count < len(self.frenet) and self._state_count(count) < minimum:
                 count += 1
-        for field in ("frenet", "cartesian", "controls", "control_masks", "state_ids", "tags"):
+        while len(self.record_info) < len(self.frenet):
+            self.record_info.insert(0, None)
+        for field in ("frenet", "cartesian", "controls", "control_masks", "state_ids", "tags", "state_tags", "record_info"):
             values = getattr(self, field)
             setattr(self, field, values[-count:] if count else [])
         return count
@@ -311,10 +338,120 @@ class SafeSet:
         signature = self.signature
         if self._array_cache is None or self._array_cache[0] != signature:
             active = signature[2]
+            tags = self.state_tags + [None] * (len(self.frenet) - len(self.state_tags))
             self._array_cache = (signature, np.concatenate([self.frenet[i] for i in active]),
                                  np.concatenate([self.cartesian[i] for i in active]),
-                                 tuple(self.frenet), tuple(self.cartesian))
+                                 tuple(self.frenet), tuple(self.cartesian),
+                                 np.concatenate([np.full(len(self.frenet[i]), np.nan) if tags[i] is None else tags[i]
+                                                 for i in active]),
+                                 np.concatenate([np.full(len(self.frenet[i]), i) for i in active]))
         return self._array_cache[1:3]
+
+    def state_tag_arrays(self):
+        """Per-point grip tags and record index, aligned with arrays()."""
+        self.arrays()
+        return self._array_cache[5], self._array_cache[6]
+
+    def condition_filter(self, indices, tags, records):
+        """Keep whole records over this hull window, so the kept points still cover the window: each record's grip for
+        the window is the median tag of its points there; keep records within condition_threshold of the newest
+        record's value (what the last lap found on this stretch), or of the current estimate when that is lower by more
+        than condition_threshold; at least condition_min_laps records."""
+        known = indices[np.isfinite(tags[indices])]
+        if not len(known):
+            self.last_filter = {"laps": 0, "kept": 0, "fallback": False, "reference": np.nan}
+            return indices
+        ids = np.unique(records[known])
+        values = np.array([np.median(tags[known[records[known] == i]]) for i in ids])
+        expected = float(values[ids == ids.max()][0])
+        threshold = self.config.condition_threshold
+        higher_is_worse = getattr(self.config, "condition_tag", "readout") == "bicycle_error"
+        current = self.condition[0] if self.condition is not None and np.isfinite(self.condition[0]) else None
+        if current is not None and (current > expected + threshold if higher_is_worse else current < expected - threshold):
+            expected = float(current)
+        distance = np.abs(values - expected)
+        chosen = ids[distance <= threshold]
+        minimum = min(getattr(self.config, "condition_min_laps", 4), len(ids))
+        fallback = len(chosen) < minimum
+        if fallback:
+            if getattr(self.config, "condition_fallback", "closest") == "newest":
+                chosen = ids[-minimum:]
+            else:
+                chosen = ids[np.argsort(distance, kind="stable")[:minimum]]
+        self.last_filter = {"laps": int(len(ids)), "kept": int(len(chosen)), "fallback": bool(fallback),
+                            "reference": float(expected)}
+        return indices[np.isin(records[indices], chosen)]
+
+    def change_records(self, mode):
+        """Record indices for a change-monitor mode: conservative = the slowest laps from before the change (warm-up
+        laps first); new = laps driven fully after the change (conservative if too few); normal = every record."""
+        from sit_lmpc.planners.change_monitor import CONSERVATIVE, NEW
+        monitor = self.change_monitor
+        info = self.record_info + [None] * (len(self.frenet) - len(self.record_info))
+        known = [(i, r) for i, r in enumerate(info) if r is not None]
+        if mode == NEW:
+            new = [i for i, r in known if r["lap"] > monitor.detection_lap]
+            if len(new) >= monitor.new_laps:
+                return new, NEW
+            mode = CONSERVATIVE
+        if mode == CONSERVATIVE:
+            old = [(i, r) for i, r in known if r["lap"] < monitor.detection_lap]
+            old.sort(key=lambda item: (not item[1]["warmup"], -item[1]["laptime"]))
+            chosen = [i for i, _ in old[:getattr(self.config, "change_conservative_laps", 2)]]
+            if chosen:
+                return chosen, CONSERVATIVE
+        return list(range(len(self.frenet))), 0
+
+    def tag_records(self, lo, hi):
+        """Condition-aware records for a hull window after a detected change: laps whose stored per-stretch tag
+        matches each stretch's current condition (changed vs normal, judged against the limit at detection). A
+        stretch not yet judged, or a changed stretch with fewer than new_laps matching laps, falls back to the
+        slowest pre-change laps."""
+        from sit_lmpc.planners.change_monitor import CONSERVATIVE
+        monitor = self.change_monitor
+        span = np.arange(np.floor(lo / monitor.stretch), np.floor(hi / monitor.stretch) + 1).astype(int) % monitor.count
+        info = self.record_info + [None] * (len(self.frenet) - len(self.record_info))
+        if np.any((monitor.mode[span] == CONSERVATIVE) & ~monitor.changed[span]):
+            chosen, used = self.change_records(CONSERVATIVE)
+            return chosen, used
+        match = []
+        for i, r in enumerate(info):
+            if r is None or r.get("tags") is None:
+                continue
+            tags = np.asarray(r["tags"])
+            ok = True
+            for k in span:
+                if not np.isfinite(tags[k]):
+                    continue
+                if bool(tags[k] > monitor.pre_limit[k]) != bool(monitor.changed[k]):
+                    ok = False
+                    break
+            if ok:
+                match.append(i)
+        if monitor.changed[span].any() and len(match) < monitor.new_laps:
+            return self.change_records(CONSERVATIVE)
+        if not match:
+            return list(range(len(self.frenet))), 0
+        return match, 2 if monitor.changed[span].any() else 3
+
+    def change_filter(self, indices, records, lo, hi):
+        mode = self.change_monitor.window_mode(lo, hi)
+        tag_mode = getattr(self.config, "change_safe_set", "laps") == "tag"
+        if mode == 0 and not tag_mode:
+            self.last_change = {"mode": 0, "records": -1}
+            return indices
+        chosen, used = self.tag_records(lo, hi) if tag_mode else self.change_records(mode)
+        if used == 0:
+            self.last_change = {"mode": 0, "records": -1}
+            return indices
+        kept = indices[np.isin(records[indices], chosen)]
+        if len(kept) < 6:
+            self.last_change = {"mode": 0, "records": -1, "too_few_points": True}
+            return indices
+        self.last_change = {"mode": int(used), "records": len(chosen)}
+        if getattr(self.config, "change_value", True) and used != 0:
+            self.value_records = [(np.asarray(self.frenet[i][:, 0]), np.asarray(self.frenet[i][:, -1])) for i in chosen]
+        return kept
 
     def window(self, bounds, speed):
         return (bounds[0] - speed * (self.config.reference_interval - 1) * self.timestep,
@@ -326,15 +463,44 @@ class SafeSet:
     def select_window(self, lo, hi, rng=None):
         rng = self.rng if rng is None else rng
         arr_f, arr_c = self.arrays()
+        tags, records = self.state_tag_arrays()
         if len(arr_f) > self.config.safe_set_max_points:
             inds = rng.choice(len(arr_f), self.config.safe_set_max_points, replace=False)
-            arr_f, arr_c = arr_f[inds], arr_c[inds]
+            arr_f, arr_c, tags, records = arr_f[inds], arr_c[inds], tags[inds], records[inds]
         indices = np.flatnonzero((arr_f[:, 0] > lo) & (arr_f[:, 0] < hi))
+        keep = self.cap_mask()
+        if keep is not None:
+            indices = indices[keep[records[indices], self.stretch_index(arr_f[indices, 0])]]
+        if self.footprint is not None:
+            indices = indices[within_footprint_limit(arr_f[indices], *self.footprint)]
+        self.value_records = None
+        if self.change_monitor is not None and self.change_monitor.active:
+            indices = self.change_filter(indices, records, lo, hi)
+        if self.state_mode():
+            indices = self.condition_filter(indices, tags, records)
+            self.last_filter = dict(getattr(self, "last_filter", {}), points=int(len(indices)))
         if len(indices) > self.config.hull_selection_points:
             indices = rng.choice(indices, self.config.hull_selection_points, replace=False)
         if len(indices) < 6:
             raise ValueError("not enough local safe-set points for learned control")
-        return arr_f[indices], arr_c[indices]
+        selected_f, selected_c = arr_f[indices], arr_c[indices]
+        if (self.change_monitor is not None and self.change_monitor.active
+                and getattr(self.config, "change_scale_safe_set", True)):
+            factors = self.speed_scale(selected_f[:, 0], records[indices])
+            if np.any(factors != 1.0):
+                selected_f, selected_c = selected_f.copy(), selected_c.copy()
+                selected_f[:, 3] *= factors
+                selected_c[:, 3] *= factors
+        return selected_f, selected_c
+
+    def speed_scale(self, s, records):
+        """Speed factor per selected state: the stretch's factor (ChangeMonitor.safe_set_factors) for states from
+        laps driven before the detection, 1 for laps driven after it."""
+        monitor = self.change_monitor
+        info = self.record_info + [None] * (len(self.frenet) - len(self.record_info))
+        pre = np.asarray([info[int(r)] is None or info[int(r)]["lap"] < monitor.detection_lap for r in records])
+        idx = (np.floor(np.asarray(s) / monitor.stretch).astype(int)) % monitor.count
+        return np.where(pre, monitor.safe_set_factors()[idx], 1.0)
 
     def speculate(self, window, dtype):
         """Do not consume the real host stream unless this geometry is accepted."""
@@ -376,9 +542,19 @@ class SafeSet:
             combined_c.setflags(write=False)
             while len(self.tags) < len(self.frenet):
                 self.tags.insert(0, None)
+            while len(self.state_tags) < len(self.frenet):
+                self.state_tags.insert(0, None)
+            while len(self.record_info) < len(self.frenet):
+                self.record_info.insert(0, None)
             self.frenet.append(combined_f)
             self.cartesian.append(combined_c)
+            self.record_info.append(self.previous_info)
             self.tags.append(self.previous_tag)
+            current_state_tag = self._state_tag(tag, len(lap.frenet))
+            if self.previous_state_tag is None or current_state_tag is None:
+                self.state_tags.append(None)
+            else:
+                self.state_tags.append(np.concatenate([self.previous_state_tag, current_state_tag[indices]]))
             ids = np.concatenate((
                 self._state_ids(self.previous_trajectory, len(previous.times)),
                 self._state_ids(trajectory, len(lap.times))[indices],
@@ -421,26 +597,107 @@ class SafeSet:
             new = True
         self.previous = lap
         self.previous_trajectory = trajectory
-        self.previous_tag = None if tag is None else np.asarray(tag, dtype=float)
+        self.previous_info = self.pending_info
+        self.pending_info = None
+        self.previous_tag = None if tag is None or np.ndim(tag) and len(np.ravel(tag)) > 1 else np.asarray(tag, dtype=float)
+        self.previous_state_tag = self._state_tag(tag, len(lap.frenet))
         return new
+
+    @staticmethod
+    def _state_tag(tag, count):
+        """A per-point tag array (any length) resampled to the lap's rows, or None for lap-level or missing tags."""
+        if tag is None:
+            return None
+        values = np.ravel(np.asarray(tag, dtype=float))
+        if len(values) < 2:
+            return None
+        if len(values) == count:
+            return values
+        return np.interp(np.linspace(0, len(values) - 1, count), np.arange(len(values)), values)
 
     @property
     def ready(self):
         return len(self.frenet) >= self.config.safe_set_size
 
+    def stretch_geometry(self):
+        from sit_lmpc.planners.change_monitor import stretch_length
+        stretch = stretch_length(self.config, self.track_length)
+        count = max(1, int(np.ceil(float(self.track_length) / stretch)))
+        return float(self.track_length) / count, count
+
+    def stretch_index(self, s):
+        length, count = self.stretch_geometry()
+        return (np.floor((np.asarray(s) % float(self.track_length)) / length).astype(int)) % count
+
+    def cap_mask(self):
+        """Safe-set cap (safe_set_cap_laps = K > 0): per stretch, keep the newest K stored laps plus the one with the
+        lowest mean speed on that stretch; after a detected change also every lap driven after it and the slowest
+        pre-change laps the conservative fallback uses. Returns a (records, stretches) mask, or None without a cap."""
+        cap = int(getattr(self.config, "safe_set_cap_laps", 0) or 0)
+        if cap <= 0 or not self.frenet:
+            return None
+        monitor = self.change_monitor
+        key = (tuple(id(row) for row in self.frenet), cap,
+               None if monitor is None else (monitor.active, monitor.detection_lap))
+        if self._cap_cache is not None and self._cap_cache[0] == key:
+            return self._cap_cache[1]
+        _, count = self.stretch_geometry()
+        n = len(self.frenet)
+        speeds = np.full((n, count), np.inf)
+        for r, record in enumerate(self.frenet):
+            cached = self._stretch_speed.get(id(record))
+            if cached is None or cached[0] is not record:
+                k = self.stretch_index(record[:, 0])
+                total = np.bincount(k, weights=record[:, 3], minlength=count)
+                steps = np.bincount(k, minlength=count)
+                cached = (record, np.where(steps > 0, total / np.maximum(steps, 1), np.inf))
+                self._stretch_speed[id(record)] = cached
+            speeds[r] = cached[1]
+        keep = np.zeros((n, count), bool)
+        keep[max(0, n - cap):, :] = True
+        finite = np.isfinite(speeds).any(axis=0)
+        slowest = np.argmin(speeds, axis=0)
+        keep[slowest[finite], np.flatnonzero(finite)] = True
+        if monitor is not None and monitor.active:
+            from sit_lmpc.planners.change_monitor import CONSERVATIVE
+            info = self.record_info + [None] * (n - len(self.record_info))
+            after = [i for i, r in enumerate(info) if r is not None and r["lap"] > monitor.detection_lap]
+            fallback, _ = self.change_records(CONSERVATIVE)
+            keep[sorted(set(after) | set(fallback)), :] = True
+        self._cap_cache = (key, keep)
+        return keep
+
+    def capped_rows(self, r, record):
+        keep = self.cap_mask()
+        if keep is None:
+            return np.ones(len(record), bool)
+        return keep[r, self.stretch_index(record[:, 0])]
+
     def training_data(self, input_mode="state"):
         if not self.frenet:
             raise ValueError("safe set has no completed pairs of laps")
+        if input_mode == "state_tag":
+            monitor = self.change_monitor
+            info = self.record_info + [None] * (len(self.frenet) - len(self.record_info))
+            rows = []
+            for i, (record, r) in enumerate(zip(self.frenet, info)):
+                if r is None or r.get("tags") is None:
+                    continue
+                tags = np.nan_to_num(np.asarray(r["tags"], float), nan=0.0)
+                idx = (np.floor(record[:, 0] / monitor.stretch).astype(int)) % monitor.count
+                keep = self.capped_rows(i, record)
+                rows.append(np.column_stack([record[:, :5], tags[idx], record[:, -1]])[keep])
+            return np.concatenate(rows)
         if input_mode == "state_action":
             if len(self.controls) != len(self.frenet):
                 raise ValueError(
                     "state-action value training needs aligned controls; collect fresh warm-up laps"
                 )
             rows = [
-                np.column_stack((record[mask, :5], control[mask], record[mask, -1]))
-                for record, control, mask in zip(
+                np.column_stack((record[mask, :5], control[mask], record[mask, -1]))[self.capped_rows(i, record)[mask]]
+                for i, (record, control, mask) in enumerate(zip(
                     self.frenet, self.controls, self.control_masks, strict=True
-                )
+                ))
             ]
             data = np.concatenate(rows)
             if not len(data):
@@ -449,7 +706,8 @@ class SafeSet:
         if input_mode != "state":
             raise ValueError("input_mode must be state or state_action")
         return np.concatenate(
-            [np.column_stack([record[:, :5], record[:, -1]]) for record in self.frenet]
+            [np.column_stack([record[:, :5], record[:, -1]])[self.capped_rows(i, record)]
+             for i, record in enumerate(self.frenet)]
         )
 
     def select(self, terminals, speed):

@@ -1,0 +1,20 @@
+# Retry mode: v11 + the learned change handling (no speed caps, no hand-written speed rule). Change detection with
+# the bicycle 1.0 s position-error tag; after a detection the safe set keeps only stored laps whose per-stretch tag
+# matches each stretch's current condition (slowest pre-change laps until enough new-condition laps exist), and a
+# second value network with the tag as an extra input is trained and used. Nothing changes before a detection.
+extends: ../world/rssm-latent-v11.yaml
+output:
+  exp_name: retry-v11-learned
+planner:
+  sit_lmpc_mode: false
+  change_detection: true
+  change_window: 10
+  change_ratio: 3.0
+  change_floor: 0.05
+  change_new_laps: 2
+  change_conservative_laps: 2
+  change_value: false
+  change_speed: null
+  change_cap_scope: track
+  change_safe_set: tag
+  change_value_tag: true

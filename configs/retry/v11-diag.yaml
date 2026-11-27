@@ -1,0 +1,7 @@
+# Retry mode: plain v11 with the per-candidate final-pick cost log on (for the diagnosis of why v11 does not slow
+# down after a change). Same planner as configs/retry/v11.yaml; the logging adds planning time.
+extends: v11.yaml
+output:
+  exp_name: retry-v11-diag
+planner:
+  change_breakdown: true

@@ -1,0 +1,90 @@
+{
+  "status": "speed_too_low",
+  "laps": 6,
+  "successful_laps": 6,
+  "trials": 6,
+  "history_laps": 0,
+  "attempts": 7,
+  "failed_attempts": 0,
+  "incomplete_attempts": 1,
+  "applied_steps": 2436,
+  "learned_steps": 530,
+  "training_generations": 5,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 0,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": null,
+  "predictor_friction": null,
+  "dynamics_predictor": {
+    "kind": "gaussian_bnn",
+    "particles": 64,
+    "latent_dimension": 16,
+    "model_fingerprint": "23d2cfb4144cf8542f0d450345408d57ef0f3592f310d041dbcbdf82eee916ee",
+    "population_generation": 20000,
+    "target_mode": "residual",
+    "adaptation": "gaussian_posterior",
+    "belief_generation": 0,
+    "likelihood_power": 1.0,
+    "posterior_method": "standard",
+    "inference": "conditional_bayes"
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.9,
+    "lambda_count": 10,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 382.13307111499944,
+  "partial_lap": {
+    "file": "partial_lap.npz",
+    "lap": 7,
+    "completed": false,
+    "termination_reason": "speed_too_low",
+    "steps": 132,
+    "duration": 13.199999999999969,
+    "lap_time": null,
+    "mean_speed": 8.252117156982422,
+    "safe_set_max": 2.182596206665039,
+    "safe_set_mean": 0.05630299186503345,
+    "boundary_max": 2.7869982719421387,
+    "boundary_mean": 0.02782562691153902,
+    "actual_boundary_max": 0.0,
+    "actual_boundary_mean": 0.0,
+    "out_of_bounds_steps": 0,
+    "max_abs_lateral_offset": 0.8592427968978882,
+    "nonfinite_lateral_steps": 0,
+    "attempt_id": 7,
+    "outcome": "incomplete",
+    "lambda_summary": {
+      "steps": 132,
+      "terms": {
+        "hull": {
+          "mean": 4.166666666666667,
+          "max": 18.75,
+          "steps": 132
+        },
+        "boundary": {
+          "mean": 2.945075757575758,
+          "max": 18.75,
+          "steps": 132
+        }
+      }
+    }
+  },
+  "device_memory": {
+    "bytes_in_use": 1691136,
+    "peak_bytes_in_use": 339411200,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 6167724032
+  }
+}

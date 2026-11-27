@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rssm-latent-v7-smoke",
+  "files": {
+    "state.json": "36e2c76dcd9f0d71056a35efa729b3c018392c0dfb9ecf18f3a7f49f3281fd34",
+    "events.jsonl": "4a57869ee51d2cbfb4682e5a1e779601150a4c2e9e39743ab6d45e06196e922f",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "3ac5ee65825836ed56b33190c1801638c248756e104d540bf6367b3877b222fe",
+    "config.yaml": "091d7884ace996d6f4291b2163cdcea7c5e527d368d9ed75f7259633c65df17d",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "4f3fc25c2d09d8693112aadda5fd97402df0f9bac90bdf85ecfb45b241e444a3"
+  }
+}

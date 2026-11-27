@@ -1,0 +1,20 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rootcause/head-v3-s2-r",
+  "files": {
+    "state.json": "28072c02965f3abe324ef899735f9a668895aad7a9ed750b6cc4173d9bb1a18d",
+    "events.jsonl": "cae6704f0a9372af668331fd86827ba5ee00c921036f638bee8dad0a50ede7b8",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "f5535f583333873f54eb2105b61536381d3cc5fe0dd0d0d3f582fc000c64a707",
+    "config.yaml": "6f879d47939b9c7f02cd03773dc8a28c86ca90e646dee83eef3545b3bc43bdf3",
+    "dynamics_model/manifest.json": "0e1b9875340fa2973b146a5e657b6e09b3061d4402df6fc62261723a8f7d37ce",
+    "dynamics_model/model.msgpack": "23d2cfb4144cf8542f0d450345408d57ef0f3592f310d041dbcbdf82eee916ee",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "aed9c6388f8687ff96e033feea21f4257d13c9ac04b2e99fa75851da736be4da"
+  }
+}

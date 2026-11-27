@@ -1,0 +1,93 @@
+{
+ "oracle_c_grip_readout": {
+  "1.0489": 1.0473840236663818
+ },
+ "after the change": {
+  "starts": 1335,
+  "own_c_grip_readout_mean": 0.9843180775642395,
+  "own c": {
+   "0.5 s": {
+    "position_median": 0.07156078517436981,
+    "position_p95": 0.2560901939868927,
+    "lateral_median": 0.04106581211090088,
+    "lateral_p95": 0.20312295854091644
+   },
+   "1.0 s": {
+    "position_median": 0.1822509914636612,
+    "position_p95": 0.6707941889762878,
+    "lateral_median": 0.11779928207397461,
+    "lateral_p95": 0.5776727795600891
+   },
+   "1.5 s": {
+    "position_median": 0.37117862701416016,
+    "position_p95": 1.2935632467269897,
+    "lateral_median": 0.2632545232772827,
+    "lateral_p95": 1.4347296953201294
+   }
+  },
+  "oracle c": {
+   "0.5 s": {
+    "position_median": 0.09157425165176392,
+    "position_p95": 0.3341856896877289,
+    "lateral_median": 0.05360165238380432,
+    "lateral_p95": 0.264155775308609
+   },
+   "1.0 s": {
+    "position_median": 0.22077612578868866,
+    "position_p95": 0.8363698720932007,
+    "lateral_median": 0.1436147689819336,
+    "lateral_p95": 0.7682286500930786
+   },
+   "1.5 s": {
+    "position_median": 0.41848182678222656,
+    "position_p95": 1.4561527967453003,
+    "lateral_median": 0.30008697509765625,
+    "lateral_p95": 1.6825079917907715
+   }
+  }
+ },
+ "before the change (control)": {
+  "starts": 583,
+  "own_c_grip_readout_mean": 1.0404750108718872,
+  "own c": {
+   "0.5 s": {
+    "position_median": 0.06857810169458389,
+    "position_p95": 0.1190648227930069,
+    "lateral_median": 0.026293113827705383,
+    "lateral_p95": 0.09776149690151215
+   },
+   "1.0 s": {
+    "position_median": 0.171600803732872,
+    "position_p95": 0.5493447780609131,
+    "lateral_median": 0.10525205731391907,
+    "lateral_p95": 0.4715503454208374
+   },
+   "1.5 s": {
+    "position_median": 0.3798643946647644,
+    "position_p95": 1.394934058189392,
+    "lateral_median": 0.2888932228088379,
+    "lateral_p95": 1.6279157400131226
+   }
+  },
+  "oracle c": {
+   "0.5 s": {
+    "position_median": 0.07054070383310318,
+    "position_p95": 0.1093108206987381,
+    "lateral_median": 0.027239501476287842,
+    "lateral_p95": 0.08635382354259491
+   },
+   "1.0 s": {
+    "position_median": 0.16038037836551666,
+    "position_p95": 0.4910745322704315,
+    "lateral_median": 0.09383095800876617,
+    "lateral_p95": 0.4704650342464447
+   },
+   "1.5 s": {
+    "position_median": 0.3133354187011719,
+    "position_p95": 1.2857646942138672,
+    "lateral_median": 0.23921185731887817,
+    "lateral_p95": 1.396828532218933
+   }
+  }
+ }
+}

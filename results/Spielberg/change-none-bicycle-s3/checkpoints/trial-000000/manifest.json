@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/change-none-bicycle-s3",
+  "files": {
+    "state.json": "5d1f00ffbad6a6d7c043c99b047d36e622d890165d74e9ce8412835c860f061c",
+    "events.jsonl": "52d09149be1bc4b797d163781addd08c8bb5922950ba80bf0c290bbc8d7088be",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "a413aaec477853d7f7d5019a4479807e36065c0065f29702450bca320b0b7740",
+    "config.yaml": "009f012f684678f7a49c4cb8345e5907b1fd767da39ed50f061949dadef2e30d",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "3038b2b1b0e848e30a6069b2f9c685cd65674c3a75ec9cd18382f9ca63bd306a"
+  }
+}

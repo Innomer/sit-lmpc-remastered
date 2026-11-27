@@ -1,0 +1,55 @@
+{
+ "spot_m": 34.5,
+ "crashes": {
+  "change-grip-drop-v11-s2": {
+   "steps": 20,
+   "speed_mean": 9.386012077331543,
+   "speed_max": 10.967836380004883,
+   "abs_ey_mean": 0.11987670511007309,
+   "abs_ey_max": 0.29505839943885803,
+   "abs_slip_max": 0.3946090638637543,
+   "pred_error_1p5s_median": 0.14078152179718018,
+   "pred_error_1p5s_p90": 0.2829524099826813
+  },
+  "change-patch-v11-s2": {
+   "steps": 20,
+   "speed_mean": 9.33464241027832,
+   "speed_max": 9.718076705932617,
+   "abs_ey_mean": 0.13597126305103302,
+   "abs_ey_max": 0.3130010962486267,
+   "abs_slip_max": 0.2835075855255127,
+   "pred_error_1p5s_median": 0.11712099611759186,
+   "pred_error_1p5s_p90": 0.21203498840332033
+  },
+  "change-patch-v11-v2-s2": {
+   "steps": 20,
+   "speed_mean": 10.620612144470215,
+   "speed_max": 10.967585563659668,
+   "abs_ey_mean": 0.2145669162273407,
+   "abs_ey_max": 0.4012790024280548,
+   "abs_slip_max": 0.37763872742652893,
+   "pred_error_1p5s_median": 0.07786032557487488,
+   "pred_error_1p5s_p90": 0.3423575043678284
+  },
+  "change-none-v11-v2-s1": {
+   "steps": 20,
+   "speed_mean": 9.277933120727539,
+   "speed_max": 9.653864860534668,
+   "abs_ey_mean": 0.11189697682857513,
+   "abs_ey_max": 0.16368527710437775,
+   "abs_slip_max": 0.2699197828769684,
+   "pred_error_1p5s_median": 0.10668006539344788,
+   "pred_error_1p5s_p90": 0.1628204584121704
+  }
+ },
+ "clean": {
+  "steps": 761,
+  "speed_mean": 8.959759712219238,
+  "speed_max": 11.111351013183594,
+  "abs_ey_mean": 0.21732743084430695,
+  "abs_ey_max": 0.7294957637786865,
+  "abs_slip_max": 0.4980873465538025,
+  "pred_error_1p5s_median": 0.38127753138542175,
+  "pred_error_1p5s_p90": 1.158974528312683
+ }
+}

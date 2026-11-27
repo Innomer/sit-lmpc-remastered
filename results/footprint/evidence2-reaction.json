@@ -1,0 +1,6137 @@
+{
+ "runs": {
+  "hc-grip055-bicycle-s1": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    37.9,
+    38.9,
+    37.9
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 22.5,
+    "s": 178.1,
+    "type": "spin",
+    "max_slip_last_2s": 0.74,
+    "hit": [
+     -12.2,
+     43.43
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    37.9,
+    38.9,
+    37.9
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.082
+   ],
+   "laps_under_0.2m": "1/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "grip055",
+   "controller": "bicycle"
+  },
+  "hc-grip055-bicycle-s2": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.2,
+    39.1,
+    37.5
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 12.6,
+    "s": 112.1,
+    "type": "spin",
+    "max_slip_last_2s": 0.85,
+    "hit": [
+     -75.02,
+     54.07
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.2,
+    39.1,
+    37.5
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.058
+   ],
+   "laps_under_0.2m": "1/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "grip055",
+   "controller": "bicycle"
+  },
+  "hc-grip055-bicycle-s3": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.7,
+    38.2,
+    37.9
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 20.7,
+    "s": 176.9,
+    "type": "spin",
+    "max_slip_last_2s": 0.84,
+    "hit": [
+     -11.46,
+     45.06
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.7,
+    38.2,
+    37.9
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.058
+   ],
+   "laps_under_0.2m": "1/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "grip055",
+   "controller": "bicycle"
+  },
+  "hc-grip055-v11-s1": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.3,
+    40.5,
+    39.3
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 21.4,
+    "s": 176.7,
+    "type": "spin",
+    "max_slip_last_2s": 1.0,
+    "hit": [
+     -11.54,
+     45.0
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.3,
+    40.5,
+    39.3
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.0
+   ],
+   "laps_under_0.2m": "1/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "grip055",
+   "controller": "v11"
+  },
+  "hc-grip055-v11-s2": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.4,
+    39.7,
+    39.0,
+    39.7,
+    40.0
+   ],
+   "after_change": [
+    39.7,
+    40.0
+   ],
+   "crash": {
+    "lap": 11,
+    "seconds_into_lap": 21.5,
+    "s": 179.4,
+    "type": "spin",
+    "max_slip_last_2s": 0.7,
+    "hit": [
+     -12.84,
+     42.39
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.4,
+    39.7,
+    39.0,
+    39.7,
+    40.0
+   ],
+   "laps_after_change": 2,
+   "clearance_after": [
+    0.082,
+    0.058,
+    0.058
+   ],
+   "laps_under_0.2m": "3/3",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "grip055",
+   "controller": "v11"
+  },
+  "hc-grip055-v11-s3": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    40.0,
+    40.0,
+    40.2,
+    40.2,
+    40.0
+   ],
+   "after_change": [
+    40.2,
+    40.0
+   ],
+   "crash": {
+    "lap": 11,
+    "seconds_into_lap": 20.5,
+    "s": 179.7,
+    "type": "spin",
+    "max_slip_last_2s": 0.96,
+    "hit": [
+     -12.88,
+     42.4
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    40.0,
+    40.0,
+    40.2,
+    40.2,
+    40.0
+   ],
+   "laps_after_change": 2,
+   "clearance_after": [
+    0.209,
+    0.13,
+    0.116
+   ],
+   "laps_under_0.2m": "2/3",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "grip055",
+   "controller": "v11"
+  },
+  "ev2-grip055-v11-react-s1": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.5,
+    38.8,
+    38.8,
+    55.5,
+    50.4,
+    54.9,
+    54.1,
+    52.5,
+    51.0,
+    51.7
+   ],
+   "after_change": [
+    55.5,
+    50.4,
+    54.9,
+    54.1,
+    52.5,
+    51.0,
+    51.7
+   ],
+   "crash": null,
+   "laps_to_recover": 2,
+   "detections": [
+    {
+     "step": 3087,
+     "lap": 9,
+     "stretch": 1
+    },
+    {
+     "step": 3708,
+     "lap": 10,
+     "stretch": 5
+    },
+    {
+     "step": 3725,
+     "lap": 10,
+     "stretch": 7
+    },
+    {
+     "step": 3735,
+     "lap": 10,
+     "stretch": 8
+    },
+    {
+     "step": 3761,
+     "lap": 10,
+     "stretch": 10
+    },
+    {
+     "step": 3797,
+     "lap": 10,
+     "stretch": 12
+    },
+    {
+     "step": 3818,
+     "lap": 10,
+     "stretch": 14
+    },
+    {
+     "step": 3845,
+     "lap": 10,
+     "stretch": 16
+    },
+    {
+     "step": 4013,
+     "lap": 10,
+     "stretch": 27
+    },
+    {
+     "step": 4792,
+     "lap": 12,
+     "stretch": 7
+    },
+    {
+     "step": 4803,
+     "lap": 12,
+     "stretch": 8
+    },
+    {
+     "step": 4829,
+     "lap": 12,
+     "stretch": 10
+    },
+    {
+     "step": 5851,
+     "lap": 14,
+     "stretch": 7
+    },
+    {
+     "step": 5875,
+     "lap": 14,
+     "stretch": 8
+    },
+    {
+     "step": 5890,
+     "lap": 14,
+     "stretch": 10
+    }
+   ],
+   "detection_delay_s": 1.1,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.68,
+    0.83,
+    0.47,
+    0.49,
+    0.83,
+    0.53,
+    0.83,
+    0.72,
+    0.83,
+    0.73,
+    0.83,
+    0.73,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.78,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83,
+    0.83
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 17,
+   "changed_stretches": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.5,
+    38.8,
+    38.8,
+    55.5,
+    50.4,
+    54.9,
+    54.1,
+    52.5,
+    51.0,
+    51.7
+   ],
+   "laps_after_change": 7,
+   "clearance_after": [
+    0.371,
+    0.174,
+    0.239,
+    0.328,
+    0.13,
+    0.164,
+    0.209
+   ],
+   "laps_under_0.2m": "3/7",
+   "cap_speed": {
+    "capped_steps": 3678,
+    "mean_speed": 6.63,
+    "mean_cap": 7.09,
+    "mean_gap": 0.46,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.98,
+      "speed": 6.26,
+      "cap": 7.08
+     },
+     {
+      "lap": 10,
+      "capped_share": 1.0,
+      "speed": 6.98,
+      "cap": 7.1
+     },
+     {
+      "lap": 11,
+      "capped_share": 1.0,
+      "speed": 6.38,
+      "cap": 7.09
+     },
+     {
+      "lap": 12,
+      "capped_share": 1.0,
+      "speed": 6.47,
+      "cap": 7.09
+     },
+     {
+      "lap": 13,
+      "capped_share": 1.0,
+      "speed": 6.7,
+      "cap": 7.08
+     },
+     {
+      "lap": 14,
+      "capped_share": 0.98,
+      "speed": 6.89,
+      "cap": 7.09
+     },
+     {
+      "lap": 15,
+      "capped_share": 1.0,
+      "speed": 6.82,
+      "cap": 7.09
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 131,
+      "speed": 9.38,
+      "cap": 6.91,
+      "gap": -2.47
+     },
+     "soft": {
+      "steps": 3547,
+      "speed": 6.53,
+      "cap": 7.1,
+      "gap": 0.56
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 49,
+    "caps_set_laps": [
+     9,
+     10,
+     12,
+     14
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3087,
+      "event": "detected",
+      "stretch": 1
+     },
+     {
+      "lap": 9,
+      "step": 3169,
+      "event": "cap removed",
+      "stretch": 5,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3202,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3218,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3254,
+      "event": "cap removed",
+      "stretch": 10,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3290,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3319,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3350,
+      "event": "cap removed",
+      "stretch": 16,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3522,
+      "event": "cap removed",
+      "stretch": 27,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3708,
+      "event": "detected again",
+      "stretch": 5
+     },
+     {
+      "lap": 10,
+      "step": 3725,
+      "event": "detected again",
+      "stretch": 7
+     },
+     {
+      "lap": 10,
+      "step": 3735,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 10,
+      "step": 3761,
+      "event": "detected again",
+      "stretch": 10
+     },
+     {
+      "lap": 10,
+      "step": 3797,
+      "event": "detected again",
+      "stretch": 12
+     },
+     {
+      "lap": 10,
+      "step": 3818,
+      "event": "detected again",
+      "stretch": 14
+     },
+     {
+      "lap": 10,
+      "step": 3845,
+      "event": "detected again",
+      "stretch": 16
+     },
+     {
+      "lap": 10,
+      "step": 4013,
+      "event": "detected again",
+      "stretch": 27
+     },
+     {
+      "lap": 11,
+      "step": 4261,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 11,
+      "step": 4276,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 11,
+      "step": 4310,
+      "event": "cap removed",
+      "stretch": 10,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 12,
+      "step": 4792,
+      "event": "detected again",
+      "stretch": 7
+     },
+     {
+      "lap": 12,
+      "step": 4803,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 12,
+      "step": 4829,
+      "event": "detected again",
+      "stretch": 10
+     },
+     {
+      "lap": 13,
+      "step": 5346,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5362,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5396,
+      "event": "cap removed",
+      "stretch": 10,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5706,
+      "event": "cap raised",
+      "stretch": 31,
+      "cap": 7.5,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.9,
+      "model_error_m": 0.264,
+      "model_limit_m": 0.672,
+      "min_clearance_m": 0.422
+     },
+     {
+      "lap": 14,
+      "step": 5851,
+      "event": "detected again",
+      "stretch": 7
+     },
+     {
+      "lap": 14,
+      "step": 5875,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 14,
+      "step": 5890,
+      "event": "detected again",
+      "stretch": 10
+     },
+     {
+      "lap": 15,
+      "step": 6380,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 15,
+      "step": 6395,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 15,
+      "step": 6429,
+      "event": "cap removed",
+      "stretch": 10,
+      "reason": "tag matches history"
+     }
+    ],
+    "cap_kept_reasons_per_lap": {
+     "no pre-change data at this speed": {
+      "9": 25,
+      "10": 19,
+      "11": 27,
+      "12": 28,
+      "13": 26,
+      "14": 23,
+      "15": 24
+     },
+     "slip above pre-change range": {
+      "9": 1,
+      "11": 2,
+      "13": 1,
+      "14": 2,
+      "15": 2
+     },
+     "clearance under limit": {
+      "13": 1,
+      "14": 1
+     }
+    },
+    "passes_not_counted_per_lap": {
+     "9": 1,
+     "10": 16,
+     "11": 5,
+     "12": 7,
+     "13": 5,
+     "14": 10,
+     "15": 7
+    },
+    "detection_to_under_cap_s": 0.2,
+    "under_cap_speed": 6.74
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 8.86,
+    "speed_2s_after": 6.56,
+    "same_stretch_previous_lap": 7.86
+   },
+   "scenario": "grip055",
+   "controller": "v11-react"
+  },
+  "ev2-grip055-v11-react-s2": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.2,
+    38.9,
+    40.6,
+    55.3,
+    53.4,
+    55.1,
+    54.4,
+    51.6,
+    51.1,
+    51.2
+   ],
+   "after_change": [
+    55.3,
+    53.4,
+    55.1,
+    54.4,
+    51.6,
+    51.1,
+    51.2
+   ],
+   "crash": null,
+   "laps_to_recover": 5,
+   "detections": [
+    {
+     "step": 3114,
+     "lap": 9,
+     "stretch": 0
+    },
+    {
+     "step": 3683,
+     "lap": 10,
+     "stretch": 2
+    },
+    {
+     "step": 3758,
+     "lap": 10,
+     "stretch": 7
+    },
+    {
+     "step": 3768,
+     "lap": 10,
+     "stretch": 8
+    },
+    {
+     "step": 4178,
+     "lap": 10,
+     "stretch": 34
+    },
+    {
+     "step": 4189,
+     "lap": 10,
+     "stretch": 0
+    },
+    {
+     "step": 5273,
+     "lap": 12,
+     "stretch": 34
+    },
+    {
+     "step": 5284,
+     "lap": 12,
+     "stretch": 0
+    },
+    {
+     "step": 6300,
+     "lap": 14,
+     "stretch": 34
+    },
+    {
+     "step": 6318,
+     "lap": 15,
+     "stretch": 0
+    }
+   ],
+   "detection_delay_s": 1.2,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.73,
+    0.73,
+    0.58,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.6,
+    0.61,
+    0.73,
+    0.73,
+    1.0,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.73,
+    0.71
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 10,
+   "changed_stretches": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33
+   ],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.2,
+    38.9,
+    40.6,
+    55.3,
+    53.4,
+    55.1,
+    54.4,
+    51.6,
+    51.1,
+    51.2
+   ],
+   "laps_after_change": 7,
+   "clearance_after": [
+    0.29,
+    0.371,
+    0.348,
+    0.29,
+    0.164,
+    0.183,
+    0.164
+   ],
+   "laps_under_0.2m": "3/7",
+   "cap_speed": {
+    "capped_steps": 3689,
+    "mean_speed": 6.59,
+    "mean_cap": 7.08,
+    "mean_gap": 0.49,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.98,
+      "speed": 6.3,
+      "cap": 7.04
+     },
+     {
+      "lap": 10,
+      "capped_share": 1.0,
+      "speed": 6.56,
+      "cap": 7.06
+     },
+     {
+      "lap": 11,
+      "capped_share": 1.0,
+      "speed": 6.36,
+      "cap": 7.06
+     },
+     {
+      "lap": 12,
+      "capped_share": 1.0,
+      "speed": 6.43,
+      "cap": 7.08
+     },
+     {
+      "lap": 13,
+      "capped_share": 1.0,
+      "speed": 6.83,
+      "cap": 7.08
+     },
+     {
+      "lap": 14,
+      "capped_share": 1.0,
+      "speed": 6.89,
+      "cap": 7.12
+     },
+     {
+      "lap": 15,
+      "capped_share": 0.96,
+      "speed": 6.82,
+      "cap": 7.09
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 104,
+      "speed": 9.31,
+      "cap": 7.08,
+      "gap": -2.23
+     },
+     "soft": {
+      "steps": 3585,
+      "speed": 6.51,
+      "cap": 7.08,
+      "gap": 0.57
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 44,
+    "caps_set_laps": [
+     9,
+     10,
+     12,
+     14,
+     15
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3114,
+      "event": "detected",
+      "stretch": 0
+     },
+     {
+      "lap": 9,
+      "step": 3145,
+      "event": "cap removed",
+      "stretch": 2,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3227,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3243,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3560,
+      "event": "cap raised",
+      "stretch": 28,
+      "cap": 7.5,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.54,
+      "model_error_m": 0.202,
+      "model_limit_m": 0.545,
+      "min_clearance_m": 0.696
+     },
+     {
+      "lap": 9,
+      "step": 3655,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3670,
+      "event": "cap removed",
+      "stretch": 0,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3683,
+      "event": "detected again",
+      "stretch": 2
+     },
+     {
+      "lap": 10,
+      "step": 3758,
+      "event": "detected again",
+      "stretch": 7
+     },
+     {
+      "lap": 10,
+      "step": 3768,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 10,
+      "step": 4100,
+      "event": "cap raised",
+      "stretch": 28,
+      "cap": 7.8,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.66,
+      "model_error_m": 0.236,
+      "model_limit_m": 0.545,
+      "min_clearance_m": 0.605
+     },
+     {
+      "lap": 10,
+      "step": 4178,
+      "event": "detected again",
+      "stretch": 34
+     },
+     {
+      "lap": 10,
+      "step": 4189,
+      "event": "detected again",
+      "stretch": 0
+     },
+     {
+      "lap": 11,
+      "step": 4292,
+      "event": "cap raised",
+      "stretch": 6,
+      "cap": 7.28,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.43,
+      "model_error_m": 0.217,
+      "model_limit_m": 0.413,
+      "min_clearance_m": 0.726
+     },
+     {
+      "lap": 11,
+      "step": 4646,
+      "event": "cap raised",
+      "stretch": 28,
+      "cap": 8.1,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.84,
+      "model_error_m": 0.249,
+      "model_limit_m": 0.499,
+      "min_clearance_m": 0.696
+     },
+     {
+      "lap": 11,
+      "step": 4740,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 12,
+      "step": 4755,
+      "event": "cap removed",
+      "stretch": 0,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 12,
+      "step": 4848,
+      "event": "cap raised",
+      "stretch": 6,
+      "cap": 7.58,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.4,
+      "model_error_m": 0.214,
+      "model_limit_m": 0.413,
+      "min_clearance_m": 0.83
+     },
+     {
+      "lap": 12,
+      "step": 5193,
+      "event": "cap raised",
+      "stretch": 28,
+      "cap": 8.4,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.82,
+      "model_error_m": 0.298,
+      "model_limit_m": 0.499,
+      "min_clearance_m": 0.638
+     },
+     {
+      "lap": 12,
+      "step": 5273,
+      "event": "detected again",
+      "stretch": 34
+     },
+     {
+      "lap": 12,
+      "step": 5284,
+      "event": "detected again",
+      "stretch": 0
+     },
+     {
+      "lap": 13,
+      "step": 5378,
+      "event": "cap raised",
+      "stretch": 6,
+      "cap": 7.88,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 7.01,
+      "model_error_m": 0.252,
+      "model_limit_m": 0.413,
+      "min_clearance_m": 0.753
+     },
+     {
+      "lap": 13,
+      "step": 5409,
+      "event": "cap raised",
+      "stretch": 8,
+      "cap": 7.21,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.61,
+      "model_error_m": 0.179,
+      "model_limit_m": 0.33,
+      "min_clearance_m": 0.778
+     },
+     {
+      "lap": 13,
+      "step": 5479,
+      "event": "cap raised",
+      "stretch": 12,
+      "cap": 7.46,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.77,
+      "model_error_m": 0.192,
+      "model_limit_m": 0.278,
+      "min_clearance_m": 0.58
+     },
+     {
+      "lap": 13,
+      "step": 5712,
+      "event": "cap raised",
+      "stretch": 28,
+      "cap": 8.7,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 7.46,
+      "model_error_m": 0.248,
+      "model_limit_m": 0.591,
+      "min_clearance_m": 0.753
+     },
+     {
+      "lap": 13,
+      "step": 5800,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 14,
+      "step": 5815,
+      "event": "cap removed",
+      "stretch": 0,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 14,
+      "step": 5902,
+      "event": "cap raised",
+      "stretch": 6,
+      "cap": 8.18,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 7.05,
+      "model_error_m": 0.229,
+      "model_limit_m": 0.413,
+      "min_clearance_m": 0.571
+     },
+     {
+      "lap": 14,
+      "step": 5947,
+      "event": "cap raised",
+      "stretch": 9,
+      "cap": 7.28,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.67,
+      "model_error_m": 0.22,
+      "model_limit_m": 0.33,
+      "min_clearance_m": 0.869
+     },
+     {
+      "lap": 14,
+      "step": 6229,
+      "event": "cap removed",
+      "stretch": 28,
+      "reason": "clean pass, model error in range at this speed; pre-change speed reached",
+      "pass_speed": 7.71,
+      "model_error_m": 0.343,
+      "model_limit_m": 0.591,
+      "min_clearance_m": 0.753
+     },
+     {
+      "lap": 14,
+      "step": 6300,
+      "event": "detected again",
+      "stretch": 34
+     },
+     {
+      "lap": 15,
+      "step": 6318,
+      "event": "detected again",
+      "stretch": 0
+     },
+     {
+      "lap": 15,
+      "step": 6407,
+      "event": "cap raised",
+      "stretch": 6,
+      "cap": 8.48,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 7.57,
+      "model_error_m": 0.255,
+      "model_limit_m": 0.41,
+      "min_clearance_m": 0.571
+     },
+     {
+      "lap": 15,
+      "step": 6823,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     }
+    ],
+    "cap_kept_reasons_per_lap": {
+     "no pre-change data at this speed": {
+      "9": 26,
+      "10": 25,
+      "11": 29,
+      "12": 26,
+      "13": 21,
+      "14": 18,
+      "15": 18
+     },
+     "slip above pre-change range": {
+      "9": 2,
+      "10": 4,
+      "12": 1,
+      "13": 5,
+      "14": 3,
+      "15": 4
+     },
+     "clearance under limit": {
+      "13": 1
+     }
+    },
+    "passes_not_counted_per_lap": {
+     "9": 3,
+     "10": 8,
+     "11": 3,
+     "12": 6,
+     "13": 9,
+     "14": 12,
+     "15": 10
+    },
+    "detection_to_under_cap_s": 0.1,
+    "under_cap_speed": 6.92
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 8.42,
+    "speed_2s_after": 6.48,
+    "same_stretch_previous_lap": 9.26
+   },
+   "scenario": "grip055",
+   "controller": "v11-react"
+  },
+  "ev2-grip055-v11-react-s3": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    40.2,
+    39.4,
+    40.6
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 4.3,
+    "s": 38.5,
+    "type": "spin",
+    "max_slip_last_2s": 1.0,
+    "hit": [
+     -37.25,
+     -6.58
+    ]
+   },
+   "laps_to_recover": null,
+   "detections": [
+    {
+     "step": 3133,
+     "lap": 9,
+     "stretch": 1
+    }
+   ],
+   "detection_delay_s": 1.6,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 0,
+   "changed_stretches": [],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    40.2,
+    39.4,
+    40.6
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.312
+   ],
+   "laps_under_0.2m": "0/1",
+   "cap_speed": {
+    "capped_steps": 28,
+    "mean_speed": 9.43,
+    "mean_cap": 6.9,
+    "mean_gap": -2.53,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.64,
+      "speed": 9.43,
+      "cap": 6.9
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 28,
+      "speed": 9.43,
+      "cap": 6.9,
+      "gap": -2.53
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 35,
+    "caps_set_laps": [
+     9
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3133,
+      "event": "detected",
+      "stretch": 1
+     }
+    ],
+    "cap_kept_reasons_per_lap": {},
+    "passes_not_counted_per_lap": {
+     "9": 2
+    },
+    "detection_to_under_cap_s": null,
+    "under_cap_speed": null
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 8.38,
+    "speed_2s_after": 9.28,
+    "same_stretch_previous_lap": 7.23
+   },
+   "scenario": "grip055",
+   "controller": "v11-react"
+  },
+  "hc-patch045-bicycle-s1": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.5,
+    39.0,
+    38.7
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 14.4,
+    "s": 110.9,
+    "type": "spin",
+    "max_slip_last_2s": 0.96,
+    "hit": [
+     -76.18,
+     53.71
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.5,
+    39.0,
+    38.7
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.13
+   ],
+   "laps_under_0.2m": "1/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "patch045",
+   "controller": "bicycle"
+  },
+  "hc-patch045-bicycle-s2": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.2,
+    39.1,
+    38.0
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 12.9,
+    "s": 113.0,
+    "type": "spin",
+    "max_slip_last_2s": 0.9,
+    "hit": [
+     -74.17,
+     54.2
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.2,
+    39.1,
+    38.0
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.13
+   ],
+   "laps_under_0.2m": "1/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "patch045",
+   "controller": "bicycle"
+  },
+  "hc-patch045-bicycle-s3": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.7,
+    38.2,
+    38.0
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 13.6,
+    "s": 111.7,
+    "type": "spin",
+    "max_slip_last_2s": 1.04,
+    "hit": [
+     -75.06,
+     54.08
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.7,
+    38.2,
+    38.0
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.29
+   ],
+   "laps_under_0.2m": "0/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "patch045",
+   "controller": "bicycle"
+  },
+  "hc-patch045-v11-s1": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.1,
+    39.3,
+    38.9
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 14.8,
+    "s": 112.9,
+    "type": "spin",
+    "max_slip_last_2s": 0.94,
+    "hit": [
+     -73.54,
+     54.28
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.1,
+    39.3,
+    38.9
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.116
+   ],
+   "laps_under_0.2m": "1/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "patch045",
+   "controller": "v11"
+  },
+  "hc-patch045-v11-s2": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.6,
+    39.0,
+    39.1
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 12.8,
+    "s": 112.0,
+    "type": "spin",
+    "max_slip_last_2s": 1.1,
+    "hit": [
+     -74.82,
+     54.07
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.6,
+    39.0,
+    39.1
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.246
+   ],
+   "laps_under_0.2m": "0/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "patch045",
+   "controller": "v11"
+  },
+  "hc-patch045-v11-s3": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    40.2,
+    41.2,
+    41.0
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 9,
+    "seconds_into_lap": 14.4,
+    "s": 112.6,
+    "type": "spin",
+    "max_slip_last_2s": 0.96,
+    "hit": [
+     -73.97,
+     54.19
+    ]
+   },
+   "laps_to_recover": null,
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    40.2,
+    41.2,
+    41.0
+   ],
+   "laps_after_change": 0,
+   "clearance_after": [
+    0.328
+   ],
+   "laps_under_0.2m": "0/1",
+   "cap_speed": null,
+   "cap_events": null,
+   "speed_at_detection": null,
+   "scenario": "patch045",
+   "controller": "v11"
+  },
+  "ev2-patch045-v11-react-s1": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.6,
+    39.0,
+    38.9,
+    51.3,
+    43.9,
+    42.9,
+    42.6,
+    42.2,
+    41.7,
+    41.0
+   ],
+   "after_change": [
+    51.3,
+    43.9,
+    42.9,
+    42.6,
+    42.2,
+    41.7,
+    41.0
+   ],
+   "crash": null,
+   "laps_to_recover": 6,
+   "detections": [
+    {
+     "step": 3186,
+     "lap": 9,
+     "stretch": 9
+    },
+    {
+     "step": 3783,
+     "lap": 10,
+     "stretch": 12
+    },
+    {
+     "step": 3794,
+     "lap": 10,
+     "stretch": 13
+    },
+    {
+     "step": 4567,
+     "lap": 12,
+     "stretch": 8
+    },
+    {
+     "step": 4620,
+     "lap": 12,
+     "stretch": 12
+    },
+    {
+     "step": 5877,
+     "lap": 15,
+     "stretch": 12
+    }
+   ],
+   "detection_delay_s": 0.4,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.94,
+    0.95,
+    0.95,
+    0.96,
+    0.96,
+    0.97,
+    0.97,
+    0.98,
+    0.68,
+    0.66,
+    0.66,
+    1.0,
+    0.56,
+    0.83,
+    0.83,
+    0.84,
+    0.84,
+    0.85,
+    0.85,
+    0.86,
+    0.86,
+    0.87,
+    0.87,
+    0.88,
+    0.88,
+    0.89,
+    0.89,
+    0.9,
+    0.9,
+    0.91,
+    0.91,
+    0.92,
+    0.93,
+    0.93,
+    0.94
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 35,
+   "changed_stretches": [
+    9,
+    10
+   ],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.6,
+    39.0,
+    38.9,
+    51.3,
+    43.9,
+    42.9,
+    42.6,
+    42.2,
+    41.7,
+    41.0
+   ],
+   "laps_after_change": 7,
+   "clearance_after": [
+    0.29,
+    0.183,
+    0.232,
+    0.058,
+    0.116,
+    0.13,
+    0.174
+   ],
+   "laps_under_0.2m": "5/7",
+   "cap_speed": {
+    "capped_steps": 1032,
+    "mean_speed": 6.43,
+    "mean_cap": 6.98,
+    "mean_gap": 0.55,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.79,
+      "speed": 6.36,
+      "cap": 7.12
+     },
+     {
+      "lap": 10,
+      "capped_share": 0.48,
+      "speed": 6.65,
+      "cap": 7.03
+     },
+     {
+      "lap": 11,
+      "capped_share": 0.19,
+      "speed": 6.16,
+      "cap": 6.81
+     },
+     {
+      "lap": 12,
+      "capped_share": 0.18,
+      "speed": 6.72,
+      "cap": 6.83
+     },
+     {
+      "lap": 13,
+      "capped_share": 0.23,
+      "speed": 6.21,
+      "cap": 6.86
+     },
+     {
+      "lap": 14,
+      "capped_share": 0.2,
+      "speed": 6.17,
+      "cap": 6.81
+     },
+     {
+      "lap": 15,
+      "capped_share": 0.19,
+      "speed": 6.78,
+      "cap": 6.81
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 47,
+      "speed": 9.4,
+      "cap": 7.17,
+      "gap": -2.23
+     },
+     "soft": {
+      "steps": 985,
+      "speed": 6.29,
+      "cap": 6.97,
+      "gap": 0.68
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 40,
+    "caps_set_laps": [
+     9,
+     10,
+     12,
+     15
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3186,
+      "event": "detected",
+      "stretch": 9
+     },
+     {
+      "lap": 9,
+      "step": 3253,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3267,
+      "event": "cap removed",
+      "stretch": 13,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3282,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3297,
+      "event": "cap removed",
+      "stretch": 15,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3313,
+      "event": "cap removed",
+      "stretch": 16,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3329,
+      "event": "cap removed",
+      "stretch": 17,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3345,
+      "event": "cap removed",
+      "stretch": 18,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3361,
+      "event": "cap removed",
+      "stretch": 19,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3376,
+      "event": "cap removed",
+      "stretch": 20,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3392,
+      "event": "cap removed",
+      "stretch": 21,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3407,
+      "event": "cap removed",
+      "stretch": 22,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3422,
+      "event": "cap removed",
+      "stretch": 23,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3437,
+      "event": "cap removed",
+      "stretch": 24,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3452,
+      "event": "cap removed",
+      "stretch": 25,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3467,
+      "event": "cap removed",
+      "stretch": 26,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3482,
+      "event": "cap removed",
+      "stretch": 27,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3498,
+      "event": "cap removed",
+      "stretch": 28,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3514,
+      "event": "cap removed",
+      "stretch": 29,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3529,
+      "event": "cap removed",
+      "stretch": 30,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3546,
+      "event": "cap removed",
+      "stretch": 31,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3562,
+      "event": "cap removed",
+      "stretch": 32,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3577,
+      "event": "cap removed",
+      "stretch": 33,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3593,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3608,
+      "event": "cap removed",
+      "stretch": 0,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3623,
+      "event": "cap removed",
+      "stretch": 1,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3639,
+      "event": "cap removed",
+      "stretch": 2,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3654,
+      "event": "cap removed",
+      "stretch": 3,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3669,
+      "event": "cap removed",
+      "stretch": 4,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3685,
+      "event": "cap removed",
+      "stretch": 5,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3700,
+      "event": "cap removed",
+      "stretch": 6,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3717,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3732,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3783,
+      "event": "detected again",
+      "stretch": 12
+     },
+     {
+      "lap": 10,
+      "step": 3794,
+      "event": "detected again",
+      "stretch": 13
+     },
+     {
+      "lap": 11,
+      "step": 4203,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 12,
+      "step": 4567,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 12,
+      "step": 4620,
+      "event": "detected again",
+      "stretch": 12
+     },
+     {
+      "lap": 13,
+      "step": 4996,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 14,
+      "step": 5480,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 15,
+      "step": 5877,
+      "event": "detected again",
+      "stretch": 12
+     }
+    ],
+    "cap_kept_reasons_per_lap": {
+     "no pre-change data at this speed": {
+      "9": 1,
+      "10": 2,
+      "11": 2,
+      "12": 2,
+      "13": 2,
+      "14": 2,
+      "15": 2
+     },
+     "slip above pre-change range": {
+      "11": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1
+     }
+    },
+    "passes_not_counted_per_lap": {
+     "9": 2,
+     "10": 3,
+     "11": 2,
+     "12": 3,
+     "13": 3,
+     "14": 2,
+     "15": 3
+    },
+    "detection_to_under_cap_s": 0.4,
+    "under_cap_speed": 6.98
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 8.2,
+    "speed_2s_after": 6.48,
+    "same_stretch_previous_lap": 8.64
+   },
+   "scenario": "patch045",
+   "controller": "v11-react"
+  },
+  "ev2-patch045-v11-react-s2": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    37.6,
+    38.9,
+    36.9,
+    49.0,
+    43.9,
+    40.7,
+    41.2,
+    41.1
+   ],
+   "after_change": [
+    49.0,
+    43.9,
+    40.7,
+    41.2,
+    41.1
+   ],
+   "crash": {
+    "lap": 14,
+    "seconds_into_lap": 13.2,
+    "s": 113.5,
+    "type": "spin",
+    "max_slip_last_2s": 0.73,
+    "hit": [
+     -73.5,
+     54.26
+    ]
+   },
+   "laps_to_recover": null,
+   "detections": [
+    {
+     "step": 3143,
+     "lap": 9,
+     "stretch": 9
+    },
+    {
+     "step": 4071,
+     "lap": 11,
+     "stretch": 8
+    }
+   ],
+   "detection_delay_s": 0.6,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.76,
+    0.77,
+    0.78,
+    0.79,
+    0.79,
+    0.8,
+    0.81,
+    0.81,
+    0.43,
+    0.75,
+    0.75,
+    0.64,
+    0.75,
+    0.61,
+    0.62,
+    0.63,
+    0.63,
+    0.64,
+    0.65,
+    0.66,
+    0.66,
+    0.67,
+    0.68,
+    0.68,
+    0.88,
+    1.0,
+    0.7,
+    0.71,
+    0.72,
+    0.72,
+    0.73,
+    0.74,
+    0.74,
+    0.75,
+    0.76
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 32,
+   "changed_stretches": [
+    9,
+    10,
+    12
+   ],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    37.6,
+    38.9,
+    36.9,
+    49.0,
+    43.9,
+    40.7,
+    41.2,
+    41.1
+   ],
+   "laps_after_change": 5,
+   "clearance_after": [
+    0.29,
+    0.246,
+    0.116,
+    0.246,
+    0.058,
+    0.174
+   ],
+   "laps_under_0.2m": "3/6",
+   "cap_speed": {
+    "capped_steps": 921,
+    "mean_speed": 6.62,
+    "mean_cap": 7.07,
+    "mean_gap": 0.45,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.81,
+      "speed": 6.5,
+      "cap": 7.13
+     },
+     {
+      "lap": 10,
+      "capped_share": 0.51,
+      "speed": 6.69,
+      "cap": 7.09
+     },
+     {
+      "lap": 11,
+      "capped_share": 0.24,
+      "speed": 6.28,
+      "cap": 6.89
+     },
+     {
+      "lap": 12,
+      "capped_share": 0.25,
+      "speed": 6.95,
+      "cap": 6.9
+     },
+     {
+      "lap": 13,
+      "capped_share": 0.17,
+      "speed": 6.92,
+      "cap": 7.14
+     },
+     {
+      "lap": 14,
+      "capped_share": 0.22,
+      "speed": 6.93,
+      "cap": 7.12
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 57,
+      "speed": 9.57,
+      "cap": 7.17,
+      "gap": -2.4
+     },
+     "soft": {
+      "steps": 864,
+      "speed": 6.42,
+      "cap": 7.06,
+      "gap": 0.64
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 36,
+    "caps_set_laps": [
+     9,
+     11
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3143,
+      "event": "detected",
+      "stretch": 9
+     },
+     {
+      "lap": 9,
+      "step": 3222,
+      "event": "cap removed",
+      "stretch": 13,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3237,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3251,
+      "event": "cap removed",
+      "stretch": 15,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3266,
+      "event": "cap removed",
+      "stretch": 16,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3281,
+      "event": "cap removed",
+      "stretch": 17,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3297,
+      "event": "cap removed",
+      "stretch": 18,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3313,
+      "event": "cap removed",
+      "stretch": 19,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3327,
+      "event": "cap removed",
+      "stretch": 20,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3343,
+      "event": "cap removed",
+      "stretch": 21,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3359,
+      "event": "cap removed",
+      "stretch": 22,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3375,
+      "event": "cap removed",
+      "stretch": 23,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3419,
+      "event": "cap removed",
+      "stretch": 26,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3433,
+      "event": "cap removed",
+      "stretch": 27,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3448,
+      "event": "cap removed",
+      "stretch": 28,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3463,
+      "event": "cap removed",
+      "stretch": 29,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3478,
+      "event": "cap removed",
+      "stretch": 30,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3494,
+      "event": "cap removed",
+      "stretch": 31,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3510,
+      "event": "cap removed",
+      "stretch": 32,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3524,
+      "event": "cap removed",
+      "stretch": 33,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3539,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3554,
+      "event": "cap removed",
+      "stretch": 0,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3570,
+      "event": "cap removed",
+      "stretch": 1,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3585,
+      "event": "cap removed",
+      "stretch": 2,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3601,
+      "event": "cap removed",
+      "stretch": 3,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3615,
+      "event": "cap removed",
+      "stretch": 4,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3631,
+      "event": "cap removed",
+      "stretch": 5,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3646,
+      "event": "cap removed",
+      "stretch": 6,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3662,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3678,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 11,
+      "step": 4071,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 12,
+      "step": 4489,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 12,
+      "step": 4542,
+      "event": "cap removed",
+      "stretch": 11,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5088,
+      "event": "cap removed",
+      "stretch": 24,
+      "reason": "tag matches history"
+     }
+    ],
+    "cap_kept_reasons_per_lap": {
+     "no pre-change data at this speed": {
+      "9": 2,
+      "10": 2,
+      "11": 2,
+      "12": 2,
+      "13": 1,
+      "14": 2
+     },
+     "slip above pre-change range": {
+      "10": 1,
+      "13": 1,
+      "14": 2
+     }
+    },
+    "passes_not_counted_per_lap": {
+     "9": 3,
+     "10": 4,
+     "11": 4,
+     "12": 3,
+     "13": 3
+    },
+    "detection_to_under_cap_s": 0.4,
+    "under_cap_speed": 7.04
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 9.11,
+    "speed_2s_after": 6.59,
+    "same_stretch_previous_lap": 8.15
+   },
+   "scenario": "patch045",
+   "controller": "v11-react"
+  },
+  "ev2-patch045-v11-react-s3": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    40.7,
+    40.6,
+    39.4,
+    50.9,
+    43.7,
+    41.8,
+    43.2,
+    42.3,
+    43.3,
+    40.5
+   ],
+   "after_change": [
+    50.9,
+    43.7,
+    41.8,
+    43.2,
+    42.3,
+    43.3,
+    40.5
+   ],
+   "crash": null,
+   "laps_to_recover": 3,
+   "detections": [
+    {
+     "step": 3226,
+     "lap": 9,
+     "stretch": 9
+    },
+    {
+     "step": 3811,
+     "lap": 10,
+     "stretch": 12
+    },
+    {
+     "step": 3821,
+     "lap": 10,
+     "stretch": 13
+    },
+    {
+     "step": 4595,
+     "lap": 12,
+     "stretch": 8
+    },
+    {
+     "step": 5079,
+     "lap": 13,
+     "stretch": 12
+    },
+    {
+     "step": 5923,
+     "lap": 15,
+     "stretch": 12
+    }
+   ],
+   "detection_delay_s": 0.5,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.94,
+    1.0,
+    1.0,
+    1.0,
+    0.98,
+    1.0,
+    0.97,
+    0.98,
+    0.96,
+    0.95,
+    0.95,
+    1.0,
+    0.55,
+    0.83,
+    0.83,
+    0.84,
+    0.84,
+    0.85,
+    0.86,
+    0.86,
+    0.87,
+    0.87,
+    0.88,
+    0.88,
+    1.0,
+    0.89,
+    0.9,
+    0.9,
+    0.91,
+    0.91,
+    0.92,
+    0.92,
+    0.93,
+    0.93,
+    0.94
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 30,
+   "changed_stretches": [
+    9,
+    10
+   ],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    40.7,
+    40.6,
+    39.4,
+    50.9,
+    43.7,
+    41.8,
+    43.2,
+    42.3,
+    43.3,
+    40.5
+   ],
+   "laps_after_change": 7,
+   "clearance_after": [
+    0.328,
+    0.116,
+    0.082,
+    0.232,
+    0.058,
+    0.232,
+    0.058
+   ],
+   "laps_under_0.2m": "4/7",
+   "cap_speed": {
+    "capped_steps": 1328,
+    "mean_speed": 7.08,
+    "mean_cap": 6.78,
+    "mean_gap": -0.3,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.8,
+      "speed": 6.37,
+      "cap": 7.0
+     },
+     {
+      "lap": 10,
+      "capped_share": 0.49,
+      "speed": 7.05,
+      "cap": 6.77
+     },
+     {
+      "lap": 11,
+      "capped_share": 0.33,
+      "speed": 8.15,
+      "cap": 6.65
+     },
+     {
+      "lap": 12,
+      "capped_share": 0.36,
+      "speed": 7.11,
+      "cap": 6.68
+     },
+     {
+      "lap": 13,
+      "capped_share": 0.34,
+      "speed": 7.73,
+      "cap": 6.68
+     },
+     {
+      "lap": 14,
+      "capped_share": 0.35,
+      "speed": 6.64,
+      "cap": 6.63
+     },
+     {
+      "lap": 15,
+      "capped_share": 0.31,
+      "speed": 7.98,
+      "cap": 6.63
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 305,
+      "speed": 10.02,
+      "cap": 6.75,
+      "gap": -3.27
+     },
+     "soft": {
+      "steps": 1023,
+      "speed": 6.2,
+      "cap": 6.79,
+      "gap": 0.59
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 40,
+    "caps_set_laps": [
+     9,
+     10,
+     12,
+     13,
+     15
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3226,
+      "event": "detected",
+      "stretch": 9
+     },
+     {
+      "lap": 9,
+      "step": 3291,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3307,
+      "event": "cap removed",
+      "stretch": 13,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3322,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3336,
+      "event": "cap removed",
+      "stretch": 15,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3352,
+      "event": "cap removed",
+      "stretch": 16,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3368,
+      "event": "cap removed",
+      "stretch": 17,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3384,
+      "event": "cap removed",
+      "stretch": 18,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3400,
+      "event": "cap removed",
+      "stretch": 19,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3415,
+      "event": "cap removed",
+      "stretch": 20,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3430,
+      "event": "cap removed",
+      "stretch": 21,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3445,
+      "event": "cap removed",
+      "stretch": 22,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3460,
+      "event": "cap removed",
+      "stretch": 23,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3489,
+      "event": "cap removed",
+      "stretch": 25,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3505,
+      "event": "cap removed",
+      "stretch": 26,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3521,
+      "event": "cap removed",
+      "stretch": 27,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3537,
+      "event": "cap removed",
+      "stretch": 28,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3552,
+      "event": "cap removed",
+      "stretch": 29,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3568,
+      "event": "cap removed",
+      "stretch": 30,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3584,
+      "event": "cap removed",
+      "stretch": 31,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3600,
+      "event": "cap removed",
+      "stretch": 32,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3615,
+      "event": "cap removed",
+      "stretch": 33,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3631,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3647,
+      "event": "cap removed",
+      "stretch": 0,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3722,
+      "event": "cap removed",
+      "stretch": 6,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3739,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3754,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3811,
+      "event": "detected again",
+      "stretch": 12
+     },
+     {
+      "lap": 10,
+      "step": 3821,
+      "event": "detected again",
+      "stretch": 13
+     },
+     {
+      "lap": 12,
+      "step": 4546,
+      "event": "cap removed",
+      "stretch": 4,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 12,
+      "step": 4595,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 12,
+      "step": 4667,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5025,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5079,
+      "event": "detected again",
+      "stretch": 12
+     },
+     {
+      "lap": 14,
+      "step": 5526,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 15,
+      "step": 5923,
+      "event": "detected again",
+      "stretch": 12
+     }
+    ],
+    "cap_kept_reasons_per_lap": {
+     "no pre-change data at this speed": {
+      "9": 1,
+      "10": 2,
+      "11": 2,
+      "12": 2,
+      "13": 1,
+      "14": 1,
+      "15": 2
+     },
+     "slip above pre-change range": {
+      "9": 1
+     }
+    },
+    "passes_not_counted_per_lap": {
+     "9": 2,
+     "10": 9,
+     "11": 9,
+     "12": 7,
+     "13": 9,
+     "14": 8,
+     "15": 8
+    },
+    "detection_to_under_cap_s": 0.9,
+    "under_cap_speed": 6.68
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 8.72,
+    "speed_2s_after": 6.85,
+    "same_stretch_previous_lap": 8.43
+   },
+   "scenario": "patch045",
+   "controller": "v11-react"
+  },
+  "ev2-none-v11-react-s1": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.7,
+    39.9,
+    39.9,
+    39.3,
+    38.6,
+    38.1,
+    38.0,
+    37.7,
+    37.4,
+    37.6
+   ],
+   "after_change": [],
+   "crash": null,
+   "laps_to_recover": null,
+   "detections": [],
+   "detection_delay_s": null,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "stretches_mostly_conservative": [],
+   "relax_events": 0,
+   "changed_stretches": [],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.7,
+    39.9,
+    39.9,
+    39.3,
+    38.6,
+    38.1,
+    38.0,
+    37.7,
+    37.4,
+    37.6
+   ],
+   "laps_after_change": null,
+   "clearance_after": [
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.259,
+    0.296,
+    0.29,
+    0.348,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.312,
+    0.29
+   ],
+   "laps_under_0.2m": "0/15",
+   "cap_speed": {
+    "capped_steps": 0
+   },
+   "cap_events": {
+    "caps_set": 0,
+    "caps_set_laps": [],
+    "events": [],
+    "cap_kept_reasons_per_lap": {},
+    "passes_not_counted_per_lap": {},
+    "detection_to_under_cap_s": null,
+    "under_cap_speed": null
+   },
+   "false_detections": 0,
+   "speed_at_detection": null,
+   "scenario": "none",
+   "controller": "v11-react"
+  },
+  "ev2-none-v11-react-s2": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.5,
+    38.6,
+    38.1,
+    38.6
+   ],
+   "after_change": [],
+   "crash": {
+    "lap": 10,
+    "seconds_into_lap": 14.6,
+    "s": 108.9,
+    "type": "spin",
+    "max_slip_last_2s": 3.09,
+    "hit": [
+     -74.92,
+     51.64
+    ]
+   },
+   "laps_to_recover": null,
+   "detections": [
+    {
+     "step": 3599,
+     "lap": 10,
+     "stretch": 11
+    }
+   ],
+   "detection_delay_s": null,
+   "detections_before_change": 1,
+   "conservative_share_per_stretch": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 0,
+   "changed_stretches": [],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.5,
+    38.6,
+    38.1,
+    38.6
+   ],
+   "laps_after_change": null,
+   "clearance_after": [
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.259,
+    0.328,
+    0.312
+   ],
+   "laps_under_0.2m": "0/10",
+   "cap_speed": {
+    "capped_steps": 1,
+    "mean_speed": 4.12,
+    "mean_cap": 5.95,
+    "mean_gap": 1.84,
+    "per_lap": [
+     {
+      "lap": 10,
+      "capped_share": 0.01,
+      "speed": 4.12,
+      "cap": 5.95
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 1,
+      "speed": 4.12,
+      "cap": 5.95,
+      "gap": 1.84
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 35,
+    "caps_set_laps": [
+     10
+    ],
+    "events": [
+     {
+      "lap": 10,
+      "step": 3599,
+      "event": "detected",
+      "stretch": 11
+     }
+    ],
+    "cap_kept_reasons_per_lap": {},
+    "passes_not_counted_per_lap": {},
+    "detection_to_under_cap_s": 0.1,
+    "under_cap_speed": 2.27
+   },
+   "false_detections": 1,
+   "speed_at_detection": {
+    "speed_2s_before": 0.79,
+    "speed_2s_after": 3.23,
+    "same_stretch_previous_lap": null
+   },
+   "scenario": "none",
+   "controller": "v11-react"
+  },
+  "ev2-none-v11-react-s3": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.1,
+    40.3,
+    40.8,
+    39.9,
+    39.0,
+    38.4,
+    38.6,
+    37.6,
+    37.1,
+    37.0
+   ],
+   "after_change": [],
+   "crash": null,
+   "laps_to_recover": null,
+   "detections": [],
+   "detection_delay_s": null,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "stretches_mostly_conservative": [],
+   "relax_events": 0,
+   "changed_stretches": [],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.1,
+    40.3,
+    40.8,
+    39.9,
+    39.0,
+    38.4,
+    38.6,
+    37.6,
+    37.1,
+    37.0
+   ],
+   "laps_after_change": null,
+   "clearance_after": [
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.29,
+    0.348,
+    0.29,
+    0.338,
+    0.328,
+    0.29,
+    0.246,
+    0.29,
+    0.246,
+    0.259,
+    0.29
+   ],
+   "laps_under_0.2m": "0/15",
+   "cap_speed": {
+    "capped_steps": 0
+   },
+   "cap_events": {
+    "caps_set": 0,
+    "caps_set_laps": [],
+    "events": [],
+    "cap_kept_reasons_per_lap": {},
+    "passes_not_counted_per_lap": {},
+    "detection_to_under_cap_s": null,
+    "under_cap_speed": null
+   },
+   "false_detections": 0,
+   "speed_at_detection": null,
+   "scenario": "none",
+   "controller": "v11-react"
+  },
+  "ev2-check-grip055-s1": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.5,
+    39.3,
+    39.3,
+    54.4,
+    51.7,
+    54.4,
+    52.3,
+    52.7,
+    49.9,
+    51.5
+   ],
+   "after_change": [
+    54.4,
+    51.7,
+    54.4,
+    52.3,
+    52.7,
+    49.9,
+    51.5
+   ],
+   "crash": null,
+   "laps_to_recover": 2,
+   "detections": [
+    {
+     "step": 3104,
+     "lap": 9,
+     "stretch": 1
+    },
+    {
+     "step": 3658,
+     "lap": 10,
+     "stretch": 2
+    },
+    {
+     "step": 3724,
+     "lap": 10,
+     "stretch": 7
+    },
+    {
+     "step": 3735,
+     "lap": 10,
+     "stretch": 8
+    },
+    {
+     "step": 3832,
+     "lap": 10,
+     "stretch": 14
+    },
+    {
+     "step": 3842,
+     "lap": 10,
+     "stretch": 15
+    },
+    {
+     "step": 4044,
+     "lap": 10,
+     "stretch": 28
+    },
+    {
+     "step": 4055,
+     "lap": 10,
+     "stretch": 29
+    },
+    {
+     "step": 4720,
+     "lap": 12,
+     "stretch": 2
+    },
+    {
+     "step": 4785,
+     "lap": 12,
+     "stretch": 7
+    },
+    {
+     "step": 4796,
+     "lap": 12,
+     "stretch": 8
+    },
+    {
+     "step": 4891,
+     "lap": 12,
+     "stretch": 14
+    },
+    {
+     "step": 4902,
+     "lap": 12,
+     "stretch": 15
+    },
+    {
+     "step": 5767,
+     "lap": 14,
+     "stretch": 2
+    },
+    {
+     "step": 5942,
+     "lap": 14,
+     "stretch": 14
+    },
+    {
+     "step": 5957,
+     "lap": 14,
+     "stretch": 15
+    },
+    {
+     "step": 6364,
+     "lap": 15,
+     "stretch": 8
+    }
+   ],
+   "detection_delay_s": 1.8,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.85,
+    0.85,
+    0.55,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.64,
+    0.65,
+    0.85,
+    0.85,
+    1.0,
+    0.85,
+    0.85,
+    0.65,
+    0.67,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.82,
+    0.82,
+    0.85,
+    0.85,
+    0.85,
+    0.85,
+    0.85
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 20,
+   "changed_stretches": [
+    0,
+    1,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    12,
+    13,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    38.5,
+    39.3,
+    39.3,
+    54.4,
+    51.7,
+    54.4,
+    52.3,
+    52.7,
+    49.9,
+    51.5
+   ],
+   "laps_after_change": 7,
+   "clearance_after": [
+    0.183,
+    0.29,
+    0.29,
+    0.058,
+    0.13,
+    0.183,
+    0.239
+   ],
+   "laps_under_0.2m": "4/7",
+   "cap_speed": {
+    "capped_steps": 3600,
+    "mean_speed": 6.67,
+    "mean_cap": 7.1,
+    "mean_gap": 0.43,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.97,
+      "speed": 6.38,
+      "cap": 7.09
+     },
+     {
+      "lap": 10,
+      "capped_share": 1.0,
+      "speed": 6.79,
+      "cap": 7.09
+     },
+     {
+      "lap": 11,
+      "capped_share": 1.0,
+      "speed": 6.43,
+      "cap": 7.1
+     },
+     {
+      "lap": 12,
+      "capped_share": 1.0,
+      "speed": 6.72,
+      "cap": 7.11
+     },
+     {
+      "lap": 13,
+      "capped_share": 1.0,
+      "speed": 6.67,
+      "cap": 7.1
+     },
+     {
+      "lap": 14,
+      "capped_share": 0.94,
+      "speed": 6.97,
+      "cap": 7.11
+     },
+     {
+      "lap": 15,
+      "capped_share": 0.96,
+      "speed": 6.77,
+      "cap": 7.12
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 185,
+      "speed": 9.22,
+      "cap": 7.17,
+      "gap": -2.05
+     },
+     "soft": {
+      "steps": 3415,
+      "speed": 6.53,
+      "cap": 7.1,
+      "gap": 0.56
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 51,
+    "caps_set_laps": [
+     9,
+     10,
+     12,
+     14,
+     15
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3104,
+      "event": "detected",
+      "stretch": 1
+     },
+     {
+      "lap": 9,
+      "step": 3127,
+      "event": "cap removed",
+      "stretch": 2,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3206,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3222,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3322,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3338,
+      "event": "cap removed",
+      "stretch": 15,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3542,
+      "event": "cap removed",
+      "stretch": 28,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3557,
+      "event": "cap removed",
+      "stretch": 29,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3658,
+      "event": "detected again",
+      "stretch": 2
+     },
+     {
+      "lap": 10,
+      "step": 3724,
+      "event": "detected again",
+      "stretch": 7
+     },
+     {
+      "lap": 10,
+      "step": 3735,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 10,
+      "step": 3832,
+      "event": "detected again",
+      "stretch": 14
+     },
+     {
+      "lap": 10,
+      "step": 3842,
+      "event": "detected again",
+      "stretch": 15
+     },
+     {
+      "lap": 10,
+      "step": 4044,
+      "event": "detected again",
+      "stretch": 28
+     },
+     {
+      "lap": 10,
+      "step": 4055,
+      "event": "detected again",
+      "stretch": 29
+     },
+     {
+      "lap": 11,
+      "step": 4177,
+      "event": "cap raised",
+      "stretch": 1,
+      "cap": 7.47,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.54,
+      "model_error_m": 0.273,
+      "model_limit_m": 0.439,
+      "min_clearance_m": 0.571
+     },
+     {
+      "lap": 11,
+      "step": 4192,
+      "event": "cap removed",
+      "stretch": 2,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 11,
+      "step": 4273,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 11,
+      "step": 4288,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 11,
+      "step": 4388,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 11,
+      "step": 4404,
+      "event": "cap removed",
+      "stretch": 15,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 12,
+      "step": 4720,
+      "event": "detected again",
+      "stretch": 2
+     },
+     {
+      "lap": 12,
+      "step": 4785,
+      "event": "detected again",
+      "stretch": 7
+     },
+     {
+      "lap": 12,
+      "step": 4796,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 12,
+      "step": 4891,
+      "event": "detected again",
+      "stretch": 14
+     },
+     {
+      "lap": 12,
+      "step": 4902,
+      "event": "detected again",
+      "stretch": 15
+     },
+     {
+      "lap": 13,
+      "step": 5244,
+      "event": "cap raised",
+      "stretch": 1,
+      "cap": 7.77,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.53,
+      "model_error_m": 0.23,
+      "model_limit_m": 0.439,
+      "min_clearance_m": 0.55
+     },
+     {
+      "lap": 13,
+      "step": 5260,
+      "event": "cap removed",
+      "stretch": 2,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5334,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5350,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5447,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5462,
+      "event": "cap removed",
+      "stretch": 15,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 14,
+      "step": 5767,
+      "event": "detected again",
+      "stretch": 2
+     },
+     {
+      "lap": 14,
+      "step": 5942,
+      "event": "detected again",
+      "stretch": 14
+     },
+     {
+      "lap": 14,
+      "step": 5957,
+      "event": "detected again",
+      "stretch": 15
+     },
+     {
+      "lap": 15,
+      "step": 6269,
+      "event": "cap raised",
+      "stretch": 1,
+      "cap": 8.07,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 6.81,
+      "model_error_m": 0.275,
+      "model_limit_m": 0.452,
+      "min_clearance_m": 0.571
+     },
+     {
+      "lap": 15,
+      "step": 6284,
+      "event": "cap removed",
+      "stretch": 2,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 15,
+      "step": 6364,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 15,
+      "step": 6464,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 15,
+      "step": 6480,
+      "event": "cap removed",
+      "stretch": 15,
+      "reason": "tag matches history"
+     }
+    ],
+    "cap_kept_reasons_per_lap": {
+     "no pre-change data at this speed": {
+      "9": 23,
+      "10": 22,
+      "11": 25,
+      "12": 24,
+      "13": 22,
+      "14": 15,
+      "15": 23
+     },
+     "slip above pre-change range": {
+      "9": 3,
+      "10": 2,
+      "11": 2,
+      "12": 1,
+      "13": 5,
+      "14": 3,
+      "15": 4
+     },
+     "clearance under limit": {
+      "13": 2,
+      "14": 1
+     }
+    },
+    "passes_not_counted_per_lap": {
+     "9": 3,
+     "10": 13,
+     "11": 4,
+     "12": 11,
+     "13": 7,
+     "14": 17,
+     "15": 6
+    },
+    "detection_to_under_cap_s": 0.3,
+    "under_cap_speed": 7.07
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 8.65,
+    "speed_2s_after": 6.3,
+    "same_stretch_previous_lap": 7.96
+   },
+   "scenario": "grip055",
+   "controller": "v11-react"
+  },
+  "ev2-check-patch045-s1": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.3,
+    39.0,
+    40.6,
+    50.6,
+    44.0,
+    41.6,
+    42.2,
+    41.6,
+    41.5,
+    40.6
+   ],
+   "after_change": [
+    50.6,
+    44.0,
+    41.6,
+    42.2,
+    41.6,
+    41.5,
+    40.6
+   ],
+   "crash": null,
+   "laps_to_recover": 3,
+   "detections": [
+    {
+     "step": 3214,
+     "lap": 9,
+     "stretch": 9
+    },
+    {
+     "step": 3806,
+     "lap": 10,
+     "stretch": 12
+    },
+    {
+     "step": 3816,
+     "lap": 10,
+     "stretch": 13
+    },
+    {
+     "step": 4569,
+     "lap": 12,
+     "stretch": 8
+    },
+    {
+     "step": 5048,
+     "lap": 13,
+     "stretch": 12
+    }
+   ],
+   "detection_delay_s": 0.5,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.94,
+    0.94,
+    0.95,
+    0.95,
+    0.96,
+    0.97,
+    0.97,
+    0.98,
+    0.96,
+    0.95,
+    0.95,
+    1.0,
+    0.45,
+    0.82,
+    0.83,
+    0.83,
+    0.84,
+    0.84,
+    0.85,
+    0.85,
+    0.86,
+    0.86,
+    0.87,
+    0.87,
+    0.88,
+    0.88,
+    0.89,
+    0.9,
+    0.9,
+    0.91,
+    0.91,
+    0.92,
+    0.92,
+    0.93,
+    0.93
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 35,
+   "changed_stretches": [
+    9,
+    10
+   ],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.3,
+    39.0,
+    40.6,
+    50.6,
+    44.0,
+    41.6,
+    42.2,
+    41.6,
+    41.5,
+    40.6
+   ],
+   "laps_after_change": 7,
+   "clearance_after": [
+    0.296,
+    0.058,
+    0.116,
+    0.239,
+    0.058,
+    0.209,
+    0.174
+   ],
+   "laps_under_0.2m": "4/7",
+   "cap_speed": {
+    "capped_steps": 997,
+    "mean_speed": 6.55,
+    "mean_cap": 6.93,
+    "mean_gap": 0.38,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.78,
+      "speed": 6.5,
+      "cap": 7.06
+     },
+     {
+      "lap": 10,
+      "capped_share": 0.49,
+      "speed": 6.5,
+      "cap": 6.9
+     },
+     {
+      "lap": 11,
+      "capped_share": 0.17,
+      "speed": 7.09,
+      "cap": 6.63
+     },
+     {
+      "lap": 12,
+      "capped_share": 0.19,
+      "speed": 6.18,
+      "cap": 6.73
+     },
+     {
+      "lap": 13,
+      "capped_share": 0.21,
+      "speed": 6.89,
+      "cap": 6.84
+     },
+     {
+      "lap": 14,
+      "capped_share": 0.19,
+      "speed": 6.38,
+      "cap": 6.86
+     },
+     {
+      "lap": 15,
+      "capped_share": 0.15,
+      "speed": 6.58,
+      "cap": 6.97
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 86,
+      "speed": 9.99,
+      "cap": 6.86,
+      "gap": -3.13
+     },
+     "soft": {
+      "steps": 911,
+      "speed": 6.22,
+      "cap": 6.93,
+      "gap": 0.71
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 39,
+    "caps_set_laps": [
+     9,
+     10,
+     12,
+     13
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3214,
+      "event": "detected",
+      "stretch": 9
+     },
+     {
+      "lap": 9,
+      "step": 3266,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3282,
+      "event": "cap removed",
+      "stretch": 13,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3297,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3312,
+      "event": "cap removed",
+      "stretch": 15,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3328,
+      "event": "cap removed",
+      "stretch": 16,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3344,
+      "event": "cap removed",
+      "stretch": 17,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3360,
+      "event": "cap removed",
+      "stretch": 18,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3376,
+      "event": "cap removed",
+      "stretch": 19,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3392,
+      "event": "cap removed",
+      "stretch": 20,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3408,
+      "event": "cap removed",
+      "stretch": 21,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3423,
+      "event": "cap removed",
+      "stretch": 22,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3439,
+      "event": "cap removed",
+      "stretch": 23,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3454,
+      "event": "cap removed",
+      "stretch": 24,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3470,
+      "event": "cap removed",
+      "stretch": 25,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3485,
+      "event": "cap removed",
+      "stretch": 26,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3501,
+      "event": "cap removed",
+      "stretch": 27,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3517,
+      "event": "cap removed",
+      "stretch": 28,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3533,
+      "event": "cap removed",
+      "stretch": 29,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3548,
+      "event": "cap removed",
+      "stretch": 30,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3565,
+      "event": "cap removed",
+      "stretch": 31,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3580,
+      "event": "cap removed",
+      "stretch": 32,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3595,
+      "event": "cap removed",
+      "stretch": 33,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3610,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3625,
+      "event": "cap removed",
+      "stretch": 0,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3641,
+      "event": "cap removed",
+      "stretch": 1,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3657,
+      "event": "cap removed",
+      "stretch": 2,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3673,
+      "event": "cap removed",
+      "stretch": 3,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3689,
+      "event": "cap removed",
+      "stretch": 4,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3705,
+      "event": "cap removed",
+      "stretch": 5,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3720,
+      "event": "cap removed",
+      "stretch": 6,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3737,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3753,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3788,
+      "event": "cap raised",
+      "stretch": 10,
+      "cap": 6.42,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 5.33,
+      "model_error_m": 0.234,
+      "model_limit_m": 0.459,
+      "min_clearance_m": 0.371
+     },
+     {
+      "lap": 10,
+      "step": 3806,
+      "event": "detected again",
+      "stretch": 12
+     },
+     {
+      "lap": 10,
+      "step": 3816,
+      "event": "detected again",
+      "stretch": 13
+     },
+     {
+      "lap": 11,
+      "step": 4189,
+      "event": "cap raised",
+      "stretch": 10,
+      "cap": 6.72,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 5.08,
+      "model_error_m": 0.194,
+      "model_limit_m": 0.425,
+      "min_clearance_m": 0.41
+     },
+     {
+      "lap": 12,
+      "step": 4569,
+      "event": "detected again",
+      "stretch": 8
+     },
+     {
+      "lap": 12,
+      "step": 4602,
+      "event": "cap raised",
+      "stretch": 10,
+      "cap": 7.02,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 5.7,
+      "model_error_m": 0.237,
+      "model_limit_m": 0.436,
+      "min_clearance_m": 0.453
+     },
+     {
+      "lap": 12,
+      "step": 4638,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 4995,
+      "event": "cap removed",
+      "stretch": 8,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 13,
+      "step": 5030,
+      "event": "cap raised",
+      "stretch": 10,
+      "cap": 7.32,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 5.14,
+      "model_error_m": 0.27,
+      "model_limit_m": 0.425,
+      "min_clearance_m": 0.328
+     },
+     {
+      "lap": 13,
+      "step": 5048,
+      "event": "detected again",
+      "stretch": 12
+     },
+     {
+      "lap": 14,
+      "step": 5436,
+      "event": "cap raised",
+      "stretch": 10,
+      "cap": 7.62,
+      "reason": "clean pass, model error in range at this speed",
+      "pass_speed": 5.68,
+      "model_error_m": 0.277,
+      "model_limit_m": 0.448,
+      "min_clearance_m": 0.41
+     },
+     {
+      "lap": 14,
+      "step": 5471,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     }
+    ],
+    "cap_kept_reasons_per_lap": {
+     "no pre-change data at this speed": {
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 1,
+      "14": 1
+     },
+     "slip above pre-change range": {
+      "10": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1
+     }
+    },
+    "passes_not_counted_per_lap": {
+     "9": 2,
+     "10": 3,
+     "11": 3,
+     "12": 2,
+     "13": 3,
+     "14": 2,
+     "15": 3
+    },
+    "detection_to_under_cap_s": 2.6,
+    "under_cap_speed": 5.76
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 8.54,
+    "speed_2s_after": 9.3,
+    "same_stretch_previous_lap": 7.15
+   },
+   "scenario": "patch045",
+   "controller": "v11-react"
+  },
+  "ev2-check-grip055-s1-latch": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.5,
+    40.1,
+    40.1,
+    55.2
+   ],
+   "after_change": [
+    55.2
+   ],
+   "crash": {
+    "lap": 10,
+    "seconds_into_lap": 12.8,
+    "s": 114.4,
+    "type": "spin",
+    "max_slip_last_2s": 1.34,
+    "hit": [
+     -72.74,
+     54.41
+    ]
+   },
+   "laps_to_recover": null,
+   "detections": [
+    {
+     "step": 3132,
+     "lap": 9,
+     "stretch": 1
+    },
+    {
+     "step": 3722,
+     "lap": 10,
+     "stretch": 5
+    }
+   ],
+   "detection_delay_s": 2.0,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.94,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.22,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.91
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 3,
+   "changed_stretches": [
+    2,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33
+   ],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.5,
+    40.1,
+    40.1,
+    55.2
+   ],
+   "laps_after_change": 1,
+   "clearance_after": [
+    0.259,
+    0.082
+   ],
+   "laps_under_0.2m": "1/2",
+   "cap_speed": {
+    "capped_steps": 661,
+    "mean_speed": 6.84,
+    "mean_cap": 6.95,
+    "mean_gap": 0.11,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.96,
+      "speed": 6.28,
+      "cap": 7.01
+     },
+     {
+      "lap": 10,
+      "capped_share": 1.0,
+      "speed": 9.15,
+      "cap": 6.72
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 14,
+      "speed": 9.86,
+      "cap": 6.74,
+      "gap": -3.12
+     },
+     "soft": {
+      "steps": 647,
+      "speed": 6.78,
+      "cap": 6.95,
+      "gap": 0.18
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 36,
+    "caps_set_laps": [
+     9,
+     10
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3132,
+      "event": "detected",
+      "stretch": 1
+     },
+     {
+      "lap": 9,
+      "step": 3204,
+      "event": "cap removed",
+      "stretch": 5,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3664,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3680,
+      "event": "cap removed",
+      "stretch": 0,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3722,
+      "event": "detected again",
+      "stretch": 5
+     }
+    ],
+    "cap_kept_reasons_per_lap": {
+     "no pre-change data at this speed": {
+      "9": 30
+     },
+     "slip above pre-change range": {
+      "9": 2
+     }
+    },
+    "passes_not_counted_per_lap": {
+     "9": 1,
+     "10": 10
+    },
+    "detection_to_under_cap_s": 0.5,
+    "under_cap_speed": 5.95
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 8.12,
+    "speed_2s_after": 6.2,
+    "same_stretch_previous_lap": 6.95
+   },
+   "scenario": "grip055",
+   "controller": "v11-react"
+  },
+  "ev2-check-patch045-s1-latch": {
+   "laps": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.6,
+    39.2,
+    39.3,
+    51.5
+   ],
+   "after_change": [
+    51.5
+   ],
+   "crash": {
+    "lap": 10,
+    "seconds_into_lap": 16.8,
+    "s": 113.0,
+    "type": "spin",
+    "max_slip_last_2s": 1.35,
+    "hit": [
+     -74.13,
+     54.13
+    ]
+   },
+   "laps_to_recover": null,
+   "detections": [
+    {
+     "step": 3203,
+     "lap": 9,
+     "stretch": 9
+    }
+   ],
+   "detection_delay_s": 0.6,
+   "detections_before_change": 0,
+   "conservative_share_per_stretch": [
+    0.73,
+    0.76,
+    0.79,
+    0.82,
+    0.84,
+    0.87,
+    0.9,
+    0.93,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.11,
+    0.14,
+    0.17,
+    0.19,
+    0.22,
+    0.24,
+    0.27,
+    0.3,
+    0.33,
+    0.36,
+    0.38,
+    0.41,
+    0.44,
+    0.46,
+    0.49,
+    0.52,
+    0.55,
+    0.57,
+    0.6,
+    0.63,
+    0.66,
+    0.68,
+    0.71
+   ],
+   "stretches_mostly_conservative": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "relax_events": 31,
+   "changed_stretches": [
+    10
+   ],
+   "lap_times": [
+    38.4,
+    38.3,
+    38.3,
+    38.2,
+    38.3,
+    39.6,
+    39.2,
+    39.3,
+    51.5
+   ],
+   "laps_after_change": 1,
+   "clearance_after": [
+    0.239,
+    0.29
+   ],
+   "laps_under_0.2m": "0/2",
+   "cap_speed": {
+    "capped_steps": 577,
+    "mean_speed": 6.47,
+    "mean_cap": 7.02,
+    "mean_gap": 0.55,
+    "per_lap": [
+     {
+      "lap": 9,
+      "capped_share": 0.79,
+      "speed": 6.31,
+      "cap": 7.05
+     },
+     {
+      "lap": 10,
+      "capped_share": 1.0,
+      "speed": 6.85,
+      "cap": 6.94
+     }
+    ],
+    "per_phase": {
+     "strong": {
+      "steps": 8,
+      "speed": 8.43,
+      "cap": 7.02,
+      "gap": -1.41
+     },
+     "soft": {
+      "steps": 569,
+      "speed": 6.44,
+      "cap": 7.02,
+      "gap": 0.58
+     }
+    }
+   },
+   "cap_events": {
+    "caps_set": 35,
+    "caps_set_laps": [
+     9
+    ],
+    "events": [
+     {
+      "lap": 9,
+      "step": 3203,
+      "event": "detected",
+      "stretch": 9
+     },
+     {
+      "lap": 9,
+      "step": 3269,
+      "event": "cap removed",
+      "stretch": 12,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3284,
+      "event": "cap removed",
+      "stretch": 13,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3299,
+      "event": "cap removed",
+      "stretch": 14,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3314,
+      "event": "cap removed",
+      "stretch": 15,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3329,
+      "event": "cap removed",
+      "stretch": 16,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3344,
+      "event": "cap removed",
+      "stretch": 17,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3361,
+      "event": "cap removed",
+      "stretch": 18,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3377,
+      "event": "cap removed",
+      "stretch": 19,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3393,
+      "event": "cap removed",
+      "stretch": 20,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3408,
+      "event": "cap removed",
+      "stretch": 21,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3424,
+      "event": "cap removed",
+      "stretch": 22,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3439,
+      "event": "cap removed",
+      "stretch": 23,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3455,
+      "event": "cap removed",
+      "stretch": 24,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3471,
+      "event": "cap removed",
+      "stretch": 25,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3486,
+      "event": "cap removed",
+      "stretch": 26,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3502,
+      "event": "cap removed",
+      "stretch": 27,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3518,
+      "event": "cap removed",
+      "stretch": 28,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3533,
+      "event": "cap removed",
+      "stretch": 29,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3549,
+      "event": "cap removed",
+      "stretch": 30,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3565,
+      "event": "cap removed",
+      "stretch": 31,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3581,
+      "event": "cap removed",
+      "stretch": 32,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3597,
+      "event": "cap removed",
+      "stretch": 33,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 9,
+      "step": 3611,
+      "event": "cap removed",
+      "stretch": 34,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3626,
+      "event": "cap removed",
+      "stretch": 0,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3642,
+      "event": "cap removed",
+      "stretch": 1,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3658,
+      "event": "cap removed",
+      "stretch": 2,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3674,
+      "event": "cap removed",
+      "stretch": 3,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3689,
+      "event": "cap removed",
+      "stretch": 4,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3705,
+      "event": "cap removed",
+      "stretch": 5,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3720,
+      "event": "cap removed",
+      "stretch": 6,
+      "reason": "tag matches history"
+     },
+     {
+      "lap": 10,
+      "step": 3738,
+      "event": "cap removed",
+      "stretch": 7,
+      "reason": "tag matches history"
+     }
+    ],
+    "cap_kept_reasons_per_lap": {
+     "no pre-change data at this speed": {
+      "9": 1
+     }
+    },
+    "passes_not_counted_per_lap": {
+     "9": 1,
+     "10": 3
+    },
+    "detection_to_under_cap_s": 0.8,
+    "under_cap_speed": 6.96
+   },
+   "false_detections": 0,
+   "speed_at_detection": {
+    "speed_2s_before": 8.85,
+    "speed_2s_after": 6.69,
+    "same_stretch_previous_lap": 8.38
+   },
+   "scenario": "patch045",
+   "controller": "v11-react"
+  }
+ },
+ "summary": [
+  {
+   "scenario": "grip drop (μ 0.55)",
+   "controller": "bicycle + footprint",
+   "seeds": 3,
+   "crashes": 3,
+   "crash_details": [
+    "spin lap 9 s=178.1",
+    "spin lap 9 s=112.1",
+    "spin lap 9 s=176.9"
+   ],
+   "laps_after_change": [
+    0,
+    0,
+    0
+   ],
+   "laps_under_0.2m": "3/3"
+  },
+  {
+   "scenario": "grip drop (μ 0.55)",
+   "controller": "v11 + footprint, no reaction",
+   "seeds": 3,
+   "crashes": 3,
+   "crash_details": [
+    "spin lap 9 s=176.7",
+    "spin lap 11 s=179.4",
+    "spin lap 11 s=179.7"
+   ],
+   "laps_after_change": [
+    0,
+    2,
+    2
+   ],
+   "laps_under_0.2m": "6/7"
+  },
+  {
+   "scenario": "grip drop (μ 0.55)",
+   "controller": "v11 + footprint + evidence reaction",
+   "seeds": 3,
+   "crashes": 1,
+   "crash_details": [
+    "spin lap 9 s=38.5"
+   ],
+   "laps_after_change": [
+    7,
+    7,
+    0
+   ],
+   "laps_under_0.2m": "6/15",
+   "mean_speed_vs_cap": [
+    "6.63/7.09",
+    "6.59/7.08",
+    "9.43/6.9"
+   ],
+   "per_phase": [
+    {
+     "strong": {
+      "steps": 131,
+      "speed": 9.38,
+      "cap": 6.91,
+      "gap": -2.47
+     },
+     "soft": {
+      "steps": 3547,
+      "speed": 6.53,
+      "cap": 7.1,
+      "gap": 0.56
+     }
+    },
+    {
+     "strong": {
+      "steps": 104,
+      "speed": 9.31,
+      "cap": 7.08,
+      "gap": -2.23
+     },
+     "soft": {
+      "steps": 3585,
+      "speed": 6.51,
+      "cap": 7.08,
+      "gap": 0.57
+     }
+    },
+    {
+     "strong": {
+      "steps": 28,
+      "speed": 9.43,
+      "cap": 6.9,
+      "gap": -2.53
+     }
+    }
+   ],
+   "detection_to_under_cap_s": [
+    0.2,
+    0.1,
+    null
+   ],
+   "detection_delay_s": [
+    1.1,
+    1.2,
+    1.6
+   ],
+   "false_detections": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "scenario": "patch (μ 0.45, s 85–115 m)",
+   "controller": "bicycle + footprint",
+   "seeds": 3,
+   "crashes": 3,
+   "crash_details": [
+    "spin lap 9 s=110.9",
+    "spin lap 9 s=113.0",
+    "spin lap 9 s=111.7"
+   ],
+   "laps_after_change": [
+    0,
+    0,
+    0
+   ],
+   "laps_under_0.2m": "2/3"
+  },
+  {
+   "scenario": "patch (μ 0.45, s 85–115 m)",
+   "controller": "v11 + footprint, no reaction",
+   "seeds": 3,
+   "crashes": 3,
+   "crash_details": [
+    "spin lap 9 s=112.9",
+    "spin lap 9 s=112.0",
+    "spin lap 9 s=112.6"
+   ],
+   "laps_after_change": [
+    0,
+    0,
+    0
+   ],
+   "laps_under_0.2m": "1/3"
+  },
+  {
+   "scenario": "patch (μ 0.45, s 85–115 m)",
+   "controller": "v11 + footprint + evidence reaction",
+   "seeds": 3,
+   "crashes": 1,
+   "crash_details": [
+    "spin lap 14 s=113.5"
+   ],
+   "laps_after_change": [
+    7,
+    5,
+    7
+   ],
+   "laps_under_0.2m": "12/20",
+   "mean_speed_vs_cap": [
+    "6.43/6.98",
+    "6.62/7.07",
+    "7.08/6.78"
+   ],
+   "per_phase": [
+    {
+     "strong": {
+      "steps": 47,
+      "speed": 9.4,
+      "cap": 7.17,
+      "gap": -2.23
+     },
+     "soft": {
+      "steps": 985,
+      "speed": 6.29,
+      "cap": 6.97,
+      "gap": 0.68
+     }
+    },
+    {
+     "strong": {
+      "steps": 57,
+      "speed": 9.57,
+      "cap": 7.17,
+      "gap": -2.4
+     },
+     "soft": {
+      "steps": 864,
+      "speed": 6.42,
+      "cap": 7.06,
+      "gap": 0.64
+     }
+    },
+    {
+     "strong": {
+      "steps": 305,
+      "speed": 10.02,
+      "cap": 6.75,
+      "gap": -3.27
+     },
+     "soft": {
+      "steps": 1023,
+      "speed": 6.2,
+      "cap": 6.79,
+      "gap": 0.59
+     }
+    }
+   ],
+   "detection_to_under_cap_s": [
+    0.4,
+    0.4,
+    0.9
+   ],
+   "detection_delay_s": [
+    0.4,
+    0.6,
+    0.5
+   ],
+   "false_detections": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "scenario": "no change",
+   "controller": "v11 + footprint + evidence reaction",
+   "seeds": 3,
+   "crashes": 1,
+   "crash_details": [
+    "spin lap 10 s=108.9"
+   ],
+   "laps_after_change": [
+    null,
+    null,
+    null
+   ],
+   "laps_under_0.2m": "0/40",
+   "mean_speed_vs_cap": [
+    "4.12/5.95"
+   ],
+   "per_phase": [
+    {
+     "strong": {
+      "steps": 1,
+      "speed": 4.12,
+      "cap": 5.95,
+      "gap": 1.84
+     }
+    }
+   ],
+   "detection_to_under_cap_s": [
+    null,
+    0.1,
+    null
+   ],
+   "detection_delay_s": [
+    null,
+    null,
+    null
+   ],
+   "false_detections": [
+    0,
+    1,
+    0
+   ]
+  }
+ ]
+}

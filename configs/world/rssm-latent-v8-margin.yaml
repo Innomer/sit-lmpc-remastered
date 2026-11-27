@@ -1,0 +1,9 @@
+# rssm-v8 with the LiDAR clearance check and a world-model track-limit margin (slip cost and risk head off, varied
+# warm-up). Margin per step = 95th percentile of v8's lateral error near the edges (|e_y| >= 0.5 m) on validation
+# data (results/lateral-error/v8-validation.json), capped at 0.65 m so the allowed half-width (0.85 m on Spielberg)
+# never drops below 0.2 m; uncapped it would reach 1.80 m at 1.5 s and leave no plan inside the limits after 1.0 s.
+extends: rssm-latent-v8-varied.yaml
+output:
+  exp_name: rssm-latent-v8-margin
+planner:
+  boundary_margin: [0.04, 0.08, 0.12, 0.18, 0.25, 0.32, 0.41, 0.52, 0.64, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65]

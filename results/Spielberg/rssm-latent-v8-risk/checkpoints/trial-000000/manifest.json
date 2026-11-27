@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rssm-latent-v8-risk",
+  "files": {
+    "state.json": "de92860639a5fcaa760cdf63316e0d5710033634d918c49dfc5a14d028bfa6ae",
+    "events.jsonl": "8bdea3a64f5247c6d89e3714f47567caaf242a3316c96a0bb42217c2cddb998e",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "89c00ae73ec35d3d5a9efcd7a6231dd0fdb516575835d877c7c73bfbfafdaa5a",
+    "config.yaml": "3fdd0a62398b12b9561eec2c141575f202c60d61dd100d2367e18711c00e4f97",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "f721c8f76ec4720cb2fd79c8a07616ce73191217ea324d1546993555680f23a9"
+  }
+}

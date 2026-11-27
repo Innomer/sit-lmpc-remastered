@@ -1,0 +1,387 @@
+{
+ "rootcause/old-v3-s1-r": {
+  "lap_times": [
+   38.4,
+   38.1,
+   38.0,
+   38.1,
+   38.0,
+   37.6,
+   36.8,
+   37.6,
+   37.5,
+   36.8,
+   36.6,
+   36.2,
+   36.3,
+   36.0
+  ],
+  "attempts": 15,
+  "crashes": [
+   {
+    "attempt": 6,
+    "seconds_into_lap": 3.2,
+    "s": 34.3,
+    "type": "wall",
+    "max_slip_last_2s": 0.14,
+    "hit": [
+     -33.86,
+     -8.24
+    ]
+   }
+  ],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=14 | failed_attempts=1 | applied_s"
+ },
+ "rootcause/old-v3-s2-r": {
+  "lap_times": [
+   38.4,
+   38.1,
+   38.0,
+   38.1,
+   38.0,
+   38.3,
+   36.9,
+   37.4,
+   37.8,
+   37.8,
+   37.0,
+   36.5,
+   36.5,
+   35.7
+  ],
+  "attempts": 15,
+  "crashes": [
+   {
+    "attempt": 10,
+    "seconds_into_lap": 3.6,
+    "s": 34.9,
+    "type": "wall",
+    "max_slip_last_2s": 0.34,
+    "hit": [
+     -33.96,
+     -8.28
+    ]
+   }
+  ],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=14 | failed_attempts=1 | applied_s"
+ },
+ "rootcause/old-v3-s3-r": {
+  "lap_times": [
+   38.4,
+   38.1,
+   38.0,
+   38.1,
+   38.0,
+   37.2,
+   37.2,
+   37.6,
+   38.3,
+   37.0,
+   37.8,
+   37.5,
+   35.6,
+   36.4
+  ],
+  "attempts": 15,
+  "crashes": [
+   {
+    "attempt": 7,
+    "seconds_into_lap": 11.0,
+    "s": 109.1,
+    "type": "wall",
+    "max_slip_last_2s": 0.17,
+    "hit": [
+     -75.06,
+     51.84
+    ]
+   }
+  ],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=14 | failed_attempts=1 | applied_s"
+ },
+ "rootcause/head-v3-s1-r": {
+  "lap_times": [
+   38.4,
+   38.1,
+   38.0,
+   38.1,
+   38.0,
+   37.5,
+   37.6,
+   37.0,
+   37.5,
+   36.2,
+   36.9,
+   36.0,
+   35.3,
+   35.9
+  ],
+  "attempts": 15,
+  "crashes": [
+   {
+    "attempt": 6,
+    "seconds_into_lap": 1.2,
+    "s": 14.5,
+    "type": "wall",
+    "max_slip_last_2s": 0.12,
+    "hit": [
+     -14.88,
+     -3.07
+    ]
+   }
+  ],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=14 | failed_attempts=1 | applied_s"
+ },
+ "rootcause/head-v3-s2-r": {
+  "lap_times": [
+   38.4,
+   38.1,
+   38.0,
+   38.1,
+   38.0,
+   36.5,
+   38.8,
+   36.9,
+   37.0,
+   36.7
+  ],
+  "attempts": 13,
+  "crashes": [
+   {
+    "attempt": 11,
+    "seconds_into_lap": 3.7,
+    "s": 34.1,
+    "type": "wall",
+    "max_slip_last_2s": 0.14,
+    "hit": [
+     -33.77,
+     -8.25
+    ]
+   },
+   {
+    "attempt": 12,
+    "seconds_into_lap": 3.4,
+    "s": 34.1,
+    "type": "wall",
+    "max_slip_last_2s": 0.16,
+    "hit": [
+     -33.78,
+     -8.25
+    ]
+   }
+  ],
+  "finish": "[finish] status=speed_too_low | trials=12 | successful_laps=10 | failed_attempts=2 | appli"
+ },
+ "rootcause/head-v3-s3-r": {
+  "lap_times": [
+   38.4,
+   38.1,
+   38.0,
+   38.1,
+   38.0,
+   38.1,
+   38.5,
+   37.1,
+   36.9,
+   37.2,
+   36.5,
+   36.4,
+   36.7,
+   35.8
+  ],
+  "attempts": 15,
+  "crashes": [
+   {
+    "attempt": 6,
+    "seconds_into_lap": 3.7,
+    "s": 34.9,
+    "type": "wall",
+    "max_slip_last_2s": 0.28,
+    "hit": [
+     -33.96,
+     -8.27
+    ]
+   }
+  ],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=14 | failed_attempts=1 | applied_s"
+ },
+ "rootcause/old-bicycle-s1-r": {
+  "lap_times": [
+   38.4,
+   38.3,
+   38.3,
+   38.2,
+   38.3,
+   37.7,
+   39.1,
+   37.3,
+   39.4,
+   38.4,
+   37.3,
+   37.3,
+   37.3,
+   37.3,
+   37.4
+  ],
+  "attempts": 15,
+  "crashes": [],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=15 | failed_attempts=0 | applied_s"
+ },
+ "rootcause/old-bicycle-s2-r": {
+  "lap_times": [
+   38.4,
+   38.3,
+   38.3,
+   38.2,
+   38.3,
+   37.7,
+   38.2,
+   37.5,
+   38.9,
+   38.3,
+   38.7,
+   38.0,
+   37.7,
+   38.1,
+   38.4
+  ],
+  "attempts": 15,
+  "crashes": [],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=15 | failed_attempts=0 | applied_s"
+ },
+ "rootcause/old-bicycle-s3-r": {
+  "lap_times": [
+   38.4,
+   38.3,
+   38.3,
+   38.2,
+   38.3,
+   38.1,
+   38.0,
+   37.8,
+   39.8,
+   38.6,
+   38.7,
+   38.3,
+   38.6,
+   38.1,
+   38.3
+  ],
+  "attempts": 15,
+  "crashes": [],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=15 | failed_attempts=0 | applied_s"
+ },
+ "change-none-bicycle-s1": {
+  "lap_times": [
+   38.4,
+   38.3,
+   38.3,
+   38.2,
+   38.3,
+   38.0,
+   39.8,
+   37.2,
+   37.3,
+   37.2,
+   37.0,
+   37.3,
+   37.1,
+   37.1,
+   37.5
+  ],
+  "attempts": 15,
+  "crashes": [],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=15 | failed_attempts=0 | applied_s"
+ },
+ "change-none-bicycle-s2": {
+  "lap_times": [
+   38.4,
+   38.3,
+   38.3,
+   38.2,
+   38.3,
+   38.7,
+   39.2,
+   38.3,
+   39.4,
+   38.6,
+   38.6,
+   38.6,
+   38.7,
+   38.1,
+   38.8
+  ],
+  "attempts": 15,
+  "crashes": [],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=15 | failed_attempts=0 | applied_s"
+ },
+ "change-none-bicycle-s3": {
+  "lap_times": [
+   38.4,
+   38.3,
+   38.3,
+   38.2,
+   38.3,
+   38.4,
+   38.4
+  ],
+  "attempts": 8,
+  "crashes": [
+   {
+    "attempt": 8,
+    "seconds_into_lap": 12.1,
+    "s": 109.5,
+    "type": "wall",
+    "max_slip_last_2s": 0.4,
+    "hit": [
+     -75.11,
+     52.0
+    ]
+   }
+  ],
+  "finish": "[finish] status=collision | trials=8 | successful_laps=7 | failed_attempts=1 | applied_ste"
+ },
+ "known-varied-long": {
+  "lap_times": [
+   38.4,
+   38.3,
+   38.3,
+   38.2,
+   38.3,
+   37.9,
+   38.8,
+   37.3,
+   38.6,
+   37.8,
+   37.0,
+   37.4,
+   36.9,
+   36.6,
+   36.9
+  ],
+  "attempts": 15,
+  "crashes": [],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=15 | failed_attempts=0 | applied_s"
+ },
+ "known-varied-slipoff": {
+  "lap_times": [
+   38.4,
+   38.3,
+   38.3,
+   38.2,
+   38.3,
+   37.9,
+   39.2,
+   36.6,
+   37.4,
+   36.2,
+   37.3,
+   36.7,
+   36.7,
+   36.0,
+   36.1
+  ],
+  "attempts": 15,
+  "crashes": [],
+  "finish": "[finish] status=lap_limit | trials=15 | successful_laps=15 | failed_attempts=0 | applied_s"
+ }
+}

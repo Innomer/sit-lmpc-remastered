@@ -1,0 +1,76 @@
+[start] learning | seed=1 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[attempt] #1 success | 384 steps
+[lap] trial 1 | 38.4 s | avg speed 9.211 m/s | mppi
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[attempt] #2 success | 383 steps
+[lap] trial 2 | 38.3 s | avg speed 9.23 m/s | mppi
+[safe_set_retention] laps=1 | states=415 | min_states=1000000
+[control_step_timing] steps=800
+[training] generation=1 | epochs=300 | loss=-0.5452 | gradient_steps=600
+[control_step_timing] steps=900
+[control_step_timing] steps=1000
+[control_step_timing] steps=1100
+[attempt] #3 success | 383 steps
+[lap] trial 3 | 38.3 s | avg speed 9.229 m/s | mppi
+[safe_set_retention] laps=2 | states=797 | min_states=1000000
+[control_step_timing] steps=1200
+[training] generation=2 | epochs=300 | loss=-1.178 | gradient_steps=1800
+[control_step_timing] steps=1300
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[attempt] #4 success | 382 steps
+[lap] trial 4 | 38.2 s | avg speed 9.233 m/s | mppi
+[safe_set_retention] laps=3 | states=1180 | min_states=1000000
+[control_step_timing] steps=1600
+[training] generation=3 | epochs=300 | loss=-2.509 | gradient_steps=3300
+[control_step_timing] steps=1700
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[attempt] #5 success | 383 steps
+[lap] trial 5 | 38.3 s | avg speed 9.229 m/s | mppi
+[safe_set_retention] laps=4 | states=1563 | min_states=1000000
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/change-grip-drop-v11-condition/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[learned_controller_started] step=1915 | value_generation=3 | hull_facets=886
+[training] generation=4 | epochs=300 | loss=-3.42 | gradient_steps=5100
+[control_step_timing] steps=2000
+[control_step_timing] steps=2100
+[control_step_timing] steps=2200
+[control_step_timing] steps=2300
+[attempt] #6 success | 396 steps
+[lap] trial 6 | 39.6 s | avg speed 8.943 m/s | lmppi | safe-set violation=0.03819 | lambda_ss mean=3.905 max=18.75 | lambda_boundary mean=3.879 max=18.75
+[safe_set_retention] laps=5 | states=1954 | min_states=1000000
+[training] generation=5 | epochs=300 | loss=-3.593 | gradient_steps=7500
+[control_step_timing] steps=2400
+[control_step_timing] steps=2500
+[control_step_timing] steps=2600
+[control_step_timing] steps=2700
+[attempt] #7 success | 398 steps
+[lap] trial 7 | 39.8 s | avg speed 8.883 m/s | lmppi | lambda_ss mean=3.665 max=18.75 | lambda_boundary mean=4.334 max=18.75
+[safe_set_retention] laps=6 | states=2347 | min_states=1000000
+[training] generation=6 | epochs=300 | loss=-3.723 | gradient_steps=10200
+[control_step_timing] steps=2800
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[control_step_timing] steps=3100
+[attempt] #8 success | 392 steps
+[lap] trial 8 | 39.2 s | avg speed 8.957 m/s | lmppi | lambda_ss mean=0.9853 max=17.5 | lambda_boundary mean=1.304 max=18.75
+[safe_set_retention] laps=7 | states=2751 | min_states=1000000
+[attempt] #9 failure | 37 steps | collision | lambda_ss mean=2.061 max=17.5 | lambda_boundary mean=1.892 max=18.75
+[training] generation=7 | epochs=300 | loss=-3.592 | gradient_steps=13500
+[finish] status=collision | trials=9 | successful_laps=8 | failed_attempts=1 | applied_steps=3138 | training_generations=7 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/change-grip-drop-v11-condition
+[control_timing_summary] steps=3138 | control_period_seconds=0.1 | stepping=lockstep

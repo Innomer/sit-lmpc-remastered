@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/fpjit-v11-s1",
+  "files": {
+    "state.json": "75afb20928b4f41f2247ea8ed16510c3843df008656d62ee072bd96ad2123aa8",
+    "events.jsonl": "c35db5aff0a4d2e5aa9a746fe9ed9fc7e67dd4659db36538669fa9dfe8f05373",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "d17348d72fbd67946e9490683b227b45515d0d3886361550272c45e9a6a67305",
+    "config.yaml": "500c9c6c408feb554a1e96ce32ffe225fb76d88b95b2d181b28f56bf81bf893c",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "86da1bab40039854eaad77f2f3f8be30ef7ccbea50a18c2aadffe8340a295449"
+  }
+}

@@ -25,8 +25,10 @@ ACTION_UNITS = ("rad/s", "m/s^2")
 
 
 def feature_names(mode):
-    if mode not in ("state", "state_action"):
-        raise ValueError("input_mode must be state or state_action")
+    if mode not in ("state", "state_action", "state_tag"):
+        raise ValueError("input_mode must be state, state_action or state_tag")
+    if mode == "state_tag":
+        return STATE_FEATURES + ("tag",)
     return STATE_FEATURES + (ACTION_FEATURES if mode == "state_action" else ())
 
 
@@ -36,6 +38,11 @@ def features(states, mode="state", actions=None):
         raise ValueError("expected a batch of at least five Frenet state features")
     if mode == "state":
         return states[:, :5]
+    if mode == "state_tag":
+        if states.shape[1] < 8:
+            raise ValueError("state_tag inputs need the tag as an eighth column")
+        concatenate = np.concatenate if isinstance(states, np.ndarray) else jnp.concatenate
+        return concatenate((states[:, :5], states[:, 7:8]), axis=1)
     feature_names(mode)
     if actions is None or actions.shape != (len(states), 2):
         raise ValueError("state_action inputs require aligned physical (N, 2) controls")
@@ -47,7 +54,7 @@ def input_metadata(mode):
     return {
         "input_mode": mode,
         "features": list(feature_names(mode)),
-        "state_units": ["m", "m", "rad", "m/s", "rad"],
+        "state_units": ["m", "m", "rad", "m/s", "rad"] + (["m"] if mode == "state_tag" else []),
         "action_units": list(ACTION_UNITS) if mode == "state_action" else [],
         "action_timing": "next action at pre-action state" if mode == "state_action" else None,
     }

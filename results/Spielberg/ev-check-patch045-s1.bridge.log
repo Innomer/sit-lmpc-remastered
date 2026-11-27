@@ -1,0 +1,19 @@
+[INFO] [1795759421.682750676] [bridge]: Loading map from path: /home/mann-bhanushali/sim_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/maps/Spielberg.yaml
+[INFO] [1795759422.008141711] [bridge]: Start poses: ego_racecar=(0.00, 0.00, -2.88)
+[INFO] [1795759422.296118554] [bridge]: Running in synchronous mode. Simulation will step only on new /drive messages.
+[INFO] [1795759422.305114430] [bridge]: Using simulation time. Will publish /clock topic. Drive and odom will be as fast as possible.
+[INFO] [1795759422.311437275] [bridge]: simulated sensors on: {'imu_offset_x': 0.05, 'imu_offset_y': 0.01, 'imu_yaw_misalignment': 0.01, 'accel_bias_x': 0.2, 'accel_bias_y': -0.15, 'accel_noise': 0.3, 'gyro_bias': 0.01, 'gyro_noise': 0.01, 'gyro_scale': 1.01, 'wheel_scale': 1.03, 'wheel_noise': 0.05, 'pose_noise': 0.02, 'yaw_noise': 0.01, 'pose_lag': 0.05}
+[INFO] [1795759458.563649512] [bridge]: ego_racecar completed lap 1, last lap 38.39 s
+[INFO] [1795759469.250991610] [bridge]: ego_racecar completed lap 2, last lap 38.27 s
+[INFO] [1795759481.923725292] [bridge]: ego_racecar completed lap 3, last lap 38.27 s
+[INFO] [1795759495.556460864] [bridge]: ego_racecar completed lap 4, last lap 38.27 s
+[INFO] [1795759509.552151381] [bridge]: ego_racecar completed lap 5, last lap 38.27 s
+[INFO] [1795759559.817480367] [bridge]: ego_racecar completed lap 6, last lap 39.63 s
+[INFO] [1795759606.472910911] [bridge]: ego_racecar completed lap 7, last lap 39.48 s
+[INFO] [1795759652.645572947] [bridge]: ego_racecar completed lap 8, last lap 39.68 s
+[INFO] [1795759652.655745842] [bridge]: 60 friction zones set
+[INFO] [1795759716.205257411] [bridge]: ego_racecar completed lap 9, last lap 52.52 s
+[INFO] [1795759772.296888759] [bridge]: ego_racecar completed lap 10, last lap 46.51 s
+[INFO] [1795759825.594614938] [bridge]: ego_racecar completed lap 11, last lap 42.12 s
+[INFO] [1795759874.905357869] [bridge]: ego_racecar completed lap 12, last lap 41.50 s
+[WARN] [1795759891.150219508] [bridge]: ego_racecar hit something at (-73.55, 54.23)

@@ -1,0 +1,34 @@
+base: runs/rssm-v11
+batch: 1024
+epochs: 12
+false_alarm_rate: 0.05
+heldout_runs:
+- change-none-v11-v2-s1
+- change-grip-drop-v11-v2-s1
+- change-patch-v11
+- rssm-latent-slow-logged
+- rssm-latent-v6-smoke
+- rssm-latent-v7-smoke
+horizon: 15
+layers: 2
+learning_rate: 0.001
+runs_root: results/Spielberg
+seed: 20261127
+train_runs:
+- rssm-latent-v8-clearance
+- rssm-latent-v8-clearance-long
+- rssm-latent-v8-slow-long
+- rssm-latent-v8-varied-long
+- rssm-latent-v8-guarded
+- rssm-latent-v8-risk
+- rssm-latent-v11
+- change-grip-drop-v11-s2
+- change-patch-v11-s2
+- change-grip-drop-v11-s3
+- change-patch-v11-s3
+- change-none-v11-v2-s2
+- change-none-v11-v2-s3
+- change-grip-drop-v11-v2-s2
+- change-patch-v11-v2-s2
+- change-patch-v11-v2-s3
+width: 64

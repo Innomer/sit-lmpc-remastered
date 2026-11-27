@@ -1,0 +1,11 @@
+{
+ "candidates": {
+  "steps": 3655,
+  "chosen": 1,
+  "previous_chosen": 27
+ },
+ "clearance_check": {
+  "steps": 5171,
+  "changed": 4
+ }
+}

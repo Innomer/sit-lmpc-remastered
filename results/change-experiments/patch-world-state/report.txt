@@ -1,0 +1,10 @@
+== patch-world-state
+attempt  1  success    mppi    38.4 s  grip guess 0.86
+attempt  2  success    mppi    38.1 s  grip guess 0.88
+attempt  3  success    mppi    38.0 s  grip guess 0.88
+attempt  4  success    mppi    38.1 s  grip guess 0.88
+attempt  5  success    mppi    38.0 s  grip guess 0.88
+attempt  6  success    lmppi   39.8 s  grip guess 0.90
+attempt  7  incomplete lmppi   13.2 s  ended at s 110 m, max |slip| 0.41  grip guess 0.89
+[finish] status=speed_too_low | trials=6 | successful_laps=6 | failed_attempts=0 | applied_steps=2436 | traini
+planning (learned laps) p50 508 ms, p95 664 ms

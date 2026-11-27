@@ -1,0 +1,12 @@
+# Our method + condition-aware safe set with per-state grip tags (for grip that changes within a lap, e.g. patches):
+# every stored state is tagged with the grip estimate around it. For each hull window, each stored lap's grip there is
+# the median of its tags; laps within 0.12 of what the newest lap found there are kept (or of the current estimate
+# when that is lower by more than 0.12), at least 4 laps, so kept states always cover the whole window.
+extends: world-nochance.yaml
+output:
+  exp_name: world-nochance-state
+planner:
+  condition_threshold: 0.12
+  condition_mode: state
+  condition_min_laps: 4
+  condition_tau: 1.0

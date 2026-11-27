@@ -1,0 +1,9 @@
+# rssm-v11 (from scratch on track + coverage data) with the LiDAR clearance check, varied warm-up (full pure-pursuit
+# profile capped at 9 m/s). Slip cost off (default), no margin, no risk head. Same planner settings as
+# configs/fast-diag/known-varied-warmup.yaml.
+extends: rssm-latent-v8-varied.yaml
+output:
+  exp_name: rssm-latent-v11
+planner:
+  dynamics:
+    rssm: runs/rssm-v11

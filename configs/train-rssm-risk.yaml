@@ -1,0 +1,23 @@
+# Crash-risk head on the frozen rssm-v8 latent (python -m sit_lmpc.world.rssm_risk): "crash within 1.5 s" from (h, s).
+# Closed-loop sim runs under our own planner are labelled episodes; the v5-v7 crash runs are held out for the
+# warning-time check.
+base: runs/rssm-v8
+horizon: 15
+seed: 20261125
+width: 64
+layers: 2
+learning_rate: 1.0e-3
+batch: 1024
+epochs: 12
+false_alarm_rate: 0.05
+runs_root: results/Spielberg
+train_runs:
+  - rssm-latent-v8-clearance
+  - rssm-latent-v8-clearance-long
+  - rssm-latent-v8-slow-long
+  - rssm-latent-v8-varied-long
+  - rssm-latent-v8-guarded
+heldout_runs:
+  - rssm-latent-slow-logged
+  - rssm-latent-v6-smoke
+  - rssm-latent-v7-smoke

@@ -44,6 +44,7 @@ from sit_lmpc.planners.lmppi import (
     sampled_risk_diagnostic,
 )
 from sit_lmpc.planners.safe_set import SafeSet
+from sit_lmpc.planners.change_monitor import wall_distance_field, body_clearance, stretch_length, tag_seconds
 from sit_lmpc.planners.probabilistic import SafetyStop, configured_candidate_counts
 from sit_lmpc.training.value import ValueTrainer
 from sit_lmpc.training.risk import RiskTrainer
@@ -312,6 +313,61 @@ def _run(config, tracking_only, keyboard_cleanup):
             planner.dynamics, simulation, randomness.next_key(),
             source=source, destination=directory / "dynamics_model",
         )
+    rssm_filter = None
+    grip_probe = nominal_rollout = None
+    tag_trace, tag_controls, tag_states, safe_set_trace, probe_trace = [], [], [], [], []
+    model_tag_predictors, model_tag_states, model_error_trace = [], [], []
+    tag_steps = max(1, int(round(tag_seconds(planner, track.s_frame_max) / simulation.timestep)))
+    model_error_needed = planner.change_detection and planner.change_cap_scope == "evidence" and bool(planner.change_speed)
+    model_error_buffer = []
+    model_error_batch = jax.jit(lambda m, h, s, x, u: jax.vmap(
+        lambda hh, ss, xx, uu: m.replace(h=hh, s=ss).rollout_members(xx, uu)[0][-1])(h, s, x, u))
+
+    def flush_model_errors():
+        if model_error_buffer and len(model_error_buffer[0]) == 4:
+            rows = list(model_error_buffer)
+            model_error_buffer.clear()
+            change_monitor.model_errors([r[0] for r in rows], [r[1] for r in rows], [r[2] for r in rows],
+                                        [r[3] for r in rows])
+            model_error_trace.extend((r[0], r[3]) for r in rows)
+            return
+        if not model_error_buffer or not model_tag_predictors:
+            return
+        template = model_tag_predictors[-1]
+        rows = list(model_error_buffer)
+        model_error_buffer.clear()
+        errors = []
+        chunk_size = 128
+        for start in range(0, len(rows), chunk_size):
+            chunk = rows[start:start + chunk_size]
+            padded = chunk + [chunk[-1]] * (chunk_size - len(chunk))
+            ends = np.asarray(model_error_batch(
+                template, jnp.stack([r[3] for r in padded]), jnp.stack([r[4] for r in padded]),
+                jnp.asarray(np.stack([r[5] for r in padded])),
+                jnp.asarray(np.stack([r[6] for r in padded]), template.st_params.dtype) / template.action_scale))
+            target = np.stack([r[7] for r in chunk])
+            errors.extend(np.hypot(ends[:len(chunk), 0] - target[:, 0], ends[:len(chunk), 1] - target[:, 1]).tolist())
+        steps = [r[0] for r in rows]
+        change_monitor.model_errors(steps, [r[1] for r in rows], [r[2] for r in rows], errors)
+        model_error_trace.extend(zip(steps, errors))
+    wall_field = wall_distance_field(track) if model_error_needed else None
+    if planner.dynamics.backend == "rssm" and (planner.condition_tag == "probe" or planner.change_speed == "probe"):
+        from sit_lmpc.world.rssm_grip import GripProbe
+        grip_probe = GripProbe(planner.dynamics.rssm_grip_probe)
+    if planner.dynamics.backend in ("rssm", "st") and (planner.condition_tag == "bicycle_error" or planner.change_detection):
+        from sit_lmpc.world.rssm import bicycle as nominal_step
+        nominal_params = jnp.asarray(model.params, jnp.float32)
+        nominal_rollout = jax.jit(lambda x, u: jax.lax.scan(
+            lambda y, a: (nominal_step(nominal_params, y, a, simulation.timestep, model.integrator_timestep), None),
+            x, u)[0])
+    if planner.dynamics.backend == "rssm":
+        from sit_lmpc.world.rssm_runtime import RSSMFilter
+
+        rssm_filter = RSSMFilter(planner.dynamics.rssm, model.params, model.action_scale, planner.dynamics.rssm_variant,
+                                 planner.dynamics.rssm_model_timestep, model.integrator_timestep,
+                                 planner.dynamics.rssm_clearance_margin, planner.dynamics.rssm_clearance_weight,
+                                 planner.dynamics.rssm_risk, planner.dynamics.rssm_risk_weight)
+        model = rssm_filter.predictor()
     encoder_belief = None
     if planner.dynamics.belief_update == "encoder":
         from sit_lmpc.world.runtime import EncoderBelief
@@ -341,12 +397,114 @@ def _run(config, tracking_only, keyboard_cleanup):
                     simulator_integrator_timestep=simulation.integrator_timestep,
                     numerical_substep_mismatch=model.integrator_timestep != simulation.integrator_timestep)
 
+    def apply_rssm(cartesian, frenet):
+        nonlocal model
+        observation, pose = simulator.encoder_observation()
+        scan = simulator.lidar_scan()
+        observation_trace.append(observation)
+        true_state_trace.append(np.array(cartesian, copy=True))
+        anchor, _, grip = rssm_filter.step(observation, scan, pose, simulator.applied_control)
+        lidar_trace.append(np.asarray(rssm_filter.lidar_features(scan), np.float32))
+        memory_trace.append(np.asarray(rssm_filter.h, np.float32))
+        tag = grip
+        if planner.condition_tag == "probe":
+            tag = float(grip_probe(rssm_filter.h, rssm_filter.s))
+        if planner.condition_tag == "bicycle_error" or planner.change_detection:
+            if len(true_state_trace) > 1 and np.hypot(*(true_state_trace[-1][:2] - true_state_trace[-2][:2])) > 3.0:
+                tag_controls.clear()
+                tag_states.clear()
+                model_tag_predictors.clear()
+                model_tag_states.clear()
+            tag_controls.append(np.asarray(simulator.applied_control, np.float32))
+            tag_states.append(np.asarray(cartesian, np.float32))
+            tag = 0.0
+            if len(tag_states) > tag_steps:
+                end = np.asarray(nominal_rollout(jnp.asarray(tag_states[-tag_steps - 1]),
+                                                 jnp.asarray(np.stack(tag_controls[-tag_steps:]))))
+                tag = float(np.hypot(*(end[:2] - tag_states[-1][:2])))
+        model_error = None
+        if model_error_needed and len(model_tag_predictors) >= tag_steps and len(tag_controls) >= tag_steps:
+            predictor = model_tag_predictors[-tag_steps]
+            model_error_buffer.append((len(tag_trace), float(frenet[0]), float(cartesian[3]), predictor.h, predictor.s,
+                                       model_tag_states[-tag_steps], np.stack(tag_controls[-tag_steps:]),
+                                       np.asarray(cartesian[:2], np.float32)))
+        error_tag = tag if planner.condition_tag == "bicycle_error" or planner.change_detection else None
+        if planner.condition_tag == "probe":
+            tag = float(grip_probe(rssm_filter.h, rssm_filter.s))
+        if planner.condition_tag == "readout":
+            tag = grip if not planner.change_detection else tag
+        if change_monitor is not None:
+            factor = None
+            if planner.change_speed == "probe":
+                probe_trace.append(float(grip_probe(rssm_filter.h, rssm_filter.s)))
+                factor = float(np.clip(np.sqrt(np.mean(probe_trace[-10:]) / 1.0489), 0.6, 1.0))
+            clearance = body_clearance(wall_field, track.spec, cartesian) if wall_field is not None else None
+            change_monitor.observe(len(tag_trace), frenet[0], error_tag, learned_steps > 0, speed=float(cartesian[3]),
+                                   factor=factor, model_error=model_error, clearance=clearance,
+                                   slip=float(cartesian[6]))
+        tag_trace.append(tag)
+        lap_condition.append([tag if planner.condition_tag != "readout" else grip])
+        grip_trace.append(grip)
+        friction_trace.append(grip)
+        if planner.condition_threshold > 0:
+            current = float(np.median(tag_trace[-20:])) if planner.condition_tag != "readout" else grip
+            safe_set.condition = np.array([current])
+        model = rssm_filter.predictor()
+        nominal.model = learned.model = model
+        encoder_trace.append(np.asarray(rssm_filter.s))
+        if not planner.dynamics.rssm_state:
+            if model_error_needed:
+                model_tag_predictors.append(model)
+                model_tag_states.append(np.asarray(cartesian, np.float32))
+                del model_tag_predictors[:-tag_steps - 1], model_tag_states[:-tag_steps - 1]
+            return cartesian, frenet
+        cartesian, frenet = np.array(cartesian, copy=True), np.array(frenet, copy=True)
+        cartesian[[2, 3, 5, 6]] = anchor
+        frenet[[2, 3, 5, 6]] = anchor
+        if model_error_needed:
+            model_tag_predictors.append(model)
+            model_tag_states.append(np.asarray(cartesian, np.float32))
+            del model_tag_predictors[:-tag_steps - 1], model_tag_states[:-tag_steps - 1]
+        return cartesian, frenet
+
+    def apply_tag(cartesian, frenet):
+        if len(tag_states) and np.hypot(*(np.asarray(cartesian)[:2] - tag_states[-1][:2])) > 3.0:
+            tag_controls.clear()
+            tag_states.clear()
+        tag_controls.append(np.asarray(simulator.applied_control, np.float32))
+        tag_states.append(np.asarray(cartesian, np.float32))
+        tag = 0.0
+        if len(tag_states) > tag_steps:
+            end = np.asarray(nominal_rollout(jnp.asarray(tag_states[-tag_steps - 1]),
+                                             jnp.asarray(np.stack(tag_controls[-tag_steps:]))))
+            tag = float(np.hypot(*(end[:2] - tag_states[-1][:2])))
+        clearance = body_clearance(wall_field, track.spec, cartesian) if wall_field is not None else None
+        change_monitor.observe(len(tag_trace), frenet[0], tag, learned_steps > 0, speed=float(cartesian[3]),
+                               clearance=clearance, slip=float(cartesian[6]))
+        if model_error_needed:
+            model_error_buffer.append((len(tag_trace), float(frenet[0]), float(cartesian[3]), tag))
+        tag_trace.append(tag)
+        return cartesian, frenet
+
     def apply_encoder(cartesian, frenet):
         nonlocal model
         observation, _ = simulator.encoder_observation()
+        observation_trace.append(observation)
+        true_state_trace.append(np.array(cartesian, copy=True))
         hidden, z_mean, z_factor, w_mean = encoder_belief.step(observation)
         friction = encoder_belief.friction(w_mean)
-        if friction is not None:
+        if planner.condition_mode == "state":
+            grip = encoder_belief.grip(w_mean, encoder_belief.last_w_std)
+            if grip is not None:
+                keep = np.exp(-simulation.timestep / planner.condition_tau)
+                weight = 1.0 / max(grip[1], 1e-6)
+                grip_filter[0] = keep * grip_filter[0] + weight * grip[0]
+                grip_filter[1] = keep * grip_filter[1] + weight
+                lap_condition.append([grip[0]])
+                grip_trace.append(grip_filter[0] / grip_filter[1])
+                if planner.condition_threshold > 0:
+                    safe_set.condition = np.array([grip_trace[-1]])
+        elif friction is not None:
             lap_condition.append([friction])
             if planner.condition_threshold > 0:
                 safe_set.condition = np.array([friction])
@@ -364,6 +522,12 @@ def _run(config, tracking_only, keyboard_cleanup):
         return cartesian, frenet
 
     encoder_trace = []
+    observation_trace = []
+    true_state_trace = []
+    grip_trace = []
+    grip_filter = [0.0, 0.0]
+    lidar_trace = []
+    memory_trace = []
     lap_condition = []
     friction_trace = []
 
@@ -438,6 +602,27 @@ def _run(config, tracking_only, keyboard_cleanup):
         simulation.seed,
         randomness=randomness,
     )
+    if planner.safe_set_footprint_filter and learned.corners is not None:
+        safe_set.footprint = (learned.corners, planner.boundary_limit)
+    change_monitor = None
+    tag_trainer = None
+    change_trace = []
+    if planner.change_detection:
+        from sit_lmpc.planners.change_monitor import ChangeMonitor
+        change_monitor = ChangeMonitor(float(track.s_frame_max), stretch_length(planner, track.s_frame_max),
+                                       planner.change_window,
+                                       planner.change_ratio, planner.change_floor, new_laps=planner.change_new_laps,
+                                       speed_factor=planner.change_speed_factor if planner.change_speed else None,
+                                       speed_step=planner.change_speed_step, scope=planner.change_cap_scope,
+                                       global_share=planner.change_global_share,
+                                       global_min=planner.change_global_min,
+                                       strong_weight=planner.change_cap_strong_weight,
+                                       soft_weight=planner.change_cap_soft_weight,
+                                       raise_band=planner.change_raise_band, raise_step=planner.change_raise_step,
+                                       min_clearance=planner.change_min_clearance,
+                                       pass_share=planner.change_pass_share)
+        change_monitor.scale_factor = float(planner.change_speed_factor)
+        safe_set.change_monitor = change_monitor
     density_trainer = (
         SafeSetDensityTrainer(planner.safe_set_density, planner.dynamics, simulation,
             track.s_frame_max, planner.safe_set_size, directory,
@@ -620,6 +805,15 @@ def _run(config, tracking_only, keyboard_cleanup):
     success_controller_versions = set()
     lap_metrics, step_violations = [], []
     lambda_statistics = LambdaStatistics()
+    safety_trace = []
+
+    def safety_summary():
+        names = sorted({name for step in safety_trace for name in step})
+        return {"steps": len(safety_trace), **{
+            name: {"steps_any_candidate": float(np.mean([step.get(name, (0, 0))[0] > 0 for step in safety_trace])),
+                   "mean_share_of_candidates": float(np.mean([step.get(name, (0, 0))[0] for step in safety_trace])),
+                   "steps_chosen_plan": float(np.mean([step.get(name, (0, 0))[1] for step in safety_trace]))}
+            for name in names}}
     init_saved = initial_snapshot is not None
     learned_steps, lap_time = 0, 0.0
     status = "step_limit"
@@ -673,6 +867,9 @@ def _run(config, tracking_only, keyboard_cleanup):
         metrics.update(attempt_id=trajectory.attempt_id, outcome=outcome)
         metrics["lambda_summary"] = lambda_statistics.summary()
         lambda_statistics.clear()
+        if safety_trace:
+            metrics["safety_summary"] = safety_summary()
+            safety_trace.clear()
         lap_metrics.append(metrics)
         step_violations.clear()
         (directory / "lap_metrics.json").write_text(json.dumps(lap_metrics, indent=2) + "\n")
@@ -1037,6 +1234,11 @@ def _run(config, tracking_only, keyboard_cleanup):
         if encoder_belief is not None:
             encoder_belief.reset()
             cartesian, frenet = apply_encoder(cartesian, frenet)
+        if rssm_filter is not None:
+            rssm_filter.reset()
+            cartesian, frenet = apply_rssm(cartesian, frenet)
+        elif change_monitor is not None:
+            cartesian, frenet = apply_tag(cartesian, frenet)
         if resuming:
             tolerance = getattr(simulator, "restore_tolerance", 1e-5)
             mismatch = np.abs(np.asarray(frenet) - np.asarray(resume_arrays["frenet"]))
@@ -1218,6 +1420,8 @@ def _run(config, tracking_only, keyboard_cleanup):
                 if trainer.snapshot is None:
                     trainer.wait()
                 snapshot = trainer.snapshot
+                if tag_trainer is not None and tag_trainer.snapshot is not None:
+                    snapshot = tag_trainer.snapshot
                 generation = snapshot.generation
                 noise = randomness.state_noise(simulation.state_noise)
                 risk_snapshot = active_risk_snapshot or (
@@ -1244,6 +1448,19 @@ def _run(config, tracking_only, keyboard_cleanup):
                 )
                 mode = "lmppi"
                 learned_steps += 1
+                if change_monitor is not None:
+                    snap = change_monitor.snapshot()
+                    last = safe_set.last_change or {}
+                    change_trace.append([index, float(snap["active"]), snap["conservative"], snap["new"], snap["changed"],
+                                         last.get("mode", 0), last.get("records", -1),
+                                         float(safe_set.value_records is not None), snap["capped"],
+                                         float(change_monitor.cap_at(frenet[0])), float(cartesian[3]),
+                                         float(change_monitor.phase(frenet[0]))])
+                if safe_set.state_mode() and getattr(safe_set, "last_filter", None):
+                    f = safe_set.last_filter
+                    safe_set_trace.append([index, f.get("laps", 0), f.get("kept", 0), float(f.get("fallback", False)),
+                                           f.get("points", 0), f.get("reference", np.nan),
+                                           float(safe_set.condition[0]) if safe_set.condition is not None else np.nan])
                 if config.diagnostics.print_lambdas:
                     events.emit(
                         "selected_lambdas",
@@ -1420,6 +1637,10 @@ def _run(config, tracking_only, keyboard_cleanup):
             )
             if encoder_belief is not None:
                 next_cartesian, next_frenet = apply_encoder(next_cartesian, next_frenet)
+            if rssm_filter is not None:
+                next_cartesian, next_frenet = apply_rssm(next_cartesian, next_frenet)
+            elif change_monitor is not None:
+                next_cartesian, next_frenet = apply_tag(next_cartesian, next_frenet)
             insight.applied(next_cartesian, next_frenet, control)
             if insight.enabled:
                 insight.display(simulator.capture_render() if hasattr(simulator, "capture_render") else None)
@@ -1432,6 +1653,8 @@ def _run(config, tracking_only, keyboard_cleanup):
             if mode == "lmppi":
                 lambda_statistics.observe(result.lambdas,
                     result.metrics.get("lambda_terms", ("hull", "boundary")))
+                if "safety_activity" in result.metrics:
+                    safety_trace.append(result.metrics["safety_activity"])
             step_violations.append((result.safe_set_violation, result.boundary_violation))
             if not np.isfinite(next_cartesian).all() or not np.isfinite(next_frenet).all():
                 status = "nonfinite_state"
@@ -1551,10 +1774,19 @@ def _run(config, tracking_only, keyboard_cleanup):
                 if risk_trainer is not None:
                     risk_trainer.wait()
                     show_validation()
-                (cartesian, frenet), _ = simulator.reset(failed.cartesian[0].copy())
+                restart = failed.cartesian[0].copy()
+                if simulation.retry_speed is not None:
+                    restart[3] = float(simulation.retry_speed)
+                    restart[[2, 5, 6]] = 0.0
+                (cartesian, frenet), _ = simulator.reset(restart)
                 if encoder_belief is not None:
                     encoder_belief.reset()
                     cartesian, frenet = apply_encoder(cartesian, frenet)
+                if rssm_filter is not None:
+                    rssm_filter.reset()
+                    cartesian, frenet = apply_rssm(cartesian, frenet)
+                elif change_monitor is not None:
+                    cartesian, frenet = apply_tag(cartesian, frenet)
                 nominal.actions = jnp.zeros((planner.horizon, 2), dtype=model.params.dtype)
                 learned.actions = jnp.zeros_like(learned.actions)
                 collector = begin_attempt(cartesian, frenet)
@@ -1584,8 +1816,29 @@ def _run(config, tracking_only, keyboard_cleanup):
                     elapsed=time.perf_counter() - started,
                 )
                 previous_safe_laps = len(safe_set.frenet)
-                lap_tag = np.mean(lap_condition, axis=0) if lap_condition else None
+                if planner.condition_mode == "state":
+                    raw = np.asarray(lap_condition, dtype=float)[:, 0] if lap_condition else None
+                    if raw is not None and len(raw) > 1:
+                        window = min(int(round(2.0 / simulation.timestep)), len(raw))
+                        lap_tag = np.convolve(np.pad(raw, (window // 2, window - 1 - window // 2), mode="edge"),
+                                              np.ones(window) / window, mode="valid")
+                    else:
+                        lap_tag = None
+                else:
+                    lap_tag = np.mean(lap_condition, axis=0) if lap_condition else None
+                if change_monitor is not None:
+                    controllers = finished[0].controllers
+                    safe_set.pending_info = {"lap": change_monitor.lap, "laptime": float(lap.laptime),
+                                             "warmup": bool(len(controllers) and str(controllers[0]) == "mppi"),
+                                             "tags": change_monitor.lap_tags()}
                 safe_set_added = safe_set.add_lap(lap, finished[0], tag=lap_tag)
+                if change_monitor is not None and model_error_needed:
+                    flush_model_errors()
+                if change_monitor is not None:
+                    detection = change_monitor.detection_lap
+                    new_laps = 0 if detection is None else sum(
+                        1 for r in safe_set.record_info if r is not None and r["lap"] > detection)
+                    change_monitor.finish_lap(len(tag_trace), new_laps)
                 if planner.safe_set_min_states and len(safe_set.frenet) != previous_safe_laps:
                     events.emit("safe_set_retention", laps=len(safe_set.frenet),
                                 states=safe_set.state_count, min_states=planner.safe_set_min_states)
@@ -1598,6 +1851,14 @@ def _run(config, tracking_only, keyboard_cleanup):
                         "successful_attempt_count": len(laps),
                     }
                     trainer.start(safe_set.training_data(config.value.input_mode))
+                    if planner.change_value_tag and change_monitor is not None and change_monitor.active:
+                        if tag_trainer is None:
+                            tag_trainer = ValueTrainer(
+                                replace(config.value, input_mode="state_tag"), planner.half_width, simulation.seed,
+                                directory / "value_tag", events.emit, randomness=randomness.fork("value_tag"),
+                                prediction_batch_size=planner.samples * planner.horizon, context=learning_context)
+                            events.emit("tag_value_started", lap=change_monitor.lap)
+                        tag_trainer.start(safe_set.training_data("state_tag"))
                 if density_trainer is not None:
                     density_trainer.fit(safe_set)
                     publish_density()
@@ -1776,6 +2037,40 @@ def _run(config, tracking_only, keyboard_cleanup):
             if encoder_trace:
                 np.save(directory / "encoder_z.npy", np.asarray(encoder_trace))
                 np.save(directory / "encoder_friction.npy", np.asarray(friction_trace))
+                np.save(directory / "encoder_observations.npy", np.asarray(observation_trace))
+                np.save(directory / "encoder_true_states.npy", np.asarray(true_state_trace))
+                if grip_trace:
+                    np.save(directory / "encoder_grip.npy", np.asarray(grip_trace))
+                if lidar_trace:
+                    np.save(directory / "rssm_lidar.npy", np.asarray(lidar_trace))
+                    np.save(directory / "rssm_memory.npy", np.asarray(memory_trace))
+            if tag_trace:
+                np.save(directory / "condition_tag.npy", np.asarray(tag_trace, np.float32))
+            if model_error_trace:
+                np.save(directory / "model_error_tag.npy", np.asarray(model_error_trace, np.float32))
+            if safe_set_trace:
+                np.save(directory / "safe_set_trace.npy", np.asarray(safe_set_trace, np.float64))
+            if getattr(learned, "step_log", None):
+                np.save(directory / "planner_steps.npy", np.asarray(learned.step_log, np.float64))
+            (directory / "planner_counts.json").write_text(json.dumps(
+                {"candidates": dict(getattr(learned, "brake_counts", {})),
+                 "reduced_speed": dict(getattr(learned, "reduced_counts", {})),
+                 "clearance_check": dict(getattr(learned, "clearance_counts", {}))}, indent=1) + "\n")
+            if getattr(learned, "breakdown_log", None):
+                shapes = {}
+                for row in learned.breakdown_log:
+                    for key, value in row.items():
+                        shapes.setdefault(key, np.shape(value))
+                np.savez_compressed(directory / "candidate_breakdown.npz", **{
+                    key: np.stack([np.broadcast_to(np.asarray(row.get(key, np.nan), np.float64), shape)
+                                   for row in learned.breakdown_log]) for key, shape in shapes.items()})
+            if change_monitor is not None:
+                np.save(directory / "change_trace.npy", np.asarray(change_trace, np.float64))
+                (directory / "change_events.json").write_text(json.dumps(
+                    {"events": change_monitor.events, "stretch_m": change_monitor.stretch,
+                     "stretches": change_monitor.count,
+                     "history": [[float(v) for v in h] for h in change_monitor.history],
+                     "brake": dict(getattr(learned, "brake_counts", {}))}, indent=1) + "\n")
     return RunResult(
         directory,
         status,

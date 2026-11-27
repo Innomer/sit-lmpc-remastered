@@ -1,0 +1,19 @@
+== patch-world
+attempt  1  success    mppi    38.4 s  grip guess 0.92
+attempt  2  success    mppi    38.1 s  grip guess 0.92
+attempt  3  success    mppi    38.0 s  grip guess 0.92
+attempt  4  success    mppi    38.1 s  grip guess 0.92
+attempt  5  success    mppi    38.0 s  grip guess 0.93
+attempt  6  success    lmppi   37.8 s  grip guess 0.94
+attempt  7  success    lmppi   38.7 s  grip guess 0.95
+attempt  8  success    lmppi   38.2 s  grip guess 0.93
+attempt  9  failure    lmppi    3.7 s  ended at s 36 m, max |slip| 0.71  grip guess 0.75
+attempt 10  success    lmppi   37.0 s  grip guess 0.93
+attempt 11  success    lmppi   36.9 s  grip guess 0.90
+attempt 12  success    lmppi   37.0 s  grip guess 0.94
+attempt 13  success    lmppi   36.7 s  grip guess 0.91
+attempt 14  success    lmppi   37.0 s  grip guess 0.91
+attempt 15  success    lmppi   36.3 s  grip guess 0.91
+[finish] status=lap_limit | trials=15 | successful_laps=14 | failed_attempts=1 | applied_steps=5299 | training
+planning (learned laps) p50 485 ms, p95 658 ms
+condition: {'lap': 7, 'patches': [{'s_start': 85.0, 's_end': 115.0, 'mu': 0.6}]}

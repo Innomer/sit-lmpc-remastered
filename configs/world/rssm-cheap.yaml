@@ -1,0 +1,7 @@
+# Variant C: RSSM filtering every step, planning with bicycle + residual (h and s held fixed over the plan).
+extends: rssm-latent.yaml
+output:
+  exp_name: rssm-cheap
+planner:
+  dynamics:
+    rssm_variant: cheap

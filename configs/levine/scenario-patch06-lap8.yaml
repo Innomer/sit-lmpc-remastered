@@ -1,0 +1,6 @@
+# Levine sim map: a mild low-grip patch (mu 0.6) on the corner at s = 15.5-21.5 m (6 m, about 10% of the 61.8 m track),
+# from 8 finished laps on.
+map: tracks/levine_sim/levine_sim
+events:
+  - lap: 8
+    patches: [{s_start: 15.5, s_end: 21.5, mu: 0.6, half_width: 0.8}]

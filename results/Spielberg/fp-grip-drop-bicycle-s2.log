@@ -1,0 +1,132 @@
+[start] learning | seed=2 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[ros_launch] target_speed=5 | speed=5
+[ros_reset] run_up=1.264 | requested=0, 0, 0, 5, -2.879, 0, 0 | reached=-0.06864, -0.01845, 0, 5, -2.879, 0, 0
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[control_step_timing] steps=100
+[control_step_timing] steps=200
+[control_step_timing] steps=300
+[attempt] #1 success | 384 steps
+[lap] trial 1 | 38.4 s | avg speed 8.906 m/s | mppi
+[control_step_timing] steps=400
+[control_step_timing] steps=500
+[control_step_timing] steps=600
+[control_step_timing] steps=700
+[attempt] #2 success | 383 steps
+[lap] trial 2 | 38.3 s | avg speed 8.928 m/s | mppi
+[safe_set_retention] laps=1 | states=413 | min_states=1000000
+[control_step_timing] steps=800
+[training] generation=1 | epochs=300 | loss=-0.427 | gradient_steps=600
+[control_step_timing] steps=900
+[control_step_timing] steps=1000
+[control_step_timing] steps=1100
+[attempt] #3 success | 383 steps
+[lap] trial 3 | 38.3 s | avg speed 8.927 m/s | mppi
+[safe_set_retention] laps=2 | states=796 | min_states=1000000
+[control_step_timing] steps=1200
+[training] generation=2 | epochs=300 | loss=-1.003 | gradient_steps=1800
+[control_step_timing] steps=1300
+[control_step_timing] steps=1400
+[control_step_timing] steps=1500
+[attempt] #4 success | 382 steps
+[lap] trial 4 | 38.2 s | avg speed 8.927 m/s | mppi
+[safe_set_retention] laps=3 | states=1179 | min_states=1000000
+[control_step_timing] steps=1600
+[training] generation=3 | epochs=300 | loss=-1.424 | gradient_steps=3300
+[control_step_timing] steps=1700
+[control_step_timing] steps=1800
+[control_step_timing] steps=1900
+[attempt] #5 success | 383 steps
+[lap] trial 5 | 38.3 s | avg speed 8.928 m/s | mppi
+[safe_set_retention] laps=4 | states=1561 | min_states=1000000
+[initial_snapshot_saved] file=/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/fp-grip-drop-bicycle-s2/init.npz
+[controller_kernels_warmed] candidates=256 | mode=terminal
+[learned_controller_started] step=1915 | value_generation=3 | hull_facets=976
+[training] generation=4 | epochs=300 | loss=-2.87 | gradient_steps=5100
+[control_step_timing] steps=2000
+[control_step_timing] steps=2100
+[control_step_timing] steps=2200
+[control_step_timing] steps=2300
+[attempt] #6 success | 386 steps
+[lap] trial 6 | 38.6 s | avg speed 8.904 m/s | lmppi | safe-set violation=0.03352 | lambda_ss mean=3.876 max=18.75 | lambda_boundary mean=6.033 max=18.75
+[safe_set_retention] laps=5 | states=1952 | min_states=1000000
+[training] generation=5 | epochs=300 | loss=-3.084 | gradient_steps=7500
+[control_step_timing] steps=2400
+[control_step_timing] steps=2500
+[control_step_timing] steps=2600
+[attempt] #7 success | 392 steps
+[lap] trial 7 | 39.2 s | avg speed 8.748 m/s | lmppi | lambda_ss mean=3.852 max=18.75 | lambda_boundary mean=4.783 max=18.75
+[safe_set_retention] laps=6 | states=2334 | min_states=1000000
+[control_step_timing] steps=2700
+[training] generation=6 | epochs=300 | loss=-3.53 | gradient_steps=10200
+[control_step_timing] steps=2800
+[control_step_timing] steps=2900
+[control_step_timing] steps=3000
+[attempt] #8 success | 388 steps
+[lap] trial 8 | 38.8 s | avg speed 8.843 m/s | lmppi | lambda_ss mean=1.15 max=18.75 | lambda_boundary mean=1.579 max=18.75
+[safe_set_retention] laps=7 | states=2725 | min_states=1000000
+[control_step_timing] steps=3100
+[training] generation=7 | epochs=300 | loss=-3.446 | gradient_steps=13500
+[control_step_timing] steps=3200
+[control_step_timing] steps=3300
+[control_step_timing] steps=3400
+[attempt] #9 success | 396 steps
+[lap] trial 9 | 39.6 s | avg speed 8.752 m/s | lmppi | lambda_ss mean=0.9943 max=18.75 | lambda_boundary mean=1.304 max=18.75
+[safe_set_retention] laps=8 | states=3116 | min_states=1000000
+[control_step_timing] steps=3500
+[training] generation=8 | epochs=300 | loss=-3.556 | gradient_steps=17100
+[control_step_timing] steps=3600
+[control_step_timing] steps=3700
+[control_step_timing] steps=3800
+[attempt] #10 success | 395 steps
+[lap] trial 10 | 39.5 s | avg speed 8.76 m/s | lmppi | lambda_ss mean=0.9209 max=18.75 | lambda_boundary mean=1.285 max=18.75
+[safe_set_retention] laps=9 | states=3508 | min_states=1000000
+[training] generation=9 | epochs=300 | loss=-3.452 | gradient_steps=21000
+[checkpoint_saved] file=checkpoints/trial-000010 | trials=10
+[control_step_timing] steps=3900
+[control_step_timing] steps=4000
+[control_step_timing] steps=4100
+[control_step_timing] steps=4200
+[attempt] #11 success | 400 steps
+[lap] trial 11 | 40 s | avg speed 8.68 m/s | lmppi | lambda_ss mean=0.725 max=18.75 | lambda_boundary mean=1.066 max=18.75
+[safe_set_retention] laps=10 | states=3905 | min_states=1000000
+[control_step_timing] steps=4300
+[training] generation=10 | epochs=300 | loss=-3.337 | gradient_steps=25500
+[control_step_timing] steps=4400
+[control_step_timing] steps=4500
+[control_step_timing] steps=4600
+[attempt] #12 success | 393 steps
+[lap] trial 12 | 39.3 s | avg speed 8.86 m/s | lmppi | lambda_ss mean=1.139 max=18.75 | lambda_boundary mean=1.024 max=18.75
+[safe_set_retention] laps=11 | states=4305 | min_states=1000000
+[control_step_timing] steps=4700
+[training] generation=11 | epochs=300 | loss=-3.247 | gradient_steps=30300
+[control_step_timing] steps=4800
+[control_step_timing] steps=4900
+[control_step_timing] steps=5000
+[attempt] #13 success | 394 steps
+[lap] trial 13 | 39.4 s | avg speed 8.79 m/s | lmppi | lambda_ss mean=0.6948 max=18.75 | lambda_boundary mean=0.8566 max=11.25
+[safe_set_retention] laps=12 | states=4696 | min_states=1000000
+[control_step_timing] steps=5100
+[training] generation=12 | epochs=300 | loss=-3.209 | gradient_steps=35700
+[control_step_timing] steps=5200
+[control_step_timing] steps=5300
+[control_step_timing] steps=5400
+[attempt] #14 success | 400 steps
+[lap] trial 14 | 40 s | avg speed 8.648 m/s | lmppi | lambda_ss mean=0.6281 max=18.75 | lambda_boundary mean=0.9563 max=18.75
+[safe_set_retention] laps=13 | states=5092 | min_states=1000000
+[control_step_timing] steps=5500
+[training] generation=13 | epochs=300 | loss=-3.195 | gradient_steps=41400
+[control_step_timing] steps=5600
+[control_step_timing] steps=5700
+[control_step_timing] steps=5800
+[attempt] #15 success | 404 steps
+[lap] trial 15 | 40.4 s | avg speed 8.591 m/s | lmppi | lambda_ss mean=0.7797 max=18.75 | lambda_boundary mean=0.8478 max=18.75
+[safe_set_retention] laps=14 | states=5493 | min_states=1000000
+[training] generation=14 | epochs=300 | loss=-2.998 | gradient_steps=47700
+[checkpoint_saved] file=checkpoints/trial-000015 | trials=15
+[finish] status=lap_limit | trials=15 | successful_laps=15 | failed_attempts=0 | applied_steps=5863 | training_generations=14 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/fp-grip-drop-bicycle-s2
+[control_timing_summary] steps=5863 | control_period_seconds=0.1 | stepping=lockstep

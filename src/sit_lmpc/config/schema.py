@@ -25,6 +25,7 @@ class RosConfig:
     imu_topic: str = ""
     wheel_topic: str = ""
     pose_topic: str = ""
+    lidar_topic: str = ""
 
 
 @dataclass(frozen=True)
@@ -70,6 +71,7 @@ class SimulationConfig:
     mass_ratio: float = 1.0
     initial_speed: float = 7.0
     max_laps: int = 8
+    retry_speed: float | None = None
     max_steps: int = 100000
     seed_mode: str = "auto"
     seed: int | None = None
@@ -138,6 +140,16 @@ class DynamicsConfig:
     belief_update: str = "frozen"
     encoder: str | None = None
     encoder_state: bool = True
+    rssm: str | None = None
+    rssm_variant: str = "latent"
+    rssm_model_timestep: float = 0.1
+    rssm_state: bool = True
+    rssm_clearance_margin: float = 0.35
+    rssm_clearance_weight: float = 0.0
+    rssm_risk: str | None = None
+    rssm_grip_probe: str | None = None
+    rssm_risk_weight: float = 0.0
+    rssm_risk_rank: bool = False
     likelihood_power: float = 1.0
     update_batch_size: int = 512
     validation_fraction: float = 0.2
@@ -225,6 +237,40 @@ class PlannerConfig:
     safe_set_size: int = 6
     condition_threshold: float = 0.0
     condition_min_laps: int = 4
+    condition_mode: str = "lap"
+    condition_tau: float = 1.0
+    condition_tag: str = "readout"
+    condition_fallback: str = "closest"
+    change_detection: bool = False
+    change_stretch: float | None = None
+    change_tag_seconds: float | None = None
+    change_window: int = 10
+    change_ratio: float = 3.0
+    change_floor: float = 0.05
+    change_new_laps: int = 2
+    change_conservative_laps: int = 2
+    change_value: bool = True
+    change_speed: str | None = None
+    change_speed_factor: float = 0.8
+    change_speed_step: float = 0.05
+    change_cap_scope: str = "local"
+    change_global_share: float = 0.5
+    change_global_min: int = 8
+    change_breakdown: bool = False
+    change_cap_rank_weight: float = 1.0
+    change_cap_sample_weight: float = 1.0
+    change_cap_strong_weight: float = 0.1
+    change_cap_soft_weight: float = 0.03
+    change_raise_band: float = 0.5
+    change_raise_step: float = 0.3
+    change_min_clearance: float = 0.2
+    change_pass_share: float = 0.9
+    change_brake_candidates: int = 4
+    change_safe_set: str = "laps"
+    change_scale_safe_set: bool = True
+    speed_diverse_factors: tuple[float, ...] = (0.9, 0.75, 0.6)
+    safe_set_cap_laps: int = 4
+    change_value_tag: bool = False
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000
@@ -243,6 +289,19 @@ class PlannerConfig:
     reference_interval: float = 3.0
     search_points: int = 400
     action_rate_penalty: float = 0.01
+    safety_speed_cap: float | None = None
+    safety_speed_weight: float = 1.0
+    safety_slip_limit: float = 0.35
+    safety_slip_weight: float = 0.0
+    boundary_margin: float | tuple[float, ...] | None = None
+    footprint_limits: bool = True
+    footprint_length: float | None = None
+    footprint_width: float | None = None
+    footprint_offset: float = -0.0065
+    footprint_buffer: float = 0.10
+    safe_set_footprint_filter: bool = True
+    safety_heading_limit: float | None = None
+    safety_heading_weight: float = 1.0
     mean_value: bool = True
     scan_rollout: bool = True
     safe_set_selection: str = "exact"
@@ -251,6 +310,8 @@ class PlannerConfig:
 
     @property
     def boundary_limit(self):
+        if self.footprint_limits:
+            return self.half_width - self.footprint_buffer
         return self.half_width - self.boundary_buffer
 
     @property
@@ -398,8 +459,26 @@ class ExperimentConfig:
             if d.render:
                 raise ValueError("simulation.backend ros has no simulator window; set diagnostics.render false")
         dynamics = p.dynamics
-        if not isinstance(dynamics, DynamicsConfig) or dynamics.backend not in ("st", "gaussian_bnn"):
-            raise ValueError("planner.dynamics.backend must be st or gaussian_bnn")
+        if not isinstance(dynamics, DynamicsConfig) or dynamics.backend not in ("st", "gaussian_bnn", "rssm"):
+            raise ValueError("planner.dynamics.backend must be st, gaussian_bnn or rssm")
+        if dynamics.backend == "rssm":
+            if not isinstance(dynamics.rssm, str) or not (Path(dynamics.rssm).expanduser() / "best.msgpack").is_file():
+                raise ValueError("planner.dynamics.backend rssm needs planner.dynamics.rssm, a trained RSSM run folder")
+            if dynamics.rssm_variant == "two_stage":
+                raise ValueError("planner.dynamics.rssm_variant two_stage is not built yet; use latent or cheap")
+            if dynamics.rssm_variant not in ("latent", "cheap"):
+                raise ValueError("planner.dynamics.rssm_variant must be latent or cheap")
+            if not dynamics.rssm_model_timestep > 0:
+                raise ValueError("planner.dynamics.rssm_model_timestep must be > 0")
+            if not dynamics.rssm_clearance_margin > 0 or dynamics.rssm_clearance_weight < 0:
+                raise ValueError("planner.dynamics.rssm_clearance_margin must be > 0 and rssm_clearance_weight >= 0")
+            if dynamics.rssm_risk_weight < 0 or (dynamics.rssm_risk_weight > 0 and not (
+                    isinstance(dynamics.rssm_risk, str) and (Path(dynamics.rssm_risk) / "risk_head.msgpack").is_file())):
+                raise ValueError("planner.dynamics.rssm_risk_weight > 0 needs planner.dynamics.rssm_risk, a trained "
+                                 "crash-risk head folder (sit_lmpc.world.rssm_risk)")
+            if s.backend != "ros" or not (s.ros.imu_topic and s.ros.wheel_topic and s.ros.pose_topic and s.ros.lidar_topic):
+                raise ValueError("planner.dynamics.backend rssm needs backend ros with simulation.ros imu_topic, "
+                                 "wheel_topic, pose_topic and lidar_topic (bridge sensors and LiDAR enabled)")
         if dynamics.checkpoint is not None and (not isinstance(dynamics.checkpoint, str) or not dynamics.checkpoint.strip()):
             raise ValueError("planner.dynamics.checkpoint must be null or a nonempty path")
         for name in ("particles", "verification_particles", "update_batch_size",
@@ -417,10 +496,44 @@ class ExperimentConfig:
                 raise ValueError("gaussian_bnn requires sit_lmpc_mode=false and belief.enabled=false; use dynamics.belief_update=frozen or posterior")
         if dynamics.belief_update not in ("frozen", "posterior", "encoder"):
             raise ValueError("planner.dynamics.belief_update must be frozen, posterior or encoder")
-        if p.condition_threshold > 0 and not (dynamics.belief_update == "encoder" and isinstance(dynamics.encoder, str)
-                                               and (Path(dynamics.encoder).expanduser() / "condition_readout.npz").is_file()):
+        if p.condition_threshold > 0 and dynamics.backend != "rssm" and not (
+                dynamics.belief_update == "encoder" and isinstance(dynamics.encoder, str)
+                and (Path(dynamics.encoder).expanduser() / "condition_readout.npz").is_file()):
             raise ValueError("planner.condition_threshold needs belief_update encoder and a fitted read-out "
                              "(python -m sit_lmpc.world.readout --encoder <run>)")
+        if p.condition_mode not in ("lap", "state"):
+            raise ValueError("planner.condition_mode must be lap or state")
+        if p.condition_mode == "state" and p.condition_threshold > 0 and dynamics.backend != "rssm" and not (
+                Path(dynamics.encoder).expanduser() / "grip_readout.npz").is_file():
+            raise ValueError("planner.condition_mode state needs grip_readout.npz in the encoder run "
+                             "(python scripts/grip_estimate_eval.py --encoder <run>)")
+        if not p.condition_tau > 0:
+            raise ValueError("planner.condition_tau must be > 0")
+        if p.condition_tag not in ("readout", "probe", "bicycle_error"):
+            raise ValueError("planner.condition_tag must be readout, probe or bicycle_error")
+        if p.condition_tag != "readout" and (dynamics.backend != "rssm" or p.condition_mode != "state"):
+            raise ValueError("planner.condition_tag probe / bicycle_error needs backend rssm and condition_mode state")
+        if p.condition_tag == "probe" and not (isinstance(dynamics.rssm_grip_probe, str) and
+                                               (Path(dynamics.rssm_grip_probe) / "probe.msgpack").is_file()):
+            raise ValueError("planner.condition_tag probe needs planner.dynamics.rssm_grip_probe (sit_lmpc.world.rssm_grip)")
+        if p.change_detection and dynamics.backend not in ("rssm", "st"):
+            raise ValueError("planner.change_detection needs planner.dynamics.backend rssm or st")
+        if p.change_safe_set not in ("laps", "tag"):
+            raise ValueError("planner.change_safe_set must be laps or tag")
+        if p.change_detection and not ((p.change_stretch is None or p.change_stretch > 0) and p.change_window > 0 and p.change_ratio > 0
+                                       and p.change_floor >= 0 and p.change_new_laps > 0 and p.change_conservative_laps > 0):
+            raise ValueError("planner.change_* settings must be positive")
+        if p.change_speed not in (None, "fixed", "probe"):
+            raise ValueError("planner.change_speed must be null, fixed or probe")
+        if p.change_speed and not (0 < p.change_speed_factor <= 1 and p.change_speed_step >= 0):
+            raise ValueError("planner.change_speed_factor must be in (0, 1] and change_speed_step >= 0")
+        if p.change_cap_scope not in ("local", "track", "evidence") or not 0 <= p.change_global_share <= 1:
+            raise ValueError("planner.change_cap_scope must be local, track or evidence, change_global_share in [0, 1]")
+        if p.change_speed == "probe" and not (isinstance(dynamics.rssm_grip_probe, str) and
+                                              (Path(dynamics.rssm_grip_probe) / "probe.msgpack").is_file()):
+            raise ValueError("planner.change_speed probe needs planner.dynamics.rssm_grip_probe")
+        if p.condition_fallback not in ("closest", "newest"):
+            raise ValueError("planner.condition_fallback must be closest or newest")
         if dynamics.belief_update == "encoder":
             if not isinstance(dynamics.encoder, str) or not (Path(dynamics.encoder).expanduser() / "best.msgpack").is_file():
                 raise ValueError("belief_update encoder needs planner.dynamics.encoder, a trained world-encoder run folder")
@@ -760,6 +873,8 @@ class ExperimentConfig:
         ratio = s.timestep / s.integrator_timestep
         if ratio < 1 or not math.isclose(ratio, round(ratio), abs_tol=1e-8):
             raise ValueError("timestep must be an integer multiple of integrator_timestep")
+        if not 0 <= p.footprint_buffer < p.half_width:
+            raise ValueError("footprint_buffer must be between zero and half_width")
         if not 0 <= p.boundary_buffer < p.half_width:
             raise ValueError("boundary_buffer must be between zero and half_width")
         for name, number in {
@@ -788,6 +903,20 @@ class ExperimentConfig:
             not math.isfinite(n) or n < 0 for n in (*s.control_noise, s.state_noise)
         ):
             raise ValueError("noise values must be nonnegative and finite")
+        if p.safety_speed_cap is not None and not p.safety_speed_cap > 0:
+            raise ValueError("planner.safety_speed_cap must be null or > 0")
+        if p.safety_speed_weight < 0 or p.safety_slip_weight < 0 or not p.safety_slip_limit > 0:
+            raise ValueError("planner.safety_speed_weight and safety_slip_weight must be >= 0, safety_slip_limit > 0")
+        if (p.footprint_length is not None and not p.footprint_length > 0) or (
+                p.footprint_width is not None and not p.footprint_width > 0):
+            raise ValueError("planner.footprint_length / footprint_width must be null or > 0")
+        if p.safety_heading_limit is not None and not (p.safety_heading_limit > 0 and p.safety_heading_weight >= 0):
+            raise ValueError("planner.safety_heading_limit must be null or > 0, safety_heading_weight >= 0")
+        if p.boundary_margin is not None:
+            margins = (p.boundary_margin,) if isinstance(p.boundary_margin, (int, float)) else tuple(p.boundary_margin)
+            if any(not (isinstance(m, (int, float)) and math.isfinite(m) and m >= 0) for m in margins) or (
+                    len(margins) not in (1, p.horizon)):
+                raise ValueError("planner.boundary_margin must be null, one value >= 0, or horizon values >= 0")
         if p.lambda_max <= 0 or p.safe_set_relaxation < 0 or p.action_rate_penalty < 0:
             raise ValueError("invalid planner penalty or lambda range")
         return self

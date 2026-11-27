@@ -1,0 +1,6 @@
+# rssm-v11 + LiDAR clearance + planner speed cap at 10 m/s (option b for v11's repeat crashes).
+extends: rssm-latent-v11.yaml
+output:
+  exp_name: rssm-latent-v11-cap10
+planner:
+  safety_speed_cap: 10.0

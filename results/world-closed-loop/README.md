@@ -49,7 +49,7 @@ The lap average finds the drop on the first slippery lap. Within a lap the estim
 | Run | Attempt | Where | What |
 |---|---|---|---|
 | No change | 15 | s ≈ 113 m | entered at ~11 m/s (laps 12–14: ≤ 10.8 m/s), slip 0.7 rad, yaw rate −8 rad/s, wall |
-| Grip drop | 12 | s ≈ 33 m (first corner, 3.4 s in) | slip 0.8 rad, yaw rate −9.6 rad/s; lap 11 already slid to 0.5 rad there. First lap whose filtered safe set holds only low-grip laps (link not checked) |
+| Grip drop | 12 | s ≈ 33 m (first corner, 3.4 s in) | slip 0.8 rad, yaw rate −9.6 rad/s; lap 11 already slid to 0.5 rad there. Not caused by the filter switching: during lap 12 only 3 low-grip laps were stored, so every step still used at least one high-grip lap |
 
 ## Files
 

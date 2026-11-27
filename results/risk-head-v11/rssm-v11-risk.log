@@ -1,0 +1,67 @@
+train: 3667 episodes, 507796 steps, 24597 crash-within-1.5-s steps
+val: 464 episodes, 74657 steps, 2992 crash-within-1.5-s steps
+test: 453 episodes, 68175 steps, 2417 crash-within-1.5-s steps
+run rssm-latent-v8-clearance: 3050 steps, crash at None
+run rssm-latent-v8-clearance-long: 2473 steps, crash at 2473
+run rssm-latent-v8-slow-long: 4976 steps, crash at None
+run rssm-latent-v8-varied-long: 2158 steps, crash at 2158
+run rssm-latent-v8-guarded: 1989 steps, crash at 1989
+run rssm-latent-v8-risk: 2017 steps, crash at 2017
+run rssm-latent-v11: 5771 steps, crash at None
+run change-grip-drop-v11-s2: 2338 steps, crash at 2338
+run change-patch-v11-s2: 2335 steps, crash at 2335
+run change-grip-drop-v11-s3: 4096 steps, crash at 4096
+run change-patch-v11-s3: 3609 steps, crash at 3609
+run change-none-v11-v2-s2: 5794 steps, crash at None
+run change-none-v11-v2-s3: 2845 steps, crash at 2845
+run change-grip-drop-v11-v2-s2: 3098 steps, crash at 3098
+run change-patch-v11-v2-s2: 3102 steps, crash at 3102
+run change-patch-v11-v2-s3: 2841 steps, crash at 2841
+run change-none-v11-v2-s1: 5421 steps, crash at 5421
+run change-grip-drop-v11-v2-s1: 2436 steps, crash at 2436
+run change-patch-v11: 4431 steps, crash at 4431
+run rssm-latent-slow-logged: 3284 steps, crash at 3284
+run rssm-latent-v6-smoke: 2685 steps, crash at 2685
+run rssm-latent-v7-smoke: 2369 steps, crash at 2369
+training steps 560288, crash-label share 4.42%
+epoch   1  loss 0.3832  val AUC 0.931
+epoch   2  loss 0.3407  val AUC 0.933
+epoch   3  loss 0.3268  val AUC 0.932
+epoch   4  loss 0.3181  val AUC 0.938
+epoch   5  loss 0.3092  val AUC 0.935
+epoch   6  loss 0.3034  val AUC 0.937
+epoch   7  loss 0.2980  val AUC 0.936
+epoch   8  loss 0.2938  val AUC 0.934
+epoch   9  loss 0.2893  val AUC 0.935
+epoch  10  loss 0.2850  val AUC 0.938
+epoch  11  loss 0.2822  val AUC 0.936
+epoch  12  loss 0.2788  val AUC 0.929
+{
+ "threshold": 0.8177234530448914,
+ "auc": {
+  "val": {
+   "all": 0.9378468212729235,
+   "onset groups": 0.8196093823167907,
+   "other episodes": 0.9212324828139343,
+   "map Spielberg": 0.9450034820528279,
+   "map custom1": 0.9219704627005624,
+   "map levine": 0.9017763509711657,
+   "steps": 74657,
+   "crash steps": 2992
+  },
+  "test": {
+   "all": 0.9165764968158533,
+   "onset groups": 0.8367609357975767,
+   "other episodes": 0.900201994276712,
+   "map Spielberg": 0.9066011276092232,
+   "map custom1": 0.9111369680851064,
+   "map levine": 0.9208133307900518,
+   "steps": 68175,
+   "crash steps": 2417
+  }
+ }
+}
+rssm-latent-v8-clearance {'held_out': False, 'crash_step': None, 'auc': nan, 'share_of_safe_steps_above_threshold': 0.009508196721311476}
+rssm-latent-v8-slow-long {'held_out': False, 'crash_step': None, 'auc': nan, 'share_of_safe_steps_above_threshold': 0.00020096463022508038}
+rssm-latent-v11 {'held_out': False, 'crash_step': None, 'auc': nan, 'share_of_safe_steps_above_threshold': 0.006931207762952695}
+change-none-v11-v2-s2 {'held_out': False, 'crash_step': None, 'auc': nan, 'share_of_safe_steps_above_threshold': 0.0029340697273041077}

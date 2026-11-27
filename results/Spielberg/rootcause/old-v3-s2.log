@@ -1,0 +1,23 @@
+[dynamics_model_loaded] kind=gaussian_bnn | latent_dimension=16 | particles=64 | adaptation=frozen_population | numerical_substep_mismatch=True
+[start] learning | seed=2 | friction actual/model=1.049/None | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[error] type=ModuleNotFoundError | message=No module named 'rclpy'
+[finish] status=error | trials=0 | successful_laps=0 | failed_attempts=0 | applied_steps=0 | training_generations=0 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/rootcause/old-v3-s2
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/mann-bhanushali/sim_ws/wt-old-v3/src/sit_lmpc/cli/racecar.py", line 124, in main
+    execute()
+  File "/home/mann-bhanushali/sim_ws/wt-old-v3/src/sit_lmpc/cli/racecar.py", line 116, in execute
+    result = run(config, tracking_only=tracking_only)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/wt-old-v3/src/sit_lmpc/experiments/runner.py", line 214, in run
+    return _run(config, tracking_only, keyboard_cleanup)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/wt-old-v3/src/sit_lmpc/experiments/runner.py", line 849, in _run
+    simulator = RosSimulator(simulation, track, simulator_params, events.emit, directory)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/wt-old-v3/src/sit_lmpc/adapters/ros_f1tenth.py", line 79, in __init__
+    import rclpy
+ModuleNotFoundError: No module named 'rclpy'
