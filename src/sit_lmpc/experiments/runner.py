@@ -318,7 +318,30 @@ def _run(config, tracking_only, keyboard_cleanup):
     tag_trace, tag_controls, tag_states, safe_set_trace, probe_trace = [], [], [], [], []
     model_tag_predictors, model_tag_states, model_error_trace = [], [], []
     model_error_needed = planner.change_detection and planner.change_cap_scope == "evidence" and bool(planner.change_speed)
-    model_error_rollout = jax.jit(lambda m, x, u: m.rollout_members(x, u)[0][-1])
+    model_error_buffer = []
+    model_error_batch = jax.jit(lambda m, h, s, x, u: jax.vmap(
+        lambda hh, ss, xx, uu: m.replace(h=hh, s=ss).rollout_members(xx, uu)[0][-1])(h, s, x, u))
+
+    def flush_model_errors():
+        if not model_error_buffer or not model_tag_predictors:
+            return
+        template = model_tag_predictors[-1]
+        rows = list(model_error_buffer)
+        model_error_buffer.clear()
+        errors = []
+        chunk_size = 128
+        for start in range(0, len(rows), chunk_size):
+            chunk = rows[start:start + chunk_size]
+            padded = chunk + [chunk[-1]] * (chunk_size - len(chunk))
+            ends = np.asarray(model_error_batch(
+                template, jnp.stack([r[3] for r in padded]), jnp.stack([r[4] for r in padded]),
+                jnp.asarray(np.stack([r[5] for r in padded])),
+                jnp.asarray(np.stack([r[6] for r in padded]), template.st_params.dtype) / template.action_scale))
+            target = np.stack([r[7] for r in chunk])
+            errors.extend(np.hypot(ends[:len(chunk), 0] - target[:, 0], ends[:len(chunk), 1] - target[:, 1]).tolist())
+        steps = [r[0] for r in rows]
+        change_monitor.model_errors(steps, [r[1] for r in rows], [r[2] for r in rows], errors)
+        model_error_trace.extend(zip(steps, errors))
     wall_field = wall_distance_field(track) if model_error_needed else None
     if planner.dynamics.backend == "rssm" and (planner.condition_tag == "probe" or planner.change_speed == "probe"):
         from sit_lmpc.world.rssm_grip import GripProbe
@@ -393,11 +416,9 @@ def _run(config, tracking_only, keyboard_cleanup):
         model_error = None
         if model_error_needed and len(model_tag_predictors) >= 10 and len(tag_controls) >= 10:
             predictor = model_tag_predictors[-10]
-            controls = jnp.asarray(np.stack(tag_controls[-10:]), predictor.st_params.dtype) / predictor.action_scale
-            end = np.asarray(model_error_rollout(predictor, jnp.asarray(model_tag_states[-10]), controls))
-            model_error = float(np.hypot(*(end[:2] - np.asarray(cartesian)[:2])))
-        if model_error_needed:
-            model_error_trace.append(np.nan if model_error is None else model_error)
+            model_error_buffer.append((len(tag_trace), float(frenet[0]), float(cartesian[3]), predictor.h, predictor.s,
+                                       model_tag_states[-10], np.stack(tag_controls[-10:]),
+                                       np.asarray(cartesian[:2], np.float32)))
         error_tag = tag if planner.condition_tag == "bicycle_error" or planner.change_detection else None
         if planner.condition_tag == "probe":
             tag = float(grip_probe(rssm_filter.h, rssm_filter.s))
@@ -1761,6 +1782,8 @@ def _run(config, tracking_only, keyboard_cleanup):
                     safe_set.pending_info = {"lap": change_monitor.lap, "laptime": float(lap.laptime),
                                              "warmup": bool(len(controllers) and str(controllers[0]) == "mppi")}
                 safe_set_added = safe_set.add_lap(lap, finished[0], tag=lap_tag)
+                if change_monitor is not None and model_error_needed:
+                    flush_model_errors()
                 if change_monitor is not None:
                     detection = change_monitor.detection_lap
                     new_laps = 0 if detection is None else sum(
@@ -1982,7 +2005,8 @@ def _run(config, tracking_only, keyboard_cleanup):
                     (directory / "change_events.json").write_text(json.dumps(
                         {"events": change_monitor.events, "stretch_m": change_monitor.stretch,
                          "stretches": change_monitor.count,
-                         "history": [[float(v) for v in h] for h in change_monitor.history]}, indent=1) + "\n")
+                         "history": [[float(v) for v in h] for h in change_monitor.history],
+                         "brake": dict(getattr(learned, "brake_counts", {}))}, indent=1) + "\n")
     return RunResult(
         directory,
         status,

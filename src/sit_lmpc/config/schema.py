@@ -234,6 +234,7 @@ class PlannerConfig:
     change_raise_step: float = 0.3
     change_min_clearance: float = 0.2
     change_pass_share: float = 0.9
+    change_brake_candidates: int = 4
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000

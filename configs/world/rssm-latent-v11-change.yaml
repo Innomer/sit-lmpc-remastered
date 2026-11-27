@@ -1,8 +1,12 @@
 # rssm-v11 + LiDAR clearance + safe set v2 (live change detection, sit_lmpc.planners.change_monitor) + change-aware
-# value (option B). The tag is the nominal bicycle model's 1.0 s position error. A change is flagged when the median
-# of the last 1 s exceeds 0.05 m and 3x the current 10 m stretch's history; then every stretch goes conservative (the
-# 2 slowest pre-change laps, warm-up first) and is relaxed as it is driven, or kept conservative until 2 laps under the
-# new condition exist. In conservative / new windows the value is the time-to-go of the same laps.
+# value (option B) + the evidence speed reaction (entry 41). The tag is the nominal bicycle model's 1.0 s position
+# error. A change is flagged when the median of the last 1 s exceeds 0.05 m and 3x the current 10 m stretch's
+# history; then every stretch goes conservative and is capped at 0.8 x its pre-change speed. A cap starts in a strong
+# phase (sampling weight 0.1, hard priority in the final pick, hard-braking candidates) and switches to a soft phase
+# (weight 0.03, not in the final pick) once the car is under it on that pass. A pass counts only if the car was at or
+# under the cap on 90% of it. A counted pass whose tag matches history removes the cap; on a stretch that still looks
+# changed the cap rises by 0.3 m/s after a clean counted pass whose v11 1.0 s error is at or below the stretch's
+# pre-change error-vs-speed fit. Before entry 41 this config had detection only, without speed caps.
 extends: rssm-latent-v11.yaml
 output:
   exp_name: rssm-latent-v11-change
@@ -15,3 +19,14 @@ planner:
   change_new_laps: 2
   change_conservative_laps: 2
   change_value: true
+  change_speed: fixed
+  change_speed_factor: 0.8
+  change_cap_scope: evidence
+  change_cap_strong_weight: 0.1
+  change_cap_soft_weight: 0.03
+  change_cap_rank_weight: 1000.0
+  change_brake_candidates: 4
+  change_raise_step: 0.3
+  change_min_clearance: 0.2
+  change_pass_share: 0.9
+  change_breakdown: false

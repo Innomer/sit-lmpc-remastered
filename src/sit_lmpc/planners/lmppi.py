@@ -497,6 +497,8 @@ class LMPPI:
                                              config.footprint_offset)
         self.boundary = None
         self.breakdown_log = []
+        self.brake_counts = {"steps": 0, "chosen": 0}
+        self.brake_active = False
         if self.corners is not None or self.margins is not None:
             dtype = np.asarray(model.params).dtype if np.asarray(model.params).dtype.kind == "f" else np.float32
             self.boundary = (None if self.corners is None else jnp.asarray(self.corners, dtype),
@@ -729,6 +731,26 @@ class LMPPI:
         if weights is not None:
             cost = cost * jnp.asarray(weights, frenet.dtype)[idx]
         return cost
+
+    def with_brake_candidates(self, candidates, safe_set, frenet_state, state):
+        monitor = getattr(safe_set, "change_monitor", None)
+        count = int(getattr(self.config, "change_brake_candidates", 0))
+        self.brake_active = False
+        if monitor is None or monitor.scope != "evidence" or count <= 0 or len(candidates) <= count:
+            return candidates
+        speed = float(state[3])
+        if not monitor.strong_ahead(frenet_state[0], speed * self.config.horizon * self.model.timestep, speed):
+            return candidates
+        profiles = np.asarray([[-1.0, -1.0], [-0.7, -0.7], [-0.4, -0.4], [-1.0, 0.0]])[:count]
+        length = candidates.shape[1]
+        half = length // 2
+        accel = np.concatenate([np.repeat(profiles[:, :1], half, axis=1),
+                                np.repeat(profiles[:, 1:], length - half, axis=1)], axis=1)
+        steer = jnp.broadcast_to(candidates[0, :, 0], (len(profiles), length))
+        brake = jnp.stack([steer, jnp.asarray(accel, candidates.dtype)], axis=-1)
+        self.brake_active = True
+        self.brake_counts["steps"] += 1
+        return candidates.at[-len(profiles):].set(brake)
 
     def change_cap_weights(self, safe_set, rank):
         monitor = getattr(safe_set, "change_monitor", None)
@@ -1065,6 +1087,7 @@ class LMPPI:
                 previous, da, states, values, sample_distances, active_lambdas, self.config,
                 **proposal_options
             )
+        candidates = self.with_brake_candidates(candidates, safe_set, frenet_state, state)
         trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
         candidate_frenet = to_frenet(self.track, trajectories, indices, frenet_state[0])
         candidate_extra = self.model_safety_costs(state, candidates[:, : self.config.horizon])
@@ -1163,6 +1186,8 @@ class LMPPI:
             if chance_active and not empirical_chance else None,
         ))
         index, ss_violation, boundary_violation = packet["index"], packet["hull"], packet["boundary"]
+        if self.brake_active and int(index) >= candidates.shape[0] - int(getattr(self.config, "change_brake_candidates", 0)):
+            self.brake_counts["chosen"] += 1
         if "breakdown" in packet:
             monitor = getattr(safe_set, "change_monitor", None)
             self.breakdown_log.append(dict(

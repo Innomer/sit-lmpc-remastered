@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/ev3-patch045-v11-react-s1",
+  "files": {
+    "state.json": "179311407d45f7dd65fbadc3fd9a0ada41f543f77b636a11d20670f72e4430ef",
+    "events.jsonl": "3471e1f0391c9d4afc123fd60934b83e39697ae1333f9bef961bd216f6f4e1bd",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "6c39a776d55ce4ed07d2e9eeb77d98256de12af0f03927d3468a110f6eede62c",
+    "config.yaml": "f00b2d05dd5b520e8e6d1b1959d394a59663f0188ea223ef6d26373d6413685b",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "2b9d084de07ade1b0dfda2edf93583ad3bcee5b2963a27ad05a2e538c2c75eaf"
+  }
+}

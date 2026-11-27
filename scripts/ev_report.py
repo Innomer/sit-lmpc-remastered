@@ -138,6 +138,13 @@ def main():
         entry["laps_under_0.2m"] = f"{sum(c < 0.2 for c in entry['clearance_after'])}/{len(after)}"
         entry["cap_speed"] = cap_speed(run)
         entry["cap_events"] = cap_events(run)
+        timing_file = run / "control_timing.json"
+        if timing_file.exists():
+            planning = json.loads(timing_file.read_text())["planning_seconds"]
+            entry["planning_ms"] = {"p50": round(planning["p50"] * 1000, 1), "p95": round(planning["p95"] * 1000, 1)}
+        events_file = run / "change_events.json"
+        if events_file.exists():
+            entry["brake"] = json.loads(events_file.read_text()).get("brake")
         if s_start is not None and "detections" in entry:
             entry["detection_delay_s"] = patch_delay(run, None, s_start, args.change_lap)
         if change is None and "detections" in entry:
@@ -154,6 +161,7 @@ def main():
               f" | laps {[round(t, 1) for t in entry['lap_times']]}"
               + (f" | speed/cap {cs.get('mean_speed')}/{cs.get('mean_cap')} gap {cs.get('mean_gap')} phases {cs.get('per_phase')}" if cs.get("capped_steps") else "")
               + (f" | to under cap {entry['cap_events']['detection_to_under_cap_s']} s" if entry["cap_events"] else "")
+              + f" | planning {entry.get('planning_ms')} brake {entry.get('brake')}"
               + (f" | det delay {entry.get('detection_delay_s')} false {entry.get('false_detections')} speed {entry['speed_at_detection']}" if "detections" in entry else ""))
     for scenario, (label, _) in SCENARIOS.items():
         for controller, clabel in CONTROLLERS.items():
@@ -168,6 +176,7 @@ def main():
                 "crash_details": [f"{r['crash']['type']} lap {r['crash']['lap']} s={r['crash']['s']}" for r in rows if r["crash"]],
                 "laps_after_change": [r["laps_after_change"] for r in rows],
                 "laps_under_0.2m": f"{sum(int(u[0]) for u in under)}/{sum(int(u[1]) for u in under)}",
+                "planning_ms": [r.get("planning_ms") for r in rows],
                 **({"mean_speed_vs_cap": [f"{c['mean_speed']}/{c['mean_cap']}" for c in caps],
                     "per_phase": [c.get("per_phase") for c in caps]} if caps else {}),
                 **({"detection_to_under_cap_s": [r["cap_events"]["detection_to_under_cap_s"] for r in rows if r["cap_events"]]}

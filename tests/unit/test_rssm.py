@@ -332,14 +332,18 @@ def test_change_monitor_evidence_caps():
 
     def drive(monitor, changed, model_bad, laps, step=0, obey=True, clearance=0.5):
         for _ in range(laps):
+            rows = []
             for s in np.arange(0.0, 200.0, 0.5):
                 k = int(s // 10)
                 speed = 5.0 + 4.0 * (s % 10) / 10
                 if obey:
                     speed = min(speed, monitor.caps[k])
-                monitor.observe(step, s, 0.2 if k in changed else 0.01, True, speed=speed,
-                                model_error=0.3 if k in model_bad else 0.02, clearance=clearance, slip=0.05)
+                monitor.observe(step, s, 0.2 if k in changed else 0.01, True, speed=speed, clearance=clearance,
+                                slip=0.05)
+                error = 0.3 if k in model_bad else (0.02 if not monitor.active else 0.01)
+                rows.append((step, s, speed, error))
                 step += 1
+            monitor.model_errors(*map(list, zip(*rows)))
             monitor.finish_lap(step, 0)
         return step
 
@@ -349,9 +353,9 @@ def test_change_monitor_evidence_caps():
     assert np.isfinite(m.caps).all()
     assert any(e["event"] == "pass not counted" and e["stretch"] == 12 for e in m.events)
     assert not m.soft[:19].any() and m.sample_weights()[9] == m.strong_weight and m.rank_mask()[9] == 1
-    m.observe(step, 0.5, 0.01, True, speed=9.0, model_error=0.02, clearance=0.5, slip=0.05)
+    m.observe(step, 0.5, 0.01, True, speed=9.0, clearance=0.5, slip=0.05)
     assert not m.soft[0]
-    m.observe(step + 1, 1.0, 0.01, True, speed=1.0, model_error=0.02, clearance=0.5, slip=0.05)
+    m.observe(step + 1, 1.0, 0.01, True, speed=1.0, clearance=0.5, slip=0.05)
     assert m.soft[0] and m.sample_weights()[0] == m.soft_weight and m.rank_mask()[0] == 0
     step += 2
     step = drive(m, {9, 10, 11}, {9, 10, 11}, 1, step)
@@ -367,3 +371,21 @@ def test_change_monitor_evidence_caps():
     assert not np.isfinite(m.caps[12:15]).any()
     step = drive(m, {9, 10, 11}, set(), 10, step)
     assert np.all(m.caps[[9, 10, 11]] <= m.base[[9, 10, 11]]) or not np.isfinite(m.caps[[9, 10, 11]]).any()
+
+
+def test_change_monitor_uncounted_history():
+    from sit_lmpc.planners.change_monitor import ChangeMonitor
+
+    m = ChangeMonitor(200.0, stretch=10, speed_factor=0.8, scope="evidence")
+    step = 0
+    for lap in range(9):
+        for s in np.arange(0.0, 200.0, 0.5):
+            k = int(s // 10)
+            speed = 5.0 + 4.0 * (s % 10) / 10
+            changed = lap >= 5 and k in (9, 10, 11)
+            m.observe(step, s, 0.6 if changed else 0.01, True, speed=speed, clearance=0.5, slip=0.05)
+            step += 1
+        m.finish_lap(step, 0)
+    assert m.active and np.isfinite(m.caps[9:12]).all()
+    assert len(m.history[9]) == 5 and max(m.history[10]) == 0.01 and max(m.history[11]) == 0.01
+    assert m.limit(11) == m.floor

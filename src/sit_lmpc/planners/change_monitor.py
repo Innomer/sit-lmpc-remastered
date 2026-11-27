@@ -20,7 +20,7 @@ class ChangeMonitor:
     def __init__(self, track_length, stretch=10.0, window=10, ratio=3.0, floor=0.05, history_laps=5, new_laps=2,
                  speed_factor=None, speed_step=0.05, scope="track", global_share=0.5, global_min=8,
                  strong_weight=0.1, soft_weight=0.03, raise_band=0.5, raise_step=0.3, min_clearance=0.2,
-                 pass_share=0.9, min_matched=3):
+                 pass_share=0.9, min_matched=3, fit_min_points=20):
         self.length = float(track_length)
         self.count = int(np.ceil(self.length / stretch))
         self.stretch = self.length / self.count
@@ -66,6 +66,10 @@ class ChangeMonitor:
         self.pair_history = [[] for _ in range(self.count)]
         self.lap_slip = [[] for _ in range(self.count)]
         self.slip_history = [[] for _ in range(self.count)]
+        self.fit_min_points = int(fit_min_points)
+        self.uncounted = np.zeros(self.count, bool)
+        self.pending = []
+        self.records = np.zeros((0, 3))
 
     def index(self, s):
         return int((float(s) % self.length) // self.stretch) % self.count
@@ -186,6 +190,15 @@ class ChangeMonitor:
     def rank_mask(self):
         return (np.isfinite(self.caps) & ~self.soft).astype(float)
 
+    def strong_ahead(self, s, distance, speed):
+        first = int(np.floor(float(s) / self.stretch))
+        last = int(np.floor((float(s) + max(float(distance), 0.0)) / self.stretch))
+        for j in range(first, last + 1):
+            k = j % self.count
+            if np.isfinite(self.caps[k]) and not self.soft[k] and self.caps[k] < float(speed):
+                return True
+        return False
+
     def _leave(self, step, k):
         if self.active:
             self.driven.add(k)
@@ -221,10 +234,12 @@ class ChangeMonitor:
             return
         capped = np.isfinite(self.caps[k])
         if capped and self.pass_start < self.cap_step[k]:
+            self.uncounted[k] = True
             return
         if capped:
             share = float(np.mean(np.asarray(self.pass_speeds) <= self.caps[k])) if self.pass_speeds else 0.0
             if share < self.pass_share:
+                self.uncounted[k] = True
                 self.events.append({"step": int(step), "event": "pass not counted", "stretch": k, "lap": self.lap,
                                     "cap": float(self.caps[k]), "share_under_cap": share})
                 return
@@ -243,24 +258,62 @@ class ChangeMonitor:
                 return
             self.changed[k] = True
             self.events.append({"step": int(step), "event": "changed", "stretch": k, "lap": self.lap, "tag_m": value})
-        if not (self.changed[k] and capped and self.model_pass):
+        if not (self.changed[k] and capped and self.pass_speeds):
             return
-        speed = float(np.mean(self.pass_speeds))
-        error = float(np.median(self.model_pass))
-        limit = self.matched_limit(k, speed)
-        clearance = min(self.pass_clearance) if self.pass_clearance else None
-        slip = max(self.pass_slip) if self.pass_slip else None
+        self.pending.append({"stretch": k, "start": int(self.pass_start), "end": int(step), "lap": self.lap,
+                             "speed": float(np.mean(self.pass_speeds)),
+                             "clearance": min(self.pass_clearance) if self.pass_clearance else None,
+                             "slip": max(self.pass_slip) if self.pass_slip else None})
+
+    def error_fit(self, k):
+        if not self.pair_history[k]:
+            return None
+        pairs = np.concatenate(self.pair_history[k])
+        if len(pairs) < self.fit_min_points or np.ptp(pairs[:, 0]) < 0.5:
+            return None
+        return np.polyfit(pairs[:, 0], pairs[:, 1], 1)
+
+    def model_errors(self, steps, s, speeds, errors):
+        """v11's 1.0 s errors for the steps of the lap just driven (replayed in one batch at lap end): fill the
+        pre-change error history and decide the cap raises of the passes driven so far."""
+        rows = np.column_stack([steps, speeds, errors]).astype(float)
+        for j in range(len(rows)):
+            if np.isfinite(rows[j, 2]):
+                k = self.index(s[j])
+                self.model_lap_values[k].append(float(rows[j, 2]))
+                self.lap_pairs[k].append((float(rows[j, 1]), float(rows[j, 2])))
+        self.records = np.concatenate([self.records, rows])[-4000:]
+        last = self.records[-1, 0] if len(self.records) else -1
+        waiting = []
+        for item in self.pending:
+            if item["end"] - 1 > last:
+                waiting.append(item)
+                continue
+            inside = (self.records[:, 0] >= item["start"]) & (self.records[:, 0] < item["end"])
+            values = self.records[inside, 2]
+            values = values[np.isfinite(values)]
+            if len(values):
+                self._raise(int(last), item, float(np.median(values)))
+        self.pending = waiting
+
+    def _raise(self, step, item, error):
+        k = item["stretch"]
+        if not (self.changed[k] and np.isfinite(self.caps[k])):
+            return
+        speed, clearance, slip = item["speed"], item["clearance"], item["slip"]
+        fit = self.error_fit(k)
+        limit = None if fit is None else float(np.polyval(fit, speed))
         slip_limit = self.slip_limit(k)
         why = []
         if limit is None:
-            why.append("no pre-change data at this speed")
+            why.append("no pre-change error fit")
         elif error > limit:
-            why.append("model error above pre-change range")
+            why.append("model error above pre-change fit")
         if clearance is None or clearance < self.min_clearance:
             why.append("clearance under limit")
         if slip is None or slip_limit is None or slip > slip_limit:
             why.append("slip above pre-change range")
-        detail = {"stretch": k, "lap": self.lap, "pass_speed": speed, "model_error_m": error, "model_limit_m": limit,
+        detail = {"stretch": k, "lap": item["lap"], "pass_speed": speed, "model_error_m": error, "model_limit_m": limit,
                   "min_clearance_m": clearance, "max_slip": slip, "slip_limit": slip_limit}
         if why:
             self.events.append(dict({"step": int(step), "event": "cap kept", "cap": float(self.caps[k]),
@@ -271,19 +324,21 @@ class ChangeMonitor:
             self.caps[k] = np.inf
             self.cap_factor[k] = 1.0
             self.events.append(dict({"step": int(step), "event": "cap removed",
-                                     "reason": "clean pass, model error in range at this speed; pre-change speed reached"},
+                                     "reason": "clean pass, model error at or below pre-change fit; pre-change speed reached"},
                                     **detail))
         else:
             self.caps[k] = self.caps[k] + self.raise_step
             self.cap_factor[k] = self.caps[k] / self.base[k]
             self.events.append(dict({"step": int(step), "event": "cap raised", "cap": float(self.caps[k]),
-                                     "reason": "clean pass, model error in range at this speed"}, **detail))
+                                     "reason": "clean pass, model error at or below pre-change fit"}, **detail))
 
     def finish_lap(self, step, new_condition_laps):
         """At the end of a lap: store this lap's per-stretch medians as history (a changed stretch skips the lap the
         change happened in and then starts a fresh history), and switch changed stretches to the new-condition laps
         once enough exist."""
         for k in range(self.count):
+            if self.lap_values[k] and self.uncounted[k]:
+                self.lap_values[k] = []
             if self.lap_values[k]:
                 value = float(np.median(self.lap_values[k]))
                 if self.changed[k]:
@@ -319,6 +374,7 @@ class ChangeMonitor:
             if capped.any():
                 self.events.append({"step": int(step), "event": "caps raised", "lap": self.lap,
                                     "factor_mean": float(self.cap_factor[capped].mean())})
+        self.uncounted[:] = False
         if self.active and new_condition_laps >= self.new_laps:
             switch = self.changed & (self.mode == CONSERVATIVE)
             if switch.any():

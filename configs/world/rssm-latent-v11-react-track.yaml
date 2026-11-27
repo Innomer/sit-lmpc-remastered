@@ -7,3 +7,4 @@ planner:
   change_cap_scope: track
   change_breakdown: true
   change_cap_sample_weight: 1.0
+  change_cap_rank_weight: 1.0
