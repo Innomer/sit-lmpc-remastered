@@ -58,7 +58,7 @@ def analyse(run, change_lap, field, resolution, origin, height, body):
             heading = float(np.abs(fr[max(0, k - 20):k + 1, 4]).max())
             row["crash"] = {"type": "spin" if heading > 0.6 else "wall", "max_heading_error_last_2s": round(heading, 2),
                             "reason": reason,
-                            "s": round(float(fr[k, 0]) % 318.0, 1),
+                            "s": round(float(fr[k, 0]) % 343.32, 1),
                             "hit": nearest_hit(hits, c[k, :2])}
         else:
             completed += 1

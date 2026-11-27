@@ -16,14 +16,14 @@ import json
 from pathlib import Path
 import numpy as np
 
-TRACK = 318.0
+TRACK = 343.32
 
 
 def split(d):
     s = d["s"]
     starts, kinds = [0], []
     for i in range(1, len(s)):
-        if s[i] < s[i - 1] - 50:
+        if s[i] < s[i - 1] - 10:
             kinds.append("lap" if (s[i - 1] % TRACK) > TRACK - 20 else "crash")
             starts.append(i)
     kinds.append("open")
@@ -87,18 +87,19 @@ def main():
     parser.add_argument("runs", nargs="+")
     parser.add_argument("--root", default="results/Spielberg")
     parser.add_argument("--change-lap", type=int, default=8)
+    parser.add_argument("--warmup-laps", type=int, default=5, help="laps driven before learned control (not in the log)")
     parser.add_argument("--window", type=int, default=50)
     parser.add_argument("--clearance-weight", type=float, default=1.0)
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
     report = {}
     for name in args.runs:
-        crashes = analyse(Path(args.root) / name, args.change_lap, args.window, args.clearance_weight)
+        crashes = analyse(Path(args.root) / name, args.change_lap - args.warmup_laps, args.window, args.clearance_weight)
         for crash in crashes:
             crash["verdict"] = verdict(crash["steps"])
         report[name] = crashes
         for crash in crashes:
-            print(f"== {name}: crash after {crash['crash_after_laps']} completed laps: {crash['verdict']}")
+            print(f"== {name}: crash after {crash['crash_after_laps']} completed learned laps: {crash['verdict']}")
             for r in crash["steps"][::5]:
                 c, w = r["chosen"], r["slower"] or {}
                 print(f"   s={r['s']:6.1f} v={r['speed']:4.1f} in-bounds {r['in_bounds_candidates']:3d} | chosen v {c['mean_speed']:4.1f} "
