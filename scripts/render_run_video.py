@@ -82,7 +82,12 @@ def main():
     attempts = [a for a in load_attempts(run) if a["id"] >= args.from_attempt]
     if not attempts:
         raise SystemExit("no saved attempts yet")
-    track = Track.from_track_path(map_path("Spielberg"))
+    config_path = run / "config.yaml"
+    track_name = "Spielberg"
+    if config_path.exists():
+        import yaml
+        track_name = (yaml.safe_load(config_path.read_text()).get("simulation") or {}).get("map", "Spielberg")
+    track = Track.from_track_path(map_path(track_name))
     friction_path = run / "encoder_grip.npy" if (run / "encoder_grip.npy").exists() else run / "encoder_friction.npy"
     friction = np.load(friction_path) if friction_path.exists() else None
     events = true_friction_events(run)

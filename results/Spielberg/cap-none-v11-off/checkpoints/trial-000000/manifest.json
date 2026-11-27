@@ -1,0 +1,18 @@
+{
+  "schema": 2,
+  "trials": 0,
+  "experiment_directory": "/home/mann-bhanushali/sim_ws/src/sit-lmpc-remastered/results/Spielberg/cap-none-v11-off",
+  "files": {
+    "state.json": "87ba575220217f6f4c0b4f5cd5a370b4eb009443732567c12e5a7c78f69c183c",
+    "events.jsonl": "f1cae025a19b0883d7fe29794d08c43045ce0b1f4ea7cf5b17577b255fb94773",
+    "metadata.json": "ee4250735f0cdbc9d20f923217c078b8ce4d301c2fe476fa49fa0155509bd660",
+    "state.npz": "e518fb9d9f1af571c74f772ec535ed834a9487178979f345f3f47d4a449f0c1d",
+    "config.yaml": "de118508746181c28043f588c880dcc877e525a1299312ee9c4d44035450c1fb",
+    "map/Spielberg_map.yaml": "769028a2114be90053b1cc9ee4dfb3b014144bb4555d16edf40ecebdc0f629e1",
+    "map/Spielberg_raceline.csv": "4b79179d42e712c9121ffbfb045cd0b06689d96607ffa5701324360450d1f0bd",
+    "map/Spielberg_map.png": "3378ea1da231e00b4c41015311f7f3a63fb62420d8c54aaa23b6d1ca7c947e56",
+    "map/Spielberg_centerline.csv": "3c690173dda7772bffc36190e6d6f0e11e61be86a65e3910cd78cdd0c098c602",
+    "trajectories/index.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trajectories/context.json": "49f78d1a01e137408640df91bd0b1dddbdf3fe3702718e8aba505b27baa5731d"
+  }
+}
