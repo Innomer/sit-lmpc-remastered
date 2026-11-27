@@ -1,0 +1,14 @@
+# First floor laps on the car: configs/car/levine-bicycle.yaml capped at 2 m/s (hard cap and warm-up profile).
+#   sit-racecar --config configs/car/levine-bicycle-slow.yaml
+extends: levine-bicycle.yaml
+output:
+  exp_name: car-levine-bicycle-slow
+simulation:
+  initial_speed: 1.0
+  max_laps: 8
+  car:
+    max_speed: 2.0
+planner:
+  safety_speed_cap: 2.0
+  warmup:
+    max_speed: 2.0
