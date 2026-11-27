@@ -110,6 +110,11 @@ def summarize(name, rows, change_attempt, run):
         check = info.get("clearance_check", {})
         if check.get("steps"):
             entry["clearance_check_changed_pick"] = f"{check['changed']}/{check['steps']} ({100 * check['changed'] / check['steps']:.1f}%)"
+        reduced = info.get("reduced_speed", {})
+        if reduced.get("steps"):
+            chosen = reduced.get("chosen", {})
+            entry["reduced_speed_chosen"] = {"steps": reduced["steps"], **chosen,
+                                             "share": f"{100 * sum(chosen.values()) / reduced['steps']:.1f}%"}
         cand = info.get("candidates", {})
         entry["previous_plan_chosen"] = cand.get("previous_chosen")
         if cand.get("steps"):
@@ -143,7 +148,7 @@ def main():
         print("   " + ", ".join(f"{k} {entry.get(k)}" for k in ("laps_under_0.2m_before", "laps_under_0.2m_after", "speed_before",
                                                              "speed_first_after", "first_after_outcome", "pre_change_lap_s",
                                                              "laps_to_settle", "settled_lap_s", "clearance_check_changed_pick",
-                                                             "previous_plan_chosen", "brake_plans", "planning_ms")))
+                                                             "previous_plan_chosen", "reduced_speed_chosen", "brake_plans", "planning_ms")))
     if args.out:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
         Path(args.out).write_text(json.dumps(report, indent=1) + "\n")
