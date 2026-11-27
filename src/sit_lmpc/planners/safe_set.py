@@ -630,9 +630,10 @@ class SafeSet:
         return (np.floor((np.asarray(s) % float(self.track_length)) / length).astype(int)) % count
 
     def cap_mask(self):
-        """Safe-set cap (safe_set_cap_laps = K > 0): per stretch, keep the newest K stored laps plus the one with the
-        lowest mean speed on that stretch; after a detected change also every lap driven after it and the slowest
-        pre-change laps the conservative fallback uses. Returns a (records, stretches) mask, or None without a cap."""
+        """Safe-set cap (safe_set_cap_laps = K > 0): per stretch, keep the newest K stored laps plus the ones with
+        the highest and the lowest mean speed on that stretch (the fastest keeps what the car has learned, the slowest
+        a slow fallback); after a detected change also every lap driven after it and the slowest pre-change laps the
+        conservative fallback uses. Returns a (records, stretches) mask, or None without a cap."""
         cap = int(getattr(self.config, "safe_set_cap_laps", 0) or 0)
         if cap <= 0 or not self.frenet:
             return None
@@ -658,6 +659,8 @@ class SafeSet:
         finite = np.isfinite(speeds).any(axis=0)
         slowest = np.argmin(speeds, axis=0)
         keep[slowest[finite], np.flatnonzero(finite)] = True
+        fastest = np.argmax(np.where(np.isfinite(speeds), speeds, -np.inf), axis=0)
+        keep[fastest[finite], np.flatnonzero(finite)] = True
         if monitor is not None and monitor.active:
             from sit_lmpc.planners.change_monitor import CONSERVATIVE
             info = self.record_info + [None] * (n - len(self.record_info))

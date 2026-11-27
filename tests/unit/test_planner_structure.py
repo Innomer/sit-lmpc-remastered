@@ -150,7 +150,7 @@ def test_safe_set_cap_keeps_newest_and_slowest_laps():
     planner = replace(load_config().planner, safe_set_cap_laps=4, change_stretch=10.0)
     safe = SafeSet(planner, 0.1, 40.0)
     laps = []
-    for i, speed in enumerate([9.0, 5.0, 9.1, 9.2, 9.3, 9.4, 9.5]):
+    for i, speed in enumerate([9.0, 5.0, 9.1, 9.9, 9.3, 9.4, 9.5, 8.0]):
         lap = np.zeros((80, 7))
         lap[:, 0] = np.linspace(0.0, 39.5, 80)
         lap[:, 3] = speed
@@ -160,18 +160,19 @@ def test_safe_set_cap_keeps_newest_and_slowest_laps():
     safe.frenet = laps
     safe.cartesian = [lap.copy() for lap in laps]
     keep = safe.cap_mask()
-    assert keep.shape == (7, 4)
-    assert keep[3:].all()
+    assert keep.shape == (8, 4)
+    assert keep[4:].all()
     assert keep[2, 0] and not keep[2, 1:].any()
     assert keep[1, 1:].all() and not keep[1, 0]
+    assert keep[3].all()
     assert not keep[0].any()
     selected, _ = safe.select_window(12.0, 18.0)
-    assert set(np.unique(selected[:, 3])) == {5.0, 9.2, 9.3, 9.4, 9.5}
+    assert set(np.unique(selected[:, 3])) == {5.0, 9.9, 9.3, 9.4, 9.5, 8.0}
     data = safe.training_data()
-    assert len(data) == 4 * 80 + 60 + 20
+    assert len(data) == 5 * 80 + 60 + 20
     uncapped = SafeSet(replace(planner, safe_set_cap_laps=0), 0.1, 40.0)
     uncapped.frenet, uncapped.cartesian = laps, [lap.copy() for lap in laps]
-    assert uncapped.cap_mask() is None and len(uncapped.training_data()) == 7 * 80
+    assert uncapped.cap_mask() is None and len(uncapped.training_data()) == 8 * 80
 
 
 def test_reduced_speed_plans_device_matches_host():

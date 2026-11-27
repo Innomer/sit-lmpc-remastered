@@ -1,0 +1,660 @@
+{
+ "cap-none-v11-off": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 25,
+  "crashes_after": 0,
+  "attempts_after": 0,
+  "crash_attempt_numbers_after_change": [],
+  "crashes": [],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.4
+   ],
+   [
+    7,
+    38.7
+   ],
+   [
+    8,
+    38.9
+   ],
+   [
+    9,
+    38.6
+   ],
+   [
+    10,
+    38.6
+   ],
+   [
+    11,
+    38.9
+   ],
+   [
+    12,
+    38.5
+   ],
+   [
+    13,
+    38.8
+   ],
+   [
+    14,
+    38.9
+   ],
+   [
+    15,
+    38.3
+   ],
+   [
+    16,
+    38.6
+   ],
+   [
+    17,
+    38.9
+   ],
+   [
+    18,
+    39.5
+   ],
+   [
+    19,
+    38.9
+   ],
+   [
+    20,
+    39.0
+   ],
+   [
+    21,
+    39.3
+   ],
+   [
+    22,
+    39.1
+   ],
+   [
+    23,
+    40.0
+   ],
+   [
+    24,
+    39.3
+   ],
+   [
+    25,
+    39.3
+   ]
+  ],
+  "laps_under_0.2m_after": "0/0",
+  "laps_under_0.2m_before": "20/20",
+  "pre_change_lap_s": 39.3,
+  "clearance_check_changed_pick": "67/7785 (0.9%)",
+  "reduced_speed_chosen": {
+   "steps": 7785,
+   "0.9": 6,
+   "0.75": 0,
+   "0.6": 0,
+   "share": "0.1%"
+  },
+  "previous_plan_chosen": 10,
+  "planning_ms": {
+   "p50": 69.6,
+   "p95": 94.5
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.19,
+    "min_clearance_m": 0.13,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.09,
+    "min_clearance_m": 0.13,
+    "time_s": 38.7
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.07,
+    "min_clearance_m": 0.058,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 9,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.1,
+    "min_clearance_m": 0.082,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 10,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.1,
+    "min_clearance_m": 0.082,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 11,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.06,
+    "min_clearance_m": 0.058,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 12,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.11,
+    "min_clearance_m": 0.116,
+    "time_s": 38.5
+   },
+   {
+    "attempt": 13,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.07,
+    "min_clearance_m": 0.082,
+    "time_s": 38.8
+   },
+   {
+    "attempt": 14,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.03,
+    "min_clearance_m": 0.082,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 15,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.17,
+    "min_clearance_m": 0.13,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 16,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.1,
+    "min_clearance_m": 0.116,
+    "time_s": 38.6
+   },
+   {
+    "attempt": 17,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.0,
+    "min_clearance_m": 0.058,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 18,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.91,
+    "min_clearance_m": 0.058,
+    "time_s": 39.5
+   },
+   {
+    "attempt": 19,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.02,
+    "min_clearance_m": 0.082,
+    "time_s": 38.9
+   },
+   {
+    "attempt": 20,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.99,
+    "min_clearance_m": 0.082,
+    "time_s": 39.0
+   },
+   {
+    "attempt": 21,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.95,
+    "min_clearance_m": 0.082,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 22,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.96,
+    "min_clearance_m": 0.116,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 23,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.81,
+    "min_clearance_m": 0.082,
+    "time_s": 40.0
+   },
+   {
+    "attempt": 24,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.93,
+    "min_clearance_m": 0.082,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 25,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.96,
+    "min_clearance_m": 0.082,
+    "time_s": 39.3
+   }
+  ]
+ },
+ "cap-none-v11-on": {
+  "attempts": 25,
+  "crashes_before": 0,
+  "attempts_before": 25,
+  "crashes_after": 0,
+  "attempts_after": 0,
+  "crash_attempt_numbers_after_change": [],
+  "crashes": [],
+  "lap_times": [
+   [
+    1,
+    38.4
+   ],
+   [
+    2,
+    38.3
+   ],
+   [
+    3,
+    38.3
+   ],
+   [
+    4,
+    38.2
+   ],
+   [
+    5,
+    38.3
+   ],
+   [
+    6,
+    38.2
+   ],
+   [
+    7,
+    39.3
+   ],
+   [
+    8,
+    39.3
+   ],
+   [
+    9,
+    39.6
+   ],
+   [
+    10,
+    39.5
+   ],
+   [
+    11,
+    39.1
+   ],
+   [
+    12,
+    39.6
+   ],
+   [
+    13,
+    39.4
+   ],
+   [
+    14,
+    39.6
+   ],
+   [
+    15,
+    40.5
+   ],
+   [
+    16,
+    40.7
+   ],
+   [
+    17,
+    40.8
+   ],
+   [
+    18,
+    40.6
+   ],
+   [
+    19,
+    41.6
+   ],
+   [
+    20,
+    41.8
+   ],
+   [
+    21,
+    41.6
+   ],
+   [
+    22,
+    41.9
+   ],
+   [
+    23,
+    41.8
+   ],
+   [
+    24,
+    42.4
+   ],
+   [
+    25,
+    42.5
+   ]
+  ],
+  "laps_under_0.2m_after": "0/0",
+  "laps_under_0.2m_before": "20/20",
+  "pre_change_lap_s": 42.4,
+  "clearance_check_changed_pick": "67/8098 (0.8%)",
+  "reduced_speed_chosen": {
+   "steps": 8098,
+   "0.9": 6,
+   "0.75": 0,
+   "0.6": 0,
+   "share": "0.1%"
+  },
+  "previous_plan_chosen": 8,
+  "planning_ms": {
+   "p50": 57.2,
+   "p95": 75.3
+  },
+  "per_attempt": [
+   {
+    "attempt": 1,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.2,
+    "min_clearance_m": 0.29,
+    "time_s": 38.4
+   },
+   {
+    "attempt": 2,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 3,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 4,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 5,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.29,
+    "time_s": 38.3
+   },
+   {
+    "attempt": 6,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 9.23,
+    "min_clearance_m": 0.13,
+    "time_s": 38.2
+   },
+   {
+    "attempt": 7,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.96,
+    "min_clearance_m": 0.13,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 8,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.98,
+    "min_clearance_m": 0.13,
+    "time_s": 39.3
+   },
+   {
+    "attempt": 9,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.87,
+    "min_clearance_m": 0.058,
+    "time_s": 39.6
+   },
+   {
+    "attempt": 10,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.88,
+    "min_clearance_m": 0.082,
+    "time_s": 39.5
+   },
+   {
+    "attempt": 11,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.99,
+    "min_clearance_m": 0.13,
+    "time_s": 39.1
+   },
+   {
+    "attempt": 12,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.86,
+    "min_clearance_m": 0.13,
+    "time_s": 39.6
+   },
+   {
+    "attempt": 13,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.91,
+    "min_clearance_m": 0.058,
+    "time_s": 39.4
+   },
+   {
+    "attempt": 14,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.88,
+    "min_clearance_m": 0.13,
+    "time_s": 39.6
+   },
+   {
+    "attempt": 15,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.67,
+    "min_clearance_m": 0.082,
+    "time_s": 40.5
+   },
+   {
+    "attempt": 16,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.65,
+    "min_clearance_m": 0.082,
+    "time_s": 40.7
+   },
+   {
+    "attempt": 17,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.61,
+    "min_clearance_m": 0.116,
+    "time_s": 40.8
+   },
+   {
+    "attempt": 18,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.65,
+    "min_clearance_m": 0.058,
+    "time_s": 40.6
+   },
+   {
+    "attempt": 19,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.45,
+    "min_clearance_m": 0.116,
+    "time_s": 41.6
+   },
+   {
+    "attempt": 20,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.4,
+    "min_clearance_m": 0.082,
+    "time_s": 41.8
+   },
+   {
+    "attempt": 21,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.44,
+    "min_clearance_m": 0.116,
+    "time_s": 41.6
+   },
+   {
+    "attempt": 22,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.39,
+    "min_clearance_m": 0.116,
+    "time_s": 41.9
+   },
+   {
+    "attempt": 23,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.41,
+    "min_clearance_m": 0.116,
+    "time_s": 41.8
+   },
+   {
+    "attempt": 24,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.29,
+    "min_clearance_m": 0.082,
+    "time_s": 42.4
+   },
+   {
+    "attempt": 25,
+    "outcome": "success",
+    "after_change": false,
+    "mean_speed": 8.28,
+    "min_clearance_m": 0.058,
+    "time_s": 42.5
+   }
+  ]
+ }
+}
