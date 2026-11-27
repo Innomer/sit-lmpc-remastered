@@ -7,6 +7,8 @@ crashes before and after the change, crashes by attempt number after the change,
 after the change vs the last three completed laps before it, laps until lap times settle (first completed lap within
 1% of the median of the last three), laps under 0.2 m clearance after the change, how often the LiDAR clearance check
 changed the chosen plan, how often the shifted previous plan was chosen, and planning time on learned steps.
+Crash type: spin if |heading error| > 0.6 rad in the 2 s before contact (heading comes from the true pose; the
+logged slip of the v11 runs is the model's estimate), else wall.
 The change applies once `change-lap` laps have been completed (the scheduler counts completed laps across resets).
 """
 
@@ -45,8 +47,9 @@ def analyse(run, change_lap, field, resolution, origin, height, body):
                "time_s": round(float(a["times"][-1] - a["times"][0]), 2)}
         if outcome == "failure":
             k = min(end, len(c) - 1)
-            slip = float(np.abs(c[max(0, k - 20):k + 1, 6]).max())
-            row["crash"] = {"type": "spin" if slip > 0.4 else "wall", "max_slip_last_2s": round(slip, 2), "reason": reason,
+            heading = float(np.abs(fr[max(0, k - 20):k + 1, 4]).max())
+            row["crash"] = {"type": "spin" if heading > 0.6 else "wall", "max_heading_error_last_2s": round(heading, 2),
+                            "reason": reason,
                             "s": round(float(fr[k, 0]) % 318.0, 1),
                             "hit": [float(v) for v in hits[hit_index]] if hit_index < len(hits) else None}
             hit_index += 1
