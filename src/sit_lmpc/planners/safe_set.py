@@ -400,12 +400,48 @@ class SafeSet:
                 return chosen, CONSERVATIVE
         return list(range(len(self.frenet))), 0
 
+    def tag_records(self, lo, hi):
+        """Condition-aware records for a hull window after a detected change: laps whose stored per-stretch tag
+        matches each stretch's current condition (changed vs normal, judged against the limit at detection). A
+        stretch not yet judged, or a changed stretch with fewer than new_laps matching laps, falls back to the
+        slowest pre-change laps."""
+        from sit_lmpc.planners.change_monitor import CONSERVATIVE
+        monitor = self.change_monitor
+        span = np.arange(np.floor(lo / monitor.stretch), np.floor(hi / monitor.stretch) + 1).astype(int) % monitor.count
+        info = self.record_info + [None] * (len(self.frenet) - len(self.record_info))
+        if np.any((monitor.mode[span] == CONSERVATIVE) & ~monitor.changed[span]):
+            chosen, used = self.change_records(CONSERVATIVE)
+            return chosen, used
+        match = []
+        for i, r in enumerate(info):
+            if r is None or r.get("tags") is None:
+                continue
+            tags = np.asarray(r["tags"])
+            ok = True
+            for k in span:
+                if not np.isfinite(tags[k]):
+                    continue
+                if bool(tags[k] > monitor.pre_limit[k]) != bool(monitor.changed[k]):
+                    ok = False
+                    break
+            if ok:
+                match.append(i)
+        if monitor.changed[span].any() and len(match) < monitor.new_laps:
+            return self.change_records(CONSERVATIVE)
+        if not match:
+            return list(range(len(self.frenet))), 0
+        return match, 2 if monitor.changed[span].any() else 3
+
     def change_filter(self, indices, records, lo, hi):
         mode = self.change_monitor.window_mode(lo, hi)
-        if mode == 0:
+        tag_mode = getattr(self.config, "change_safe_set", "laps") == "tag"
+        if mode == 0 and not tag_mode:
             self.last_change = {"mode": 0, "records": -1}
             return indices
-        chosen, used = self.change_records(mode)
+        chosen, used = self.tag_records(lo, hi) if tag_mode else self.change_records(mode)
+        if used == 0:
+            self.last_change = {"mode": 0, "records": -1}
+            return indices
         kept = indices[np.isin(records[indices], chosen)]
         if len(kept) < 6:
             self.last_change = {"mode": 0, "records": -1, "too_few_points": True}
@@ -564,6 +600,17 @@ class SafeSet:
     def training_data(self, input_mode="state"):
         if not self.frenet:
             raise ValueError("safe set has no completed pairs of laps")
+        if input_mode == "state_tag":
+            monitor = self.change_monitor
+            info = self.record_info + [None] * (len(self.frenet) - len(self.record_info))
+            rows = []
+            for record, r in zip(self.frenet, info):
+                if r is None or r.get("tags") is None:
+                    continue
+                tags = np.nan_to_num(np.asarray(r["tags"], float), nan=0.0)
+                idx = (np.floor(record[:, 0] / monitor.stretch).astype(int)) % monitor.count
+                rows.append(np.column_stack([record[:, :5], tags[idx], record[:, -1]]))
+            return np.concatenate(rows)
         if input_mode == "state_action":
             if len(self.controls) != len(self.frenet):
                 raise ValueError(

@@ -235,6 +235,8 @@ class PlannerConfig:
     change_min_clearance: float = 0.2
     change_pass_share: float = 0.9
     change_brake_candidates: int = 4
+    change_safe_set: str = "laps"
+    change_value_tag: bool = False
     safe_set_min_states: int = 0
     safe_set_max_points: int = 2000000
     hull_selection_points: int = 1000
@@ -463,8 +465,10 @@ class ExperimentConfig:
         if p.condition_tag == "probe" and not (isinstance(dynamics.rssm_grip_probe, str) and
                                                (Path(dynamics.rssm_grip_probe) / "probe.msgpack").is_file()):
             raise ValueError("planner.condition_tag probe needs planner.dynamics.rssm_grip_probe (sit_lmpc.world.rssm_grip)")
-        if p.change_detection and dynamics.backend != "rssm":
-            raise ValueError("planner.change_detection needs planner.dynamics.backend rssm")
+        if p.change_detection and dynamics.backend not in ("rssm", "st"):
+            raise ValueError("planner.change_detection needs planner.dynamics.backend rssm or st")
+        if p.change_safe_set not in ("laps", "tag"):
+            raise ValueError("planner.change_safe_set must be laps or tag")
         if p.change_detection and not (p.change_stretch > 0 and p.change_window > 0 and p.change_ratio > 0
                                        and p.change_floor >= 0 and p.change_new_laps > 0 and p.change_conservative_laps > 0):
             raise ValueError("planner.change_* settings must be positive")

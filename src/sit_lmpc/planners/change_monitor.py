@@ -68,6 +68,8 @@ class ChangeMonitor:
         self.slip_history = [[] for _ in range(self.count)]
         self.fit_min_points = int(fit_min_points)
         self.uncounted = np.zeros(self.count, bool)
+        self.pre_limit = None
+        self.last_pass_tag = np.full(self.count, np.nan)
         self.pending = []
         self.records = np.zeros((0, 3))
 
@@ -124,6 +126,8 @@ class ChangeMonitor:
         short = float(np.median(self.recent))
         if short > self.limit(k) and self.mode[k] == NORMAL and not self.changed[k]:
             first = not self.active
+            if first:
+                self.pre_limit = np.asarray([self.limit(j) for j in range(self.count)])
             self.active = True
             self.detection_lap = self.lap if first else self.detection_lap
             if self.scope == "track" or first:
@@ -161,6 +165,22 @@ class ChangeMonitor:
         elif self.scope == "track" and self.speed_history[j]:
             self.cap_factor[j] = factor
             self.caps[j] = factor * float(np.median(self.speed_history[j][-self.history_laps:]))
+
+    def lap_tags(self):
+        """Per-stretch median tag of the lap being driven (nan where the lap did not pass)."""
+        return np.asarray([float(np.median(v)) if v else np.nan for v in self.lap_values])
+
+    def query_tags(self):
+        """Per-stretch tag describing the current condition, for the tag-conditioned value: the latest pass after
+        the change where one exists, else the stretch's normal reference."""
+        out = np.zeros(self.count)
+        for k in range(self.count):
+            if np.isfinite(self.last_pass_tag[k]):
+                out[k] = self.last_pass_tag[k]
+            else:
+                ref = self.reference(k)
+                out[k] = 0.0 if ref is None else ref
+        return out
 
     def model_limit(self, k):
         values = self.model_history[k][-self.history_laps:]
@@ -202,6 +222,8 @@ class ChangeMonitor:
     def _leave(self, step, k):
         if self.active:
             self.driven.add(k)
+            if self.pass_values:
+                self.last_pass_tag[k] = float(np.median(self.pass_values))
         if self.scope == "evidence":
             self._leave_evidence(step, k)
             return

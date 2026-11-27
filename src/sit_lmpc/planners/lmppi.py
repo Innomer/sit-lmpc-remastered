@@ -763,6 +763,14 @@ class LMPPI:
         self.brake_counts["steps"] += 1
         return candidates.at[-len(profiles) - 1:-1].set(brake)
 
+    def value_inputs(self, states, value_snapshot, safe_set):
+        if value_snapshot.input_mode != "state_tag":
+            return states
+        monitor = safe_set.change_monitor
+        tags = jnp.asarray(monitor.query_tags(), states.dtype)
+        idx = jnp.floor(states[:, 0] / monitor.stretch).astype(jnp.int32) % monitor.count
+        return jnp.concatenate([states, tags[idx][:, None]], axis=1)
+
     def change_cap_weights(self, safe_set, rank):
         monitor = getattr(safe_set, "change_monitor", None)
         if monitor is None or monitor.scope != "evidence":
@@ -797,7 +805,8 @@ class LMPPI:
                                                           jnp.asarray(t, progress.dtype))
                                                for s, t in safe_set.value_records]), axis=0)
         else:
-            out["value"] = predict_value(value_snapshot, frenet[:, -1], value_key, self.value_samples).reshape(len(frenet), -1).mean(axis=1)
+            out["value"] = predict_value(value_snapshot, self.value_inputs(frenet[:, -1], value_snapshot, safe_set),
+                                         value_key, self.value_samples).reshape(len(frenet), -1).mean(axis=1)
         return out
 
     def model_safety_costs(self, state, actions):
@@ -1040,7 +1049,8 @@ class LMPPI:
             )
         else:
             values = predict_value(
-                value_snapshot, states.reshape(-1, 7), value_key, self.value_samples
+                value_snapshot, self.value_inputs(states.reshape(-1, 7), value_snapshot, safe_set), value_key,
+                self.value_samples
             )
             if getattr(safe_set, "value_records", None):
                 progress = states.reshape(-1, 7)[:, 0]

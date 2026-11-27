@@ -182,7 +182,7 @@ class ValueTrainer:
     def _warmup_prediction(self, snapshot, count):
         predict_value(
             inference_snapshot(snapshot),
-            jnp.zeros((count, 7), dtype=snapshot.normalization.low.dtype),
+            jnp.zeros((count, 8 if snapshot.input_mode == "state_tag" else 7), dtype=snapshot.normalization.low.dtype),
             jax.random.key(self.seed),
             self.config.samples,
             jnp.zeros((count, 2), dtype=snapshot.normalization.low.dtype)

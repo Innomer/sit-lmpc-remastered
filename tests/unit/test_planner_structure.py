@@ -61,3 +61,37 @@ def test_safe_set_drops_states_outside_the_body_corner_limit():
     safe.footprint = None
     selected, _ = safe.select_window(0.0, 40.0)
     assert np.any(np.abs(selected[:, 1]) > 0.8)
+
+
+def test_tag_matched_safe_set_and_tag_value_inputs():
+    from sit_lmpc.planners.change_monitor import ChangeMonitor
+    from sit_lmpc.training.features import feature_names, features
+
+    planner = replace(load_config().planner, change_safe_set="tag", change_new_laps=2)
+    monitor = ChangeMonitor(100.0, stretch=10)
+    safe = SafeSet(planner, 0.1, 100.0)
+    safe.change_monitor = monitor
+    normal = np.full(10, 0.01)
+    changed = normal.copy()
+    changed[4] = 0.5
+    safe.frenet = [np.zeros((5, 7)) for _ in range(5)]
+    safe.record_info = [{"lap": i, "laptime": 40.0 + i, "warmup": i == 0, "tags": normal} for i in range(4)]
+    safe.record_info.append({"lap": 4, "laptime": 50.0, "warmup": False, "tags": changed})
+    monitor.history = [[0.01] * 5 for _ in range(10)]
+    monitor.active, monitor.detection_lap = True, 4
+    monitor.pre_limit = np.asarray([monitor.limit(k) for k in range(10)])
+    monitor.changed[4] = True
+    chosen, used = safe.tag_records(40.0, 45.0)
+    assert used == 1
+    safe.frenet.append(np.zeros((5, 7)))
+    safe.record_info.append({"lap": 5, "laptime": 52.0, "warmup": False, "tags": changed})
+    chosen, used = safe.tag_records(40.0, 45.0)
+    assert used == 2 and chosen == [4, 5]
+    chosen, used = safe.tag_records(10.0, 15.0)
+    assert used == 3 and chosen == [0, 1, 2, 3, 4, 5]
+    assert feature_names("state_tag")[-1] == "tag"
+    states = np.arange(16, dtype=float).reshape(2, 8)
+    assert features(states, "state_tag").tolist() == [[0, 1, 2, 3, 4, 7], [8, 9, 10, 11, 12, 15]]
+    monitor.last_pass_tag[4] = 0.4
+    tags = monitor.query_tags()
+    assert np.isclose(tags[4], 0.4) and np.isclose(tags[0], 0.01)
