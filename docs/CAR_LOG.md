@@ -97,6 +97,12 @@ Jetson, bicycle, stack on (`profile_step.py`): **160 ms -> 112 ms median, p95 19
 operations 63 -> 16 ms. Still over the budget; what is left: waiting for GPU results 50 ms, Python in the step 22 ms,
 remaining loose operations and slices about 28 ms, hull build 6.5 ms, random-key splits 5.3 ms.
 
+With 512 samples (instead of 1024) the GPU wait dropped from 50 to 35 ms: now that the per-operation overhead is
+gone, the sample count matters. Second folding round (both random keys in one compiled split, the state read to
+the CPU once per step; bicycle plans again exactly identical): loose operations 16 -> 7.8 ms. **Bicycle, 512
+samples: 160 -> 80 ms median, p95 192 -> 96 ms** on the Jetson with the full stack. Left per step: GPU results
+30 ms, Python in the step 21 ms, hull build 5.6 ms, hull check 4.4 ms, 4 loose operations 7.8 ms.
+
 Also learned: compiling the planner takes several minutes on the Jetson at every start; with
 `JAX_COMPILATION_CACHE_DIR` set, only the first start compiles.
 
@@ -152,6 +158,8 @@ PF settings: 10000 particles, `rmgpu` (GPU ray marching), every 18th beam, max r
 | 5 | on, PF fixed | command buffers only | 0.81 ms | 160.0 / 195.2 / 325.6 ms | | |
 | 6 | on, PF fixed | none; 4 value samples | 0.96 ms | 167.7 / 200.9 / 326.6 ms | | |
 | 7 (folded planner, `irl-planner-jit`) | on, PF fixed | none | - | 114.9 / 129.9 / 135.1 ms | | |
+| 8 (folded, 512 samples) | on, PF fixed | none | - | 97.1 / 118.1 / 139.3 ms | | |
+| 9 (folded round 2, 512 samples) | on, PF fixed | none | - | **79.6 / 96.3 / 101.4 ms** | | |
 
 Laptop for comparison (same check, on battery): bicycle 21 / 25 ms, v11 36 / 43 ms (filter step 3.9 ms of it).
 
