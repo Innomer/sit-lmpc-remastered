@@ -155,6 +155,7 @@ class DynamicsConfig:
     rssm_clearance_margin: float = 0.35
     rssm_clearance_weight: float = 0.0
     rssm_sample_clearance: bool = True
+    rssm_filter_device: str = "default"
     rssm_risk: str | None = None
     rssm_grip_probe: str | None = None
     rssm_risk_weight: float = 0.0
