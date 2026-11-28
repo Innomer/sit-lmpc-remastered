@@ -1,0 +1,37 @@
+[INFO] [1795837196.731515043] [bridge]: Loading map from path: /home/mann-bhanushali/sim_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/maps/levine.yaml
+[INFO] [1795837197.591035516] [bridge]: Start poses: ego_racecar=(0.03, -0.07, 0.01)
+[INFO] [1795837201.328789186] [bridge]: Running in asynchronous mode. Simulation will step using a timer callback.
+[INFO] [1795837201.500826745] [bridge]: simulated sensors on: {'imu_offset_x': 0.05, 'imu_offset_y': 0.01, 'imu_yaw_misalignment': 0.01, 'accel_bias_x': 0.2, 'accel_bias_y': -0.15, 'accel_noise': 0.3, 'gyro_bias': 0.01, 'gyro_noise': 0.01, 'gyro_scale': 1.01, 'wheel_scale': 1.03, 'wheel_noise': 0.05, 'pose_noise': 0.02, 'yaw_noise': 0.01, 'pose_lag': 0.05}
+[INFO] [1795837257.732502042] [bridge]: ego_racecar completed lap 1, last lap 15.27 s
+[INFO] [1795837283.702448295] [bridge]: ego_racecar completed lap 1, last lap 15.28 s
+[WARN] [1795837301.272360755] [bridge]: ego_racecar hit something at (9.23, 5.65)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/mann-bhanushali/sim_ws/src/f1tenth_gym_ros/f1tenth_gym_ros/gym_bridge.py", line 1056, in <module>
+    main()
+  File "/home/mann-bhanushali/sim_ws/src/f1tenth_gym_ros/f1tenth_gym_ros/gym_bridge.py", line 1044, in main
+    rclpy.spin(gym_bridge)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/__init__.py", line 247, in spin
+    executor.spin_once()
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 926, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 918, in _spin_once_impl
+    raise handler.exception()
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/task.py", line 286, in _execute_coroutine_step
+    result = coro.send(None)
+             ^^^^^^^^^^^^^^^
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 592, in handler
+    await call_coroutine()
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 454, in _execute
+    await await_or_execute(tmr.callback)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/executors.py", line 115, in await_or_execute
+    return callback(*args)
+           ^^^^^^^^^^^^^^^
+  File "/home/mann-bhanushali/sim_ws/src/f1tenth_gym_ros/f1tenth_gym_ros/gym_bridge.py", line 885, in timer_callback
+    self._publish_sensors(ts)
+  File "/home/mann-bhanushali/sim_ws/src/f1tenth_gym_ros/f1tenth_gym_ros/gym_bridge.py", line 723, in _publish_sensors
+    self.pf_pub.publish(pose)
+  File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/publisher.py", line 70, in publish
+    self.__publisher.publish(msg)
+rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:423

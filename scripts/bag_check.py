@@ -65,15 +65,36 @@ def wrap(angle):
     return (angle + math.pi) % (2 * math.pi) - math.pi
 
 
+def imu_arrays(messages, car):
+    from sit_lmpc.adapters.imu_frame import axis_matrix, level_rotation
+    matrix = axis_matrix(car.imu_axes)
+    times = np.asarray([t for t, _ in messages["imu"]])
+    accel = np.asarray([[m.linear_acceleration.x, m.linear_acceleration.y, m.linear_acceleration.z]
+                        for _, m in messages["imu"]]) @ matrix.T
+    gyro = np.asarray([[m.angular_velocity.x, m.angular_velocity.y, m.angular_velocity.z]
+                       for _, m in messages["imu"]]) @ matrix.T
+    if car.imu_level:
+        speed_times = np.asarray([t for t, _ in messages["speed"]])
+        speeds = np.asarray([m.twist.twist.linear.x for _, m in messages["speed"]])
+        still = np.abs(np.interp(times, speed_times, speeds)) < 0.05
+        rotation = level_rotation(accel[still].mean(axis=0) if still.sum() > 20 else accel[:200].mean(axis=0))
+        accel, gyro = accel @ rotation.T, gyro @ rotation.T
+    return times, accel, gyro
+
+
 def timeline(messages, car, timestep, lr):
     pose_times = np.asarray([t for t, _ in messages["pose"]])
+    imu_times, imu_accel, imu_gyro = imu_arrays(messages, car)
     ticks = np.arange(pose_times[0] + 0.5, pose_times[-1], timestep)
     index = {k: np.asarray([t for t, _ in v]) for k, v in messages.items()}
     rows = []
     previous_pose, previous_steer = None, None
     for t in ticks:
         pose = latest(messages["pose"], index["pose"], t)
-        imu = latest(messages["imu"], index["imu"], t)
+        inside = (imu_times > t - timestep) & (imu_times <= t)
+        last = max(int(np.searchsorted(imu_times, t, side="right")) - 1, 0)
+        accel = imu_accel[inside].mean(axis=0) if inside.any() else imu_accel[last]
+        gyro = imu_gyro[inside].mean(axis=0) if inside.any() else imu_gyro[last]
         wheel = latest(messages["speed"], index["speed"], t)
         scan = latest(messages["scan"], index["scan"], t)
         drive = latest(messages["drive"], index["drive"], t)
@@ -86,17 +107,24 @@ def timeline(messages, car, timestep, lr):
         speed = float(wheel.twist.twist.linear.x)
         control = (0.0 if previous_steer is None else (steer - previous_steer) / timestep,
                    (float(drive.drive.speed) - speed) / car.speed_horizon)
-        accel = imu.linear_acceleration
-        yaw_rate = car.imu_yaw_scale * imu.angular_velocity.z
+        yaw_rate = car.imu_yaw_scale * gyro[2]
         jump = previous_pose is not None and math.hypot(dx, dy) > 3 * max(speed, 1.0) * timestep + 0.3
         rows.append({
             "t": t, "rear": rear, "jump": jump, "steer": steer, "speed": speed, "yaw_rate": yaw_rate, "control": control,
-            "observation": np.array([car.imu_accel_scale[0] * accel.x, car.imu_accel_scale[1] * accel.y, yaw_rate, speed,
+            "observation": np.array([car.imu_accel_scale[0] * accel[0], car.imu_accel_scale[1] * accel[1], yaw_rate, speed,
                                      body[0] / timestep, body[1] / timestep, body[2] / timestep, 0.0, 0.0], np.float32),
             "scan": (scan.ranges, scan.angle_min, scan.angle_increment),
             "cog": (rear[0] + lr * math.cos(rear[2]), rear[1] + lr * math.sin(rear[2])),
         })
         previous_pose, previous_steer = rear, steer
+    if car.imu_position is not None:
+        from sit_lmpc.adapters.imu_frame import to_center_of_gravity
+        for i in range(len(rows)):
+            rate = rows[i]["yaw_rate"]
+            rate_dot = 0.0 if i == 0 or rows[i]["jump"] else (rate - rows[i - 1]["yaw_rate"]) / timestep
+            observation = rows[i]["observation"]
+            observation[0], observation[1] = to_center_of_gravity(observation[0], observation[1], rate, rate_dot,
+                                                                  car.imu_position[0] - lr, car.imu_position[1])
     for i in range(1, len(rows)):
         rows[i]["observation"][7:9] = rows[i - 1]["control"]
     return rows

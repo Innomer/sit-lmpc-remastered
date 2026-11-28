@@ -40,6 +40,9 @@ simulation:
     speed_topic: /odom  # nav_msgs/Odometry whose twist.linear.x is the speed (VESC wheel odometry); "" uses odom_topic.
     imu_topic: /sensors/imu/raw  # sensor_msgs/Imu; yaw rate = imu_yaw_scale * angular_velocity.z. "" uses odom_topic's twist.
     imu_accel_scale: [1.0, 1.0]  # World-model input: factors on the IMU linear acceleration x, y to get m/s^2 in the body frame (x forward, y left); scripts/car_check.py suggests them.
+    imu_axes: [x, y, z]  # IMU axis (with sign) that is the car's x (forward), y (left), z (up); a RealSense D435i facing forward: [z, -x, -y].
+    imu_level: false  # true: at the first start, with the car standing still, measure gravity and rotate the IMU so it points straight down (removes a tilted mount).
+    imu_position: null  # IMU position (x forward, y left, m) from the rear axle (base_link); set: accelerations are moved to the centre of gravity (yaw-rate and yaw-acceleration terms removed). null uses them as measured.
     world_model_inputs: false  # Subscribe to the LiDAR for the world model even when stop_distance is 0 (planner.dynamics.backend rssm).
     imu_yaw_scale: 1.0  # Sign and unit factor for the gyro; scripts/car_check.py suggests it.
     drive_topic: /drive  # ackermann_msgs/AckermannDriveStamped (speed, steering_angle) into the car's mux.

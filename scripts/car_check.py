@@ -47,9 +47,15 @@ def main():
     def speed(msg):
         records["speed"].append((time.perf_counter(), msg.twist.twist.linear.x))
 
+    from sit_lmpc.adapters.imu_frame import axis_matrix, level_rotation, tilt_degrees
+    imu_matrix = axis_matrix(car.imu_axes)
+
     def imu(msg):
         a = msg.linear_acceleration
-        records["imu"].append((time.perf_counter(), msg.angular_velocity.z, a.x, a.y, a.z))
+        w = msg.angular_velocity
+        accel = imu_matrix @ np.array([a.x, a.y, a.z])
+        gyro = imu_matrix @ np.array([w.x, w.y, w.z])
+        records["imu"].append((time.perf_counter(), gyro[2], accel[0], accel[1], accel[2], gyro[0], gyro[1]))
 
     def scan(msg):
         layout.update(count=len(msg.ranges), angle_min=msg.angle_min, angle_max=msg.angle_max,
@@ -80,6 +86,15 @@ def main():
         rclpy.spin_once(node, timeout_sec=0.05)
     node.destroy_node()
     rclpy.shutdown()
+    if records["imu"] and car.imu_level and np.any(np.asarray(records["imu"])[:, 1:]):
+        raw = np.asarray(records["imu"])
+        still = raw[:, 0] < raw[0, 0] + 3.0
+        gravity = raw[still, 2:5].mean(axis=0)
+        rotation = level_rotation(gravity)
+        accel = raw[:, 2:5] @ rotation.T
+        gyro = raw[:, [5, 6, 1]] @ rotation.T
+        records["imu"] = [tuple(row) for row in np.column_stack([raw[:, 0], gyro[:, 2], accel, gyro[:, 0], gyro[:, 1]])]
+        print(f"IMU levelled (imu_level): mount tilt {tilt_degrees(gravity):.1f} deg from the first 3 s (car still)")
 
     names = {"odom": car.odom_topic, "speed": car.speed_topic, "imu": car.imu_topic, "scan": car.scan_topic,
              "joy": car.joy_topic}
@@ -111,7 +126,11 @@ def main():
             problems.append("the car faces against the track direction")
         yaw = np.unwrap(odom_array[:, 3])
         times = odom_array[:, 0]
-        if records["imu"] and times.size > 10:
+        imu_dead = bool(records["imu"]) and not np.any(np.asarray(records["imu"])[:, 1:])
+        if imu_dead:
+            problems.append(f"the IMU ({car.imu_topic}) reports only zeros: enable the VESC IMU or set imu_topic to the "
+                            "topic that has data; v11 and the yaw rate need it")
+        if records["imu"] and times.size > 10 and not imu_dead:
             pf_rate = np.gradient(yaw, times)
             imu_array = np.asarray(records["imu"])
             imu_rate = np.interp(times, imu_array[:, 0], imu_array[:, 1])
@@ -137,7 +156,7 @@ def main():
                 print(f"VESC speed / PF speed median ratio {ratio:.3f}")
                 if not 0.85 < ratio < 1.15:
                     problems.append("VESC speed disagrees with PF speed; check speed_to_erpm_gain or use speed_topic \"\"")
-    if records["imu"] and records["speed"] and records["odom"]:
+    if records["imu"] and records["speed"] and records["odom"] and np.any(np.asarray(records["imu"])[:, 1:]):
         imu_array = np.asarray(records["imu"])
         still = imu_array[:, 0] < imu_array[0, 0] + 3.0
         gravity = imu_array[still, 2:5].mean(axis=0) if still.any() else imu_array[:, 2:5].mean(axis=0)
@@ -147,7 +166,8 @@ def main():
             unit = 9.81
             problems.append("IMU acceleration looks like g units (|z| about 1 at rest); multiply imu_accel_scale by 9.81")
         elif not 8.0 < abs(gravity[2]) < 11.5:
-            problems.append(f"IMU z acceleration at rest is {gravity[2]:+.2f}; expected about 9.81 m/s^2 or 1 g")
+            problems.append(f"IMU z acceleration at rest is {gravity[2]:+.2f}; expected about 9.81 m/s^2 or 1 g "
+                            "(check simulation.car.imu_axes: which IMU axis points up)")
         speed_array = np.asarray(records["speed"])
         t = imu_array[:, 0]
         v = np.interp(t, speed_array[:, 0], speed_array[:, 1])
@@ -193,12 +213,19 @@ def main():
         for a, b in zip(pose[:-1], pose[1:]):
             dx, dy = b[1] - a[1], b[2] - a[2]
             body = (math.cos(a[3]) * dx + math.sin(a[3]) * dy, -math.sin(a[3]) * dx + math.cos(a[3]) * dy)
+            inside = (imu_array[:, 0] > b[0] - dt) & (imu_array[:, 0] <= b[0])
             j = min(np.searchsorted(imu_array[:, 0], b[0]), len(imu_array) - 1)
+            sample = imu_array[inside].mean(axis=0) if inside.any() else imu_array[j]
             w = np.interp(b[0], speed_array[:, 0], speed_array[:, 1])
-            rows.append([car.imu_accel_scale[0] * imu_array[j, 2], car.imu_accel_scale[1] * imu_array[j, 3],
-                         car.imu_yaw_scale * imu_array[j, 1], w, body[0] / dt, body[1] / dt,
+            rows.append([car.imu_accel_scale[0] * sample[2], car.imu_accel_scale[1] * sample[3],
+                         car.imu_yaw_scale * sample[1], w, body[0] / dt, body[1] / dt,
                          (b[3] - a[3] + math.pi) % (2 * math.pi) - math.pi])
         rows = np.asarray(rows)
+        if car.imu_position is not None:
+            from sit_lmpc.adapters.imu_frame import to_center_of_gravity
+            rate_dot = np.concatenate([[0.0], np.diff(rows[:, 2]) / dt])
+            rows[:, 0], rows[:, 1] = to_center_of_gravity(rows[:, 0], rows[:, 1], rows[:, 2], rate_dot,
+                                                          car.imu_position[0] - lr, car.imu_position[1])
         names = ["imu ax", "imu ay", "gyro z", "wheel speed", "PF dx/dt", "PF dy/dt", "PF dyaw/dt"]
         print("world-model inputs (car) vs training: mean / std")
         for k, name in enumerate(names):

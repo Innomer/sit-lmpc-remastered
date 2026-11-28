@@ -35,6 +35,9 @@ class CarConfig:
     imu_topic: str = "/sensors/imu/raw"
     imu_yaw_scale: float = 1.0
     imu_accel_scale: tuple[float, float] = (1.0, 1.0)
+    imu_axes: tuple[str, str, str] = ("x", "y", "z")
+    imu_level: bool = False
+    imu_position: tuple[float, float] | None = None
     world_model_inputs: bool = False
     drive_topic: str = "/drive"
     scan_topic: str = "/scan"

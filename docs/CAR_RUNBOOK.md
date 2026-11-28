@@ -43,9 +43,19 @@ GPU JAX, and validates the car configs).
 In two other terminals (same shell setup), bring up the car. Always the full stack, never the LiDAR alone:
 
 ```bash
-ros2 launch f1tenth_stack bringup_launch.py
+ros2 launch f1tenth_stack sick_bringup_launch.py   # this car: SICK TiM LiDAR (811 beams over 270 deg)
 ros2 launch particle_filter localize_launch.py    # on the Levine map; set the initial pose in RViz
+ros2 launch realsense2_camera rs_launch.py enable_gyro:=true enable_accel:=true unite_imu_method:=2 \
+  enable_color:=false enable_depth:=false enable_infra1:=false enable_infra2:=false   # the IMU
 ```
+
+The VESC on this car has no IMU, so the IMU is the RealSense D435i's (`/camera/camera/imu`, 200 Hz). It needs
+librealsense built with the RSUSB backend (the Jetson kernel has no HID sensor modules) and realsense-ros built
+against it. Check: `ros2 topic hz /camera/camera/imu` about 200. The car configs remap the camera axes to the car
+(`imu_axes: [z, -x, -y]`), level the tilted mount from gravity at the first start (`imu_level`, logged as
+`imu_leveled`; keep the car still on flat floor when starting a run), move the accelerations to the centre of gravity
+(`imu_position`: 0.346, 0.032 m from the rear axle, from the LiDAR TF and the vision-lab camera offset) and average
+each 0.1 s.
 
 ## 2. Sensor check: `car_check.py`
 
@@ -59,8 +69,10 @@ python scripts/car_check.py --config configs/car/levine-v11.yaml --seconds 40
 | It prints | Do |
 |---|---|
 | topic rates and the largest PF gap | PF gaps must stay under 0.3 s |
-| suggested `imu_yaw_scale` | set `simulation.car.imu_yaw_scale` in `configs/car/levine-bicycle.yaml` |
-| IMU acceleration at rest, units, suggested `imu_accel_scale` | set `simulation.car.imu_accel_scale` (signs, and 9.81 if the IMU reports g) |
+| `IMU levelled ... mount tilt` | about 6 deg for the current camera mount |
+| suggested `imu_yaw_scale` | should be about +1.0; set `simulation.car.imu_yaw_scale` in `configs/car/levine-bicycle.yaml` |
+| IMU acceleration at rest, units, suggested `imu_accel_scale` | z about +9.8 (after the remap and levelling); x, y signs should come out +1 |
+| "the IMU reports only zeros" | the IMU topic carries no data: start the RealSense node, or check `imu_topic` |
 | VESC speed / PF speed ratio | must be 0.85–1.15 |
 | LiDAR layout vs training (1080 beams, ±135°) | under 240° of coverage is a problem |
 | v11's 9 inputs vs the training statistics | anything marked "far off" means wrong units, sign or frame |
@@ -141,7 +153,7 @@ setup:
 
 ```bash
 ros2 bag record -o bags/levine-$(date +%Y%m%d-%H%M%S) \
-  /pf/pose/odom /odom /sensors/imu/raw /sensors/imu /sensors/core /scan /drive /joy /tf /tf_static
+  /pf/pose/odom /odom /camera/camera/imu /sensors/core /scan /drive /joy /tf /tf_static
 ```
 
 Ctrl-C stops the recording. These are the topics in `simulation.car.bag_topics`; `scripts/bag_check.py` needs at
@@ -194,7 +206,9 @@ python -m sit_lmpc.cli.racecar --config configs/car/levine-v11-learned.yaml \
 
 ## Laptop dry run (no car)
 
-The same car code path against the ROS sim, on the Levine sim map, with simulated IMU, wheel speed, PF pose and LiDAR:
+The same car code path against the ROS sim, on the Levine sim map, with simulated IMU, wheel speed, PF pose and LiDAR.
+Scripted (places the car behind the line and presses go at every stop, one off-track teleport after N laps):
+`bash scripts/car_dryrun.sh configs/car/dryrun-levine-v11.yaml dry-v11 6 9`. By hand:
 
 ```bash
 ros2 run f1tenth_gym_ros gym_bridge --ros-args -r __node:=bridge --params-file configs/car/ros-bridge-dryrun-levine.yaml

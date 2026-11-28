@@ -1,0 +1,39 @@
+[value_precompile]
+[planner_precompile]
+[start] learning | seed=93055452 | friction actual/model=1.049/1.049 | value=state
+[hull_precompile_started] variants=238 | max_facets=1190 | dtype=float32
+[hull_precompile_finished] variants=238
+[car_bag_recording] topics=/ego_racecar/pf_odom, /ego_racecar/wheel_odom, /ego_racecar/imu, /scan, /drive
+[imu_level_skipped] gravity=0.2016, -0.1242, 0 | message=no gravity in the IMU acceleration (expected about 9.81 m/s^2); IMU not levelled
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.839 | launch_speed=1.5
+/home/mann-bhanushali/sim_ws/.venv/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+[checkpoint_saved] file=checkpoints/trial-000000 | trials=0
+[car_launch] speed=1.68
+[control_step_timing] steps=50 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=100 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=150 | overruns=1 | watchdog_stops=0
+[attempt] #1 success | 152 steps
+[lap] trial 1 | 15.2 s | avg speed 4.197 m/s | mppi
+[checkpoint_saved] file=checkpoints/trial-000001 | trials=1
+[car_lap_stop] speed=0.02061
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.857 | launch_speed=1.5
+[car_launch] speed=1.674
+[control_step_timing] steps=200 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=250 | overruns=1 | watchdog_stops=0
+[control_step_timing] steps=300 | overruns=1 | watchdog_stops=0
+[attempt] #2 success | 153 steps
+[lap] trial 2 | 15.3 s | avg speed 4.189 m/s | mppi
+[car_lap_stop] speed=0.0802
+[training] generation=1 | epochs=300 | loss=-0.2707 | gradient_steps=600
+[checkpoint_saved] file=checkpoints/trial-000002 | trials=2
+[car_waiting] message=Car stopped. Put it on the track 0.3-4.0 m behind the start line, facing forward, then press joystick button 0 (or: ros2 topic pub --once /sit_lmpc/go std_msgs/msg/Empty).
+[car_start_accepted] behind=1.864 | launch_speed=1.5
+[car_launch] speed=1.602
+[attempt] #3 incomplete | 36 steps | interrupted
+[partial_lap] attempt_id=3 | steps=36 | termination_reason=interrupted
+[finish] status=interrupted | trials=2 | successful_laps=2 | failed_attempts=0 | applied_steps=341 | training_generations=1 | risk_training_generations=0
+  results: /home/mann-bhanushali/sim_ws/wt-irl-world-model/results/dryrun/dry-imu-test
+[control_timing_summary] steps=342 | control_period_seconds=0.1 | overruns=1 | watchdog_stops=1

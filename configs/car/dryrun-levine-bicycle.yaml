@@ -14,6 +14,9 @@ simulation:
     odom_topic: /ego_racecar/pf_odom
     speed_topic: /ego_racecar/wheel_odom
     imu_topic: /ego_racecar/imu
+    imu_axes: [x, y, z]  # the sim IMU is already in the car frame
+    imu_level: false
+    imu_position: null
     scan_topic: /scan
     joy_topic: ""
     start_zone: 4.0

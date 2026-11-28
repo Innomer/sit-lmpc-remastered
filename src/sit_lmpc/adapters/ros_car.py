@@ -9,6 +9,7 @@ import time
 from collections import deque
 import numpy as np
 
+from sit_lmpc.adapters.imu_frame import axis_matrix, level_rotation, tilt_degrees, to_center_of_gravity
 from sit_lmpc.adapters.ros_f1tenth import percentile_summary, wrap_angle
 
 
@@ -49,8 +50,10 @@ class RosCar:
         self.rclpy = rclpy
         from rclpy.signals import SignalHandlerOptions
 
-        signal.signal(signal.SIGINT, signal.default_int_handler)
-        signal.signal(signal.SIGTERM, signal.default_int_handler)
+        self.spinning = False
+        self.interrupt_pending = False
+        signal.signal(signal.SIGINT, self._interrupt)
+        signal.signal(signal.SIGTERM, self._interrupt)
         if not rclpy.ok():
             rclpy.init(args=None, signal_handler_options=SignalHandlerOptions.NO)
         self.node = rclpy.create_node("sit_lmpc_car")
@@ -64,6 +67,13 @@ class RosCar:
         self.close_scan = False
         self.closest = math.inf
         self.imu = None
+        self.imu_matrix = axis_matrix(simulation.car.imu_axes)
+        self.imu_rotation = np.eye(3)
+        self.imu_window = deque()
+        self.imu_accel = np.zeros(3)
+        self.imu_gyro = np.zeros(3)
+        self.imu_leveled = not simulation.car.imu_level
+        self.imu_previous_rate = None
         self.scan = None
         self.encoder_pose = None
         self.applied_control = np.zeros(2)
@@ -138,7 +148,29 @@ class RosCar:
 
     def _imu_callback(self, msg):
         self.imu = msg
-        self.yaw_rate = self.car.imu_yaw_scale * msg.angular_velocity.z
+        now = time.perf_counter()
+        a = msg.linear_acceleration
+        w = msg.angular_velocity
+        self.imu_window.append((now, self.imu_matrix @ np.array([a.x, a.y, a.z]),
+                                self.imu_matrix @ np.array([w.x, w.y, w.z])))
+        while self.imu_window and self.imu_window[0][0] < now - 1.0:
+            self.imu_window.popleft()
+        recent = [entry for entry in self.imu_window if entry[0] >= now - self.timestep]
+        self.imu_accel = self.imu_rotation @ np.mean([entry[1] for entry in recent], axis=0)
+        self.imu_gyro = self.imu_rotation @ np.mean([entry[2] for entry in recent], axis=0)
+        self.yaw_rate = self.car.imu_yaw_scale * self.imu_gyro[2]
+
+    def _level_imu(self):
+        if self.imu_leveled or len(self.imu_window) < 20:
+            return
+        gravity = np.mean([entry[1] for entry in self.imu_window], axis=0)
+        self.imu_leveled = True
+        if not 5.0 < np.linalg.norm(gravity) < 15.0:
+            self.emit("imu_level_skipped", gravity=[float(v) for v in gravity],
+                      message="no gravity in the IMU acceleration (expected about 9.81 m/s^2); IMU not levelled")
+            return
+        self.imu_rotation = level_rotation(gravity)
+        self.emit("imu_leveled", tilt_degrees=tilt_degrees(gravity), gravity=[float(v) for v in gravity])
 
     def _scan_callback(self, msg):
         self.scan = msg
@@ -162,8 +194,27 @@ class RosCar:
     def _go_callback(self, msg):
         self.go = True
 
+    def _interrupt(self, signum, frame):
+        if self.spinning:
+            self.interrupt_pending = True
+            return
+        raise KeyboardInterrupt
+
+    def _spin_guarded(self, timeout):
+        self.spinning = True
+        try:
+            self.rclpy.spin_once(self.node, timeout_sec=timeout)
+        except Exception:
+            if not self.interrupt_pending:
+                raise
+        finally:
+            self.spinning = False
+        if self.interrupt_pending:
+            self.interrupt_pending = False
+            raise KeyboardInterrupt
+
     def _spin(self, timeout):
-        self.rclpy.spin_once(self.node, timeout_sec=timeout)
+        self._spin_guarded(timeout)
 
     def _publish(self, steering, speed):
         msg = self.drive_type()
@@ -231,7 +282,7 @@ class RosCar:
 
     def _drain(self):
         for _ in range(50):
-            self.rclpy.spin_once(self.node, timeout_sec=0.0)
+            self._spin_guarded(0.0)
 
     def _check_odom(self):
         self._drain()
@@ -249,7 +300,7 @@ class RosCar:
         if self.imu is None or self.odom is None or self.speed is None:
             raise RuntimeError("world-model inputs missing: no IMU, odometry or wheel speed yet")
         car = self.car
-        accel = self.imu.linear_acceleration
+        accel = self.imu_accel
         msg = self.odom
         current = (msg.pose.pose.position.x, msg.pose.pose.position.y, quaternion_yaw(msg.pose.pose.orientation))
         previous = current if self.encoder_pose is None else self.encoder_pose
@@ -259,8 +310,16 @@ class RosCar:
         dyaw = wrap_angle(current[2] - previous[2])
         self.encoder_pose = current
         dt = self.timestep
-        observation = np.array([car.imu_accel_scale[0] * accel.x, car.imu_accel_scale[1] * accel.y,
-                                car.imu_yaw_scale * self.imu.angular_velocity.z, self.speed,
+        rate = car.imu_yaw_scale * self.imu_gyro[2]
+        accel_x = car.imu_accel_scale[0] * accel[0]
+        accel_y = car.imu_accel_scale[1] * accel[1]
+        if car.imu_position is not None:
+            rate_dot = 0.0 if self.imu_previous_rate is None else (rate - self.imu_previous_rate) / dt
+            accel_x, accel_y = to_center_of_gravity(accel_x, accel_y, rate, rate_dot,
+                                                    car.imu_position[0] - self.params["lr"], car.imu_position[1])
+        self.imu_previous_rate = rate
+        observation = np.array([accel_x, accel_y,
+                                rate, self.speed,
                                 body_dx / dt, body_dy / dt, dyaw / dt,
                                 self.applied_control[0], self.applied_control[1]], dtype=np.float32)
         return observation, np.array(current)
@@ -334,7 +393,17 @@ class RosCar:
             self._stop()
             self._spin(0.05)
             if self.speed is not None and abs(self.speed) < 0.05:
+                self._spin_for(1.0)
+                self._level_imu()
                 return
+
+    def _spin_for(self, seconds):
+        if self.imu_leveled:
+            return
+        deadline = time.perf_counter() + seconds
+        while time.perf_counter() < deadline:
+            self._stop()
+            self._spin(0.02)
 
     def reset(self, state):
         state = np.asarray(state, dtype=np.float64)
@@ -371,6 +440,7 @@ class RosCar:
         frenet[[0, 1, 4]] = (s, ey, ephi)
         self.applied_control = np.zeros(2)
         self.encoder_pose = None
+        self.imu_previous_rate = None
         self.close_scan = False
         self.emit("car_start_accepted", behind=float(behind), launch_speed=self.launch_speed)
         self.returned_at = None

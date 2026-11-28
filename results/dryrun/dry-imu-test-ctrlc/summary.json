@@ -1,0 +1,73 @@
+{
+  "status": "error",
+  "laps": 2,
+  "successful_laps": 2,
+  "trials": 2,
+  "history_laps": 0,
+  "attempts": 3,
+  "failed_attempts": 0,
+  "incomplete_attempts": 1,
+  "applied_steps": 341,
+  "learned_steps": 0,
+  "training_generations": 1,
+  "value_input_mode": "state",
+  "safe_set_query": "facets",
+  "safe_set_density": null,
+  "risk_training_generations": 0,
+  "risk_input_mode": null,
+  "risk_evaluation": null,
+  "dynamics_belief_generation": 0,
+  "dynamics_belief_weights": null,
+  "dynamics_posterior": null,
+  "predictor_friction": 1.0489000082015991,
+  "dynamics_predictor": {
+    "kind": "rssm",
+    "variant": "latent",
+    "model_timestep": 0.1,
+    "hidden": 128,
+    "latent": 32
+  },
+  "probabilistic_safety": {
+    "enabled": false,
+    "boundary_threshold": 0.05,
+    "terminal_hull_threshold": 0.05,
+    "lambda_count": 16,
+    "lambda_max": 20.0,
+    "max_candidates": 256,
+    "fallback": "baseline"
+  },
+  "scenario_provider": null,
+  "elapsed": 70.60948272299993,
+  "partial_lap": {
+    "file": "partial_lap.npz",
+    "lap": 3,
+    "completed": false,
+    "termination_reason": "error",
+    "steps": 37,
+    "duration": 3.700000000000002,
+    "lap_time": null,
+    "mean_speed": 3.602996349334717,
+    "safe_set_max": 0.0,
+    "safe_set_mean": 0.0,
+    "boundary_max": 0.0,
+    "boundary_mean": 0.0,
+    "actual_boundary_max": 0.0,
+    "actual_boundary_mean": 0.0,
+    "out_of_bounds_steps": 0,
+    "max_abs_lateral_offset": 0.2055276334285736,
+    "nonfinite_lateral_steps": 0,
+    "attempt_id": 3,
+    "outcome": "incomplete",
+    "lambda_summary": {
+      "steps": 0,
+      "terms": {}
+    }
+  },
+  "device_memory": {
+    "bytes_in_use": 2076416,
+    "peak_bytes_in_use": 327313152,
+    "bytes_reserved": 0,
+    "peak_bytes_reserved": 0,
+    "bytes_limit": 4112515072
+  }
+}

@@ -17,3 +17,7 @@ IMU and LiDAR. Only small files are kept here (events, summaries, configs, logs)
 
 `bag_check.json` (dry-v11): v11 0.18 m / bicycle 0.10 m median position error at 0.5 s. In the sim the bicycle model is
 the simulator's own model, so it is exact here; the comparison means something only on a real car bag.
+
+RealSense IMU path (the VESC has no IMU): `dry-imu-test-ctrlc` (remap, levelling, centre-of-gravity correction and
+0.1 s averaging run while driving; Ctrl-C landing inside rclpy ended the run as `error`), `dry-imu-test` (Ctrl-C fixed:
+`interrupted`). Both used a temporary config: `dryrun-levine-v11` + `imu_level: true`, `imu_position: [0.346, 0.032]`.

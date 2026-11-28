@@ -14,7 +14,11 @@ simulation:
     max_speed: 7.0
     stop_each_lap: true  # after every lap: slow to a stop, train and save while standing, then wait for go behind the line
     record_bag: true
-    bag_topics: [/pf/pose/odom, /odom, /sensors/imu/raw, /sensors/imu, /sensors/core, /scan, /drive, /joy, /tf, /tf_static]
+    imu_topic: /camera/camera/imu  # RealSense D435i (the VESC has no IMU); realsense2_camera with enable_gyro/enable_accel and unite_imu_method 2
+    imu_axes: [z, -x, -y]  # camera optical frame (x right, y down, z forward) to the car frame (x forward, y left, z up)
+    imu_level: true  # the camera is tilted about 6 deg; levelled from gravity at the first start (car standing still)
+    imu_position: [0.346, 0.032]  # from the rear axle: LiDAR at 0.27 m (base_link -> laser TF) + camera at (0.076, 0.032) from the LiDAR (vision lab DEFAULT_C_L)
+    bag_topics: [/pf/pose/odom, /odom, /camera/camera/imu, /sensors/core, /scan, /drive, /joy, /tf, /tf_static]
 planner:
   sit_lmpc_mode: false
   half_width: 0.40  # body-corner limit = half_width - footprint_buffer; set half_width to the 5th-percentile wall distance from scripts/make_track.py
