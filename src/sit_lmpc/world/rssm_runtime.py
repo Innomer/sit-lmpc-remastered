@@ -108,6 +108,28 @@ class RSSMPredictor:
 
         return jax.vmap(one)(actions)
 
+    @jax.jit
+    def rollout_with_costs(self, state, actions):
+        state = jnp.asarray(state, self.st_params.dtype)
+
+        def one(sequence):
+            xs, hs, ss = latent_rollout(self.model, self.network, self.st_params, self.action_scale, self.timestep,
+                                        self.integrator_timestep, self.h, self.s, state,
+                                        jnp.asarray(sequence, self.st_params.dtype), jax.random.key(0), sample=False)
+            out = {}
+            if self.clearance_weight > 0:
+                mean, _ = self.model.apply(self.network, hs, ss, method=RSSM.decode_lidar)
+                nearest = jnp.exp(mean).min(axis=-1)
+                out["clearance"] = self.clearance_weight * jnp.clip(
+                    (self.clearance_margin - nearest) / self.clearance_margin, 0.0, 1.0)
+            if self.risk_weight > 0:
+                features = (jnp.concatenate([hs, ss], -1) - self.risk_mean) / self.risk_std
+                out["risk"] = self.risk_weight * jax.nn.sigmoid(self.risk_network.apply(self.risk_params, features))
+            return xs, out
+
+        xs, costs = jax.vmap(one)(actions)
+        return xs, xs[:, None], costs
+
     def step_members(self, state, action):
         state = jnp.asarray(state, self.st_params.dtype)
         action = jnp.asarray(action, self.st_params.dtype)
@@ -123,7 +145,7 @@ class RSSMPredictor:
 
 class RSSMFilter:
     def __init__(self, run, st_params, action_scale, variant="latent", model_timestep=0.1, integrator=0.02,
-                 clearance_margin=0.35, clearance_weight=0.0, risk=None, risk_weight=0.0):
+                 clearance_margin=0.35, clearance_weight=0.0, risk=None, risk_weight=0.0, device="default"):
         run = Path(run)
         config = yaml.safe_load((run / "config.yaml").read_text())
         self.config = RSSMConfig(**config["model"])
@@ -152,10 +174,14 @@ class RSSMFilter:
                          "risk_mean": jnp.asarray(normalization["mean"], jnp.float32),
                          "risk_std": jnp.asarray(normalization["std"], jnp.float32),
                          "risk_network": network, "risk_weight": float(risk_weight)}
+        self.filter_device = jax.devices("cpu")[0] if device == "cpu" else None
         model, network, st = self.model, self.network, self.st_params
+        obs_mean, obs_std = self.obs_mean, self.obs_std
+        if self.filter_device is not None:
+            network, st, obs_mean, obs_std = jax.device_put((network, st, obs_mean, obs_std), self.filter_device)
 
         def embed(lidar, sensors):
-            return model.apply(network, lidar, (sensors - self.obs_mean) / self.obs_std, method=RSSM.embed)
+            return model.apply(network, lidar, (sensors - obs_mean) / obs_std, method=RSSM.embed)
 
         def merge(pose, body_state):
             return jnp.stack([pose[0], pose[1], body_state[0], body_state[1], pose[2], body_state[2], body_state[3]])
@@ -180,6 +206,7 @@ class RSSMFilter:
         self.h = jnp.zeros(self.config.hidden, jnp.float32)
         self.s = jnp.zeros(self.config.latent, jnp.float32)
         self.x = jnp.zeros(7, jnp.float32)
+        self._state = jax.device_put((self.h, self.s, self.x), self.filter_device)
         self.reset()
 
     def reset(self):
@@ -191,19 +218,26 @@ class RSSMFilter:
     def lidar_features_host(self, scan):
         return log_range(downsample(np.asarray(scan, np.float32)[None], self.config.beams))[0]
 
+    def _keep(self, h, s, x):
+        self._state = (h, s, x)
+        if self.filter_device is None:
+            self.h, self.s, self.x = h, s, x
+        else:
+            self.h, self.s, self.x = jax.device_put((h, s, x), jax.devices()[0])
+
     def step_features(self, sensors, lidar, pose_rear, control):
         """As step, with the LiDAR already as the model's 64 log-range features (e.g. rssm_lidar.npy)."""
         yaw = float(pose_rear[2])
-        pose = jnp.asarray([pose_rear[0] + LR * np.cos(yaw), pose_rear[1] + LR * np.sin(yaw), yaw], jnp.float32)
-        lidar = jnp.asarray(lidar, jnp.float32)
-        sensors = jnp.asarray(sensors, jnp.float32)
+        pose, lidar, sensors, control = jax.device_put((
+            np.asarray([pose_rear[0] + LR * np.cos(yaw), pose_rear[1] + LR * np.sin(yaw), yaw], np.float32),
+            np.asarray(lidar, np.float32), np.asarray(sensors, np.float32), np.asarray(control, np.float32)),
+            self.filter_device)
         if not self.started:
-            self.h, self.s, self.x, anchor, condition = self._first(lidar, sensors, pose)
+            h, s, x, anchor, condition = self._first(lidar, sensors, pose)
             self.started = True
         else:
-            self.h, self.s, self.x, anchor, condition = self._step(self.h, self.s, self.x,
-                                                                   jnp.asarray(control, jnp.float32), lidar, sensors,
-                                                                   pose)
+            h, s, x, anchor, condition = self._step(*self._state, control, lidar, sensors, pose)
+        self._keep(h, s, x)
         return np.asarray(anchor)
 
     def step(self, sensors, scan, pose_rear, control):
@@ -213,15 +247,15 @@ class RSSMFilter:
         pose, lidar, sensors, control = jax.device_put((
             np.asarray([pose_rear[0] + LR * np.cos(yaw), pose_rear[1] + LR * np.sin(yaw), yaw], np.float32),
             np.asarray(self.lidar_features_host(scan), np.float32), np.asarray(sensors, np.float32),
-            np.asarray(control, np.float32)))
+            np.asarray(control, np.float32)), self.filter_device)
         if not self.started:
-            self.h, self.s, self.x, anchor, condition = self._first(lidar, sensors, pose)
+            h, s, x, anchor, condition = self._first(lidar, sensors, pose)
             self.started = True
         else:
-            self.h, self.s, self.x, anchor, condition = self._step(self.h, self.s, self.x, control, lidar, sensors,
-                                                                   pose)
+            h, s, x, anchor, condition = self._step(*self._state, control, lidar, sensors, pose)
+        self._keep(h, s, x)
         from sit_lmpc.world.rssm_train import CONDITION_MEAN, CONDITION_SCALE
-        anchor, x, condition = jax.device_get((anchor, self.x, condition))
+        anchor, x, condition = jax.device_get((anchor, x, condition))
         grip = float(np.asarray(condition)[0] * CONDITION_SCALE[0] + CONDITION_MEAN[0])
         return np.asarray(anchor), np.asarray(x), grip
 

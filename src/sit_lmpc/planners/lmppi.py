@@ -261,6 +261,8 @@ def safety_activity(states, sample_extra, candidate_frenet, candidate_extra, ind
 
 @partial(jax.jit, static_argnames=("config",))
 def candidate_safety_total(candidate_frenet, ranked, cap, config):
+    if isinstance(ranked, (tuple, list)):
+        ranked = sum(ranked) if len(ranked) else None
     total = total_safety(candidate_frenet, config, ranked).sum(axis=1)
     if cap is not None:
         total = total + cap.sum(axis=1) * config.change_cap_rank_weight / 1000.0
@@ -1208,16 +1210,23 @@ class LMPPI:
             self.reduced_counts["steps"] += 1
         candidates = assemble_candidates(candidates, previous, state[3], tuple(self.speed_factors),
                                          float(self.model.timestep), float(np.asarray(self.model.action_scale)[1]))
-        trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
+        fused = (getattr(self.model, "variant", None) == "latent" and hasattr(self.model, "rollout_with_costs")
+                 and (getattr(self.model, "clearance_weight", 0.0) > 0 or getattr(self.model, "risk_weight", 0.0) > 0))
+        if fused:
+            trajectories, member_trajectories, candidate_extra = self.model.rollout_with_costs(
+                state, candidates[:, : self.config.horizon])
+            candidate_extra = dict(candidate_extra)
+        else:
+            trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
         candidate_frenet = to_frenet(self.track, trajectories, indices, frenet_state[0])
-        candidate_extra = self.model_safety_costs(state, candidates[:, : self.config.horizon])
+        if not fused:
+            candidate_extra = self.model_safety_costs(state, candidates[:, : self.config.horizon])
         candidate_cap = self.change_cap_cost(candidate_frenet, safe_set, self.change_cap_weights(safe_set, rank=True))
         if candidate_cap is not None:
             candidate_extra = dict(candidate_extra, stretch_cap=candidate_cap)
         soft = () if getattr(self.config.dynamics, "rssm_risk_rank", False) else SOFT_TERMS
         ranked = [value for name, value in candidate_extra.items() if name not in soft and name != "stretch_cap"]
-        candidate_safety = candidate_safety_total(candidate_frenet, sum(ranked) if ranked else None, candidate_cap,
-                                                  self.config)
+        candidate_safety = candidate_safety_total(candidate_frenet, tuple(ranked), candidate_cap, self.config)
         candidate_distances = self.evaluate_safe_set_check(terminal_states(candidate_frenet), hull)
         candidate_scenarios = scenario_frenet = candidate_chance = verified_scenarios = None
         if chance_active or risk_active and risk_distribution:
@@ -1290,7 +1299,7 @@ class LMPPI:
         unranked = [value for name, value in candidate_extra.items()
                     if name not in soft and name not in ("stretch_cap", "clearance")]
         packet.update(step_diagnostics(candidate_frenet, candidate_distances, terminal_values,
-                                       sum(unranked) if unranked else None, candidate_cap, packet["index"],
+                                       tuple(unranked), candidate_cap, packet["index"],
                                        self.boundary, previous, da, states, values, sample_distances,
                                        self.config, clearance))
         if getattr(self.config, "change_breakdown", False):

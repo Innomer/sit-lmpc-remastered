@@ -72,6 +72,7 @@ planner:
     rssm_clearance_margin: 0.35  # LiDAR clearance check (latent variant): candidates whose predicted nearest LiDAR range drops below this many metres are penalised.
     rssm_clearance_weight: 0.0  # Weight of that penalty, added to the safety cost at every step; 0 disables.
     rssm_sample_clearance: true  # false: the model-side safety costs (LiDAR clearance, crash risk) only score the final candidates, not the sampled plans; one model rollout less per step.
+    rssm_filter_device: default  # [default, cpu] cpu runs the world-model filter step (one small network step per control step) on the CPU instead of the GPU.
     rssm_grip_probe: null  # Grip probe folder (sit_lmpc.world.rssm_grip) on this RSSM's (h, d), for planner.condition_tag probe.
     rssm_risk: null  # Crash-risk head folder (sit_lmpc.world.rssm_risk) trained on this RSSM's latent.
     rssm_risk_weight: 0.0  # Weight x predicted probability of a crash within 1.5 s at every predicted step. 0 disables.
