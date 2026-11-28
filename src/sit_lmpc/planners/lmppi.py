@@ -259,6 +259,51 @@ def safety_activity(states, sample_extra, candidate_frenet, candidate_extra, ind
             for name in sample_terms}
 
 
+@partial(jax.jit, static_argnames=("config",))
+def candidate_safety_total(candidate_frenet, ranked, cap, config):
+    total = total_safety(candidate_frenet, config, ranked).sum(axis=1)
+    if cap is not None:
+        total = total + cap.sum(axis=1) * config.change_cap_rank_weight / 1000.0
+    return total
+
+
+@partial(jax.jit, static_argnames=("config", "clearance"))
+def step_diagnostics(candidate_frenet, candidate_distances, terminal_values, unranked, cap, index, boundary,
+                     previous, da, states, values, sample_distances, config, clearance):
+    out = {}
+    view = boundary_view(candidate_frenet, boundary)
+    if clearance:
+        safety_without = candidate_safety_total(candidate_frenet, unranked, cap, config)
+        out["no_clearance_index"] = select_candidate(view, candidate_distances, config.boundary_limit,
+                                                     config.safe_set_threshold, terminal_values, safety_without)[0]
+    in_bounds = ~jnp.any(jnp.abs(view[:, :, 1]) > config.boundary_limit, axis=1)
+    in_hull = candidate_distances <= config.safe_set_threshold
+    out["step_summary"] = jnp.stack([jnp.sum(in_hull), jnp.sum(in_bounds), jnp.sum(in_hull & in_bounds),
+                                     candidate_distances[index]])
+    out["valid_sample_count"] = jnp.sum(sample_validity(previous, da, states, values, sample_distances))
+    return out
+
+
+@partial(jax.jit, static_argnames=("factors", "timestep", "accel_scale"))
+def assemble_candidates(candidates, previous, speed, factors, timestep, accel_scale):
+    previous = jnp.asarray(previous, candidates.dtype)[: candidates.shape[1]]
+    count = len(factors)
+    if count and len(candidates) > count + 1:
+        plans = reduced_speed_plans_device(previous, jnp.asarray(speed, candidates.dtype), factors, timestep, accel_scale)
+        candidates = candidates.at[-count - 1:-1].set(plans.astype(candidates.dtype))
+    return candidates.at[-1].set(previous)
+
+
+@jax.jit
+def terminal_states(frenet):
+    return frenet[:, -1, :5]
+
+
+@jax.jit
+def shifted_plan(actions):
+    return jnp.concatenate([actions[1:], jnp.zeros((1, 2), dtype=actions.dtype)])
+
+
 def normalized_risk_cost(risk_probabilities, mode):
     """Normalize sampled risks; retain each step in all-state mode."""
     if mode == "all":
@@ -959,9 +1004,7 @@ class LMPPI:
             self.actions = self.actions[:self.config.horizon]
         self.endpoint_action = needs_endpoint
         state = jnp.asarray(state, dtype=self.model.params.dtype)
-        previous = retained_previous if dropping_endpoint else jnp.concatenate([
-            self.actions[1:], jnp.zeros((1, 2), dtype=self.actions.dtype)
-        ])
+        previous = retained_previous if dropping_endpoint else shifted_plan(self.actions)
         if self.randomness is None:
             self.key, sample_key, value_key = jax.random.split(self.key, 3)
         else:
@@ -1110,7 +1153,7 @@ class LMPPI:
             valid = sample_validity(previous, da, states, values, jnp.zeros(self.config.samples))
             hull, sample_distances, density_normalization = sample_normalized_density(hull, states[:, -1, :5], valid)
         else:
-            sample_distances = self.evaluate_hull(states[:, -1, :5], hull)
+            sample_distances = self.evaluate_hull(terminal_states(states), hull)
         sample_risk = None
         risk_started = time.perf_counter() if risk_active else None
         if chance_active:
@@ -1159,8 +1202,10 @@ class LMPPI:
                 **proposal_options
             )
         candidates = self.with_brake_candidates(candidates, safe_set, frenet_state, state)
-        candidates = self.with_reduced_speed(candidates, previous, state)
-        candidates = with_previous_plan(candidates, previous)
+        if self.speed_factors and len(candidates) > len(self.speed_factors) + 1:
+            self.reduced_counts["steps"] += 1
+        candidates = assemble_candidates(candidates, previous, state[3], tuple(self.speed_factors),
+                                         float(self.model.timestep), float(np.asarray(self.model.action_scale)[1]))
         trajectories, member_trajectories = candidate_predictions(self.model, state, candidates, self.config)
         candidate_frenet = to_frenet(self.track, trajectories, indices, frenet_state[0])
         candidate_extra = self.model_safety_costs(state, candidates[:, : self.config.horizon])
@@ -1169,10 +1214,9 @@ class LMPPI:
             candidate_extra = dict(candidate_extra, stretch_cap=candidate_cap)
         soft = () if getattr(self.config.dynamics, "rssm_risk_rank", False) else SOFT_TERMS
         ranked = [value for name, value in candidate_extra.items() if name not in soft and name != "stretch_cap"]
-        candidate_safety = total_safety(candidate_frenet, self.config, sum(ranked) if ranked else None).sum(axis=1)
-        if candidate_cap is not None:
-            candidate_safety = candidate_safety + candidate_cap.sum(axis=1) * self.config.change_cap_rank_weight / 1000.0
-        candidate_distances = self.evaluate_safe_set_check(candidate_frenet[:, -1, :5], hull)
+        candidate_safety = candidate_safety_total(candidate_frenet, sum(ranked) if ranked else None, candidate_cap,
+                                                  self.config)
+        candidate_distances = self.evaluate_safe_set_check(terminal_states(candidate_frenet), hull)
         candidate_scenarios = scenario_frenet = candidate_chance = verified_scenarios = None
         if chance_active or risk_active and risk_distribution:
             candidate_scenarios, scenario_frenet = self.scenarios(
@@ -1240,27 +1284,19 @@ class LMPPI:
             self.model.weights if hasattr(self.model, "weights") else None,
             active_lambdas, self.config, candidate_safety, boundary=self.boundary,
         )
-        if "clearance" in candidate_extra and not chance_active and not risk_active:
-            unranked = [value for name, value in candidate_extra.items()
-                        if name not in soft and name not in ("stretch_cap", "clearance")]
-            safety_without = total_safety(candidate_frenet, self.config, sum(unranked) if unranked else None).sum(axis=1)
-            if candidate_cap is not None:
-                safety_without = safety_without + candidate_cap.sum(axis=1) * self.config.change_cap_rank_weight / 1000.0
-            packet["no_clearance_index"] = select_candidate(
-                boundary_view(candidate_frenet, self.boundary), candidate_distances, self.config.boundary_limit,
-                self.config.safe_set_threshold, terminal_values, safety_without)[0]
-        view = boundary_view(candidate_frenet, self.boundary)
-        in_bounds = ~jnp.any(jnp.abs(view[:, :, 1]) > self.config.boundary_limit, axis=1)
-        in_hull = candidate_distances <= self.config.safe_set_threshold
-        packet["step_summary"] = jnp.stack([jnp.sum(in_hull), jnp.sum(in_bounds), jnp.sum(in_hull & in_bounds),
-                                            candidate_distances[packet["index"]]])
+        clearance = "clearance" in candidate_extra and not chance_active and not risk_active
+        unranked = [value for name, value in candidate_extra.items()
+                    if name not in soft and name not in ("stretch_cap", "clearance")]
+        packet.update(step_diagnostics(candidate_frenet, candidate_distances, terminal_values,
+                                       sum(unranked) if unranked else None, candidate_cap, packet["index"],
+                                       self.boundary, previous, da, states, values, sample_distances,
+                                       self.config, clearance))
         if getattr(self.config, "change_breakdown", False):
             packet["breakdown"] = self.candidate_breakdown(
                 candidate_frenet, candidate_distances, candidate_extra, candidate_safety, terminal_values,
                 safe_set, value_snapshot, value_key)
         packet["safety_activity"] = safety_activity(
             states, sample_extra, candidate_frenet, candidate_extra, packet["index"], self.config)
-        packet["valid_sample_count"] = jnp.sum(sample_validity(previous, da, states, values, sample_distances))
         if density_normalization is not None:
             packet["density_normalization"] = density_normalization
         # Keep the chosen horizon device-resident. Download all required fields once.
