@@ -1,0 +1,7 @@
+# Levine sim map, plain v11 with the LiDAR clearance only on the final candidates (not the sampled plans).
+extends: v11.yaml
+output:
+  exp_name: levine-v11-candidate-clearance
+planner:
+  dynamics:
+    rssm_sample_clearance: false

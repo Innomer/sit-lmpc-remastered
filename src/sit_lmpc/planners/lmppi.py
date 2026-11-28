@@ -1025,7 +1025,8 @@ class LMPPI:
             cartesian, da, sampled_actions = sample_rollouts(
                 self.model, state, previous, sample_key, self.config
             )
-        sample_extra = self.model_safety_costs(state, sampled_actions[:, : self.config.horizon])
+        sample_extra = (self.model_safety_costs(state, sampled_actions[:, : self.config.horizon])
+                        if getattr(self.config.dynamics, "rssm_sample_clearance", True) else {})
         speculative = window = None
         if not density_active and self.config.safe_set_selection == "predicted_window" and hasattr(safe_set, "speculate"):
             current_s = float(frenet_state[0])

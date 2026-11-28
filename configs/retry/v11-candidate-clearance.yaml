@@ -1,0 +1,8 @@
+# Retry mode: plain v11 with the LiDAR clearance (and crash-risk) costs only on the final candidates, not on the
+# sampled plans: one model rollout less per control step (about 21 ms on the Jetson).
+extends: v11.yaml
+output:
+  exp_name: retry-v11-candidate-clearance
+planner:
+  dynamics:
+    rssm_sample_clearance: false
