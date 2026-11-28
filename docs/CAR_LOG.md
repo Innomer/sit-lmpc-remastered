@@ -113,6 +113,32 @@ on the 256 final candidates only (needs a sim check), then reduce v11's per-call
 Also learned: compiling the planner takes several minutes on the Jetson at every start; with
 `JAX_COMPILATION_CACHE_DIR` set, only the first start compiles.
 
+### 7. Sim checks of the speed-ups (2026-11-28)
+
+**Clearance on the final candidates only** (`planner.dynamics.rssm_sample_clearance: false`, branch `planner-jit`
+`16ef7b41`): v11's LiDAR clearance cost is no longer computed for the sampled plans, only for the final candidates
+(one model call less per step, about 21 ms on the Jetson). The final pick still checks clearance on every candidate.
+
+| Levine sim map, retry from standstill, 7 m/s cap, 20 attempts | Plain v11 | Clearance on candidates only |
+|---|---|---|
+| crashes | 12 (9 walls, 3 off track) | 13 |
+| crash spots | s = 39.5 (x6), 59-60 (x4), 8 (x2) | s = 39.5 (x8), 57-60 (x3), 8, 36 |
+| clearance changed the final pick | 0.3% of steps | 0.2% |
+| laps with a wall closer than 0.2 m | 10 of 15 | 6 of 15 |
+| planning p50 / p95 (laptop) | 42.3 / 51.1 ms | 38.5 / 48.3 ms |
+
+No measurable change in behaviour; the crash spots are entry 45's. v11 crashes in about 60% of learned attempts on
+this map in both variants: that, not only the planning time, is open before v11 drives the car.
+
+**Spielberg, unexplained:** plain v11 in retry mode (config identical to entry 45's capped run, which crashed 2 of
+25 times) crashed on every learned attempt today (3 of 3 on the original code, 3 of 3 and 20 of 20 on the folded
+branch), always after about 4 s at s = 31-35 m with a spin (heading error -1.0 rad, slip 0.49). Entry 45's lap 6
+passed the same corner with heading error -0.75 rad and slip 0.25 and recovered. Code, model files, packages and the
+sim bridge are unchanged since that run, and the laptop was plugged in. The corner is at the edge of what v11
+handles; why today's runs fall on the other side is not known.
+
+**Integrator substep** 0.02 -> 0.05 s (Jetson): no gain (v11 168 ms vs 172 ms; bicycle update 73 vs 77 ms); reverted.
+
 ### Open
 
 - Bicycle learned laps on the car with the folded planner (`irl-planner-jit`, 512 samples, 80 / 96 ms).
