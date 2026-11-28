@@ -51,7 +51,7 @@ is in the middle of the bottom-left corner; the car drives counterclockwise on t
 | 5 warm-up laps (pure pursuit) | all clean, 32.2-32.5 s at 2.0 m/s |
 | stop after each lap, training while standing, restart on go | worked every time; 4 value generations trained on the Jetson |
 | watchdog stops | 0 |
-| learned laps | both failed within 0.7 s: planner steps took **0.6-0.75 s** with the full stack, so the car drove 0.4-0.5 m per decision on old steering (heading error grew to 0.45-0.55 rad, then a "stopped" failure and a LiDAR obstacle stop) |
+| learned laps | both failed within 0.7 s: the planner took p95 243 ms, max 327 ms per step with the full stack, and with the control step and its waits a new command reached the car only every **0.6-0.75 s**, so the car drove 0.4-0.5 m per decision on old steering (heading error grew to 0.45-0.55 rad, then a "stopped" failure and a LiDAR obstacle stop) |
 
 ### 5. v11 on real data (offline bag check)
 
@@ -103,3 +103,90 @@ Also learned: compiling the planner takes several minutes on the Jetson at every
 - Jetson timing of the folded planner; then learned laps on the car (bicycle, then v11, then v11 + learned change handling).
 - v11's extra time on the Jetson (430 vs 204 ms before the PF fix) still needs its own profile.
 - The change test (weight or slippery patch mid-session, runbook step 10).
+
+## Appendix: Jetson measurements (2026-11-27/28, as measured)
+
+### Sensors (`scripts/car_check.py`, 40 s, car pushed by hand)
+
+| Topic | Rate, first check (VESC IMU) | Rate, second check (RealSense IMU) |
+|---|---|---|
+| `/pf/pose/odom` | 44.0 Hz | 39.6 Hz |
+| `/odom` (VESC) | 49.0 Hz | 49.6 Hz |
+| IMU | `/sensors/imu/raw` 49.0 Hz, all zeros | `/camera/camera/imu` 191.3 Hz |
+| `/scan` (SICK TiM5xx) | 14.6 Hz | 14.0 Hz |
+| `/joy` | 71.2 Hz | 65.2 Hz |
+
+- LiDAR: 811 beams over 270 deg (-135 to +135 deg), angle step 0.333 deg, scan time 0.0667 s, range max 100 m.
+- VESC speed / PF speed median ratio: 1.001.
+- RealSense IMU at rest (camera frame): acceleration (-0.108, -9.728, 1.030) m/s^2, gyro (0.001, 0.006, 0.007) rad/s; `ros2 topic hz`: 199.99 Hz.
+- After remap and levelling (car frame, at rest): acceleration (0.000, 0.000, 9.779) m/s^2; gyro z bias 0.011 rad/s. Mount tilt measured: 6.9 deg on the stand, 1.4 deg on the floor (the camera itself is nearly level).
+- IMU vs PF: x slope +1.02 (correlation 0.53), y slope +0.59 (correlation 0.40), suggested yaw scale 1.19 with 0.94 rad/s scatter; kept at 1.0 (references from the PF are noisy at walking speed).
+- v11 inputs while pushing (mean / std; training in brackets): ax 0.02 / 1.03 (0.63 / 2.64), ay 0.30 / 1.17 (0.28 / 5.00), gyro z 0.14 / 0.75 (0.06 / 1.08), wheel speed 1.48 / 0.90 (5.39 / 2.87), PF dx/dt 1.38 / 0.93 (5.34 / 2.92), PF dy/dt -0.11 / 0.37 (-0.05 / 0.86), PF dyaw/dt 0.01 / 0.08 (0.06 / 1.04).
+
+### Particle filter and system load
+
+| | Before (`OPENBLAS_NUM_THREADS` unset) | After (`OPENBLAS_NUM_THREADS=1`) |
+|---|---|---|
+| PF CPU | 388% (23 threads; 5 OpenBLAS workers with ~17 min CPU each in 25 min) | 58% (18 threads) |
+| PF rate | ~47 Hz | 46-48 Hz |
+| largest PF gap | 0.367 s (at subscription start; 0.079 s steady) | 0.033 s |
+| all 6 CPU cores, stack only | 84-100% | (headroom freed) |
+| GPU load (GR3D), stack only | 0-14% | - |
+| RAM | 3.2 GB of 7.5 GB with the stack; 6.3 GB during a planner compile | - |
+
+PF settings: 10000 particles, `rmgpu` (GPU ray marching), every 18th beam, max range 10 m.
+
+### Planning time (`scripts/jetson_check.py`, synthetic centreline laps; p50 / p95 / max)
+
+| Run | Stack | XLA flags | GPU matmul 1024x1024 | Bicycle | v11 | v11-learned |
+|---|---|---|---|---|---|---|
+| 1 | off | none | 0.97 ms | 203.6 / 232.4 / 403.7 ms | 429.7 / 446.0 / 466.3 ms | 431.1 / 446.3 / 479.4 ms |
+| 1, 512 samples | off | none | | 183.4 / 214.3 / 327.5 ms | 425.0 / 446.4 / 471.1 ms | 425.3 / 455.4 / 466.1 ms |
+| 1, 256 samples | off | none | | 181.2 / 211.9 / 227.4 ms | 425.9 / 454.9 / 468.4 ms | 425.9 / 455.5 / 475.9 ms |
+| 1, 10-step horizon | off | none | | 186.3 / 207.6 / 217.5 ms | 427.9 / 459.3 / 474.4 ms | 426.2 / 454.5 / 478.4 ms |
+| 2 | on, PF 388% | autotune off + command buffers | 8.59 ms | 269.5 / 322.4 / 476.5 ms | | |
+| 3 | on, PF fixed | autotune off + command buffers | 6.92 ms | (not finished) | | |
+| 4 | on, PF fixed | none | 0.98 ms | 155.1 / 187.6 / 380.7 ms | | |
+| 5 | on, PF fixed | command buffers only | 0.81 ms | 160.0 / 195.2 / 325.6 ms | | |
+| 6 | on, PF fixed | none; 4 value samples | 0.96 ms | 167.7 / 200.9 / 326.6 ms | | |
+
+Laptop for comparison (same check, on battery): bicycle 21 / 25 ms, v11 36 / 43 ms (filter step 3.9 ms of it).
+
+### Where the time goes on the Jetson (`scripts/profile_step.py`, bicycle, stack on, 60 steps)
+
+Planner step median 159.7 ms, p95 192.0 ms.
+
+| Function | ms per step | calls per step |
+|---|---|---|
+| `update` (whole step) | 161.9 | 1 |
+| loose JAX ops (`apply_primitive`) | 63.5 | 49 |
+| array indexing (`__getitem__`) | 51.3 | 18 |
+| `boundary_view` / `with_footprint` | 24.8 | 1 |
+| `total_safety` | 17.9 | 1 |
+| reading GPU results (`_value`) | 17.4 | 18.6 |
+| `.at[].set` scatters | 16.4 | 3 |
+| `with_reduced_speed` | 14.0 | 1 |
+| Python in `update` itself | 13.2 | 1 |
+| `safety_step_costs` | 12.1 | 1 |
+| `sample_validity` | 7.2 | 1 |
+| `with_previous_plan` | 5.8 | 1 |
+
+(Rows overlap: the indexing and loose-op rows are part of the named functions.)
+
+### Car run (`levine-bicycle-slow`, 2026-11-28 01:15)
+
+- Startup: value precompile 17.0 s, planner precompile 151.9 s, then the hull precompile (238 variants); before the compile cache, starts took several minutes; with `JAX_COMPILATION_CACHE_DIR` the next start was quick.
+- Warm-up laps: 32.3, 32.4, 32.4, 32.2, 32.5 s, all at 2.0 m/s; pure-pursuit step 0.7 ms (p50), up to 9.8 ms.
+- Value training while standing: losses -1.19, -2.03, -2.26, -3.10 (generations 1-4).
+- Control loop over the run: 1701 steps, 21 overruns, 0 watchdog stops; control step p50 98.7 ms, p95 128.9 ms.
+- Learned steps (last window): planner p95 243.0 ms, max 327.4 ms; car step p50 94.7 ms, p95 140.1 ms; commands reached the car every 0.6-0.75 s; overruns went from 10 to 20 within 13 learned steps.
+- Starts: rejected at `behind` 54.14 m and 62.61 m (car past the line), accepted at 0.80-1.29 m; on the stand the launch timed out after 10 s (expected: it cannot reach the line).
+
+### Track (`scripts/make_track.py` on the PF map)
+
+| Smoothing | Length | Points | Wall distance min / 5th pct / median | Narrow spots | Gaps (no wall within 1 m) |
+|---|---|---|---|---|---|
+| default (1 m) | 62.64 m | 627 | 0.00 / 0.62 / 0.76 m | 13 | 36 |
+| 2.5 m | 61.56 m | 616 | 0.00 / 0.48 / 0.76 m | 36 | 27 |
+
+Start line: (-6.48, 3.42) in the map frame, heading -61 deg (bottom-left corner).
