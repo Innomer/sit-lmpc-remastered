@@ -83,7 +83,9 @@ def time_config(config, steps, skip, label):
         snapshot = trainer.snapshot
     lap_f, lap_c = frenet_laps[-1], cart_laps[-1]
     times = []
-    for i in range(min(steps + skip, len(lap_f) - 1)):
+    usable = max(len(lap_f) - 40, 1)
+    for step in range(steps + skip):
+        i = 10 + step % usable
         started = time.perf_counter()
         state, frenet = lap_c[i, :7].copy(), lap_f[i, :7].copy()
         if rssm_filter is not None:
