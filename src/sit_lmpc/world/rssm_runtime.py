@@ -186,7 +186,10 @@ class RSSMFilter:
         self.started = False
 
     def lidar_features(self, scan):
-        return jnp.asarray(log_range(downsample(np.asarray(scan, np.float32)[None], self.config.beams))[0])
+        return jnp.asarray(self.lidar_features_host(scan))
+
+    def lidar_features_host(self, scan):
+        return log_range(downsample(np.asarray(scan, np.float32)[None], self.config.beams))[0]
 
     def step_features(self, sensors, lidar, pose_rear, control):
         """As step, with the LiDAR already as the model's 64 log-range features (e.g. rssm_lidar.npy)."""
@@ -207,19 +210,20 @@ class RSSMFilter:
         """sensors: the 9 encoder features (raw); scan: LiDAR ranges on the training layout (1080 beams, 270 deg);
         pose_rear: PF pose (x, y, yaw) at the rear axle; control: the control applied since the last call."""
         yaw = float(pose_rear[2])
-        pose = jnp.asarray([pose_rear[0] + LR * np.cos(yaw), pose_rear[1] + LR * np.sin(yaw), yaw], jnp.float32)
-        lidar = self.lidar_features(scan)
-        sensors = jnp.asarray(sensors, jnp.float32)
+        pose, lidar, sensors, control = jax.device_put((
+            np.asarray([pose_rear[0] + LR * np.cos(yaw), pose_rear[1] + LR * np.sin(yaw), yaw], np.float32),
+            np.asarray(self.lidar_features_host(scan), np.float32), np.asarray(sensors, np.float32),
+            np.asarray(control, np.float32)))
         if not self.started:
             self.h, self.s, self.x, anchor, condition = self._first(lidar, sensors, pose)
             self.started = True
         else:
-            self.h, self.s, self.x, anchor, condition = self._step(self.h, self.s, self.x,
-                                                                   jnp.asarray(control, jnp.float32), lidar, sensors,
+            self.h, self.s, self.x, anchor, condition = self._step(self.h, self.s, self.x, control, lidar, sensors,
                                                                    pose)
         from sit_lmpc.world.rssm_train import CONDITION_MEAN, CONDITION_SCALE
+        anchor, x, condition = jax.device_get((anchor, self.x, condition))
         grip = float(np.asarray(condition)[0] * CONDITION_SCALE[0] + CONDITION_MEAN[0])
-        return np.asarray(anchor), np.asarray(self.x), grip
+        return np.asarray(anchor), np.asarray(x), grip
 
     def predictor(self):
         return RSSMPredictor(self.network, self.st_params, self.action_scale, self.h, self.s, self.model,
