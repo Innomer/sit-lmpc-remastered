@@ -201,6 +201,7 @@ PF settings: 10000 particles, `rmgpu` (GPU ray marching), every 18th beam, max r
 | 13 (same, 256 samples) | on, PF fixed | none | - | | 164.6 / 196.7 / 215.7 ms | |
 | 14 (same, 256 samples, clearance off; timing only) | on, PF fixed | none | - | | 116.6 / 155.6 / 162.9 ms | |
 | 15 (same, 256 samples, clearance on final candidates only) | on, PF fixed | none | - | | 143.4 / 165.4 / 172.5 ms (filter 23.4 ms, clearance 20.8 ms) | |
+| 16 (same + prediction and clearance in one rollout call) | on, PF fixed | none | - | | 126.2 / 166.9 / 179.4 ms (filter 23.8 ms) | |
 
 Laptop for comparison (same check, on battery): bicycle 21 / 25 ms, v11 36 / 43 ms (filter step 3.9 ms of it).
 
