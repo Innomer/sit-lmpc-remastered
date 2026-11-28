@@ -93,7 +93,9 @@ of GPU calls instead of about 50, with the same math. Branch `planner-jit` (sim)
 `irl-planner-jit`. Bicycle: the chosen plans are exactly identical to the original code over 40 steps. v11 cannot
 be checked bit for bit: the original code run twice already differs (0.0002 at step 0, growing to 1.1 through the
 planner's choices; GPU sums are not bit-exact run to run), and folded vs original differs by the same amount.
-*Pending: Jetson timing of `irl-planner-jit` (expected: about 70-90 ms less per step).*
+Jetson, bicycle, stack on (`profile_step.py`): **160 ms -> 112 ms median, p95 192 -> 127 ms** (max 135 ms). Loose
+operations 63 -> 16 ms. Still over the budget; what is left: waiting for GPU results 50 ms, Python in the step 22 ms,
+remaining loose operations and slices about 28 ms, hull build 6.5 ms, random-key splits 5.3 ms.
 
 Also learned: compiling the planner takes several minutes on the Jetson at every start; with
 `JAX_COMPILATION_CACHE_DIR` set, only the first start compiles.
@@ -149,6 +151,7 @@ PF settings: 10000 particles, `rmgpu` (GPU ray marching), every 18th beam, max r
 | 4 | on, PF fixed | none | 0.98 ms | 155.1 / 187.6 / 380.7 ms | | |
 | 5 | on, PF fixed | command buffers only | 0.81 ms | 160.0 / 195.2 / 325.6 ms | | |
 | 6 | on, PF fixed | none; 4 value samples | 0.96 ms | 167.7 / 200.9 / 326.6 ms | | |
+| 7 (folded planner, `irl-planner-jit`) | on, PF fixed | none | - | 114.9 / 129.9 / 135.1 ms | | |
 
 Laptop for comparison (same check, on battery): bicycle 21 / 25 ms, v11 36 / 43 ms (filter step 3.9 ms of it).
 
