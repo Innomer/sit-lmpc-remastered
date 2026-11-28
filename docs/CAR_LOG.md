@@ -117,7 +117,8 @@ Also learned: compiling the planner takes several minutes on the Jetson at every
 
 **Clearance on the final candidates only** (`planner.dynamics.rssm_sample_clearance: false`, branch `planner-jit`
 `16ef7b41`): v11's LiDAR clearance cost is no longer computed for the sampled plans, only for the final candidates
-(one model call less per step, about 21 ms on the Jetson). The final pick still checks clearance on every candidate.
+(one model call less per step). The final pick still checks clearance on every candidate. Jetson, v11, 256 samples:
+165 -> 143 ms median, p95 197 -> 165 ms (clearance 42 -> 21 ms).
 
 | Levine sim map, retry from standstill, 7 m/s cap, 20 attempts | Plain v11 | Clearance on candidates only |
 |---|---|---|
@@ -199,6 +200,7 @@ PF settings: 10000 particles, `rmgpu` (GPU ray marching), every 18th beam, max r
 | 12 (same, + command buffers) | on, PF fixed | command buffers | - | | 167.7 / 196.9 / 239.3 ms | |
 | 13 (same, 256 samples) | on, PF fixed | none | - | | 164.6 / 196.7 / 215.7 ms | |
 | 14 (same, 256 samples, clearance off; timing only) | on, PF fixed | none | - | | 116.6 / 155.6 / 162.9 ms | |
+| 15 (same, 256 samples, clearance on final candidates only) | on, PF fixed | none | - | | 143.4 / 165.4 / 172.5 ms (filter 23.4 ms, clearance 20.8 ms) | |
 
 Laptop for comparison (same check, on battery): bicycle 21 / 25 ms, v11 36 / 43 ms (filter step 3.9 ms of it).
 
