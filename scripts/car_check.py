@@ -71,13 +71,15 @@ def main():
             if value:
                 buttons.add(index)
 
+    from rclpy.qos import QoSProfile, ReliabilityPolicy
+    sensor_qos = QoSProfile(depth=50, reliability=ReliabilityPolicy.BEST_EFFORT)
     node.create_subscription(Odometry, car.odom_topic, odom, 10)
     if car.speed_topic:
         node.create_subscription(Odometry, car.speed_topic, speed, 10)
     if car.imu_topic:
-        node.create_subscription(Imu, car.imu_topic, imu, 10)
+        node.create_subscription(Imu, car.imu_topic, imu, sensor_qos)
     if car.scan_topic:
-        node.create_subscription(LaserScan, car.scan_topic, scan, 10)
+        node.create_subscription(LaserScan, car.scan_topic, scan, sensor_qos)
     if car.joy_topic:
         node.create_subscription(Joy, car.joy_topic, joy, 10)
     print(f"listening for {args.seconds:.0f} s; drive or push the car through left and right turns")

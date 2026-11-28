@@ -101,15 +101,17 @@ class RosCar:
         self.lock = threading.Lock()
         self.running = True
         car = self.car
+        from rclpy.qos import QoSProfile, ReliabilityPolicy
+        sensor_qos = QoSProfile(depth=50, reliability=ReliabilityPolicy.BEST_EFFORT)
         self.subscriptions = [self.node.create_subscription(Odometry, car.odom_topic, self._odom_callback, 10)]
         if car.speed_topic:
             self.subscriptions.append(
                 self.node.create_subscription(Odometry, car.speed_topic, self._speed_callback, 10))
         if car.imu_topic:
-            self.subscriptions.append(self.node.create_subscription(Imu, car.imu_topic, self._imu_callback, 10))
+            self.subscriptions.append(self.node.create_subscription(Imu, car.imu_topic, self._imu_callback, sensor_qos))
         if car.scan_topic and (car.stop_distance > 0 or car.world_model_inputs):
             self.subscriptions.append(
-                self.node.create_subscription(LaserScan, car.scan_topic, self._scan_callback, 10))
+                self.node.create_subscription(LaserScan, car.scan_topic, self._scan_callback, sensor_qos))
         if car.joy_topic:
             self.subscriptions.append(self.node.create_subscription(Joy, car.joy_topic, self._joy_callback, 10))
         if car.go_topic:
