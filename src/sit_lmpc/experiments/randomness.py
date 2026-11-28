@@ -28,6 +28,10 @@ class ExperimentRandomness:
         self.key, key = jax.random.split(self.key)
         return key
 
+    def next_two_keys(self):
+        self.key, first, second = _split_twice(self.key)
+        return first, second
+
     def fork(self, name):
         """Named streams share the master seed without perturbing baseline draws."""
         import jax
@@ -43,3 +47,24 @@ class ExperimentRandomness:
         if std == 0:
             return np.zeros(size)
         return truncnorm.rvs(-3, 3, loc=0, scale=std, size=size, random_state=self.host)
+
+
+def _split_twice_impl(key):
+    import jax
+
+    key, first = jax.random.split(key)
+    key, second = jax.random.split(key)
+    return key, first, second
+
+
+_split_twice_compiled = None
+
+
+def _split_twice(key):
+    global _split_twice_compiled
+    if _split_twice_compiled is None:
+        import jax
+
+        _split_twice_compiled = jax.jit(_split_twice_impl)
+    return _split_twice_compiled(key)
+

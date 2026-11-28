@@ -958,7 +958,8 @@ class LMPPI:
                 self._density_metadata_identity = self.density_snapshot
             geometry_metrics.update(safe_set_query_active="nf_density", **self._density_metadata)
         # The runner supplies host measurements. Preserve them before casting.
-        speed = max(float(state[3]), 1.0)
+        state_host = np.asarray(jax.device_get(state), dtype=float)
+        speed = max(float(state_host[3]), 1.0)
         if isinstance(self.hull_evaluator, ImplicitHullEvaluator):
             self.hull_evaluator.reset_statistics()
         risk_active = self.config.risk_constraint.enabled and risk_cutoff is not None
@@ -1008,7 +1009,7 @@ class LMPPI:
         if self.randomness is None:
             self.key, sample_key, value_key = jax.random.split(self.key, 3)
         else:
-            sample_key, value_key = self.randomness.next_key(), self.randomness.next_key()
+            sample_key, value_key = self.randomness.next_two_keys()
         if hasattr(self.model, "resample"):
             self.model = self.model.resample(jax.random.fold_in(sample_key, 73))
             if provider is not None:
@@ -1310,7 +1311,7 @@ class LMPPI:
         ))
         index, ss_violation, boundary_violation = packet["index"], packet["hull"], packet["boundary"]
         summary = np.asarray(packet["step_summary"], float)
-        self.step_log.append([float(frenet_state[0]), float(state[3]), *summary.tolist(), float(int(index)),
+        self.step_log.append([float(frenet_state[0]), float(state_host[3]), *summary.tolist(), float(int(index)),
                               float(packet.get("no_clearance_index", -1))])
         if "no_clearance_index" in packet:
             self.clearance_counts["steps"] += 1
