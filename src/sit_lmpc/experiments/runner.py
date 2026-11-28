@@ -404,7 +404,7 @@ def _run(config, tracking_only, keyboard_cleanup):
         observation_trace.append(observation)
         true_state_trace.append(np.array(cartesian, copy=True))
         anchor, _, grip = rssm_filter.step(observation, scan, pose, simulator.applied_control)
-        lidar_trace.append(np.asarray(rssm_filter.lidar_features(scan), np.float32))
+        lidar_trace.append(np.asarray(rssm_filter.lidar_features_host(scan), np.float32))
         memory_trace.append(np.asarray(rssm_filter.h, np.float32))
         tag = grip
         if planner.condition_tag == "probe":
