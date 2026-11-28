@@ -140,6 +140,22 @@ handles; why today's runs fall on the other side is not known.
 
 **Integrator substep** 0.02 -> 0.05 s (Jetson): no gain (v11 168 ms vs 172 ms; bicycle update 73 vs 77 ms); reverted.
 
+### 8. v11 speed-ups, round 3 (2026-11-28)
+
+On `planner-jit` `cf25d105`, merged into `irl-planner-jit`; the clearance safety stays on for every final candidate.
+
+| Change | Check | Jetson, v11, 256 samples, p50 / p95 |
+|---|---|---|
+| (before) clearance on final candidates only | Levine sim: same crashes as plain v11 | 143 / 165 ms |
+| candidate prediction and clearance from one rollout call (they ran the same rollout twice) | trajectories and clearance identical (max difference 0.0) | 126 / 167 ms |
+| safety-cost terms summed inside compiled code | v11 on the CPU, 40 planner steps: plans, choices and summaries identical to the original code | (in the line above) |
+| filter step on the CPU (`planner.dynamics.rssm_filter_device: cpu`), its state handed to the GPU once per step | outputs within 3.3e-6 of the GPU version | **114 / 145 ms** |
+
+v11 on the Jetson: 430 -> 114 ms median, 446 -> 145 ms p95; still over the budget. Left per step: v11's two compiled
+calls about 54 ms (a fixed cost per call on the Orin), GPU results 20 ms, filter 18 ms, 8 loose operations 14.5 ms,
+hull 5 ms. Note: on the CPU backend the bicycle's plans now differ from the original by one rounding step at step 28
+(then the planner amplifies it); on the GPU, which the car uses, the bicycle was bit-identical after both fold rounds.
+
 ### Open
 
 - Bicycle learned laps on the car with the folded planner (`irl-planner-jit`, 512 samples, 80 / 96 ms).
@@ -202,6 +218,7 @@ PF settings: 10000 particles, `rmgpu` (GPU ray marching), every 18th beam, max r
 | 14 (same, 256 samples, clearance off; timing only) | on, PF fixed | none | - | | 116.6 / 155.6 / 162.9 ms | |
 | 15 (same, 256 samples, clearance on final candidates only) | on, PF fixed | none | - | | 143.4 / 165.4 / 172.5 ms (filter 23.4 ms, clearance 20.8 ms) | |
 | 16 (same + prediction and clearance in one rollout call) | on, PF fixed | none | - | | 126.2 / 166.9 / 179.4 ms (filter 23.8 ms) | |
+| 17 (same + filter step on the CPU) | on, PF fixed | none | - | | **114.2 / 145.2 / 148.7 ms** (filter 17.7 ms, p95 23.6) | |
 
 Laptop for comparison (same check, on battery): bicycle 21 / 25 ms, v11 36 / 43 ms (filter step 3.9 ms of it).
 
