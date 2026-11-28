@@ -115,9 +115,10 @@ Also learned: compiling the planner takes several minutes on the Jetson at every
 
 ### Open
 
-- Jetson timing of the folded planner; then learned laps on the car (bicycle, then v11, then v11 + learned change handling).
-- v11's extra time on the Jetson (430 vs 204 ms before the PF fix) still needs its own profile.
-- The change test (weight or slippery patch mid-session, runbook step 10).
+- Bicycle learned laps on the car with the folded planner (`irl-planner-jit`, 512 samples, 80 / 96 ms).
+- v11 is still about 165 ms per step: compute the clearance once per step on the final candidates only (sim check
+  first), then cut v11's fixed per-call cost.
+- Then v11 and v11 + learned change handling on the car, and the change test (weight or slippery patch, runbook step 10).
 
 ## Appendix: Jetson measurements (2026-11-27/28, as measured)
 
@@ -213,3 +214,53 @@ Planner step median 159.7 ms, p95 192.0 ms.
 | 2.5 m | 61.56 m | 616 | 0.00 / 0.48 / 0.76 m | 36 | 27 |
 
 Start line: (-6.48, 3.42) in the map frame, heading -61 deg (bottom-left corner).
+
+### Jetson profiles after folding (`scripts/profile_step.py`, stack on)
+
+| | Bicycle, fold 1, 1024 | Bicycle, fold 1, 512 | Bicycle, fold 1+2, 512 | v11, fold 1+2, 512 | v11, + filter fold, 512 | v11, 256, clearance off |
+|---|---|---|---|---|---|---|
+| step p50 / p95 | 114.9 / 129.9 ms | 97.1 / 118.1 ms | 79.6 / 96.3 ms | 178.8 / 225.3 ms | 171.8 / 203.7 ms | 116.6 / 155.6 ms |
+| `update` median | 112.1 ms | 94.5 ms | 77.3 ms | 145.3 ms | 143.7 ms | 90.4 ms |
+| v11 filter step median | - | - | - | 29.6 ms | 23.9 ms | 23.4 ms |
+| Python in `update` itself | 22.0 ms | 21.9 ms | 21.3 ms | 54.2 ms | 52.6 ms | 50.1 ms |
+| waiting for GPU results | 49.8 ms | 35.3 ms | 29.7 ms | 27.5 ms | 25.3 ms | 23.8 ms |
+| loose JAX ops | 16.0 ms (10) | 15.8 ms (10) | 7.8 ms (4) | 21.1 ms (11) | 12.9 ms (8) | 13.4 ms (8) |
+| v11 clearance check | - | - | - | 43.2 ms (2 calls) | 42.1 ms (2 calls) | off |
+| hull build | 6.6 ms | 5.9 ms | 5.6 ms | 5.6 ms | 5.1 ms | 4.9 ms |
+| random-key splits | 5.3 ms | 4.9 ms | (folded) | - | - | - |
+
+## Appendix: code changes (2026-11-27/28)
+
+| Change | Branch, commit | Effect |
+|---|---|---|
+| retry restart speed 1.5 m/s; checkpoint waits moved off the control loop; obstacle flag cleared at start; planner and value training precompiled at startup; stop after every lap | `irl-world-model` `9d9f5ad1` | dry-run bugs fixed (section 1) |
+| RealSense IMU: axis remap, automatic levelling, centre-of-gravity correction, 0.1 s averaging; Ctrl-C raised after the ROS spin; `scripts/car_dryrun.sh` | `bb3d490d` | IMU usable for v11 |
+| IMU and LiDAR subscriptions with best-effort QoS | `21cdfc6f` | RealSense IMU messages arrive |
+| `jetson_check.py`: timed steps kept away from the finish line | `e279adf5` | the check crashed on the short real track |
+| `scripts/profile_step.py` | `c1e0fdcc` | per-function time on the Jetson |
+| fold 1: track-limit check, step summary, validity count, candidate safety totals, reduced-speed and previous-plan candidates, plan shift and terminal-state slices as compiled calls | `planner-jit` `cdea813f` | bicycle 160 -> 112 ms on the Jetson; plans identical |
+| fold 2: both random keys in one compiled split; the state read to the CPU once per step | `planner-jit` `501a9611` | loose ops 16 -> 7.8 ms; plans identical |
+| v11 filter step: one upload, one read; LiDAR log features computed on the CPU | `planner-jit` `e4fce382` | filter 30 -> 24 ms; outputs identical |
+| all of the above for the car | `irl-planner-jit` (merges `1a8a79b6`, `2ce7014c`) | car test branch |
+| runbook: SICK bringup, RealSense IMU launch, `OPENBLAS_NUM_THREADS=1`, `ros2 bag record`, stop after every lap | `irl-world-model` | `docs/CAR_RUNBOOK.md` |
+
+Config settings found or changed on the car (not committed; local on the Jetson): `planner.half_width: 0.62`
+(from the track), `planner.samples: 512`, `planner.safe_set_size` (warm-up laps = this + 1), `simulation.car.command_timeout: 0.5`
+for the slow test; environment: `OPENBLAS_NUM_THREADS=1`, `JAX_COMPILATION_CACHE_DIR`, no `XLA_FLAGS`.
+
+## Appendix: diagnostic tests on the laptop
+
+| Test | Result | Conclusion |
+|---|---|---|
+| first profile of the planner check | counted the check's own setup (fake laps, value training) as planner time: 62 + 23 loose ops "per step" | wrong; a profile limited to the planner step showed the real picture |
+| eager-op trace inside the step (bicycle) | 12 loose ops and 15 GPU reads per step (indexing ops not caught by that trace; about 50 in total) | the step was already mostly compiled |
+| value samples 20 / 4 / 1 (laptop) | 20.7 / 13.8 / 15.3 ms | a third of the step on the laptop; no change on the Jetson (GPU not the bottleneck there) |
+| fold 1 on the laptop | 24 ms before and after | the laptop is GPU-limited, so the saved CPU work was hidden |
+| equality: original vs folded, 40 steps | bicycle identical (max difference 0.0); v11 differs, but the original run twice differs just as much (0.0002 at step 0, up to 1.1) | v11 on the GPU is not bit-exact run to run |
+| speed passed to the candidate assembly as a CPU number (float64, then float32) | plans no longer identical (1e-5 at step 3, growing) | kept the GPU value `state[3]` |
+| v11 filter, 30 steps, original vs folded, on the CPU | identical (max difference 0.0) | filter fold exact |
+| v11 clearance call vs plan count | 512 / 64 / 8 plans: returns in 1.04 / 1.46 / 1.05 ms, done in 3.02 / 3.30 / 2.33 ms | fixed cost per call, not per plan |
+| passing v11's model to a compiled call | 0.02 ms (same or a new object each step); flatten 66 arrays 0.009 ms | not the cause |
+| XLA full loop unrolling | clearance 3.01 -> 3.84 ms, bicycle rollout 1.23 -> 1.68 ms | slower; not used |
+| XLA autotuning off (Jetson) | GPU matmul 0.98 -> 6.9 ms | never use for runs |
+
