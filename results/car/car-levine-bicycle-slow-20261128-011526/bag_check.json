@@ -1,0 +1,92 @@
+{
+ "bag": "/tmp/claude-1000/-home-mann-bhanushali-sim-ws/fe461a28-837e-4742-9591-a6751092f77d/scratchpad/carrun/car-levine-bicycle-slow-20261128-011526/bag",
+ "config": "configs/car/levine-v11.yaml",
+ "starts": 349,
+ "seconds": 501.7,
+ "errors": {
+  "v11_0.5s": {
+   "position_m": [
+    0.141,
+    0.254
+   ],
+   "yaw_rate": [
+    0.447,
+    0.947
+   ],
+   "speed": [
+    0.045,
+    0.132
+   ]
+  },
+  "bicycle_0.5s": {
+   "position_m": [
+    0.154,
+    0.273
+   ],
+   "yaw_rate": [
+    0.742,
+    1.462
+   ],
+   "speed": [
+    0.009,
+    0.036
+   ]
+  },
+  "v11_1.0s": {
+   "position_m": [
+    0.264,
+    0.486
+   ],
+   "yaw_rate": [
+    0.53,
+    1.193
+   ],
+   "speed": [
+    0.042,
+    0.132
+   ]
+  },
+  "bicycle_1.0s": {
+   "position_m": [
+    0.382,
+    0.71
+   ],
+   "yaw_rate": [
+    0.608,
+    1.36
+   ],
+   "speed": [
+    0.015,
+    0.051
+   ]
+  },
+  "v11_1.5s": {
+   "position_m": [
+    0.487,
+    0.956
+   ],
+   "yaw_rate": [
+    0.643,
+    1.423
+   ],
+   "speed": [
+    0.048,
+    0.159
+   ]
+  },
+  "bicycle_1.5s": {
+   "position_m": [
+    0.736,
+    1.57
+   ],
+   "yaw_rate": [
+    0.624,
+    1.506
+   ],
+   "speed": [
+    0.021,
+    0.066
+   ]
+  }
+ }
+}
