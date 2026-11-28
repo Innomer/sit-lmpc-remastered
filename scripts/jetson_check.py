@@ -63,7 +63,8 @@ def time_config(config, steps, skip, label):
         from sit_lmpc.world.rssm_runtime import RSSMFilter
         rssm_filter = RSSMFilter(planner.dynamics.rssm, model.params, model.action_scale, planner.dynamics.rssm_variant,
                                  planner.dynamics.rssm_model_timestep, model.integrator_timestep,
-                                 planner.dynamics.rssm_clearance_margin, planner.dynamics.rssm_clearance_weight)
+                                 planner.dynamics.rssm_clearance_margin, planner.dynamics.rssm_clearance_weight,
+                                 device=planner.dynamics.rssm_filter_device)
         model = rssm_filter.predictor()
     randomness = ExperimentRandomness(simulation.seed or 0)
     learned = LMPPI(planner, model, track, simulation.seed or 0, config.value.samples, randomness=randomness,
