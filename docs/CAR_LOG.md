@@ -103,6 +103,13 @@ the CPU once per step; bicycle plans again exactly identical): loose operations 
 samples: 160 -> 80 ms median, p95 192 -> 96 ms** on the Jetson with the full stack. Left per step: GPU results
 30 ms, Python in the step 21 ms, hull build 5.6 ms, hull check 4.4 ms, 4 loose operations 7.8 ms.
 
+**v11** (same folds, plus the filter step folded to one upload and one read: 30 -> 24 ms, outputs identical): 430 ->
+172 ms median at 512 samples, 165 ms at 256. Its LiDAR clearance check (`latent_costs`, 2 calls) costs 42 ms on the
+Jetson whatever the number of plans (clearance off: 117 ms), and v11's other compiled calls also cost a fixed amount
+each: the time is per call, not per plan. On the laptop the same call returns in about 1 ms and finishes in 2.3 ms
+even for 8 plans. XLA command buffers and full loop unrolling did not help. Next: compute the clearance once per step
+on the 256 final candidates only (needs a sim check), then reduce v11's per-call cost.
+
 Also learned: compiling the planner takes several minutes on the Jetson at every start; with
 `JAX_COMPILATION_CACHE_DIR` set, only the first start compiles.
 
@@ -160,6 +167,11 @@ PF settings: 10000 particles, `rmgpu` (GPU ray marching), every 18th beam, max r
 | 7 (folded planner, `irl-planner-jit`) | on, PF fixed | none | - | 114.9 / 129.9 / 135.1 ms | | |
 | 8 (folded, 512 samples) | on, PF fixed | none | - | 97.1 / 118.1 / 139.3 ms | | |
 | 9 (folded round 2, 512 samples) | on, PF fixed | none | - | **79.6 / 96.3 / 101.4 ms** | | |
+| 10 (folded round 2, 512 samples) | on, PF fixed | none | - | | 178.8 / 225.3 / 256.8 ms (filter 29.6 ms) | |
+| 11 (+ folded filter step, 512 samples) | on, PF fixed | none | - | | 171.8 / 203.7 / 215.6 ms (filter 23.9 ms) | |
+| 12 (same, + command buffers) | on, PF fixed | command buffers | - | | 167.7 / 196.9 / 239.3 ms | |
+| 13 (same, 256 samples) | on, PF fixed | none | - | | 164.6 / 196.7 / 215.7 ms | |
+| 14 (same, 256 samples, clearance off; timing only) | on, PF fixed | none | - | | 116.6 / 155.6 / 162.9 ms | |
 
 Laptop for comparison (same check, on battery): bicycle 21 / 25 ms, v11 36 / 43 ms (filter step 3.9 ms of it).
 
