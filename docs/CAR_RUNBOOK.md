@@ -35,6 +35,7 @@ source <car workspace>/install/setup.bash        # the f1tenth_stack / particle_
 source .venv/bin/activate                         # created by scripts/jetson_setup.sh (first time only)
 export ROS_DOMAIN_ID=<the car's domain id>
 export XLA_PYTHON_CLIENT_MEM_FRACTION=0.35        # leave GPU memory for the ROS stack and the particle filter
+export OPENBLAS_NUM_THREADS=1                     # numpy's OpenBLAS otherwise busy-waits one thread per core
 ```
 
 First time only: `bash scripts/jetson_setup.sh` (creates the venv with ROS Python visible, installs the package and
@@ -44,10 +45,14 @@ In two other terminals (same shell setup), bring up the car. Always the full sta
 
 ```bash
 ros2 launch f1tenth_stack sick_bringup_launch.py   # this car: SICK TiM LiDAR (811 beams over 270 deg)
-ros2 launch particle_filter localize_launch.py    # on the Levine map; set the initial pose in RViz
+OPENBLAS_NUM_THREADS=1 ros2 launch particle_filter localize_launch.py   # on the Levine map; set the initial pose in RViz
 ros2 launch realsense2_camera rs_launch.py enable_gyro:=true enable_accel:=true unite_imu_method:=2 \
   enable_color:=false enable_depth:=false enable_infra1:=false enable_infra2:=false   # the IMU
 ```
+
+`OPENBLAS_NUM_THREADS=1` matters: without it the particle filter's numpy (OpenBLAS) keeps one busy-waiting thread per
+core and used 388% CPU, with all 6 cores at 100% and PF gaps up to 0.37 s; with it, 58% CPU, the same 47 Hz and gaps
+under 35 ms (`ps -o pcpu -C particle_filter`).
 
 The VESC on this car has no IMU, so the IMU is the RealSense D435i's (`/camera/camera/imu`, 200 Hz). It needs
 librealsense built with the RSUSB backend (the Jetson kernel has no HID sensor modules) and realsense-ros built
